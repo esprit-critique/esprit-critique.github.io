@@ -72,6 +72,31 @@ const WASON_ABSTRAITES = [
   })
 ];
 
+// Pour aller plus loin : le problème THOG (Wason et Brooks, 1979), plus difficile que la tâche de sélection
+function problemeThog() {
+  const bloc = el("div", "section");
+  bloc.append(el("h3", null, "Pour aller plus loin : le problème THOG"),
+    paragraphe("Quatre figures : un losange noir, un losange blanc, un rond noir et un rond blanc. J'ai choisi une couleur (noir ou blanc) et une forme (losange ou rond). Est un THOG toute figure qui a exactement l'une des deux caractéristiques choisies, la couleur ou la forme, mais pas les deux. Le losange noir est un THOG."),
+    el("p", "cas", "Parmi les trois autres figures, lesquelles sont des THOG ?"));
+  const options = ["Le losange blanc et le rond noir", "Le rond blanc seulement", "Aucune", "On ne peut pas savoir"];
+  const boutons = options.map((texte, k) => {
+    const b = boutonChoix(texte, k);
+    b.addEventListener("click", () => {
+      boutons.forEach(x => { x.disabled = true; });
+      boutons[1].classList.add("juste");
+      if (k !== 1) b.classList.add("faux");
+      const retour = el("div", "retour-quiz");
+      retour.append(el("p", "verdict " + (k === 1 ? "juste" : "faux"), k === 1 ? "Juste : le rond blanc seulement." : "Réponse : le rond blanc seulement."),
+        paragraphe("Le losange noir a exactement une caractéristique choisie. Soit c'est la couleur (noir) et la forme choisie est le rond ; soit c'est la forme (losange) et la couleur choisie est le blanc. Dans les deux cas, le rond blanc a exactement une caractéristique choisie : c'est un THOG. Le losange blanc et le rond noir en ont soit zéro, soit deux : ce ne sont pas des THOG."),
+        paragraphe("La réponse intuitive, « le losange blanc et le rond noir », retient ce qui ressemble au losange noir. Il faut au contraire envisager chacune des deux hypothèses possibles et en tirer les conséquences. Wason et Brooks (1979) ont fait de ce problème une épreuve classique de raisonnement hypothétique.", "source"));
+      bloc.appendChild(retour);
+    });
+    bloc.appendChild(b);
+    return b;
+  });
+  return bloc;
+}
+
 const WASON_CONCRETES = [
   {
     consigne: "Vous contrôlez un bar. Chaque carte représente un client : ce qu'il boit sur une face, son âge sur l'autre.",
@@ -95,14 +120,24 @@ const WASON_CONCRETES = [
 ];
 
 // Règles cachées possibles pour le jeu 2, 4, 6 : toutes acceptent la suite 2, 4, 6
+// Règles cachées. graine : la suite donnée en exemple (2, 4, 6 par défaut) ; evidente : l'hypothèse que cette suite
+// suggère le plus, et qu'une suite « informative » doit pouvoir mettre en défaut en sortant de son cadre.
+// Niveaux : 1, la règle de Wason ; 2, autres règles larges ; 3, règles plus fines, avec un budget de 8 suites.
+const PLUS_DEUX = { texte: "des nombres pairs qui augmentent de 2", test: (a, b, c) => a % 2 === 0 && b === a + 2 && c === b + 2 };
 const REGLES_246 = [
-  { id: "croissants", texte: "trois nombres strictement croissants", test: (a, b, c) => a < b && b < c },
-  { id: "differents", texte: "trois nombres tous différents", test: (a, b, c) => a !== b && b !== c && a !== c },
-  { id: "somme", texte: "le troisième nombre est la somme des deux premiers", test: (a, b, c) => Math.abs(a + b - c) < 1e-9 },
-  { id: "dernier", texte: "le dernier nombre est le plus grand des trois", test: (a, b, c) => c > a && c > b },
-  { id: "pairs", texte: "trois nombres pairs", test: (a, b, c) => [a, b, c].every(x => Number.isInteger(x) && x % 2 === 0) },
-  { id: "somme-paire", texte: "la somme des trois nombres est paire", test: (a, b, c) => Number.isInteger(a + b + c) && (a + b + c) % 2 === 0 },
-  { id: "extremes", texte: "le premier nombre est plus petit que le troisième", test: (a, b, c) => a < c }
+  { id: "croissants", niveau: 1, texte: "trois nombres strictement croissants", test: (a, b, c) => a < b && b < c },
+  { id: "differents", niveau: 2, texte: "trois nombres tous différents", test: (a, b, c) => a !== b && b !== c && a !== c },
+  { id: "somme", niveau: 2, texte: "le troisième nombre est la somme des deux premiers", test: (a, b, c) => Math.abs(a + b - c) < 1e-9 },
+  { id: "dernier", niveau: 2, texte: "le dernier nombre est le plus grand des trois", test: (a, b, c) => c > a && c > b },
+  { id: "pairs", niveau: 1, texte: "trois nombres pairs", test: (a, b, c) => [a, b, c].every(x => Number.isInteger(x) && x % 2 === 0) },
+  { id: "somme-paire", niveau: 2, texte: "la somme des trois nombres est paire", test: (a, b, c) => Number.isInteger(a + b + c) && (a + b + c) % 2 === 0 },
+  { id: "extremes", niveau: 1, texte: "le premier nombre est plus petit que le troisième", test: (a, b, c) => a < c },
+  { id: "ecart-croissant", niveau: 3, texte: "l'écart entre deux nombres successifs augmente", test: (a, b, c) => c - b > b - a,
+    graine: [1, 2, 4], evidente: { texte: "chaque nombre est le double du précédent", test: (a, b, c) => b === 2 * a && c === 2 * b } },
+  { id: "deux-pairs", niveau: 3, texte: "exactement deux des trois nombres sont pairs", test: (a, b, c) => [a, b, c].filter(x => Number.isInteger(x) && x % 2 === 0).length === 2,
+    graine: [2, 3, 4], evidente: { texte: "trois entiers consécutifs", test: (a, b, c) => b === a + 1 && c === b + 1 } },
+  { id: "moyenne", niveau: 3, texte: "le deuxième nombre est la moyenne des deux autres", test: (a, b, c) => Math.abs(2 * b - a - c) < 1e-9 },
+  { id: "multiple", niveau: 3, texte: "le troisième nombre est un multiple du premier", test: (a, b, c) => a !== 0 && Number.isInteger(c / a) }
 ];
 
 // Problèmes classiques. type « choix » : une bonne réponse ; « nombre » : réponse chiffrée ;
@@ -556,6 +591,7 @@ const EXPERIENCES = [
               "Dans un contexte familier, en particulier quand il s'agit de repérer une infraction, une nette majorité réussit (Griggs et Cox, 1982). Notre logique dépend fortement du contenu.",
               "La bonne stratégie est celle du modus tollens : pour tester « si P, alors Q », examiner les cas P et les cas non-Q. Chercher à confirmer (retourner Q) ne prouve rien."
             ], [["#biais/confirmation", "Biais de confirmation"], ["#sophismes/affirmation-consequent", "Affirmation du conséquent"]]);
+            zone.appendChild(problemeThog());
             boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "wason").lancer(zone), "Deux nouvelles versions");
           });
         });
@@ -576,10 +612,16 @@ const EXPERIENCES = [
     lancer(zone) {
       zone.innerHTML = "";
       // Première partie : la règle de Wason (1960) ; ensuite, une règle tirée au hasard
-      const regle = resultatAtelier("regle-246") ? melanger(REGLES_246)[0] : REGLES_246[0];
+      // Le niveau s'ajuste d'une partie à l'autre ; première partie : la règle de Wason (1960)
+      const niveau = niveauAtelier("regle-246").niveau;
+      zone.appendChild(choixNiveau("regle-246", () => EXPERIENCES.find(e => e.id === "regle-246").lancer(zone)));
+      const regle = resultatAtelier("regle-246") ? tirerSelonNiveau("regle-246", REGLES_246, 1, niveau)[0] : REGLES_246[0];
+      const graine = regle.graine || [2, 4, 6], evidente = regle.evidente || PLUS_DEUX;
+      const budget = niveau === 3 ? 8 : Infinity;
+      const suites = [];   // valeurs proposées, pour le bilan
       const essais = [];
 
-      zone.appendChild(paragraphe("J'ai en tête une règle qui s'applique à des suites de trois nombres. La suite 2, 4, 6 la respecte."));
+      zone.appendChild(paragraphe("J'ai en tête une règle qui s'applique à des suites de trois nombres. La suite " + graine.map(fr).join(", ") + " la respecte." + (budget < Infinity ? " Vous avez droit à " + budget + " suites : choisissez-les bien." : "")));
       zone.appendChild(paragraphe("Proposez autant de suites que vous voulez : je vous dirai si chacune respecte la règle. Quand vous pensez avoir trouvé, écrivez votre hypothèse, puis demandez la réponse.", "source"));
 
       const ligne = el("div", "ligne");
@@ -613,10 +655,16 @@ const EXPERIENCES = [
         if (v.some(isNaN)) { champs.find(c => isNaN(lireNombre(c.value))).focus(); return; }
         const ok = regle.test(v[0], v[1], v[2]);
         essais.push(ok);
+        suites.push(v);
         const li = el("li", ok ? "juste-texte" : "faux-texte", v.map(fr).join(", ") + " — " + (ok ? "oui, respecte la règle" : "non, ne respecte pas la règle"));
         journal.appendChild(li);
         champs.forEach(c => { c.value = ""; });
-        champs[0].focus();
+        if (suites.length >= budget) {
+          tester.disabled = true;
+          champs.forEach(c => { c.disabled = true; });
+          journal.appendChild(el("li", "source", "Budget épuisé : écrivez votre règle, puis révélez-la."));
+          hypothese.focus();
+        } else champs[0].focus();
       });
 
       reveler.addEventListener("click", () => {
@@ -624,10 +672,15 @@ const EXPERIENCES = [
         tester.disabled = true;
         hypothese.disabled = true;
         champs.forEach(c => { c.disabled = true; });
+        // Une suite est informative si elle sort de l'hypothèse la plus évidente : elle seule peut montrer que celle-ci est trop étroite
+        const informatives = suites.filter(v => !evidente.test(v[0], v[1], v[2])).length;
+        noterPartieEntiere("regle-246", niveau, [suites.length > 0 && informatives >= suites.length / 2 && essais.some(ok => !ok)]);
+        delete PARTIES_EN_COURS["regle-246"];
         noterPartie("regle-246");
         const negatifs = essais.filter(ok => !ok).length;
         zone.appendChild(el("p", "verdict", "La règle était : " + regle.texte + "."));
         if (hypothese.value.trim()) zone.appendChild(paragraphe("Votre hypothèse : « " + hypothese.value.trim() + " »."));
+        if (suites.length) zone.appendChild(paragraphe("Suites informatives : " + informatives + " sur " + suites.length + ". Elles sortaient de l'hypothèse la plus évidente (« " + evidente.texte + " ») : ce sont elles qui pouvaient montrer qu'elle était trop étroite. Une suite qui la respecte ne peut que la confirmer."));
         zone.appendChild(paragraphe("Vous avez proposé " + pluriel(essais.length, "suite") + ", dont " + negatifs + " qui ne respectai" + (negatifs > 1 ? "ent" : "t") + " pas la règle."));
         ajouterExplication(zone, "Ce que montre cette expérience", [
           negatifs === 0 && essais.length > 0
@@ -773,6 +826,27 @@ const EXPERIENCES = [
             ? "Vos parties : en changeant, " + gagnes("changer") + " victoires sur " + total("changer") + " ; en gardant, " + gagnes("garder") + " sur " + total("garder") + ". Sur peu de parties, le hasard peut masquer l'écart."
             : "Jouez quelques parties : vos propres résultats s'afficheront ici."
         ]));
+        // Pour aller plus loin : le présentateur ouvre une porte au hasard, et révèle une chèvre par chance
+        const loin = el("div", "section");
+        loin.append(el("h3", null, "Pour aller plus loin : le présentateur distrait"),
+          paragraphe("Supposons que le présentateur ne sache pas où est la voiture : il ouvre au hasard l'une des deux autres portes, et il se trouve qu'elle cache une chèvre. Faut-il encore changer ? Non : dans ce cas, changer ne gagne plus qu'une fois sur deux. Ce qui compte n'est pas la porte ouverte, mais la façon dont elle a été choisie."),
+          paragraphe("Jeffrey Rosenthal a analysé cette variante et d'autres dans « Monty Hall, Monty Fall, Monty Crawl » (Math Horizons, 2008).", "source"));
+        const resultatDistrait = paragraphe("");
+        const simulerDistrait = el("button", "bouton secondaire", "Simuler 10 000 parties avec un présentateur distrait");
+        simulerDistrait.addEventListener("click", () => {
+          let retenues = 0, gainsEnChangeant = 0;
+          for (let k = 0; k < 10000; k++) {
+            const voiture = Math.floor(Math.random() * 3), choix = Math.floor(Math.random() * 3);
+            const autres = [0, 1, 2].filter(p => p !== choix);
+            const ouverte = autres[Math.floor(Math.random() * 2)];
+            if (ouverte === voiture) continue;   // la voiture est apparue : partie écartée
+            retenues++;
+            if (autres.find(p => p !== ouverte) === voiture) gainsEnChangeant++;
+          }
+          resultatDistrait.textContent = typo("Sur " + fr(retenues) + " parties où une chèvre est apparue par hasard : en changeant, " + fr(gainsEnChangeant) + " victoires, soit " + fr(Math.round(1000 * gainsEnChangeant / retenues) / 10) + " %.");
+        });
+        loin.append(simulerDistrait, resultatDistrait);
+        bloc.appendChild(loin);
       }
 
       nouvellePartie();
@@ -892,10 +966,20 @@ const EXPERIENCES = [
     titre: "Tests positifs",
     resume: "Un test positif signifie-t-il qu'on est malade ? Quatre situations, réelles ou tirées au hasard, à résoudre en fréquences naturelles.",
     lancer(zone) {
-      const reels = tirerNouveaux("depistage", SCENARIOS_DEPISTAGE, 1);
-      const scenarios = [...reels, scenarioAuHasard(), scenarioAuHasard(), scenarioAuHasard()];
-      derouler(zone, scenarios, (s, zone, fini) => {
-        zone.appendChild(el("p", "cas", s.contexte));
+      // Niveaux : 1, données en fréquences naturelles (« sur 1 000 personnes… ») ; 2, en pourcentages seulement,
+      // un format qui rend le calcul bayésien bien plus difficile (Gigerenzer et Hoffrage, 1995) ; 3, deux tests successifs.
+      deroulerNiveaux(zone, {
+        id: "depistage", n: 4, libelle: "Situation", relancer: () => EXPERIENCES.find(e => e.id === "depistage").lancer(zone),
+        tirer: (niveau, i) => i === 0 ? tirerNouveaux("depistage", SCENARIOS_DEPISTAGE, 1)[0] : scenarioAuHasard()
+      }, (s, zone, fini, niveau) => {
+        const c = comptesDepistage(s);
+        const accord = (n, nom) => n > 1 ? nom : nom.split(" ").map(m => m !== "sans" && m.endsWith("s") ? m.slice(0, -1) : m).join(" ");
+        const deuxTests = niveau === 3;
+        if (niveau === 1) {
+          zone.appendChild(el("p", "cas", "Sur " + fr(s.population) + " personnes testées : " + fr(c.malades) + " " + accord(c.malades, s.noms[0]) + ", dont " + fr(c.vraisPositifs) + " avec un résultat positif ; " + fr(c.sains) + " " + accord(c.sains, s.noms[1]) + ", dont " + fr(c.fauxPositifs) + " avec un résultat positif quand même. Une personne a un résultat positif."));
+        } else {
+          zone.appendChild(el("p", "cas", s.contexte + (deuxTests ? " Elle passe ensuite un second test, indépendant du premier et aussi fiable, qui est lui aussi positif." : "")));
+        }
         zone.appendChild(paragraphe(s.question));
         const ligne = el("div", "ligne");
         const champ = el("input", "champ");
@@ -910,14 +994,14 @@ const EXPERIENCES = [
           if (isNaN(v) || v < 0 || v > 100) { champ.focus(); return; }
           champ.disabled = true;
           ok.remove();
-          const c = comptesDepistage(s);
-          const vrai = 100 * c.vraisPositifs / (c.vraisPositifs + c.fauxPositifs);
+          // Après un premier test positif, la probabilité obtenue devient la prévalence du second
+          const apres1 = s.sensibilite * s.prevalence / (s.sensibilite * s.prevalence + s.fauxPositifs * (1 - s.prevalence));
+          const apres2 = s.sensibilite * apres1 / (s.sensibilite * apres1 + s.fauxPositifs * (1 - apres1));
+          const vrai = 100 * (deuxTests ? apres2 : c.vraisPositifs / (c.vraisPositifs + c.fauxPositifs));
           const juste = Math.abs(v - vrai) <= Math.max(3, vrai * 0.2);
           const retour = el("div", "retour-quiz");
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Réponse : ") + "environ " + fr(vrai < 10 ? Number(vrai.toFixed(1)) : Math.round(vrai)) + " %."));
           retour.appendChild(arbreFrequences(s, c));
-          // Accord au singulier quand il n'y a qu'une personne (« 1 malade », « 1 femme ayant un cancer »)
-          const accord = (n, nom) => n > 1 ? nom : nom.split(" ").map(m => m !== "sans" && m.endsWith("s") ? m.slice(0, -1) : m).join(" ");
           retour.appendChild(paragraphe("Sur " + fr(s.population) + " personnes : " + fr(c.malades) + " " + accord(c.malades, s.noms[0]) + ", dont " + fr(c.vraisPositifs) + " avec un résultat positif ; " + fr(c.sains) + " " + accord(c.sains, s.noms[1]) + ", dont " + fr(c.fauxPositifs) + " avec un résultat positif quand même. Sur " + fr(c.vraisPositifs + c.fauxPositifs) + " résultats positifs, " + fr(c.vraisPositifs) + " seulement " + (c.vraisPositifs > 1 ? "correspondent" : "correspond") + " à un vrai cas."));
           if (s.resultat) retour.appendChild(paragraphe(s.resultat, "source"));
           const pc = x => fr(Number((100 * x).toPrecision(3))) + " %";
@@ -928,7 +1012,12 @@ const EXPERIENCES = [
             "Ici : P(cas) = " + pc(s.prevalence) + " ; P(positif | cas) = " + pc(s.sensibilite) + " ; P(positif | pas un cas) = " + pc(s.fauxPositifs) + ".",
             "= P(positif) = " + pc(s.sensibilite) + " × " + pc(s.prevalence) + " + " + pc(s.fauxPositifs) + " × " + pc(1 - s.prevalence) + " = " + pc(pPositif),
             "= P(cas | positif) = " + pc(s.sensibilite * s.prevalence) + " / " + pc(pPositif) + " = " + pc(s.sensibilite * s.prevalence / pPositif),
-            "L'arbre fait le même calcul avec des effectifs : " + fr(c.vraisPositifs) + " / (" + fr(c.vraisPositifs) + " + " + fr(c.fauxPositifs) + "), à l'arrondi près. Le dénominateur compte tous les résultats positifs, vrais et faux : c'est là que le taux de base pèse."
+            "L'arbre fait le même calcul avec des effectifs : " + fr(c.vraisPositifs) + " / (" + fr(c.vraisPositifs) + " + " + fr(c.fauxPositifs) + "), à l'arrondi près. Le dénominateur compte tous les résultats positifs, vrais et faux : c'est là que le taux de base pèse.",
+            ...(deuxTests ? [
+              "Second test : la probabilité obtenue après le premier, " + pc(apres1) + ", devient la nouvelle prévalence.",
+              "= P(cas | deux positifs) = " + pc(s.sensibilite) + " × " + pc(apres1) + " / (" + pc(s.sensibilite) + " × " + pc(apres1) + " + " + pc(s.fauxPositifs) + " × " + pc(1 - apres1) + ") = " + pc(apres2),
+              "Un second test positif rend le diagnostic bien plus probable : c'est pourquoi on confirme un dépistage positif par un autre examen, si possible indépendant du premier."
+            ] : [])
           ]));
           zone.appendChild(retour);
           fini(juste, retour);
@@ -991,6 +1080,15 @@ const EXPERIENCES = [
         ]));
         zone.appendChild(retour);
         zone.appendChild(simulationAnniversaires());
+        // Pour aller plus loin : seuils calculés ici, jamais écrits à la main
+        const moi = seuilAnniversaire(n => 1 - Math.pow(364 / 365, n));
+        const unJour = seuilAnniversaire(n => probaAnniversaireProche(n, 1));
+        const loin = el("div", "section");
+        loin.append(el("h3", null, "Pour aller plus loin"),
+          paragraphe("Même anniversaire que vous : chaque autre personne a une chance sur 365 de le partager. Il faut " + fr(moi) + " autres personnes pour dépasser une chance sur deux, puisque 1 − (364/365)ⁿ ne passe 50 % qu'à n = " + fr(moi) + "."),
+          paragraphe("Anniversaires à un jour près (le même jour ou deux jours voisins) : il suffit de " + unJour + " personnes pour que la probabilité dépasse une chance sur deux (" + fr(Number((100 * probaAnniversaireProche(unJour, 1)).toFixed(1))) + " %), contre " + fr(Number((100 * probaAnniversaireProche(unJour - 1, 1)).toFixed(1))) + " % avec " + (unJour - 1) + "."),
+          paragraphe("Calcul : on compte les façons de placer n anniversaires sur une année circulaire de 365 jours, deux à deux séparés d'au moins deux jours, puis on prend le complément.", "source"));
+        zone.appendChild(loin);
         ajouterExplication(zone, "Ce que montre cet atelier", [
           "Les coïncidences sont bien plus fréquentes qu'on ne le croit, parce que le nombre de façons de coïncider croît très vite : c'est la combinatoire qui surprend, pas le hasard.",
           "Le même raisonnement explique pourquoi des événements « incroyables » arrivent régulièrement à quelqu'un quelque part : avec assez de personnes et d'occasions, l'improbable devient presque certain. Ce problème est souvent attribué au mathématicien Richard von Mises (1939)."
@@ -1208,6 +1306,23 @@ function arbreFrequences(s, c) {
 }
 
 // Probabilité qu'au moins deux personnes sur n partagent leur anniversaire (365 jours équiprobables)
+// Probabilité qu'au moins deux des n personnes aient des anniversaires à moins de d + 1 jours l'un de l'autre
+// (le même jour si d = 0 ; le même jour ou des jours voisins si d = 1), sur une année circulaire de N jours.
+// Placements bien espacés sur un cercle : P(aucun) = (N − n·d − 1)! / ((N − n·(d + 1))! × N^(n − 1)).
+function probaAnniversaireProche(n, d, N = 365) {
+  if (n * (d + 1) > N) return 1;
+  let p = 1;
+  for (let j = N - n * (d + 1) + 1; j <= N - n * d - 1; j++) p *= j / N;
+  return 1 - p;
+}
+
+// Plus petit nombre de personnes qui fait dépasser une chance sur deux
+function seuilAnniversaire(proba) {
+  let n = 1;
+  while (proba(n) <= 0.5) n++;
+  return n;
+}
+
 function probaAnniversaire(n) {
   let p = 1;
   for (let k = 0; k < n; k++) p *= (365 - k) / 365;

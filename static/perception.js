@@ -172,15 +172,17 @@ JEUX.push(
     titre: "Le vrai hasard",
     resume: "Deux nuages de points, deux suites de pile ou face : lequel est vraiment aléatoire ? Le hasard fait plus de grappes qu'on ne le croit.",
     lancer(zone) {
-      const manches = melanger(["points", "points", "points", "points", "suite", "suite", "suite", "suite"])
-        .map(type => ({ type, gauche: Math.random() < 0.5 }));
-      derouler(zone, manches, (m, zone, fini) => {
-        const vrai = m.type === "points" ? nuageHasard(40) : suiteHasard(30);
-        const faux = m.type === "points" ? nuageRegulier(40) : suiteHumaine(30);
+      const types = melanger(["points", "points", "points", "points", "suite", "suite", "suite", "suite"]);
+      deroulerNiveaux(zone, {
+        id: "hasard", n: 8, libelle: "Manche", relancer: () => JEUX.find(j => j.id === "hasard").lancer(zone),
+        tirer: (niveau, i) => ({ type: types[i], gauche: Math.random() < 0.5, p: PARAMETRES_HASARD[niveau] })
+      }, (m, zone, fini) => {
+        const vrai = m.type === "points" ? nuageHasard(m.p.points) : suiteHasard(m.p.suite);
+        const faux = m.type === "points" ? nuageRegulier(m.p.points, m.p.ecart) : suiteHumaine(m.p.suite, m.p.alternance);
         const [a, b] = m.gauche ? [vrai, faux] : [faux, vrai];
         zone.appendChild(el("p", "cas", m.type === "points"
           ? "L'un de ces nuages a été tiré au hasard (chaque point placé indépendamment des autres). Lequel ?"
-          : "L'une de ces suites vient de 30 lancers d'une vraie pièce. Laquelle ?"));
+          : "L'une de ces suites vient de " + m.p.suite + " lancers d'une vraie pièce. Laquelle ?"));
         const duo = el("div", m.type === "points" ? "duo" : "duo-suites");
         const panneaux = [a, b].map((donnees, k) => {
           const fig = el("figure", "panneau");
@@ -214,7 +216,7 @@ JEUX.push(
           } else {
             panneaux.forEach((p, j) => { p.replaceChild(casesSuite([a, b][j], 4), p.lastChild); });
             const sv = series(vrai), sf = series(faux);
-            retour.appendChild(paragraphe("Vraie pièce : plus longue série de " + sv.plusLongue + ", " + sv.changements + " changements sur 29. L'autre suite : plus longue série de " + sf.plusLongue + ", " + sf.changements + " changements. Elle a été fabriquée en changeant de face 2 fois sur 3, comme le font spontanément la plupart des gens. Les séries de 4 ou plus sont encadrées."));
+            retour.appendChild(paragraphe("Vraie pièce : plus longue série de " + sv.plusLongue + ", " + sv.changements + " changements sur " + (m.p.suite - 1) + ". L'autre suite : plus longue série de " + sf.plusLongue + ", " + sf.changements + " changements. Elle a été fabriquée en changeant de face 2 fois sur 3, comme le font spontanément la plupart des gens. Les séries de 4 ou plus sont encadrées."));
           }
           zone.appendChild(retour);
           fini(juste, retour);
@@ -222,6 +224,13 @@ JEUX.push(
       }, resultats => {
         const bonnes = resultats.filter(Boolean).length;
         afficherScore(zone, "hasard", bonnes, resultats.length);
+        // Taux de réussite théorique d'un observateur qui applique une règle simple, par simulation
+        const taux = [1, 2, 3].map(n => [n, tauxObservateur(PARAMETRES_HASARD[n], "suite", 400), tauxObservateur(PARAMETRES_HASARD[n], "points", 150)]);
+        zone.appendChild(calculEnDetail([
+          "Un observateur qui applique une règle simple fait mieux que le hasard (50 %) à chaque niveau. Pour les suites, il choisit celle qui change le moins souvent de face ; pour les nuages, celui dont les deux points les plus proches le sont le plus, car le vrai hasard forme des grappes.",
+          ...taux.map(([n, ts, tp]) => "= Niveau " + n + " (" + PARAMETRES_HASARD[n].suite + " lancers, " + PARAMETRES_HASARD[n].points + " points) : suites " + Math.round(100 * ts) + " %, nuages " + Math.round(100 * tp) + " %"),
+          "Ces taux sont estimés par simulation à chaque bilan : ils peuvent varier de quelques points d'une fois à l'autre."
+        ]));
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Le vrai hasard produit des grappes, des vides et de longues séries. Nous attendons au contraire un hasard « bien réparti », et nous voyons des motifs là où il n'y en a pas : c'est l'illusion des séries.",
           "Pendant la Seconde Guerre mondiale, des Londoniens voyaient des cibles privilégiées dans les impacts des bombes volantes allemandes. Une analyse statistique de R. D. Clarke (1946) a montré qu'ils suivaient très bien une répartition aléatoire.",
@@ -343,9 +352,23 @@ JEUX.push(
     titre: "Corrélation à l'œil",
     resume: "Huit nuages de points : estimez le coefficient de corrélation, de −1 à +1. À quoi ressemble une corrélation de 0,3 ?",
     lancer(zone) {
-      const cibles = melanger([0.05, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, -0.35, -0.6, -0.85]).slice(0, 8);
-      derouler(zone, cibles, (cible, zone, fini) => {
-        const points = nuageCorrele(cible, 70);
+      // Niveaux : 1, grands nuages (70 points), corrélations bien distinctes ; 2, 40 points ; 3, 25 points,
+      // corrélations moyennes et proches les unes des autres, et souvent une valeur extrême à contre-courant.
+      // Le r affiché est toujours calculé exactement sur les points dessinés, valeur extrême comprise.
+      deroulerNiveaux(zone, {
+        id: "correlation", n: 8, libelle: "Nuage", relancer: () => JEUX.find(j => j.id === "correlation").lancer(zone),
+        estJuste: x => Math.abs(x.estime - x.reel) <= 0.1,
+        tirer: niveau => {
+          const signeAuHasard = Math.random() < 0.3 ? -1 : 1;
+          if (niveau === 1) return { cible: signeAuHasard * melanger([0.05, 0.3, 0.6, 0.9])[0], n: 70 };
+          if (niveau === 2) return { cible: signeAuHasard * melanger([0.2, 0.45, 0.6, 0.75])[0], n: 40 };
+          return { cible: signeAuHasard * (0.3 + 0.05 * Math.floor(Math.random() * 9)), n: 25, extreme: Math.random() < 0.7 };
+        }
+      }, (tirage, zone, fini) => {
+        const cible = tirage.cible;
+        const points = nuageCorrele(cible, tirage.n);
+        // Valeur extrême : un point loin du nuage, à l'opposé de la tendance
+        if (tirage.extreme) points.push([2.8, -2.8 * Math.sign(cible || 1)]);
         const r = correlationDe(points);
         zone.appendChild(el("p", "consigne", "Estimez la corrélation"));
         const graphe = dessinCorrelation(points);
@@ -391,7 +414,8 @@ JEUX.push(
           "Le coefficient r mesure à quel point un nuage s'aligne sur une droite : 0 pour aucune relation linéaire, +1 ou −1 pour un alignement parfait. Son carré, r², indique la part de la dispersion « expliquée » par la droite : r = 0,5 n'en explique que 25 %.",
           "Les relations étudiées en sciences humaines sont souvent faibles : sur un siècle de psychologie sociale, l'effet typique correspond à r ≈ 0,21 (Richard, Bond et Stokes-Zoota, 2003). À l'œil, un tel nuage paraît presque informe.",
           "La présentation influence le jugement : un même nuage paraît plus corrélé quand on élargit les axes et qu'il occupe une plus petite partie du cadre (Cleveland, Diaconis et McGill, 1982).",
-          "Une corrélation, même forte, ne dit rien de la cause : les deux variables peuvent dépendre d'une troisième, ou l'effet aller dans l'autre sens."
+          "Une corrélation, même forte, ne dit rien de la cause : les deux variables peuvent dépendre d'une troisième, ou l'effet aller dans l'autre sens.",
+          "Une seule valeur extrême peut beaucoup changer r, surtout dans un petit nuage : un point isolé à contre-courant l'affaiblit nettement, un point isolé dans le prolongement le renforce. Au niveau 3, certains nuages en contiennent un : il faut le compter, comme le fait le calcul."
         ], [["#sophismes/correlation", "Corrélation et causalité"], ["#biais/regression-moyenne", "Régression vers la moyenne"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "correlation").lancer(zone));
       }, "Nuage");
@@ -408,8 +432,14 @@ JEUX.push(
     titre: "Graphiques trompeurs",
     resume: "Axe tronqué, fenêtre choisie, double échelle, moyenne trompeuse… Huit graphiques à lire sans se faire piéger.",
     lancer(zone) {
-      const pieges = tirerNouveaux("graphiques", PIEGES_GRAPHIQUES, 8, p => p.id).map(p => p.creer());
-      derouler(zone, pieges, (p, zone, fini) => {
+      // Niveau 3 : une question sur deux montre un graphique qui combine deux procédés, à trouver tous les deux
+      deroulerNiveaux(zone, {
+        id: "graphiques", n: 8, relancer: () => JEUX.find(j => j.id === "graphiques").lancer(zone),
+        tirer: (niveau, i) => niveau === 3 && i % 2 === 1
+          ? (id => Object.assign(PIEGES_GRAPHIQUES.find(x => x.id === id).creer(), { double: id }))(melanger(Object.keys(DOUBLES_PIEGES))[0])
+          : tirerSelonNiveau("graphiques", PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer()
+      }, (p, zone, fini) => {
+        if (p.double) return afficherDoublePiege(p, zone, fini);
         zone.appendChild(el("p", "consigne", p.titre));
         const figure = el("figure", "figure-piege");
         figure.appendChild(p.trompeur());
@@ -552,8 +582,9 @@ function figureIllusion(e) {
 const nuageHasard = n => Array.from({ length: n }, () => [Math.random(), Math.random()]);
 
 // Points « trop bien répartis » : un nouveau point ne peut pas être trop près des autres
-function nuageRegulier(n) {
-  let distance = 0.85 / Math.sqrt(n);
+// facteur : écart minimal imposé entre les points ; plus il est petit, moins le nuage « trop régulier » se repère
+function nuageRegulier(n, facteur = 0.85) {
+  let distance = facteur / Math.sqrt(n);
   for (;;) {
     const points = [];
     for (let essai = 0; essai < 6000 && points.length < n; essai++) {
@@ -568,9 +599,34 @@ function nuageRegulier(n) {
 const suiteHasard = n => Array.from({ length: n }, () => (Math.random() < 0.5 ? 1 : 0));
 
 // Suite « humaine » : on change de face 2 fois sur 3 au lieu d'une fois sur 2
-function suiteHumaine(n) {
+// alternance : probabilité de changer de face, au lieu de 1/2 pour une vraie pièce
+// Le vrai hasard, par niveau : plus les nuages et les suites sont petits, et moins les imitations sont caricaturales,
+// plus il est difficile de les distinguer. Chaque niveau reste faisable mieux qu'au hasard : voir tauxObservateur().
+const PARAMETRES_HASARD = {
+  1: { points: 40, ecart: 0.85, suite: 30, alternance: 0.67 },
+  2: { points: 32, ecart: 0.7, suite: 24, alternance: 0.63 },
+  3: { points: 25, ecart: 0.6, suite: 20, alternance: 0.6 }
+};
+
+// Taux de réussite d'un observateur qui applique une règle simple, estimé par simulation :
+// pour les suites, choisir celle qui change le moins souvent de face ; pour les nuages, celui dont les deux points
+// les plus proches le sont le plus (le hasard forme des grappes). Égalité : pile ou face.
+function tauxObservateur(p, type, essais = 400) {
+  let bons = 0;
+  const changementsDe = s => s.reduce((t, x, k) => t + (k && x !== s[k - 1] ? 1 : 0), 0);
+  const plusProches = pts => Math.min(...pts.flatMap((a, i) => pts.slice(i + 1).map(b => Math.hypot(a[0] - b[0], a[1] - b[1]))));
+  for (let k = 0; k < essais; k++) {
+    let a, b;
+    if (type === "suite") { a = changementsDe(suiteHasard(p.suite)); b = changementsDe(suiteHumaine(p.suite, p.alternance)); }
+    else { b = plusProches(nuageRegulier(p.points, p.ecart)); a = plusProches(nuageHasard(p.points)); }
+    bons += a < b ? 1 : a === b ? 0.5 : 0;
+  }
+  return bons / essais;
+}
+
+function suiteHumaine(n, alternance = 0.67) {
   const s = [Math.random() < 0.5 ? 1 : 0];
-  while (s.length < n) s.push(Math.random() < 0.67 ? 1 - s[s.length - 1] : s[s.length - 1]);
+  while (s.length < n) s.push(Math.random() < alternance ? 1 - s[s.length - 1] : s[s.length - 1]);
   return s;
 }
 
@@ -718,6 +774,58 @@ function grapheCourbe(series, xmin, xmax, ymin, ymax, options = {}) {
 const entier = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 
 // Chaque piège crée des données au hasard, une version trompeuse et une version honnête
+// Niveau 3 : graphiques qui cumulent deux procédés. Clé : identifiant du piège dont on reprend le graphique trompeur.
+const PROCEDES = ["Axe vertical qui ne commence pas à zéro", "Fenêtre de temps choisie", "Deux axes verticaux d'échelles différentes", "Valeurs cumulées", "Moyenne au lieu de la médiane"];
+const DOUBLES_PIEGES = {
+  "fenetre": { justes: [0, 1], explication: "Le graphique ne montre que six années, choisies pour leur baisse, et son axe vertical commence bien au-dessus de zéro, ce qui amplifie encore la baisse." },
+  "double-axe": { justes: [2, 0], explication: "Chaque courbe a son propre axe, et celui de gauche commence à 880 : on peut ainsi faire se croiser n'importe quelles courbes. Sur une échelle commune partant de zéro, B reste autour de 5 % de A." }
+};
+
+// Deux procédés à cocher parmi cinq, puis validation
+function afficherDoublePiege(p, zone, fini) {
+  const d = DOUBLES_PIEGES[p.double];
+  zone.appendChild(el("p", "consigne", p.titre));
+  const figure = el("figure", "figure-piege");
+  figure.appendChild(p.trompeur());
+  figure.appendChild(el("figcaption", null, p.legende || "Données fictives."));
+  zone.appendChild(figure);
+  zone.appendChild(el("p", "cas", "Ce graphique cumule deux procédés trompeurs. Lesquels ? (deux réponses)"));
+  const choisis = new Set();
+  const valider = el("button", "bouton large", "Valider mes deux réponses");
+  valider.dataset.valider = "1";
+  valider.disabled = true;
+  const boutons = PROCEDES.map((texte, k) => {
+    const b = boutonChoix(texte, k);
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => {
+      if (choisis.has(k)) choisis.delete(k); else if (choisis.size < 2) choisis.add(k);
+      boutons.forEach((x, j) => { x.classList.toggle("choisi", choisis.has(j)); x.setAttribute("aria-pressed", String(choisis.has(j))); });
+      valider.disabled = choisis.size !== 2;
+    });
+    zone.appendChild(b);
+    return b;
+  });
+  zone.appendChild(valider);
+  valider.addEventListener("click", () => {
+    valider.remove();
+    boutons.forEach((b, k) => {
+      b.disabled = true;
+      b.classList.remove("choisi");
+      if (d.justes.includes(k)) b.classList.add("juste");
+      else if (choisis.has(k)) b.classList.add("faux");
+    });
+    const trouves = d.justes.filter(k => choisis.has(k)).length;
+    const retour = el("div", "retour-quiz");
+    retour.appendChild(el("p", "verdict " + (trouves === 2 ? "juste" : "faux"), trouves === 2 ? "Juste : les deux procédés." : trouves === 1 ? "Un procédé sur deux." : "Aucun des deux procédés."));
+    const f = el("figure", "figure-piege honnete");
+    f.appendChild(p.honnete());
+    f.appendChild(el("figcaption", null, "Les mêmes données, présentées honnêtement."));
+    retour.append(f, paragraphe(d.explication));
+    zone.appendChild(retour);
+    fini(trouves === 2, retour);
+  });
+}
+
 const PIEGES_GRAPHIQUES = [
   {
     id: "axe-tronque",

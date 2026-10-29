@@ -1340,8 +1340,15 @@ function ligneIntervalle(q, bas, haut, ok) {
 
 // ===================== Combien de points ? =====================
 
+// Niveaux (d'une partie à l'autre) : 1, de 18 à 75 points ; 2, de 40 à 190 ; 3, de 100 à 300 points, plus serrés,
+// affichés 1 seconde au lieu de 1,5. Si l'appareil demande de réduire les animations, l'affichage reste de 1,5 seconde.
+const NOMBRES_POINTS = { 1: [18, 22, 27, 33, 40, 48, 60, 75], 2: [40, 55, 75, 90, 100, 120, 140, 190], 3: [100, 120, 140, 165, 190, 220, 260, 300] };
 function partiePoints(zone, avecRepere) {
-  const nombres = melanger([18, 27, 40, 55, 75, 100, 140, 190]).map(n => n + Math.floor(Math.random() * 8));
+  const niveau = niveauAtelier("points").niveau;
+  const nombres = melanger(NOMBRES_POINTS[niveau]).map(n => n + Math.floor(Math.random() * 8));
+  const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const duree = niveau === 3 && !reduit ? 1000 : 1500;
+  const ecartMinimal = niveau === 3 ? 36 : 81;   // carré de la distance minimale entre deux points
   const essais = [];
   let i = 0;
 
@@ -1352,7 +1359,7 @@ function partiePoints(zone, avecRepere) {
     while (points.length < n && tentatives < 20000) {
       tentatives++;
       const x = 8 + Math.random() * 284, y = 8 + Math.random() * 284;
-      if (points.every(([a, b]) => (a - x) ** 2 + (b - y) ** 2 > 81)) points.push([x, y]);
+      if (points.every(([a, b]) => (a - x) ** 2 + (b - y) ** 2 > ecartMinimal)) points.push([x, y]);
     }
     points.forEach(([x, y]) => s.appendChild(svg("circle", { cx: x, cy: y, r: 3.5 })));
     return s;
@@ -1360,6 +1367,7 @@ function partiePoints(zone, avecRepere) {
 
   function repere() {
     zone.innerHTML = "";
+    zone.appendChild(choixNiveau("points", () => JEUX.find(j => j.id === "points").lancer(zone)));
     zone.appendChild(el("p", "consigne", "Repère : ce nuage contient 30 points"));
     zone.appendChild(nuage(30));
     const ok = el("button", "bouton large", "Commencer les estimations");
@@ -1395,13 +1403,16 @@ function partiePoints(zone, avecRepere) {
         i++;
         essai();
       });
-    }, 1500);
+    }, duree);
   }
 
   function bilan() {
     const rapport = moyenneGeometrique(essais.map(([n, v]) => v / n));
     const pct = Math.round((rapport - 1) * 100);
     ecrire("points", { rapport, avecRepere });
+    // Pour l'ajustement du niveau : une estimation compte comme juste à moins de 25 % d'écart
+    noterPartieEntiere("points", niveau, essais.map(([n, v]) => Math.abs(v / n - 1) <= 0.25));
+    delete PARTIES_EN_COURS.points;
     noterPartie("points");
     zone.appendChild(el("p", "consigne", "Résultat"));
     zone.appendChild(el("p", "grand-score", (pct >= 0 ? "+" : "") + pct + " %"));
