@@ -197,7 +197,7 @@ f.onload = async () => {
 
     // ---------- Ateliers ----------
     await aller("ateliers");
-    ok("ateliers : 24 cartes", vue().querySelectorAll(".atelier").length === 24);
+    ok("ateliers : 28 cartes", vue().querySelectorAll(".atelier").length === 28);
     ok("onglet Ateliers actif", d.querySelector(".onglet.actif").dataset.onglet === "ateliers");
     await aller("chiffres");
     ok("#chiffres renvoie à la liste", vue().id === "vue-ateliers");

@@ -1014,3 +1014,16 @@ h3.titre-bloc {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ===================== Débattre ===================== */
+.replique { border-left: 3px solid var(--c-fort, var(--accent)); padding: 2px 0 2px 12px; margin: 10px 0 12px; }
+.replique-qui { display: block; font-size: 13px; font-weight: 700; color: var(--c-texte, var(--accent)); letter-spacing: 0.01em; }
+.replique .cas { margin: 2px 0 0; }
+.replique.precedente { border-left-color: var(--trait); margin: 6px 0; }
+.replique.precedente .replique-qui { color: var(--discret); }
+.replique.precedente p { font-size: 14.5px; color: var(--discret); margin: 1px 0 0; }
+.replique.replique-fiche p, .replique-fiche-texte { font-family: var(--titre); font-size: 17px; line-height: 1.45; margin: 4px 0 10px; }
+.titre-etape { margin: 6px 0 2px; font-family: var(--titre); font-size: 21px; }
+.minuteur { font-family: var(--titre); font-size: 46px; font-weight: 700; text-align: center; margin: 10px 0 6px; font-variant-numeric: tabular-nums; }
+.minuteur.fini { color: var(--rouge); }
+.exercice + .exercice { border-top: 1px solid var(--trait-doux); padding-top: 14px; margin-top: 14px; }

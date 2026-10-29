@@ -3,7 +3,7 @@
 Le mode « Notions proches » du quiz présente une situation d'une fiche X (champ `cas` ou `cas2`) et deux réponses :
 X et la notion de son champ `distinction`. Une situation qui convient aussi à cette voisine rend le duel injuste.
 
-J'ai relu les 180 situations (90 fiches × 2). Les 13 situations ci-dessous sont exclues du mode, par la liste
+J'ai relu les 180 situations (90 fiches × 2). Les 14 situations ci-dessous sont exclues du mode, par la liste
 `SITUATIONS_DOUTEUSES` d'`app.js`. Elles restent utilisées par le quiz ordinaire, où la voisine n'est jamais
 proposée comme mauvaise réponse. **Aucune situation de `donnees.js` n'a été modifiée** : les réécritures
 proposées attendent ton accord. Une fois une situation réécrite, il suffit de retirer sa ligne de la liste.
@@ -38,7 +38,7 @@ Proposition : garder ces situations hors du mode. Pour ces paires, un duel n'a d
 
 ## Paires relues sans réserve
 
-Les 77 autres situations ne conviennent qu'à leur fiche, au vu du texte « Ne pas confondre » de chacune.
+Les 166 autres situations ne conviennent qu'à leur fiche, au vu du texte « Ne pas confondre » de chacune.
 Quelques cas limites ont été gardés parce que la distinction de la fiche tranche explicitement :
 ancrage et veste barrée, statu quo et inscription automatique, raisonnement motivé et supporters,
 juste milieu et vaccin, tireur d'élite et Lincoln-Kennedy.

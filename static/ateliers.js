@@ -662,6 +662,14 @@ function afficherPortrait() {
     ajouter("Certitude au quiz", "#2a8a5c", "#quiz", bloc);
   } else ajouter("Certitude au quiz", "#2a8a5c", "#quiz", null, "Quand vous êtes sûr de votre réponse au quiz, avez-vous raison ?");
 
+  // 12. Repérer les sophismes (le débat truqué)
+  const debats = lire("debats", []);
+  if (debats.length) {
+    const tot = k => debats.reduce((t, x) => t + x[k], 0);
+    const { d } = dPrime(tot("det"), tot("s"), tot("fa"), tot("r"));
+    ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", paragraphe("Sur " + pluriel(debats.length, "débat") + ", vous avez repéré " + tot("det") + " sophismes sur " + tot("s") + ", avec " + pluriel(tot("fa"), "fausse alerte", "fausses alertes") + " sur " + tot("r") + " répliques recevables. Sensibilité d′ cumulée : " + fr(Number(d.toFixed(2))) + " (0 : hasard ; 2 ou plus : très bonne distinction)."));
+  } else ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", null, "Repérez-vous les sophismes d'un débat sans crier au sophisme à tort ?");
+
   const mesures = blocs.filter(b => b.contenu);
   zone.appendChild(el("p", "source", mesures.length + " mesure" + (mesures.length > 1 ? "s" : "") + " sur " + blocs.length + " disponible" + (mesures.length > 1 ? "s" : "") + "."));
   [...mesures, ...blocs.filter(b => !b.contenu)].forEach(b => {

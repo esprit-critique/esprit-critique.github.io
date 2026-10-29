@@ -7,7 +7,7 @@
 (function verifierChargement() {
   const manquants = [
     [typeof BIAIS, "donnees.js"], [typeof NS_SVG, "schemas.js"], [typeof PAYS, "pays.js"], [typeof MONDE, "jeux-donnees.js"],
-    [typeof PICTOS, "ateliers.js"], [typeof EXPERIENCES, "experiences.js"], [typeof JEUX, "chiffres.js"], [typeof gauss, "perception.js"]
+    [typeof PICTOS, "ateliers.js"], [typeof EXPERIENCES, "experiences.js"], [typeof JEUX, "chiffres.js"], [typeof gauss, "perception.js"], [typeof DEBATS, "debattre.js"]
   ].filter(([type]) => type === "undefined").map(([, fichier]) => fichier);
   if (!manquants.length) return;
   const main = document.querySelector("main");
@@ -158,7 +158,7 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats"
 ];
 
 // Fiches marquées comme acquises par l'utilisateur
@@ -693,6 +693,7 @@ function afficherFiche(type, fiche) {
     }
   }
   ajouterSection(carte, conf.titreParade, fiche.parade);
+  ajouterSection(carte, "S'entraîner", entrainementFiche(type, fiche));
   const ateliers = ateliersDeLaFiche(cle);
   if (ateliers.length) {
     const liste = el("div", "ateliers-fiche");

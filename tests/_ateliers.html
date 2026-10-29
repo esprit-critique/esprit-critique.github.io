@@ -50,7 +50,7 @@ f.onload = async () => {
     await aller("ateliers");
     const nbJeux = w.eval("JEUX.length"), nbExp = w.eval("EXPERIENCES.length");
     ok("page ateliers : " + (nbJeux + nbExp) + " cartes", vue().querySelectorAll(".atelier").length === nbJeux + nbExp);
-    ok("page ateliers : 5 sections", vue().querySelectorAll(".section-ateliers").length === 5);
+    ok("page ateliers : 6 sections", vue().querySelectorAll(".section-ateliers").length === 6);
     ok("page ateliers : un pictogramme par carte", vue().querySelectorAll(".atelier svg.picto path, .atelier svg.picto circle, .atelier svg.picto rect").length > 3 * (nbJeux + nbExp));
     ok("page ateliers : suggestion pour commencer", !!vue().querySelector(".conseil a"));
     ok("page ateliers : l'illusion ouvre la section Percevoir", vue().querySelectorAll(".section-ateliers")[2].querySelector(".atelier").getAttribute("href") === "#chiffres/illusion");
@@ -74,7 +74,7 @@ f.onload = async () => {
           const vides = [...vue().querySelectorAll(".cas")].filter(e => e.offsetParent !== null && e.textContent.trim().length < 3);
           if (!enonces.length || vides.length) enoncesAbsents.add(adresse + " : " + (vides.length ? "énoncé vide" : "aucun énoncé") + " avant « " + visibles(".choix, input")[0].textContent.trim().slice(0, 40) + " »");
         }
-        if (vue().querySelector(".grand-score") || vue().querySelector(".section h3") && /montre|retenir|Penser|sens du temps|Se méfier|méthode|quoi servent/.test(vue().querySelector(".section h3").textContent) && !visibles("[data-suivant]").some(b => /Suivant|bilan|suivante/.test(b.textContent))) {
+        if (vue().querySelector(".grand-score") || vue().querySelector(".section h3") && /montre|retenir|Penser|sens du temps|Se méfier|méthode|quoi servent|soupçonner|reconstruire|Redire/.test(vue().querySelector(".section h3").textContent) && !visibles("[data-suivant]").some(b => /Suivant|bilan|suivante/.test(b.textContent))) {
           if (!visibles(".choix").length && !visibles("[data-valider]").length) return true;
         }
         const curseur = visibles("input.curseur")[0];
@@ -106,7 +106,7 @@ f.onload = async () => {
 
     const generiques = ["#chiffres/monde", "#chiffres/mortalite", "#chiffres/pays", "#chiffres/nord", "#chiffres/grandeurs", "#chiffres/chronologie",
       "#chiffres/vrai-faux", "#chiffres/illusion", "#chiffres/hasard", "#chiffres/correlation", "#chiffres/graphiques",
-      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations"];
+      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations", "#tests/debat-truque", "#tests/reparer", "#tests/reformuler"];
     for (const a of generiques) {
       const avant = erreursJS.length;
       for (let partie = 0; partie < 3; partie++) {
@@ -131,6 +131,65 @@ f.onload = async () => {
     w.eval("PROBLEMES").filter(p => p.type === "paire" && !(p.enonce2 && p.options2)).forEach(p => sansEnonce.push("PROBLEMES." + p.id + ".enonce2"));
     w.eval("PIEGES_GRAPHIQUES").forEach(pg => { const c = pg.creer(); if (!c.question || !c.titre) sansEnonce.push("PIEGES_GRAPHIQUES." + pg.id); });
     ok("énoncés : présents dans toutes les données", sansEnonce.length === 0, sansEnonce.join(", "));
+
+    // ---------- Débattre : contenus ----------
+    const DEB = w.eval("DEBATS"), REP = w.eval("REPARATIONS"), REF = w.eval("REFORMULATIONS"), SUJ = w.eval("SUJETS_DEBAT");
+    const idsSoph = w.eval("SOPHISMES.map(f => f.id)");
+    const repliques = DEB.flatMap(x => x.repliques);
+    const couverts = new Set(repliques.filter(r => r.sophisme).map(r => r.sophisme));
+    const inconnus = repliques.filter(r => r.sophisme && !idsSoph.includes(r.sophisme)).map(r => r.sophisme);
+    const partRecevable = repliques.filter(r => !r.sophisme).length / repliques.length;
+    ok("débats : " + DEB.length + " débats de 10 à 14 répliques, les " + idsSoph.length + " sophismes couverts", DEB.length === 8 && DEB.every(x => x.repliques.length >= 10 && x.repliques.length <= 14) && idsSoph.every(i => couverts.has(i)) && !inconnus.length, idsSoph.filter(i => !couverts.has(i)).concat(inconnus).join(", "));
+    ok("débats : " + Math.round(100 * partRecevable) + " % de répliques recevables (55 à 65 %)", partRecevable >= 0.55 && partRecevable <= 0.65);
+    ok("débats : chaque réplique a son auteur, son texte et son explication", repliques.every(r => r.qui && r.texte && r.pourquoi && r.pourquoi.length > 20));
+    const sansRep = idsSoph.filter(i => !REP.some(x => x.s === i));
+    ok("réparations : " + REP.length + " exercices, chaque sophisme couvert, identifiants uniques", !sansRep.length && new Set(REP.map(x => x.id || x.s)).size === REP.length, sansRep.join(", "));
+    ok("réparations : « autre sophisme » valide et différent", REP.every(x => idsSoph.includes(x.autre[1]) && x.autre[1] !== x.s && x.rep[0] && x.rep[1] && x.acc && x.concl), REP.filter(x => !idsSoph.includes(x.autre[1]) || x.autre[1] === x.s).map(x => x.s).join(", "));
+    ok("reformulations : 15 positions à quatre versions distinctes", REF.length === 15 && REF.every(x => new Set([x.fidele, x.paille, x.acier, x.hors]).size === 4 && x.position && x.auteur));
+    ok("débat à deux : 30 sujets à deux camps", SUJ.length === 30 && SUJ.every(x => x.length === 3 && x[1] !== x[2]));
+    const optionsOk = idsSoph.every(i => { const o = w.eval("optionsSophisme")(i); return o.length === 4 && new Set(o.map(x => x.cle)).size === 4 && o.some(x => x.cle === "sophismes:" + i); });
+    ok("débats : quatre noms proposés, dont la bonne réponse, pour chaque sophisme", optionsOk);
+    const phi = w.eval("phiInverse");
+    ok("Φ⁻¹ (Acklam) : Φ⁻¹(0,975) = 1,95996 ; Φ⁻¹(0,5) = 0 ; Φ⁻¹(0,01) = −2,32635", Math.abs(phi(0.975) - 1.959964) < 1e-5 && Math.abs(phi(0.5)) < 1e-9 && Math.abs(phi(0.01) + 2.326348) < 1e-5);
+    const dp = w.eval("dPrime")(5, 5, 0, 7);
+    ok("d′ corrigé : 5 sophismes repérés sur 5, aucune fausse alerte sur 7 → d′ ≈ 2,9", Math.abs(dp.d - (phi(5.5 / 6) - phi(0.5 / 8))) < 1e-9 && dp.d > 2.5 && dp.d < 3.2);
+
+    // ---------- Le débat à deux ----------
+    await aller("tests/debat-a-deux");
+    const prenoms = visibles("input.champ");
+    remplir(prenoms[0], "Alice"); remplir(prenoms[1], "Bruno");
+    visibles("[data-valider]")[0].click();
+    await pause(20);
+    ok("débat à deux : sujet et première étape", /Étape 1 \/ 7/.test(vue().textContent) && /Alice défend/.test(vue().textContent));
+    for (let k = 0; k < 7; k++) {
+      const oui = [...vue().querySelectorAll("button")].find(b => /Oui, c'est ça/.test(b.textContent) && !b.disabled);
+      if (oui) { oui.click(); await pause(10); }
+      const champ = visibles("input.champ")[0];
+      if (champ) { remplir(champ, "Le sujet compte pour nous deux"); visibles("[data-valider]")[0].click(); }
+      const suite = vue().querySelector("[data-suivant]");
+      if (!suite) break;
+      suite.click();
+      await pause(20);
+    }
+    ok("débat à deux : bilan avec les 39 fiches de sophismes", /Avons-nous commis un sophisme/.test(vue().textContent) && vue().querySelectorAll('.voir-aussi a[href^="#sophismes/"]').length >= 39);
+    controler();
+
+    // ---------- S'entraîner, sur les fiches ----------
+    await aller("sophismes/homme-de-paille");
+    const exos = vue().querySelectorAll(".entrainement .exercice");
+    ok("fiche « homme de paille » : rubrique S'entraîner, 3 exercices", exos.length === 3);
+    exos.forEach(e => e.querySelector(".choix").click());
+    await pause(20);
+    ok("S'entraîner : chaque exercice se corrige", [...exos].every(e => e.querySelector(".retour-quiz")));
+    controler();
+    let sansEntrainement = [];
+    for (const id of idsSoph) {
+      await aller("sophismes/" + id);
+      if (!vue().querySelector(".entrainement .exercice")) sansEntrainement.push(id);
+    }
+    ok("S'entraîner : présent sur les 39 fiches de sophismes", !sansEntrainement.length, sansEntrainement.join(", "));
+    await aller("biais/ancrage");
+    ok("S'entraîner : absent des fiches de biais", !vue().querySelector(".entrainement"));
 
     // ---------- Intervalles ----------
     await aller("chiffres/intervalles");
@@ -332,7 +391,7 @@ f.onload = async () => {
 
     // ---------- Portrait ----------
     await aller("portrait");
-    ok("portrait : page affichée", vue().id === "vue-portrait" && vue().querySelectorAll("article.carte").length === 11);
+    ok("portrait : page affichée", vue().id === "vue-portrait" && vue().querySelectorAll("article.carte").length === 12);
     ok("portrait : mesures disponibles", vue().querySelectorAll("article.carte:not(.a-mesurer)").length >= 7, vue().querySelectorAll("article.carte:not(.a-mesurer)").length + " mesures");
     ok("portrait : courbe d'étalonnage", !!vue().querySelector("svg.graphe"));
     ok("portrait : sans texte suspect", textesSuspects().length === 0, textesSuspects().join());

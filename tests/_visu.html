@@ -95,6 +95,12 @@ f.onload = async () => {
       const carte = [...vue().querySelectorAll(".carte")].find(c => /Révisions/.test(c.textContent));
       if (carte) w.scrollTo(0, carte.getBoundingClientRect().top + w.scrollY - 10);
     },
+    "debat": async () => { await aller("tests/debat-truque"); for (let k = 0; k < 2; k++) { choix(0); await pause(20); suivant(); await pause(20); } choix(1); await pause(30); if (vue().querySelector(".choix:not(:disabled)")) choix(0); await pause(50); },
+    "debat-bilan": async () => { await aller("tests/debat-truque"); for (let k = 0; k < 12; k++) { choix(k % 3 ? 0 : 1); await pause(15); if (vue().querySelector(".choix:not(:disabled)")) choix(0); await pause(15); suivant(); await pause(20); } },
+    "reparer": async () => { await aller("tests/reparer"); choix(2); await pause(50); },
+    "reformuler": async () => { await aller("tests/reformuler"); choix(0); await pause(30); suivant(); await pause(30); choix(1); await pause(50); },
+    "deux": async () => { await aller("tests/debat-a-deux"); const c = vue().querySelectorAll("input.champ"); c[0].value = "Alice"; c[1].value = "Bruno"; valider(); await pause(50); },
+    "entrainement": async () => { await aller("sophismes/homme-de-paille"); const e = vue().querySelector(".entrainement"); e.querySelectorAll(".exercice").forEach(x => x.querySelector(".choix").click()); await pause(50); w.scrollTo(0, e.getBoundingClientRect().top + w.scrollY - 10); },
     "guide": async () => { await aller("guide/philosophie"); },
     "guide-haut": async () => { await aller("guide/difference"); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
@@ -123,7 +129,7 @@ f.onload = async () => {
   await pause(150);
   if (etapes[scenario]) await etapes[scenario]();
   else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
-  if (scenario !== "accueil-agenda" && scenario !== "proches") w.scrollTo(0, 0);
+  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement"].includes(scenario)) w.scrollTo(0, 0);
   // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration
   if (scenario.startsWith("schema:")) {
     await aller(decodeURIComponent(scenario.slice(7)));
