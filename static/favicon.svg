@@ -4,8 +4,8 @@
     .trait { stroke: #1c1b19; }
     .ailette { stroke: #1d4f91; }
     @media (prefers-color-scheme: dark) {
-      .trait { stroke: #ecebe7; }
-      .ailette { stroke: #8db3e8; }
+      .trait { stroke: #e7dfd1; }
+      .ailette { stroke: #93b4e0; }
     }
   </style>
   <g fill="none" stroke-linecap="round">

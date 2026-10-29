@@ -25,23 +25,26 @@
   --hauteur-nav: 62px;
 }
 
+/* Mode sombre « papier de nuit » : fond et texte dans les mêmes tons chauds que le mode clair.
+   Texte ivoire plutôt que blanc pur (contraste 12,9:1, confortable sans éblouir),
+   surfaces de plus en plus claires pour marquer la profondeur, couleurs d'accent adoucies (≥ 7,5:1). */
 @media (prefers-color-scheme: dark) {
   :root {
-    --fond: #141414;
-    --carte: #1c1c1b;
-    --texte: #ecebe7;
-    --discret: #a3a099;
-    --trait: #353431;
-    --trait-doux: #272725;
-    --accent: #8db3e8;
-    --accent-doux: #1f2a3a;
-    --sur-accent: #111111;
-    --encadre: #232321;
-    --vert: #7cc48f;
-    --vert-doux: #1d2e22;
-    --rouge: #f08a7c;
-    --rouge-doux: #3a1f1b;
-    --orange: #e0a15e;
+    --fond: #16130f;
+    --carte: #1f1b16;
+    --texte: #e7dfd1;
+    --discret: #aba191;
+    --trait: #3b342b;
+    --trait-doux: #2a251f;
+    --accent: #93b4e0;
+    --accent-doux: #222a35;
+    --sur-accent: #16130f;
+    --encadre: #28231d;
+    --vert: #8fc79a;
+    --vert-doux: #1f2b20;
+    --rouge: #ee9582;
+    --rouge-doux: #3a221c;
+    --orange: #e2a867;
   }
 }
 
@@ -336,7 +339,7 @@ h3.titre-bloc {
     --c-fort: color-mix(in srgb, var(--c, #1d4f91) 72%, white);
     --c-texte: color-mix(in srgb, var(--c, #1d4f91) 55%, white);
     --c-clair: color-mix(in srgb, var(--c, #1d4f91) 22%, var(--carte));
-    --sur-c: #111111;
+    --sur-c: #16130f;
   }
 }
 
