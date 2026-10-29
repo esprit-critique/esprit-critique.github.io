@@ -273,8 +273,8 @@
 
         <article class="carte" id="g-donnees">
           <h2>Vos données</h2>
-          <p>Votre progression (fiches acquises, réponses au quiz, révisions, résultats des ateliers) est enregistrée uniquement dans ce navigateur, sur cet appareil. Rien n'est envoyé ailleurs.</p>
-          <p>Pour retrouver votre progression sur un autre appareil (du Mac à l'iPhone, par exemple), enregistrez-la dans un fichier, puis ouvrez ce fichier depuis l'autre appareil.</p>
+          <p>Votre progression (fiches acquises, réponses au quiz, révisions, résultats des ateliers) est enregistrée uniquement dans votre navigateur. Elle n'est envoyée nulle part : le site n'a ni compte, ni base de données, ni mesure d'audience. Il est hébergé par GitHub Pages, qui, comme tout hébergeur, reçoit les demandes de pages, mais jamais vos réponses.</p>
+          <p>Si vous effacez les données de navigation, votre progression disparaît. Pour la conserver, ou pour la retrouver sur un autre appareil (de l'ordinateur au téléphone, par exemple), enregistrez-la dans un fichier, puis ouvrez ce fichier depuis l'autre appareil.</p>
           <div class="actions actions-donnees">
             <button class="bouton secondaire" id="btn-exporter">Enregistrer dans un fichier</button>
             <label class="bouton secondaire" for="fichier-import">Restaurer depuis un fichier</label>
@@ -285,7 +285,10 @@
       </section>
     </main>
 
-    <p class="pied">Esprit critique · contenu sourcé · aucune donnée ne quitte cet appareil</p>
+    <footer class="pied">
+      <p>Esprit critique · contenu sourcé · votre progression reste dans votre navigateur</p>
+      <p><button class="lien" id="btn-partager">Partager le site</button> · <a href="https://github.com/Goatier-project/esprit-critique">Code source</a> · <a href="#guide/donnees">Vos données</a></p>
+    </footer>
   </div>
 
   <script src="donnees.js"></script>

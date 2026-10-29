@@ -476,7 +476,7 @@ function afficherPortrait() {
   zone.innerHTML = "";
   zone.appendChild(lienVers("#ateliers", "← Ateliers", "lien retour"));
   zone.append(el("h1", "page-titre", "Votre portrait"),
-    el("p", "page-intro", "Ce que vos réponses aux ateliers révèlent de votre façon de juger. Chaque mesure s'affine à mesure que vous jouez ; tout reste sur cet appareil."));
+    el("p", "page-intro", "Ce que vos réponses aux ateliers révèlent de votre façon de juger. Chaque mesure s'affine à mesure que vous jouez ; tout reste dans votre navigateur."));
 
   const blocs = [];
   const ajouter = (titre, couleur, adresse, contenu, aMesurer) => blocs.push({ titre, couleur, adresse, contenu, aMesurer });

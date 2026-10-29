@@ -983,6 +983,8 @@ h3.titre-bloc {
 .lexique dd { margin: 2px 0 0; color: var(--texte); }
 
 .pied { text-align: center; color: var(--discret); font-size: 13px; margin-top: 30px; }
+.pied p { margin: 0 0 6px; }
+.pied a, .pied .lien { color: var(--discret); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

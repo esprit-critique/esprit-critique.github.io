@@ -12,7 +12,7 @@
   if (!manquants.length) return;
   const main = document.querySelector("main");
   main.innerHTML = '<section class="vue"><article class="carte"><h2>Chargement incomplet</h2>' +
-    '<p>Une partie de l\'application n\'a pas pu être chargée (' + manquants.join(", ") + '). Vérifiez la connexion au Mac, puis rechargez la page.</p>' +
+    '<p>Une partie de l\'application n\'a pas pu être chargée (' + manquants.join(", ") + '). Vérifiez votre connexion à Internet, puis rechargez la page.</p>' +
     '<button class="bouton" onclick="location.reload()">Recharger</button></article></section>';
   throw new Error("Fichiers manquants : " + manquants.join(", "));
 })();
@@ -1019,6 +1019,20 @@ function annoncer(texte) {
   clearTimeout(minuterieAnnonce);
   minuterieAnnonce = setTimeout(() => { a.classList.remove("visible"); setTimeout(() => { a.hidden = true; }, 300); }, 3200);
 }
+
+// Partager le site : menu de partage du téléphone, ou copie du lien
+$("btn-partager").addEventListener("click", async () => {
+  const adresse = location.origin + location.pathname;
+  const donnees = { title: "Esprit critique", text: "Biais cognitifs et sophismes : fiches, quiz et ateliers fondés sur des données réelles.", url: adresse };
+  try {
+    if (navigator.share) { await navigator.share(donnees); return; }
+    await navigator.clipboard.writeText(adresse);
+    annoncer("Lien copié : " + adresse);
+  } catch (erreur) {
+    if (erreur && erreur.name === "AbortError") return;   // partage annulé par l'utilisateur
+    annoncer("Lien du site : " + adresse);
+  }
+});
 
 // L'emblème est une illusion de Müller-Lyer : un clic montre que les deux traits sont égaux
 document.querySelector(".marque").addEventListener("click", () => {
