@@ -74,7 +74,7 @@ f.onload = async () => {
           const vides = [...vue().querySelectorAll(".cas")].filter(e => e.offsetParent !== null && e.textContent.trim().length < 3);
           if (!enonces.length || vides.length) enoncesAbsents.add(adresse + " : " + (vides.length ? "énoncé vide" : "aucun énoncé") + " avant « " + visibles(".choix, input")[0].textContent.trim().slice(0, 40) + " »");
         }
-        if (vue().querySelector(".grand-score") || vue().querySelector(".section h3") && /montre|retenir|Penser|sens du temps|Se méfier|méthode|quoi servent|soupçonner|reconstruire|Redire/.test(vue().querySelector(".section h3").textContent) && !visibles("[data-suivant]").some(b => /Suivant|bilan|suivante/.test(b.textContent))) {
+        if (vue().querySelector(".grand-score") || vue().querySelector(".section h3") && /montre|retenir|Penser|sens du temps|Se méfier|méthode|quoi servent|soupçonner|reconstruire|Redire|Juger|La régression|Pourquoi tenir/.test(vue().querySelector(".section h3").textContent) && !visibles("[data-suivant]").some(b => /Suivant|bilan|suivante/.test(b.textContent))) {
           if (!visibles(".choix").length && !visibles("[data-valider]").length) return true;
         }
         const curseur = visibles("input.curseur")[0];
@@ -106,7 +106,7 @@ f.onload = async () => {
 
     const generiques = ["#chiffres/monde", "#chiffres/mortalite", "#chiffres/pays", "#chiffres/nord", "#chiffres/grandeurs", "#chiffres/chronologie",
       "#chiffres/vrai-faux", "#chiffres/illusion", "#chiffres/hasard", "#chiffres/correlation", "#chiffres/graphiques",
-      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations", "#tests/debat-truque", "#tests/reparer", "#tests/reformuler"];
+      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations", "#tests/debat-truque", "#tests/reparer", "#tests/reformuler", "#tests/logique", "#tests/moniteur", "#tests/etudes"];
     for (const a of generiques) {
       const avant = erreursJS.length;
       for (let partie = 0; partie < 3; partie++) {
@@ -190,6 +190,76 @@ f.onload = async () => {
     ok("S'entraîner : présent sur les 39 fiches de sophismes", !sansEntrainement.length, sansEntrainement.join(", "));
     await aller("biais/ancrage");
     ok("S'entraîner : absent des fiches de biais", !vue().querySelector(".entrainement"));
+
+    // ---------- Logique contre croyance : contenus et mesures ----------
+    const SYL = w.eval("SYLLOGISMES");
+    const cases = [[true, true], [true, false], [false, true], [false, false]].map(([v, c]) => SYL.filter(x => x.valide === v && x.credible === c).length);
+    ok("syllogismes : 16, quatre par case", SYL.length === 16 && cases.every(n => n === 4));
+    ok("syllogismes : quatre avec trois justifications, une seule correcte", SYL.filter(x => x.justifications).length === 4 && SYL.filter(x => x.justifications).every(x => x.justifications.length === 3 && x.justifications.filter(j => j[1]).length === 1));
+    const hist = JSON.parse(w.localStorage.getItem("logique") || "[]");
+    ok("logique : indices enregistrés après les parties", hist.length === 3 && hist.every(h => Math.abs(h.l) <= 4 && Math.abs(h.c) <= 4));
+    ok("études : asymétrie enregistrée", JSON.parse(w.localStorage.getItem("etudes") || "[]").length >= 1);
+
+    // ---------- Résoudre à plusieurs ----------
+    async function plusieurs(mode) {
+      await aller("accueil");
+      await aller("tests/plusieurs");
+      const noms = visibles("input.champ");
+      remplir(noms[0], "Ana"); remplir(noms[1], "Ben"); remplir(noms[2], "Céline");
+      visibles(".choix")[mode].click();
+      await pause(10);
+      for (let tour = 0; tour < 200; tour++) {
+        const btn = visibles("button").find(b => /^Je suis|Répondre ensemble|suivant|Manche 2|Voir le bilan/.test(b.textContent));
+        const champ = visibles("input.champ")[0];
+        if (champ) { remplir(champ, String(100 + tour)); visibles("[data-valider]")[0].click(); await pause(5); continue; }
+        if (btn) { btn.click(); await pause(5); continue; }
+        const choix = visibles(".choix");
+        if (choix.length) { choix[tour % choix.length].click(); await pause(5); continue; }
+        break;
+      }
+    }
+    await plusieurs(0);
+    ok("à plusieurs, problèmes : bilan individuel et collectif", /Réponses individuelles justes/.test(vue().textContent) && !!vue().querySelector(".grand-score") && textesSuspects().length === 0, vue().textContent.slice(0, 200));
+    controler();
+    await plusieurs(1);
+    ok("à plusieurs, estimations : deux manches et dispersion", /Dispersion de vos estimations/.test(vue().textContent) && textesSuspects().length === 0, vue().textContent.slice(0, 200));
+    controler();
+
+    // ---------- Mon carnet de prévisions ----------
+    w.localStorage.removeItem("previsions");
+    await aller("accueil"); await aller("chiffres/carnet");
+    const zoneTexte = vue().querySelector("textarea");
+    zoneTexte.value = "Je finirai ce rapport avant vendredi";
+    visibles("[data-valider]")[0].click();
+    await pause(10);
+    ok("carnet : prévision ajoutée, en cours", JSON.parse(w.localStorage.getItem("previsions")).length === 1 && /En cours/.test(vue().textContent));
+    const icsCarnet = [...vue().querySelectorAll("button")].find(b => /agenda/.test(b.textContent));
+    ok("carnet : export des échéances", !!icsCarnet);
+    // Échéance passée : la prévision est à résoudre
+    const prev = JSON.parse(w.localStorage.getItem("previsions"));
+    prev[0].echeance = w.eval("aujourdHui()") - 1;
+    prev.push({ id: "b", texte: "Il pleuvra demain", p: 30, echeance: w.eval("aujourdHui()") - 2, creee: 1, issue: null });
+    w.localStorage.setItem("previsions", JSON.stringify(prev));
+    await aller("accueil"); await aller("chiffres/carnet");
+    ok("carnet : deux prévisions à résoudre", vue().querySelectorAll(".prevision.a-resoudre").length === 2);
+    [...vue().querySelector(".prevision").querySelectorAll("button")].find(b => /^Arrivé/.test(b.textContent)).click();
+    await pause(5);
+    ok("carnet : le souvenir est demandé avant la révélation", /De mémoire/.test(vue().textContent) && !/Vous aviez annoncé/.test(vue().querySelector(".prevision").textContent));
+    const curs = vue().querySelector(".prevision input.curseur");
+    remplir(curs, "80");
+    [...vue().querySelectorAll(".prevision button")].find(b => /Révéler/.test(b.textContent)).click();
+    await pause(10);
+    [...vue().querySelector(".prevision").querySelectorAll("button")].find(b => /Pas arrivé/.test(b.textContent)).click();
+    await pause(5);
+    remplir(vue().querySelector(".prevision input.curseur"), "20");
+    [...vue().querySelectorAll(".prevision button")].find(b => /Révéler/.test(b.textContent)).click();
+    await pause(10);
+    const res = JSON.parse(w.localStorage.getItem("previsions"));
+    const brierAttendu = w.eval("fr")(Number((((0.7 - 1) ** 2 + (0.3 - 0) ** 2) / 2).toFixed(3)));
+    ok("carnet : issues et souvenirs enregistrés", res.every(x => x.issue) && res.find(x => x.id !== "b").souvenir === 80);
+    ok("carnet : score de Brier " + brierAttendu, vue().textContent.includes("Score de Brier moyen : ".replace(" :", "\u202f:") + brierAttendu) || vue().textContent.includes(brierAttendu + " sur 2") && !!vue().querySelector("svg.graphe"));
+    ok("carnet : glissement des souvenirs (+10 vers l'issue)", / 10 points plus proche/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")));
+    controler();
 
     // ---------- Intervalles ----------
     await aller("chiffres/intervalles");

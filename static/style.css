@@ -1027,3 +1027,27 @@ h3.titre-bloc {
 .minuteur { font-family: var(--titre); font-size: 46px; font-weight: 700; text-align: center; margin: 10px 0 6px; font-variant-numeric: tabular-nums; }
 .minuteur.fini { color: var(--rouge); }
 .exercice + .exercice { border-top: 1px solid var(--trait-doux); padding-top: 14px; margin-top: 14px; }
+
+/* ===================== Raisonner (lot 4) ===================== */
+.syllogisme { border-left: 3px solid var(--c-fort, var(--accent)); padding: 2px 0 2px 12px; margin: 8px 0 6px; font-family: var(--titre); font-size: 17.5px; line-height: 1.45; }
+.syllogisme p { margin: 2px 0; }
+.conclusion-syllogisme { font-weight: 700; border-top: 1px solid var(--trait); padding-top: 4px; margin-top: 6px !important; }
+.erreur-liste { color: var(--rouge); }
+.note-vol { font-family: var(--titre); font-size: 40px; font-weight: 700; margin: 2px 0 4px; font-variant-numeric: tabular-nums; }
+.echelle-sept-boutons { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.echelle-sept-boutons .choix { justify-content: center; padding: 12px 0; margin: 0; font-weight: 600; min-height: 46px; }
+.echelle-sept-bornes { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--discret); margin: 6px 0 4px; }
+.carnet-formulaire .champ-texte { width: 100%; resize: vertical; font: inherit; }
+.carnet-formulaire .modeles { flex-wrap: wrap; overflow: visible; margin: 8px 0; }
+.carnet-formulaire .modeles .puce { font-size: 13px; }
+.titre-carnet { font-family: var(--titre); font-size: 20px; margin: 22px 0 8px; }
+.prevision { border: 1px solid var(--trait); border-radius: var(--rayon); padding: 10px 12px; margin: 0 0 10px; }
+.prevision .cas { margin: 0 0 2px; }
+.grille-joueurs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.grille-joueurs .champ { width: 100%; margin: 0; }
+.trait-felicite { stroke: var(--vert); stroke-width: 1.6; }
+.trait-reprimande { stroke: var(--rouge); stroke-width: 1.6; }
+.trait-neutre { stroke: var(--discret); stroke-width: 1.2; }
+.trait-felicite-point { fill: var(--vert); }
+.trait-reprimande-point { fill: var(--rouge); }
+.trait-neutre-point { fill: var(--discret); }

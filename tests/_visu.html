@@ -101,6 +101,23 @@ f.onload = async () => {
     "reformuler": async () => { await aller("tests/reformuler"); choix(0); await pause(30); suivant(); await pause(30); choix(1); await pause(50); },
     "deux": async () => { await aller("tests/debat-a-deux"); const c = vue().querySelectorAll("input.champ"); c[0].value = "Alice"; c[1].value = "Bruno"; valider(); await pause(50); },
     "entrainement": async () => { await aller("sophismes/homme-de-paille"); const e = vue().querySelector(".entrainement"); e.querySelectorAll(".exercice").forEach(x => x.querySelector(".choix").click()); await pause(50); w.scrollTo(0, e.getBoundingClientRect().top + w.scrollY - 10); },
+    "logique": async () => { await aller("tests/logique"); },
+    "logique-bilan": async () => { await aller("tests/logique"); for (let k = 0; k < 40; k++) { const c = vue().querySelectorAll(".choix:not(:disabled)"); if (c.length) { c[k % 2].click(); await pause(10); continue; } const s = vue().querySelector("[data-suivant]"); if (!s || /Rejouer/.test(s.textContent)) break; s.click(); await pause(10); } },
+    "moniteur": async () => { await aller("tests/moniteur"); for (let k = 0; k < 3; k++) { choix(k % 3); await pause(10); suivant(); await pause(10); } },
+    "moniteur-bilan": async () => { await aller("tests/moniteur"); for (let k = 0; k < 24; k++) { choix(k % 3); await pause(10); suivant(); await pause(10); } const g = vue().querySelector(".figure-moniteur"); if (g) w.scrollTo(0, g.getBoundingClientRect().top + w.scrollY - 120); },
+    "etudes": async () => { await aller("tests/etudes"); for (let k = 0; k < 3; k++) { choix(5); await pause(10); suivant(); await pause(10); } },
+    "plusieurs": async () => { await aller("tests/plusieurs"); const c = vue().querySelectorAll("input.champ"); c[0].value = "Ana"; c[1].value = "Ben"; choix(0); await pause(20); for (let k = 0; k < 2; k++) { vue().querySelector("[data-suivant]").click(); await pause(10); choix(k); await pause(10); } },
+    "carnet": async () => {
+      const a = w.eval("aujourdHui()");
+      w.localStorage.setItem("previsions", JSON.stringify([
+        { id: "a", texte: "Je finirai le rapport de stage avant le 15", p: 70, echeance: a - 1, creee: a - 20, issue: null },
+        { id: "b", texte: "Il pleuvra à Nice le 3", p: 30, echeance: a - 30, creee: a - 40, issue: "non", souvenir: 20 },
+        { id: "c", texte: "Le colis arrivera avant samedi", p: 80, echeance: a - 25, creee: a - 30, issue: "oui", souvenir: 90 },
+        { id: "d", texte: "J'aurai lu le livre d'ici la fin du mois", p: 60, echeance: a + 12, creee: a - 2, issue: null }]));
+      await aller("chiffres/carnet");
+      const t = vue().querySelector(".titre-carnet");
+      if (t) w.scrollTo(0, t.getBoundingClientRect().top + w.scrollY - 10);
+    },
     "guide": async () => { await aller("guide/philosophie"); },
     "guide-haut": async () => { await aller("guide/difference"); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
@@ -129,7 +146,7 @@ f.onload = async () => {
   await pause(150);
   if (etapes[scenario]) await etapes[scenario]();
   else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
-  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement"].includes(scenario)) w.scrollTo(0, 0);
+  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet"].includes(scenario)) w.scrollTo(0, 0);
   // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration
   if (scenario.startsWith("schema:")) {
     await aller(decodeURIComponent(scenario.slice(7)));

@@ -15,12 +15,15 @@ pour l'utiliser comme une application.
 - **Un quiz** à révision espacée : les notions ratées reviennent après 1, 3, 7, 14 puis 30 jours. On y indique sa
   certitude (les erreurs commises en étant sûr reviennent dès le lendemain) ; un mode « Notions proches » oppose
   chaque notion à sa voisine ; les révisions prévues s'exportent dans un agenda (fichier .ics).
-- **28 ateliers**, en six sections :
+- **33 ateliers**, en six sections :
   - *le monde en chiffres* : état du monde, causes de décès, duels entre 155 pays (démographie, économie,
     géopolitique), cartes mentales, ordres de grandeur, chronologie ;
-  - *mesurer sa confiance* : vrai ou faux avec degré de certitude, intervalles à 90 %, effet d'ancrage ;
+  - *mesurer sa confiance* : vrai ou faux avec degré de certitude, intervalles à 90 %, effet d'ancrage,
+    et un carnet de prévisions personnelles (score de Brier, étalonnage, mémoire des prévisions) ;
   - *percevoir* : illusions d'optique, hasard, corrélations, graphiques trompeurs ;
-  - *raisonner* : test de réflexion cognitive, tâche de Wason, Monty Hall, problèmes classiques, tests de dépistage ;
+  - *raisonner* : test de réflexion cognitive, tâche de Wason, Monty Hall, problèmes classiques, tests de dépistage,
+    logique contre croyance, le moniteur de vol (régression vers la moyenne), deux études de même méthode,
+    et un jeu à plusieurs sur un même téléphone ;
   - *débattre* : repérer les sophismes d'un débat (avec mesure des fausses alertes), réparer un argument,
     reformuler sans trahir, et un débat minuté à deux sur un même téléphone ;
   - *philosopher* : expériences de pensée, citations vraies ou fausses.
@@ -55,6 +58,7 @@ connecté au même réseau Wi-Fi.
 | `static/app.js` | navigation, accueil, fiches, quiz, révisions |
 | `static/ateliers.js` | page des ateliers, portrait, outils communs |
 | `static/chiffres.js`, `static/perception.js`, `static/experiences.js` | les ateliers |
+| `static/raisonner.js` | logique contre croyance, moniteur de vol, deux études, résoudre à plusieurs, carnet de prévisions |
 | `static/debattre.js` | section « Débattre » : débats, réparations, reformulations (contenus fictifs) |
 | `static/jeux-donnees.js`, `static/pays.js` | contenus et données des ateliers |
 | `app.py` | petit serveur local (Python, sans dépendance) |
