@@ -115,9 +115,11 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   padding: 0 4px env(safe-area-inset-bottom);
-  background: color-mix(in srgb, var(--fond) 88%, transparent);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  /* Fond opaque et couche graphique propre : sur iPhone, quand la barre d'adresse de Safari
+     s'agrandit ou se réduit pendant le défilement, un fond flouté (backdrop-filter) est recalculé
+     à chaque image et la barre tremble. */
+  background: var(--fond);
+  transform: translateZ(0);
   border-top: 1px solid var(--trait);
 }
 
@@ -165,8 +167,7 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
     gap: 22px;
     padding: 0;
     background: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+    transform: none;
     border: 0;
   }
   .onglet {
