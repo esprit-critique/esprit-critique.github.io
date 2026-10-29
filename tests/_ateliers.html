@@ -60,6 +60,7 @@ f.onload = async () => {
 
     // ---------- Joueur générique : répond à tout jusqu'au bilan ----------
     let controlerEtapes = true;
+    const enoncesAbsents = new Set(), enoncesHorsEcran = new Set();
     async function jouer(adresse, maxTours = 120) {
       await aller("accueil");
       await aller(adresse.slice(1));
@@ -67,6 +68,12 @@ f.onload = async () => {
       while (tours++ < maxTours) {
         await pause(20);
         if (controlerEtapes) controler();
+        // Énoncé : toute étape qui attend une réponse doit montrer une question non vide
+        if (visibles(".choix, input.champ, input.curseur").length) {
+          const enonces = [...vue().querySelectorAll(".cas, .consigne, .question-pensee")].filter(e => e.offsetParent !== null && e.textContent.trim().length > 2);
+          const vides = [...vue().querySelectorAll(".cas")].filter(e => e.offsetParent !== null && e.textContent.trim().length < 3);
+          if (!enonces.length || vides.length) enoncesAbsents.add(adresse + " : " + (vides.length ? "énoncé vide" : "aucun énoncé") + " avant « " + visibles(".choix, input")[0].textContent.trim().slice(0, 40) + " »");
+        }
         if (vue().querySelector(".grand-score") || vue().querySelector(".section h3") && /montre|retenir|Penser|sens du temps|Se méfier|méthode|quoi servent/.test(vue().querySelector(".section h3").textContent) && !visibles("[data-suivant]").some(b => /Suivant|bilan|suivante/.test(b.textContent))) {
           if (!visibles(".choix").length && !visibles("[data-valider]").length) return true;
         }
@@ -78,7 +85,19 @@ f.onload = async () => {
         if (champs.length && valider) { champs.forEach((c, k) => remplir(c, String(k % 2 ? 60 : 20))); valider.click(); continue; }
         if (choix.length) { choix[Math.min(1, choix.length - 1)].click(); continue; }
         const suivant = visibles("[data-suivant]").find(b => !/Rejouer|Recommencer|Nouvelle série|autres|nouvelle|Deux nouvelles|Trois autres|Quatre autres|Cinq autres/.test(b.textContent));
-        if (suivant) { suivant.click(); continue; }
+        if (suivant) {
+          suivant.click();
+          await pause(30);
+          // Après « Suivant », l'énoncé de la nouvelle question doit être à l'écran, sous l'en-tête collant éventuel
+          const enonce = [...vue().querySelectorAll(".cas, .consigne")].find(e => e.offsetParent !== null);
+          if (enonce && !vue().querySelector(".grand-score")) {
+            const entete = d.querySelector(".entete");
+            const haut = getComputedStyle(entete).position === "sticky" ? entete.getBoundingClientRect().bottom : 0;
+            const r = enonce.getBoundingClientRect();
+            if (r.top < haut - 1 || r.top > w.innerHeight - 80) enoncesHorsEcran.add(adresse + " : énoncé à " + Math.round(r.top) + " px (zone visible de " + Math.round(haut) + " à " + (w.innerHeight - 80) + ")");
+          }
+          continue;
+        }
         if (valider) { valider.click(); continue; }
         return !!(vue().querySelector(".grand-score") || vue().querySelector(".section"));
       }
@@ -101,6 +120,17 @@ f.onload = async () => {
       }
       ok(a + " : 3 parties enregistrées, aucune erreur", (w.eval("resultatAtelier('" + a.split("/")[1] + "')") || {}).n === 3 && erreursJS.length === avant, erreursJS.slice(avant).join(" | "));
     }
+
+    ok("énoncés : visibles à l'écran après « Suivant »", enoncesHorsEcran.size === 0, [...enoncesHorsEcran].join(" | "));
+    ok("énoncés : présents à chaque étape des ateliers joués", enoncesAbsents.size === 0, [...enoncesAbsents].join(" | "));
+
+    // ---------- Énoncés dans les données ----------
+    const champsEnonce = [["MONDE", "question"], ["ETALONNAGE", "q"], ["ANCRES", "q"], ["VRAI_FAUX", "texte"], ["EVENEMENTS", "nom"],
+      ["GRANDEURS", "q"], ["CITATIONS", "texte"], ["QUESTIONS_CRT", "texte"], ["PROBLEMES", "enonce"], ["EXPERIENCES_PENSEE", "texte"], ["EXPERIENCES_PENSEE", "question"]];
+    const sansEnonce = champsEnonce.flatMap(([tableau, champ]) => w.eval(tableau).filter(x => typeof x[champ] !== "string" || x[champ].trim().length < 3).map(x => tableau + "." + (x.id || "?") + "." + champ));
+    w.eval("PROBLEMES").filter(p => p.type === "paire" && !(p.enonce2 && p.options2)).forEach(p => sansEnonce.push("PROBLEMES." + p.id + ".enonce2"));
+    w.eval("PIEGES_GRAPHIQUES").forEach(pg => { const c = pg.creer(); if (!c.question || !c.titre) sansEnonce.push("PIEGES_GRAPHIQUES." + pg.id); });
+    ok("énoncés : présents dans toutes les données", sansEnonce.length === 0, sansEnonce.join(", "));
 
     // ---------- Intervalles ----------
     await aller("chiffres/intervalles");

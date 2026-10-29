@@ -133,9 +133,21 @@ function curseurAvecBoutons(curseur, pas) {
 }
 
 // Ramène le haut de la carte de jeu dans l'écran, si nécessaire
+// Ramène le haut de la carte (et donc l'énoncé de la nouvelle question) à l'écran, sous l'en-tête collant
+// de l'ordinateur. Le défilement est immédiat : il interrompt un défilement doux encore en cours (celui de
+// montrer()), qui sinon emmènerait la page plus bas et cacherait l'énoncé. Refait à l'image suivante,
+// une fois la nouvelle question mise en page.
 function remonter() {
   const carte = document.querySelector("main > section:not([hidden]) article.carte");
-  if (carte && carte.getBoundingClientRect().top < 0) carte.scrollIntoView({ block: "start" });
+  if (!carte) return;
+  const aligner = () => {
+    const entete = document.querySelector(".entete");
+    const haut = entete && getComputedStyle(entete).position === "sticky" ? entete.getBoundingClientRect().bottom : 0;
+    const top = carte.getBoundingClientRect().top;
+    if (top < haut + 8) window.scrollTo({ top: window.scrollY + top - haut - 8, behavior: "instant" });
+  };
+  aligner();
+  requestAnimationFrame(aligner);
 }
 
 // Déroule une série de questions.

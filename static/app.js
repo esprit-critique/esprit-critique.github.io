@@ -800,7 +800,9 @@ function afficherQuiz() {
     suivante.addEventListener("click", () => {
       quiz.index++;
       afficherQuiz();
-      window.scrollTo(0, 0);
+      // Immédiat : interrompt le défilement doux vers la correction, qui cacherait la nouvelle situation
+      window.scrollTo({ top: 0, behavior: "instant" });
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "instant" }));
     });
     actions.appendChild(suivante);
   });
