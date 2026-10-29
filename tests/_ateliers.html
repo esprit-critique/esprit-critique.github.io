@@ -261,6 +261,18 @@ f.onload = async () => {
     ok("carnet : glissement des souvenirs (+10 vers l'issue)", / 10 points plus proche/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")));
     controler();
 
+    // ---------- Le calcul, en détail ----------
+    // Tests positifs : le calcul suit chaque situation, avec ses propres chiffres
+    await aller("accueil"); await aller("tests/depistage");
+    remplir(visibles("input.champ")[0], "50");
+    visibles("[data-valider]")[0].click();
+    await pause(10);
+    ok("#tests/depistage : calcul de Bayes en détail après chaque situation", !!vue().querySelector(".retour-quiz details.calcul-detail") && /P\(cas \| positif\)/.test(vue().textContent) && textesSuspects().length === 0, textesSuspects().join());
+    for (const a of ["#chiffres/vrai-faux", "#tests/debat-truque", "#chiffres/ecrire-hasard"]) {
+      await jouer(a);
+      ok(a + " : bloc « Le calcul, en détail », fermé par défaut", !!vue().querySelector("details.calcul-detail") && !vue().querySelector("details.calcul-detail").open && textesSuspects().length === 0, textesSuspects().join());
+    }
+
     // ---------- Intervalles ----------
     await aller("chiffres/intervalles");
     const bornes = visibles("input.champ");
@@ -362,6 +374,7 @@ f.onload = async () => {
     await pause(10);
     [...vue().querySelectorAll(".actions button")][1].click();
     await pause(10);
+    ok("Monty Hall : calcul conditionnel en détail", /P\(V2 \| ouvre 3\)/.test(vue().textContent));
     ok("Monty Hall : partie à 3 portes terminée", /Gagné|Perdu/.test(vue().textContent));
     [...vue().querySelectorAll(".segment a")][1].click();
     await pause(10);
@@ -378,6 +391,7 @@ f.onload = async () => {
     ok("anniversaires : 50,7 %", /50,7/.test(vue().textContent));
     [...vue().querySelectorAll(".simulation button")].pop().click();
     await pause(20);
+    ok("anniversaires : calcul en détail (produit des probabilités)", /365\/365 × 364\/365/.test(vue().textContent.replace(/\s+/g, " ")));
     ok("anniversaires : simulation de 365 jours", vue().querySelectorAll(".annee-anniversaires span").length === 365);
 
     // ---------- Contrôles des données ----------

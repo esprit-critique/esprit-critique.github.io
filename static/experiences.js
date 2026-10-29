@@ -762,6 +762,17 @@ const EXPERIENCES = [
           "La version à dix portes rend l'intuition évidente : votre premier choix a 1 chance sur 10 d'être le bon. Quand le présentateur ouvre huit portes en évitant soigneusement l'une d'elles, c'est celle-là qui cache la voiture, 9 fois sur 10.",
           "En 1990, Marilyn vos Savant publie la bonne réponse dans le magazine Parade. Elle reçoit environ 10 000 lettres affirmant qu'elle se trompe, dont près de 1 000 signées par des titulaires d'un doctorat."
         ], [["#biais/erreur-du-joueur", "Erreur du joueur"], ["#biais/taux-de-base", "Négligence du taux de base"]]);
+        const total = k => stats[3][k][1] + stats[10][k][1], gagnes = k => stats[3][k][0] + stats[10][k][0];
+        bloc.appendChild(calculEnDetail([
+          "Vous choisissez la porte 1 ; le présentateur ouvre la porte 3, qui cache une chèvre. Notons V1, V2, V3 « la voiture est derrière la porte 1, 2, 3 », chacune de probabilité 1/3 au départ.",
+          "S'il est derrière la porte 1, le présentateur ouvre la 2 ou la 3 au hasard ; si la voiture est derrière la 2, il est obligé d'ouvrir la 3 ; si elle est derrière la 3, il ne l'ouvre jamais :",
+          "= P(ouvre 3 | V1) = 1/2 ; P(ouvre 3 | V2) = 1 ; P(ouvre 3 | V3) = 0",
+          "= P(V2 | ouvre 3) = (1 × 1/3) / (1/2 × 1/3 + 1 × 1/3 + 0 × 1/3) = (1/3) / (1/2) = 2/3",
+          "Garder gagne donc 1 fois sur 3, changer 2 fois sur 3. Avec dix portes, le présentateur ouvre huit portes en évitant la voiture : garder gagne 1 fois sur 10, changer 9 fois sur 10.",
+          (total("changer") + total("garder"))
+            ? "Vos parties : en changeant, " + gagnes("changer") + " victoires sur " + total("changer") + " ; en gardant, " + gagnes("garder") + " sur " + total("garder") + ". Sur peu de parties, le hasard peut masquer l'écart."
+            : "Jouez quelques parties : vos propres résultats s'afficheront ici."
+        ]));
       }
 
       nouvellePartie();
@@ -909,6 +920,16 @@ const EXPERIENCES = [
           const accord = (n, nom) => n > 1 ? nom : nom.split(" ").map(m => m !== "sans" && m.endsWith("s") ? m.slice(0, -1) : m).join(" ");
           retour.appendChild(paragraphe("Sur " + fr(s.population) + " personnes : " + fr(c.malades) + " " + accord(c.malades, s.noms[0]) + ", dont " + fr(c.vraisPositifs) + " avec un résultat positif ; " + fr(c.sains) + " " + accord(c.sains, s.noms[1]) + ", dont " + fr(c.fauxPositifs) + " avec un résultat positif quand même. Sur " + fr(c.vraisPositifs + c.fauxPositifs) + " résultats positifs, " + fr(c.vraisPositifs) + " seulement " + (c.vraisPositifs > 1 ? "correspondent" : "correspond") + " à un vrai cas."));
           if (s.resultat) retour.appendChild(paragraphe(s.resultat, "source"));
+          const pc = x => fr(Number((100 * x).toPrecision(3))) + " %";
+          const pPositif = s.sensibilite * s.prevalence + s.fauxPositifs * (1 - s.prevalence);
+          retour.appendChild(calculEnDetail([
+            "La formule de Bayes donne la probabilité d'un vrai cas sachant que le résultat est positif :",
+            "= P(cas | positif) = P(positif | cas) × P(cas) / P(positif)",
+            "Ici : P(cas) = " + pc(s.prevalence) + " ; P(positif | cas) = " + pc(s.sensibilite) + " ; P(positif | pas un cas) = " + pc(s.fauxPositifs) + ".",
+            "= P(positif) = " + pc(s.sensibilite) + " × " + pc(s.prevalence) + " + " + pc(s.fauxPositifs) + " × " + pc(1 - s.prevalence) + " = " + pc(pPositif),
+            "= P(cas | positif) = " + pc(s.sensibilite * s.prevalence) + " / " + pc(pPositif) + " = " + pc(s.sensibilite * s.prevalence / pPositif),
+            "L'arbre fait le même calcul avec des effectifs : " + fr(c.vraisPositifs) + " / (" + fr(c.vraisPositifs) + " + " + fr(c.fauxPositifs) + "), à l'arrondi près. Le dénominateur compte tous les résultats positifs, vrais et faux : c'est là que le taux de base pèse."
+          ]));
           zone.appendChild(retour);
           fini(juste, retour);
         });
@@ -956,6 +977,18 @@ const EXPERIENCES = [
         retour.appendChild(paragraphe("Avec " + v + " personnes, la probabilité est de " + fr(Number((100 * probaAnniversaire(Math.min(v, 366))).toFixed(1))) + " %. Avec 57 personnes, elle dépasse 99 %."));
         retour.appendChild(courbeAnniversaires(v));
         retour.appendChild(paragraphe("L'intuition pense à « quelqu'un qui a le même anniversaire que moi » : pour cela, il faudrait 253 personnes. Mais n'importe quelle paire convient, et 23 personnes forment 253 paires.", "source"));
+        const sansPaire = n => 1 - probaAnniversaire(n);
+        const n = Math.min(v, 366);
+        const pc = x => fr(Number((100 * x).toFixed(1))) + " %";
+        retour.appendChild(calculEnDetail([
+          "On calcule d'abord la probabilité que tous les anniversaires soient différents : la deuxième personne doit éviter 1 date, la troisième 2 dates, et ainsi de suite.",
+          "= P(tous différents) = 365/365 × 364/365 × 363/365 × … × (365 − n + 1)/365",
+          "La probabilité d'au moins un anniversaire commun en est le complément : 1 − P(tous différents).",
+          "= Avec " + n + " personnes : 1 − " + fr(Number(sansPaire(n).toFixed(3))) + " = " + pc(probaAnniversaire(n)),
+          "= Avec 22 personnes : 1 − " + fr(Number(sansPaire(22).toFixed(3))) + " = " + pc(probaAnniversaire(22)) + " ; avec 23 : 1 − " + fr(Number(sansPaire(23).toFixed(3))) + " = " + pc(probaAnniversaire(23)),
+          "23 est donc le plus petit groupe où la probabilité dépasse une chance sur deux. Chaque facteur est proche de 1, mais il y en a autant que de personnes, et 23 personnes forment 23 × 22 / 2 = 253 paires.",
+          "On suppose les 365 jours équiprobables et l'on ignore le 29 février ; les naissances réelles, un peu inégales selon les jours, rendent les coïncidences très légèrement plus probables."
+        ]));
         zone.appendChild(retour);
         zone.appendChild(simulationAnniversaires());
         ajouterExplication(zone, "Ce que montre cet atelier", [

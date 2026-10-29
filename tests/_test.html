@@ -116,7 +116,7 @@ f.onload = async () => {
 
     // ---------- Quiz ----------
     await aller("quiz");
-    ok("quiz : 5 modes", vue().querySelectorAll("#filtres-quiz .puce").length === 5);
+    ok("quiz : 6 modes", vue().querySelectorAll("#filtres-quiz .puce").length === 6);
     ok("quiz : option « Indiquer ma certitude » cochée par défaut", vue().querySelector(".option-certitude input").checked);
     touche("2");
     ok("certitude : demandée avant la correction", !!vue().querySelector(".certitude") && !vue().querySelector(".retour-quiz"));
@@ -194,6 +194,52 @@ f.onload = async () => {
     await aller("portrait");
     ok("portrait : notions proches et certitude", /Les notions proches/.test(vue().textContent) && /Certitude au quiz/.test(vue().textContent) && /Erreurs commises en étant sûr/.test(vue().textContent));
     await aller("quiz/tout");
+
+    // ---------- Quiz : réponse libre ----------
+    await aller("quiz/libre");
+    ok("réponse libre : pas de propositions, un champ et pas de certitude", !vue().querySelector(".choix") && !!vue().querySelector(".reponse-libre input.champ"));
+    const ql = w.eval("quiz.serie[quiz.index]");
+    const champL = vue().querySelector(".reponse-libre input");
+    champL.value = "ancr"; champL.dispatchEvent(new w.Event("input"));
+    ok("réponse libre : suggestions pendant la saisie (« ancr » → Effet d'ancrage)", [...vue().querySelectorAll(".suggestions li")].some(li => /ancrage/i.test(li.textContent)));
+    champL.dispatchEvent(new w.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+    champL.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    ok("réponse libre : flèche puis Entrée choisit la suggestion sans valider", champL.value.length > 4 && !vue().querySelector(".retour-quiz"));
+    // Bonne réponse tapée sans accents ni majuscules
+    const sansAccent = w.eval("normaliser")(ql.fiche.nom).toUpperCase();
+    champL.value = sansAccent;
+    const avantL = (w.eval("memoire")[w.eval("cleFiche")(ql.type, ql.fiche)] || { b: 0 }).b;
+    vue().querySelector(".reponse-libre [data-valider]").click();
+    ok("réponse libre : nom sans accents ni majuscules accepté", /Bonne réponse/.test(vue().textContent));
+    ok("réponse libre : la notion monte d'une boîte", w.eval("memoire")[w.eval("cleFiche")(ql.type, ql.fiche)].b === Math.min(5, avantL + 1));
+    vue().querySelector("[data-suivant]").click();
+    await pause(10);
+    const champL2 = vue().querySelector(".reponse-libre input");
+    champL2.value = "n'importe quoi";
+    vue().querySelector(".reponse-libre [data-valider]").click();
+    ok("réponse libre : réponse inconnue signalée", /ne correspond à aucune fiche/.test(vue().textContent));
+    const ql2 = w.eval("quiz.serie[quiz.index]");
+    ok("réponse libre : erreur, retour en boîte 1", w.eval("memoire")[w.eval("cleFiche")(ql2.type, ql2.fiche)].b === 1);
+    await aller("quiz/tout");
+
+    // ---------- Défi du jour ----------
+    w.localStorage.removeItem("defiJour");
+    await aller("accueil");
+    const jourD = w.eval("aujourdHui()");
+    const d1 = w.eval("questionsDuDefi")(jourD), d2 = w.eval("questionsDuDefi")(jourD), dDemain = w.eval("questionsDuDefi")(jourD + 1);
+    ok("défi : 10 questions, les mêmes toute la journée, d'autres demain", d1.length === 10 && d1.map(q => q.texte).join() === d2.map(q => q.texte).join() && d1.map(q => q.texte).join() !== dDemain.map(q => q.texte).join());
+    ok("défi : chaque question a sa bonne réponse parmi les options", d1.every(q => q.options[q.juste] !== undefined && q.explication));
+    [...vue().querySelectorAll(".defi-jour button")].find(b => /Relever/.test(b.textContent)).click();
+    for (let k = 0; k < 10; k++) {
+      touche("1");
+      await pause(5);
+      vue().querySelector(".defi-jour [data-suivant]").click();
+      await pause(5);
+    }
+    const memoD = JSON.parse(w.localStorage.getItem("defiJour"));
+    ok("défi : résultat enregistré et affiché, avec partage", memoD && memoD.jour === jourD && /\/ 10/.test(vue().querySelector(".defi-jour").textContent) && /Partager/.test(vue().querySelector(".defi-jour").textContent));
+    await aller("guide"); await aller("accueil");
+    ok("défi : une seule tentative par jour", !/Relever le défi/.test(vue().textContent) && new RegExp(memoD.score + " / 10").test(vue().querySelector(".defi-jour").textContent.replace(/\s+/g, " ")));
 
     // ---------- Ateliers ----------
     await aller("ateliers");

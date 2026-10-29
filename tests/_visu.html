@@ -130,6 +130,9 @@ f.onload = async () => {
       if (t) w.scrollTo(0, t.getBoundingClientRect().top + w.scrollY - 80);
     },
     "intervalles-niveau": async () => { await aller("chiffres/intervalles"); },
+    "libre": async () => { await aller("quiz/libre"); const c = vue().querySelector(".reponse-libre input"); c.value = "ancr"; c.dispatchEvent(new w.Event("input")); c.focus(); },
+    "defi": async () => { w.localStorage.removeItem("defiJour"); await aller("accueil"); [...vue().querySelectorAll(".defi-jour button")].find(b => /Relever/.test(b.textContent)).click(); await pause(20); vue().querySelector(".defi-jour .choix").click(); await pause(20); const c = vue().querySelector(".defi-jour"); w.scrollTo(0, c.getBoundingClientRect().top + w.scrollY - 10); },
+    "calcul-vf": async () => { await aller("chiffres/vrai-faux"); for (let k = 0; k < 12; k++) { choix(k % 2); await pause(10); choix(2); await pause(10); suivant(); await pause(10); } const dd = vue().querySelector("details.calcul-detail"); dd.open = true; w.scrollTo(0, dd.getBoundingClientRect().top + w.scrollY - 10); },
     "guide": async () => { await aller("guide/philosophie"); },
     "guide-haut": async () => { await aller("guide/difference"); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
@@ -158,7 +161,7 @@ f.onload = async () => {
   await pause(150);
   if (etapes[scenario]) await etapes[scenario]();
   else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
-  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux"].includes(scenario)) w.scrollTo(0, 0);
+  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux", "defi", "calcul-vf"].includes(scenario)) w.scrollTo(0, 0);
   // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration
   if (scenario.startsWith("schema:")) {
     await aller(decodeURIComponent(scenario.slice(7)));

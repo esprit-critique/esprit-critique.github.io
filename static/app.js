@@ -158,7 +158,7 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour"
 ];
 
 // Fiches marquées comme acquises par l'utilisateur
@@ -289,6 +289,7 @@ function creerQuestion(type, fiche, alea = Math.random) {
 // Avec « q.certitude », la certitude est demandée entre le choix et la correction ;
 // « surReponse(option, certitude) » reçoit alors "sur", "plutot" ou "hasard".
 function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
+  if (q.libre) return rendreQuestionLibre(carte, q, reponseDejaDonnee, surReponse, actions);
   carte.style.setProperty("--c", "#2a8a5c");
   carte.append(el("p", "consigne", q.consigne || TYPES[q.type].consigneQuiz), el("p", "cas", q.cas));
 
@@ -365,6 +366,207 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
   if (reponseDejaDonnee) corriger(reponseDejaDonnee);
 }
 
+// ===================== Réponse libre =====================
+// Toutes les appellations d'une fiche, sans accents, majuscules ni ponctuation : son nom et ses autres noms
+const sansPonctuation = t => normaliser(t).replace(/[^a-z0-9]+/g, " ").trim();
+const appellations = fiche => [fiche.nom, ...(fiche.autresNoms || "").split(",")].map(sansPonctuation).filter(Boolean);
+
+// La fiche que désigne une réponse tapée, ou null
+function ficheDeReponse(texte) {
+  const t = sansPonctuation(texte);
+  if (!t) return null;
+  for (const r of INDEX.values()) if (appellations(r.fiche).includes(t)) return r.fiche;
+  return null;
+}
+
+// Fiches proposées pendant la saisie : celles dont une appellation commence par le texte tapé, puis celles qui le contiennent
+function suggestionsFiches(texte) {
+  const t = sansPonctuation(texte);
+  if (t.length < 2) return [];
+  const fiches = [...INDEX.values()];
+  const debut = fiches.filter(r => appellations(r.fiche).some(a => a.startsWith(t) || a.split(" ").some(m => m.startsWith(t))));
+  const dedans = fiches.filter(r => !debut.includes(r) && appellations(r.fiche).some(a => a.includes(t)));
+  return [...debut, ...dedans].slice(0, 6);
+}
+
+function rendreQuestionLibre(carte, q, reponseDejaDonnee, surReponse, actions) {
+  carte.style.setProperty("--c", "#2a8a5c");
+  carte.append(el("p", "consigne", "Quelle notion ? Tapez son nom"), el("p", "cas", q.cas));
+  const bloc = el("div", "reponse-libre");
+  const ligne = el("div", "ligne");
+  const champ = el("input", "champ");
+  champ.type = "text";
+  champ.autocomplete = "off";
+  champ.spellcheck = false;
+  champ.placeholder = "Nom du biais ou du sophisme";
+  const idListe = "suggestions-" + Math.random().toString(36).slice(2, 8);
+  champ.setAttribute("role", "combobox");
+  champ.setAttribute("aria-label", "Nom de la notion");
+  champ.setAttribute("aria-autocomplete", "list");
+  champ.setAttribute("aria-controls", idListe);
+  champ.setAttribute("aria-expanded", "false");
+  const valider = el("button", "bouton", "Valider");
+  valider.dataset.valider = "1";
+  ligne.append(champ, valider);
+  const liste = el("ul", "suggestions");
+  liste.id = idListe;
+  liste.setAttribute("role", "listbox");
+  liste.hidden = true;
+  bloc.append(ligne, liste);
+  carte.appendChild(bloc);
+  let proposees = [], active = -1;
+
+  const montrerSuggestions = () => {
+    proposees = suggestionsFiches(champ.value);
+    active = -1;
+    liste.innerHTML = "";
+    proposees.forEach((r, k) => {
+      const li = el("li", null, r.fiche.nom);
+      li.id = idListe + "-" + k;
+      li.setAttribute("role", "option");
+      li.addEventListener("mousedown", e => { e.preventDefault(); choisir(k); });
+      liste.appendChild(li);
+    });
+    liste.hidden = !proposees.length;
+    champ.setAttribute("aria-expanded", String(!!proposees.length));
+  };
+  const surligner = k => {
+    active = k;
+    [...liste.children].forEach((li, i) => { li.classList.toggle("active", i === k); li.setAttribute("aria-selected", String(i === k)); });
+    if (k >= 0) champ.setAttribute("aria-activedescendant", idListe + "-" + k); else champ.removeAttribute("aria-activedescendant");
+  };
+  const choisir = k => {
+    champ.value = proposees[k].fiche.nom;
+    liste.hidden = true;
+    champ.setAttribute("aria-expanded", "false");
+    champ.focus();
+  };
+  champ.addEventListener("input", montrerSuggestions);
+  champ.addEventListener("keydown", e => {
+    if (liste.hidden || !proposees.length) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      surligner((active + (e.key === "ArrowDown" ? 1 : proposees.length - 1)) % proposees.length);
+    } else if (e.key === "Enter" && active >= 0) {
+      e.preventDefault();
+      e.stopPropagation();   // Entrée choisit la suggestion ; une seconde Entrée valide
+      choisir(active);
+    } else if (e.key === "Escape") {
+      liste.hidden = true;
+      champ.setAttribute("aria-expanded", "false");
+    }
+  });
+  valider.addEventListener("click", () => {
+    if (!champ.value.trim()) { champ.focus(); return; }
+    const reponse = ficheDeReponse(champ.value) || { nom: champ.value.trim() };
+    surReponse(reponse);
+    corriger(reponse);
+  });
+
+  function corriger(reponse) {
+    carte.dataset.repondu = "1";
+    champ.value = reponse.nom;
+    champ.disabled = true;
+    valider.remove();
+    liste.hidden = true;
+    const juste = reponse === q.fiche;
+    carte.style.setProperty("--c", COULEURS[q.fiche.categorie]);
+    const retour = el("div", "retour-quiz");
+    retour.append(
+      el("p", "verdict " + (juste ? "juste" : "faux"), juste ? "Bonne réponse : " + q.fiche.nom + "." : "Réponse attendue : " + q.fiche.nom + "."),
+      el("p", null, q.fiche.definition)
+    );
+    if (!juste) retour.appendChild(el("p", "source", reponse.definition
+      ? "Votre réponse, « " + reponse.nom + " », désigne autre chose : " + reponse.definition
+      : "« " + reponse.nom + " » ne correspond à aucune fiche. Les noms anglais et les autres appellations sont aussi acceptés."));
+    const zoneActions = el("div", "actions");
+    actions(zoneActions);
+    retour.appendChild(zoneActions);
+    carte.appendChild(retour);
+  }
+  if (reponseDejaDonnee) corriger(reponseDejaDonnee);
+}
+
+// ===================== Défi du jour =====================
+// Dix questions de niveau 2 et 3, tirées de plusieurs ateliers, les mêmes pour tout le monde ce jour-là
+// (generateur(aujourdHui())). Une seule tentative par jour, enregistrée dans « defiJour ».
+function questionsDuDefi(jour) {
+  const alea = generateur(jour * 7 + 2026);
+  const difficiles = l => l.filter(x => (x.niveau || 1) >= 2);
+  const statuts = [["authentique", "Authentique"], ["deformee", "Déformée"], ["apocryphe", "Inventée ou mal attribuée"]];
+  const monde = melanger(difficiles(MONDE), alea).slice(0, 3).map(m => ({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }));
+  const vf = melanger(difficiles(VRAI_FAUX), alea).slice(0, 3).map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
+  const citations = melanger(difficiles(CITATIONS), alea).slice(0, 2).map(c => ({ texte: "« " + c.texte + " » — attribuée à " + c.auteur, options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
+  const chrono = melanger(PAIRES_CELEBRES, alea).slice(0, 2).map(p => {
+    const [a, b] = melanger([evenement(p.a), evenement(p.b)], alea);
+    return { texte: "Lequel a eu lieu en premier ?", options: [a.nom, b.nom], juste: momentEvenement(a) < momentEvenement(b) ? 0 : 1, explication: p.note };
+  });
+  return melanger([...monde, ...vf, ...citations, ...chrono], alea);
+}
+
+function carteDefiDuJour() {
+  const jour = aujourdHui();
+  const carte = el("article", "carte defi-jour");
+  carte.style.setProperty("--c", "#a8432e");
+  const date = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  const texteDePartage = score => "Défi Esprit critique du " + date + " : " + score + " / 10. " + location.origin + location.pathname;
+  const memo = lire("defiJour", null);
+
+  const resultat = score => {
+    carte.innerHTML = "";
+    carte.append(el("p", "surtitre", "Défi du jour"), el("p", "grand-score", score + " / 10"),
+      el("p", "source", "Un nouveau défi demain, le même pour tout le monde."));
+    const partager = el("button", "bouton secondaire", "Partager mon résultat");
+    partager.addEventListener("click", async () => {
+      const texte = texteDePartage(score);
+      try {
+        if (navigator.share) { await navigator.share({ text: texte }); return; }
+        await navigator.clipboard.writeText(texte);
+        annoncer("Résultat copié : " + texte);
+      } catch (erreur) {
+        if (erreur && erreur.name === "AbortError") return;
+        annoncer(texte);
+      }
+    });
+    carte.appendChild(partager);
+  };
+
+  if (memo && memo.jour === jour) { resultat(memo.score); return carte; }
+  carte.append(el("p", "surtitre", "Défi du jour"), el("h2", null, "Dix questions difficiles"),
+    el("p", "source", "Monde en chiffres, vrai ou faux, citations et chronologie, aux niveaux 2 et 3. Une seule tentative par jour, et les mêmes questions pour tout le monde."));
+  const commencer = el("button", "bouton", "Relever le défi");
+  commencer.addEventListener("click", () => {
+    const zone = el("div");
+    carte.innerHTML = "";
+    carte.append(el("p", "surtitre", "Défi du jour"), zone);
+    derouler(zone, questionsDuDefi(jour), (q, zone, fini) => {
+      zone.appendChild(el("p", "cas", q.texte));
+      const boutons = q.options.map((texte, k) => {
+        const b = boutonChoix(texte, k);
+        b.addEventListener("click", () => {
+          boutons.forEach(x => { x.disabled = true; });
+          boutons[q.juste].classList.add("juste");
+          if (k !== q.juste) b.classList.add("faux");
+          const retour = el("div", "retour-quiz");
+          retour.append(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? "Juste." : "Réponse : " + q.options[q.juste] + "."), paragraphe(q.explication));
+          zone.appendChild(retour);
+          fini(k === q.juste, retour);
+        });
+        zone.appendChild(b);
+        return b;
+      });
+    }, resultats => {
+      const score = resultats.filter(Boolean).length;
+      ecrire("defiJour", { jour, score });
+      noterActivite();
+      resultat(score);
+      carte.scrollIntoView({ block: "start" });
+    });
+  });
+  carte.appendChild(commencer);
+  return carte;
+}
+
 // ===================== Accueil =====================
 
 function situationDuJour() {
@@ -397,7 +599,8 @@ function afficherAccueil() {
   });
   zone.appendChild(carteJour);
 
-  // Vrai ou faux du jour : une affirmation vérifiée, différente chaque jour
+  // Défi du jour, puis vrai ou faux du jour
+  zone.appendChild(carteDefiDuJour());
   zone.appendChild(carteVraiFauxDuJour());
 
   // Révisions
@@ -763,7 +966,7 @@ function tirerAuHasard() {
 // ===================== Quiz =====================
 
 const TAILLE_SERIE = 10;
-const MODES_QUIZ = [["tout", "Tout"], ["biais", "Biais"], ["sophismes", "Sophismes"], ["reviser", "À réviser"], ["proches", "Notions proches"]];
+const MODES_QUIZ = [["tout", "Tout"], ["biais", "Biais"], ["sophismes", "Sophismes"], ["reviser", "À réviser"], ["proches", "Notions proches"], ["libre", "Réponse libre"]];
 const NIVEAUX_CERTITUDE = [["sur", "Sûr"], ["plutot", "Plutôt sûr"], ["hasard", "Au hasard"]];
 
 // Situations exclues du mode « Notions proches » : elles conviennent aussi à la notion voisine,
@@ -837,7 +1040,7 @@ function nouvelleSerie() {
   } else {
     // Priorité aux notions jamais vues ou mal mémorisées, avec une part de hasard
     choisies = [...INDEX.values()]
-      .filter(r => quiz.mode === "tout" || r.type === quiz.mode)
+      .filter(r => quiz.mode === "tout" || quiz.mode === "libre" || r.type === quiz.mode)
       .map(r => ({ r, poids: (memoire[cleFiche(r.type, r.fiche)] ? memoire[cleFiche(r.type, r.fiche)].b : -1) + Math.random() * 2.5 }))
       .sort((a, b) => a.poids - b.poids)
       .slice(0, TAILLE_SERIE)
@@ -845,6 +1048,8 @@ function nouvelleSerie() {
     choisies = melanger(choisies);
   }
   quiz.serie = choisies.map(r => creerQuestion(r.type, r.fiche));
+  // Réponse libre : la situation seule ; retrouver le nom de mémoire est plus exigeant que le reconnaître
+  if (quiz.mode === "libre") quiz.serie.forEach(q => { q.libre = true; });
   quiz.index = 0;
   quiz.bonnes = 0;
 }
@@ -873,7 +1078,7 @@ function afficherFiltresQuiz() {
   case_.checked = lire("certitudeQuiz", true);
   case_.addEventListener("change", () => ecrire("certitudeQuiz", case_.checked));
   option.append(case_, document.createTextNode(" Indiquer ma certitude"));
-  zone.after(option);
+  if (quiz.mode !== "libre") zone.after(option);   // la réponse libre ne demande pas de certitude
 }
 
 function afficherQuiz() {
@@ -918,7 +1123,7 @@ function afficherQuiz() {
   jauge.style.marginBottom = "14px";
 
   const carte = el("article", "carte");
-  if (!q.reponse) q.certitude = lire("certitudeQuiz", true);
+  if (!q.reponse) q.certitude = !q.libre && lire("certitudeQuiz", true);
   rendreQuestion(carte, q, q.reponse, (option, certitude) => {
     q.reponse = option;
     q.niveau = certitude;
@@ -1220,7 +1425,9 @@ document.addEventListener("keydown", e => {
   const section = document.querySelector("main > section:not([hidden])");
   if (!section) return;
   if (/^[1-4]$/.test(e.key)) {
-    const choix = section.querySelectorAll(".choix:not(:disabled)");
+    // Sur l'accueil, un défi en cours passe avant la situation du jour
+    const portee = section.querySelector(".defi-jour .choix:not(:disabled)") ? section.querySelector(".defi-jour") : section;
+    const choix = portee.querySelectorAll(".choix:not(:disabled)");
     if (choix[Number(e.key) - 1]) { e.preventDefault(); choix[Number(e.key) - 1].click(); }
   } else if (/^[789]$/.test(e.key)) {
     // Certitude au quiz : 7 Sûr, 8 Plutôt sûr, 9 Au hasard (les touches 1 à 4 restent aux réponses)

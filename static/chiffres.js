@@ -486,6 +486,16 @@ const JEUX = [
         const points = resultats.reduce((s, r) => s + r.points, 0);
         afficherScore(zone, "vrai-faux", bonnes, resultats.length);
         zone.appendChild(el("p", "verdict", "Points : " + signe(points)));
+        // Espérance de points quand on croit avoir 70 % de chances, selon la certitude annoncée
+        const esperance = annonce => 0.7 * pointsConfiance(annonce, true) + 0.3 * pointsConfiance(annonce, false);
+        zone.appendChild(calculEnDetail([
+          "Chaque réponse rapporte un nombre de points qui dépend de la certitude p annoncée :",
+          "= juste : 100 × (1 + log₂ p) ; fausse : 100 × (1 + log₂ (1 − p))",
+          "= " + NIVEAUX_CONFIANCE.map(c => c + " % : " + signe(pointsConfiance(c, true)) + " ou " + signe(pointsConfiance(c, false))).join(" ; "),
+          "Ce barème est une règle de score « propre » : on gagne le plus, en moyenne, en annonçant sa vraie probabilité d'avoir raison. Par exemple, si vous pensez avoir 70 % de chances :",
+          "= annoncer 70 % rapporte en moyenne " + signe(Math.round(esperance(70))) + " ; annoncer 90 %, " + signe(Math.round(esperance(90))) + " ; annoncer 99 %, " + signe(Math.round(esperance(99))),
+          "Exagérer sa certitude coûte donc des points, comme la sous-estimer. Votre total de la partie : " + signe(points) + "."
+        ]));
         zone.appendChild(paragraphe("Chaque réponse rapporte d'autant plus de points que vous étiez sûr… et en coûte beaucoup plus si vous vous trompiez : +85 ou −232 points à 90 %, +99 ou −564 à 99 %. Avec ce barème (une « règle de score propre »), on a intérêt à annoncer exactement sa certitude réelle.", "source"));
 
         // Étalonnage de cette partie et étalonnage cumulé

@@ -1063,3 +1063,19 @@ h3.titre-bloc {
 .tableau-niveaux th { font-size: 12.5px; color: var(--discret); font-weight: 600; }
 .tableau-niveaux th:first-child, .tableau-niveaux td:first-child { text-align: left; }
 .tableau-niveaux .bloc { display: block; font-size: 12.5px; }
+
+/* Le calcul, en détail : bloc repliable des bilans */
+.calcul-detail { border: 1px solid var(--trait); border-radius: var(--rayon); padding: 8px 12px; margin: 12px 0; background: var(--carte); }
+.calcul-detail summary { cursor: pointer; font-weight: 600; color: var(--c-texte, var(--accent)); }
+.calcul-detail[open] summary { margin-bottom: 6px; }
+.calcul-detail p { margin: 6px 0; }
+.calcul-detail .formule { font-variant-numeric: tabular-nums; padding: 6px 10px; background: var(--encadre); border-radius: var(--rayon); overflow-wrap: anywhere; }
+
+/* Quiz : réponse libre, avec suggestions */
+.reponse-libre { position: relative; margin: 8px 0 4px; }
+.reponse-libre .ligne { display: flex; gap: 8px; }
+.reponse-libre .champ { flex: 1; min-width: 0; }
+.suggestions { list-style: none; margin: 4px 0 0; padding: 0; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); }
+.suggestions li { padding: 9px 12px; cursor: pointer; border-top: 1px solid var(--trait-doux); }
+.suggestions li:first-child { border-top: 0; }
+.suggestions li.active, .suggestions li:hover { background: var(--accent-doux); }

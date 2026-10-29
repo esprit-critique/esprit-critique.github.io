@@ -308,6 +308,14 @@ JEUX.push(
         constats.appendChild(el("li", null, "Plus longue série : " + plusLongue + ". Une vraie pièce fait une série d'au moins 5 identiques dans " + Math.round(100 * pSerie5) + " % des cas."));
         constats.appendChild(el("li", null, "Piles : " + piles + " sur 50."));
         zone.appendChild(constats);
+        zone.appendChild(calculEnDetail([
+          "Entre deux lancers successifs d'une vraie pièce, la face change avec une probabilité 1/2, indépendamment des autres lancers. Sur 50 lancers, il y a 49 transitions : le nombre de changements suit une loi binomiale.",
+          "= Changements ~ B(49 ; 1/2) : moyenne 49 × 1/2 = 24,5 ; écart-type √(49 × 1/2 × 1/2) = 3,5",
+          "Votre suite en compte " + changements + ". Une vraie pièce en fait " + (changements >= 25 ? "au moins " : "au plus ") + changements + " dans " + frequence(pChangements) + " : la somme des probabilités binomiales correspondantes.",
+          "Pour la plus longue série, on compte les suites de 50 lancers dont aucune série ne dépasse une longueur donnée (par récurrence sur la position et la longueur de la série en cours) :",
+          "= P(plus longue série ≤ 4 sur 50 lancers) = " + fr(Number(probaSeriesAuPlus(N, 4).toFixed(3))) + ", donc P(au moins une série de 5) = " + fr(Number(pSerie5.toFixed(3))),
+          "= P(plus longue série ≤ " + plusLongue + ") = " + fr(Number(pSerie.toFixed(3))) + " : votre plus longue série, " + plusLongue + ", " + (pSerie < 0.2 ? "est plus courte que ce qu'une vraie pièce produit dans plus de 80 % des cas." : "est plausible.")
+        ]));
 
         let verdict;
         if (changements >= 32 || (plusLongue <= 4 && pSerie < 0.2)) verdict = "Votre suite alterne trop : elle évite les longues séries qu'une vraie pièce produit souvent. C'est le défaut le plus répandu.";

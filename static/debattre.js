@@ -755,6 +755,16 @@ EXPERIENCES.push(
           el("li", null, "Sensibilité d′ = " + fr(Number(d.toFixed(2)))));
         zone.appendChild(liste);
         zone.appendChild(paragraphe("Le d′ mesure votre capacité à distinguer les sophismes des répliques recevables, indépendamment de votre tendance à crier au sophisme : 0 correspond au hasard, 1 à une distinction nette, 2 ou plus à une très bonne distinction. Avec douze répliques, la mesure reste approximative.", "source"));
+        const { h, f } = dPrime(detections, sophismes, fausses, recevables);
+        const z = x => fr(Number(x.toFixed(2)));
+        zone.appendChild(calculEnDetail([
+          "Taux de détection H et taux de fausses alertes F, avec une correction de 0,5 qui évite les taux de 0 ou de 1 :",
+          "= H = (détections + 0,5) / (sophismes + 1) = (" + detections + " + 0,5) / (" + sophismes + " + 1) = " + z(h),
+          "= F = (fausses alertes + 0,5) / (recevables + 1) = (" + fausses + " + 0,5) / (" + recevables + " + 1) = " + z(f),
+          "On convertit chaque taux en écart à la moyenne d'une loi normale (Φ⁻¹, la réciproque de sa fonction de répartition), puis on fait la différence :",
+          "= d′ = Φ⁻¹(H) − Φ⁻¹(F) = " + z(phiInverse(h)) + " − (" + z(phiInverse(f)) + ") = " + z(d),
+          "Répondre « sophisme » à tout ferait monter H, mais aussi F : le d′ ne bougerait guère. Seule une meilleure distinction le fait monter."
+        ]));
         ajouterExplication(zone, "Repérer sans tout soupçonner", [
           "On peut apprendre à reconnaître des techniques de manipulation : après de courtes vidéos présentant cinq d'entre elles (langage émotionnel, incohérence, faux dilemme, bouc émissaire, attaque personnelle), des participants les repéraient mieux, avec des effets de 0,28 à 0,68 écart-type en laboratoire, et d'environ 5 % lors d'un essai sur YouTube (Roozenbeek et al., Science Advances, 2022).",
           "Mais un entraînement peut aussi rendre méfiant envers tout. En réanalysant deux jeux de ce type avec les outils de la détection du signal, Modirrousta-Galian et Higham (2023) concluent qu'ils font surtout répondre « faux » plus souvent, sans mieux distinguer le vrai du faux ; ce résultat est discuté. D'où le décompte séparé des fausses alertes, et le d′, qui en tient compte.",

@@ -62,6 +62,15 @@ function ajouterExplication(zone, titre, paragraphes, liens) {
   return bloc;
 }
 
+// Bloc repliable « Le calcul, en détail », fermé par défaut. Les lignes qui commencent par « = » sont des
+// formules, affichées à part (sans ce premier « = »).
+function calculEnDetail(lignes, titre) {
+  const d = el("details", "calcul-detail");
+  d.appendChild(el("summary", null, titre || "Le calcul, en détail"));
+  lignes.forEach(l => d.appendChild(l.startsWith("=") ? el("p", "formule", l.slice(1).trim()) : paragraphe(l)));
+  return d;
+}
+
 // En-tête d'une question : « Question 3 / 10 » et jauge d'avancement
 // « niveau » (facultatif) : niveau de la question, affiché discrètement
 function entete(zone, numero, total, libelle, niveau) {
@@ -101,7 +110,11 @@ function boutonSuivant(texte, action) {
   const b = el("button", "bouton", texte);
   b.dataset.suivant = "1";
   b.style.marginTop = "12px";
-  b.addEventListener("click", () => { action(); remonter(); });
+  b.addEventListener("click", () => {
+    const carte = b.closest("article.carte");   // la carte qui contient la partie (plusieurs cartes sur l'accueil)
+    action();
+    remonter(carte);
+  });
   return b;
 }
 
@@ -138,8 +151,8 @@ function curseurAvecBoutons(curseur, pas) {
 // de l'ordinateur. Le défilement est immédiat : il interrompt un défilement doux encore en cours (celui de
 // montrer()), qui sinon emmènerait la page plus bas et cacherait l'énoncé. Refait à l'image suivante,
 // une fois la nouvelle question mise en page.
-function remonter() {
-  const carte = document.querySelector("main > section:not([hidden]) article.carte");
+function remonter(cible) {
+  const carte = cible && cible.isConnected ? cible : document.querySelector("main > section:not([hidden]) article.carte");
   if (!carte) return;
   const aligner = () => {
     const entete = document.querySelector(".entete");
