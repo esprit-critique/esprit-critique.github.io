@@ -173,6 +173,71 @@ function noterPartieEntiere(id, niveau, justes) {
   suivrePartie(id, justes.filter(Boolean).length, justes.length);
 }
 
+// ===================== Mode chrono =====================
+// 60 secondes pour répondre au plus grand nombre de questions : +1 par bonne réponse, −2 par erreur, pour décourager
+// les réponses au hasard. Record séparé (clé « chrono »). Si l'appareil demande de réduire les animations, pas de
+// jauge qui défile : le temps restant s'affiche seulement en texte.
+// options : { cle, titre, tirer() → { texte, options, juste, explication }, relancer() }
+function partieChrono(zone, options) {
+  zone.innerHTML = "";
+  const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let score = 0, bonnes = 0, erreurs = 0, reste = 60, termine = false;
+  const temps = el("p", "chrono-temps"), points = el("p", "chrono-points");
+  const tete = el("div", "chrono-tete");
+  tete.append(temps, points);
+  const jauge = reduit ? null : el("div", "jauge chrono-jauge");
+  if (jauge) jauge.appendChild(el("div"));
+  const verdict = el("p", "chrono-verdict");
+  verdict.setAttribute("aria-live", "polite");
+  const zoneQ = el("div");
+  zone.append(el("p", "consigne", options.titre + " : 60 secondes"), tete);
+  if (jauge) zone.appendChild(jauge);
+  zone.append(verdict, zoneQ);
+  const maj = () => {
+    temps.textContent = "Reste : " + reste + " s";
+    points.textContent = typo(signe(score) + " points");
+    if (jauge) jauge.firstChild.style.width = (100 * reste / 60) + "%";
+  };
+  const question = () => {
+    zoneQ.innerHTML = "";
+    const q = options.tirer();
+    zoneQ.appendChild(el("p", "cas", q.texte));
+    q.options.forEach((o, k) => {
+      const b = boutonChoix(o, k);
+      b.addEventListener("click", () => {
+        if (termine) return;
+        if (k === q.juste) { score++; bonnes++; verdict.textContent = "Juste."; verdict.className = "chrono-verdict juste-texte"; }
+        else { score -= 2; erreurs++; verdict.textContent = typo("Erreur : c'était « " + q.options[q.juste] + " »."); verdict.className = "chrono-verdict faux-texte"; }
+        maj();
+        question();
+      });
+      zoneQ.appendChild(b);
+    });
+  };
+  const fin = () => {
+    termine = true;
+    clearInterval(minuteur);
+    const records = lire("chrono", {});
+    const ancien = records[options.cle];
+    const nouveau = ancien === undefined || score > ancien;
+    if (nouveau) { records[options.cle] = score; ecrire("chrono", records); }
+    noterActivite();
+    zone.innerHTML = "";
+    zone.append(el("p", "consigne", "Temps écoulé"), el("p", "grand-score", typo(signe(score) + " points")),
+      paragraphe(pluriel(bonnes, "bonne réponse", "bonnes réponses") + ", " + pluriel(erreurs, "erreur") + " (chaque erreur retire 2 points)."),
+      el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", ancien === undefined ? "Premier record enregistré." : nouveau ? "Nouveau record ! L'ancien était de " + signe(ancien) + " points." : "Votre record : " + signe(ancien) + " points."));
+    boutonRejouer(zone, options.relancer, "Revenir à l'atelier");
+  };
+  const minuteur = setInterval(() => {
+    if (!zone.isConnected || !zoneQ.isConnected) { clearInterval(minuteur); return; }
+    reste--;
+    maj();
+    if (reste <= 0) fin();
+  }, 1000);
+  maj();
+  question();
+}
+
 // ===================== Classements (niveau 3) =====================
 // Éléments à mettre dans l'ordre avec des boutons ↑ et ↓, utilisables au doigt et au clavier.
 // libelle(e) donne le texte d'un élément ; surValidation(ordre) reçoit l'ordre choisi.

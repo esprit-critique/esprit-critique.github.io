@@ -35,6 +35,12 @@ pour l'utiliser comme une application.
   choisir son niveau. Records par niveau, et tableau des niveaux dans le portrait.
   Au niveau 3 : classer quatre pays, villes ou événements (score par paires), deux fourchettes à 50 et 90 %
   avec un score de fourchette, et des estimations par la méthode de Fermi.
+  Au niveau 3 encore : corrélations avec valeurs extrêmes, hasard plus difficile à repérer, nuages de points denses,
+  graphiques à deux pièges, règle cachée plus fine avec 8 essais, deux tests de dépistage successifs, débats où
+  certaines répliques contiennent deux sophismes, et prémisse cachée à trouver avant de réparer un argument.
+- **Pour aller plus loin**, après le bilan : Monty Hall avec un présentateur distrait, variantes du paradoxe des
+  anniversaires, problème THOG. **Modes chrono** (60 secondes) pour le quiz et le débat truqué ; cartes contrainte
+  pour le débat à deux.
 - **Un guide** : méthode pour examiner une affirmation, débattre honnêtement, outils philosophiques, lexique.
 
 ## Principes

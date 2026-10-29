@@ -432,3 +432,25 @@ Niveaux : 1, citations dont l'attribution est très connue ou très discutée ; 
 - `hume-passions` [authentique] David Hume : « La raison est, et ne doit être, que l'esclave des passions. »
 - `pasteur-hasard` [authentique] Louis Pasteur : « Le hasard ne favorise que les esprits préparés. »
 
+
+
+## Débat truqué : niveaux des débats (lot P5)
+
+Niveau 1, sophismes nets : trottinettes, cantine, teletravail, vacances. Niveau 2, sophismes plus discrets :
+barbecues, football, bibliotheque, marche. Niveau 3, deux débats nouveaux (`static/debattre.js`) :
+
+- « Des caméras dans le parc » : répliques recevables qui semblent fautives (conflit d'intérêts signalé sans conclure,
+  étude comparative, objection brutale mais sur le fond, conséquence justifiée pas à pas) ; deux sophismes à la fois
+  (popularité + tradition ; faux dilemme + pente glissante ; appel à l'ignorance + attaque personnelle) ; toi aussi ;
+  fausse analogie.
+- « Fermer la rue de l'école aux heures d'entrée » : sophisme du sophisme ; expertise pertinente (infirmière) ;
+  généralisation hâtive + tradition ; fausse équivalence + pente glissante ; reconnaissance d'un intérêt légitime
+  (recevable) ; nirvana ; attaque personnelle + homme de paille.
+
+Chaque réplique est justifiée dans son champ `pourquoi`. Au niveau 3, le sophisme se nomme parmi tous ceux de sa
+catégorie (ou des deux catégories pour une réplique double).
+
+## Réparer l'argument : prémisses cachées (niveau 3)
+
+21 exercices ont une prémisse cachée à trouver parmi quatre (`PREMISSES` dans `static/debattre.js`) : la première est
+celle dont dépend l'argument, les trois autres sont vraies ou plausibles mais inutiles au raisonnement.

@@ -1090,3 +1090,15 @@ h3.titre-bloc {
 .ligne-fermi { align-items: center; margin: 6px 0; }
 .facteur-fermi { flex: 1; min-width: 0; font-size: 15px; }
 .ligne-fermi .champ { width: 8em; flex: none; }
+
+/* Mode chrono */
+.chrono-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.chrono-temps, .chrono-points { font-family: var(--titre); font-size: 22px; font-weight: 700; margin: 4px 0; font-variant-numeric: tabular-nums; }
+.chrono-jauge { margin: 4px 0 8px; }
+.chrono-jauge > div { transition: width 1s linear; }
+.chrono-verdict { min-height: 1.5em; margin: 4px 0; font-weight: 600; }
+
+/* Débat à deux : carte contrainte */
+.carte-contrainte { border: 1px dashed var(--c-fort, var(--accent)); border-radius: var(--rayon); padding: 8px 12px; margin: 8px 0; font-weight: 600; }
+/* Bouton présenté comme un lien (mode chrono) */
+.lien-bouton { background: none; border: 0; padding: 4px 0; margin: 0 0 8px; color: var(--c-texte, var(--accent)); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }

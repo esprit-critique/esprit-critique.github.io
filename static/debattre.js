@@ -267,6 +267,8 @@ const DEBATS = [
 //   concl  : change de conclusion pour échapper au défaut
 // Situations fictives.
 
+const NIVEAU_1_REPARATIONS = ["ad-hominem", "tu-quoque", "popularite", "tradition", "nature", "emotion", "ad-baculum", "homme-de-paille", "faux-dilemme", "generalisation-hative",
+  "post-hoc", "pente-glissante", "autorite", "nirvana", "vrai-ecossais", "composition", "ignorance", "cherry-picking", "hareng-rouge", "brandolini"];
 const REPARATIONS = [
   { s: "ad-hominem", arg: "Ne suis pas son projet de budget pour le club : il a raté son bac.",
     rep: ["Ne suis pas son projet de budget : il oublie l'assurance des locaux, 900 € par an, et il est donc en déficit.", "La critique porte sur le contenu du budget, ce qui peut réellement le mettre en défaut."],
@@ -606,6 +608,128 @@ const SUJETS_DEBAT = [
   ["Faut-il donner de l'argent de poche aux enfants ?", "Oui, chaque semaine", "Non, au cas par cas"]
 ];
 
+// ===================== Niveau 3 du débat truqué =====================
+// Répliques qui semblent fautives mais ne le sont pas, répliques à deux sophismes (sophisme: [a, b]),
+// et choix du sophisme parmi toute sa catégorie. Débats fictifs.
+DEBATS.push(
+  {
+    id: "cameras", niveau: 3,
+    titre: "Des caméras dans le parc",
+    contexte: "Conseil de quartier. Faut-il installer des caméras dans le parc, après plusieurs vols de vélos ? Mme Ferrand et M. Lenoir sont pour, Mme Vidal et M. Aubry sont contre.",
+    repliques: [
+      { qui: "Mme Vidal", texte: "Le commissariat m'a transmis ses chiffres : trois vols de vélos en un mois près du kiosque, contre un seul sur toute l'année dernière.", sophisme: null,
+        pourquoi: "Des chiffres précis, avec leur source et un point de comparaison." },
+      { qui: "M. Aubry", texte: "Le principal défenseur des caméras, M. Lenoir, vend justement des systèmes de vidéosurveillance. Quand il nous parle de leur efficacité, prenons son avis avec prudence, et demandons des chiffres indépendants.", sophisme: null,
+        pourquoi: "Ce n'est pas une attaque personnelle : signaler un conflit d'intérêts est pertinent quand on évalue la fiabilité d'un témoignage. Il ne conclut pas que M. Lenoir a tort ; il demande d'autres sources." },
+      { qui: "M. Lenoir", texte: "Tout le monde dans ce quartier réclame des caméras, et on en a toujours installé dans les gares : il faut donc en mettre au parc.", sophisme: ["popularite", "tradition"],
+        pourquoi: "Deux appels illégitimes : le nombre de partisans (popularité) et une habitude prise ailleurs (tradition) ne disent rien de l'efficacité des caméras dans ce parc." },
+      { qui: "Mme Vidal", texte: "Le rapport commandé par la mairie a comparé vingt parcs équipés de caméras à vingt parcs comparables sans caméras : les vols de vélos n'y diffèrent pas nettement.", sophisme: null,
+        pourquoi: "S'appuyer sur une étude comparative n'est pas un argument d'autorité : c'est une donnée, dont on peut discuter la méthode." },
+      { qui: "M. Lenoir", texte: "Vous racontez n'importe quoi : ce rapport porte sur des parcs du centre-ville, pas sur des parcs de quartier comme le nôtre.", sophisme: null,
+        pourquoi: "La forme est brutale, mais l'objection porte sur le fond : les parcs étudiés sont-ils comparables au nôtre ? Le ton n'est pas l'argument." },
+      { qui: "Mme Ferrand", texte: "Soit on installe des caméras, soit on abandonne le parc aux voleurs ; et si on cède sur le parc, ce sera bientôt toute la ville.", sophisme: ["faux-dilemme", "pente-glissante"],
+        pourquoi: "Elle réduit le choix à deux options alors qu'il en existe d'autres (éclairage, arceaux solides, surveillance) : faux dilemme. Puis elle annonce une suite de conséquences sans justifier aucune étape : pente glissante." },
+      { qui: "M. Aubry", texte: "Le budget prévoit d'éteindre l'éclairage du parc la nuit. D'après leur notice, les caméras proposées ne filment pas dans le noir : la nuit, elles ne serviraient à rien.", sophisme: null,
+        pourquoi: "Ce n'est pas une pente glissante : chaque étape est justifiée (le budget, la notice) et la conséquence est directe." },
+      { qui: "Mme Ferrand", texte: "Personne n'a jamais prouvé que les caméras ne servent à rien. Et le chercheur qui a dirigé ce rapport n'habite même pas notre ville.", sophisme: ["ignorance", "ad-hominem"],
+        pourquoi: "L'absence de preuve contraire est prise pour une preuve (appel à l'ignorance) ; puis elle s'en prend à l'auteur du rapport, dont le domicile ne dit rien de la valeur de son étude (attaque personnelle)." },
+      { qui: "Mme Vidal", texte: "Les arceaux à vélos du parc sont si mal fixés qu'on peut les dévisser à la main : je l'ai vérifié hier avec le gardien.", sophisme: null,
+        pourquoi: "Un constat vérifié sur place, qui suggère une cause simple des vols." },
+      { qui: "M. Lenoir", texte: "Vous réclamez le respect du parc, vous qui avez garé votre voiture sur la pelouse la semaine dernière ? Votre avis ne compte pas.", sophisme: "tu-quoque",
+        pourquoi: "Il rejette l'avis de Mme Vidal en pointant l'écart entre ce qu'elle défend et ce qu'elle a fait, sans répondre à ses arguments." },
+      { qui: "Mme Ferrand", texte: "Une caméra, c'est comme un gardien qui ne dort jamais : avec elle, plus personne n'osera voler.", sophisme: "fausse-analogie",
+        pourquoi: "Une caméra n'intervient pas : elle enregistre. La ressemblance avec un gardien ne porte pas sur ce qui compte pour empêcher un vol." },
+      { qui: "M. Aubry", texte: "Je propose de commencer par des arceaux solides et un meilleur éclairage, puis de compter les vols pendant six mois avant de décider des caméras.", sophisme: null,
+        pourquoi: "Une proposition mesurable, qui commence par la cause la plus probable." }
+    ]
+  },
+  {
+    id: "rue-scolaire", niveau: 3,
+    titre: "Fermer la rue de l'école aux heures d'entrée",
+    contexte: "Réunion de quartier. Faut-il fermer la rue de l'école aux voitures un quart d'heure à l'entrée et à la sortie des classes ? Mme Moreau dirige l'école, Sarah est mère d'élève, M. Petit est commerçant, M. Garcia habite la rue.",
+    repliques: [
+      { qui: "Mme Moreau", texte: "Entre 8 h 20 et 8 h 35, nous comptons chaque matin une soixantaine de voitures devant l'école. Deux enfants ont été frôlés ce trimestre, d'après le registre de l'école.", sophisme: null,
+        pourquoi: "Des faits précis, avec leur source : le registre de l'école." },
+      { qui: "M. Petit", texte: "Parler d'enfants frôlés, c'est un appel à l'émotion, fait pour nous effrayer. Votre argument est fallacieux : la rue n'est donc pas dangereuse.", sophisme: "sophisme-sophisme",
+        pourquoi: "Il conclut que la rue n'est pas dangereuse parce que l'argument adverse serait fallacieux. Or même un argument mal construit peut défendre une conclusion vraie ; et celui-ci s'appuie sur un registre, pas sur l'émotion." },
+      { qui: "Sarah", texte: "Je suis infirmière aux urgences pédiatriques. Dans mon service, les enfants renversés par une voiture ont souvent été touchés à la tête, parce qu'ils sont à la hauteur du capot. Ralentir les voitures devant l'école en réduirait la gravité.", sophisme: null,
+        pourquoi: "Ce n'est pas un argument d'autorité fautif : son expérience porte exactement sur le sujet, et elle donne la raison de ce qu'elle avance." },
+      { qui: "M. Garcia", texte: "Si on ferme la rue, je ne pourrai plus sortir ma voiture du garage entre 8 h 20 et 8 h 35. Il faudra prévoir une dérogation pour les riverains.", sophisme: null,
+        pourquoi: "Une conséquence directe et réelle de la mesure, et une solution : rien de fallacieux." },
+      { qui: "M. Petit", texte: "Deux de mes clients m'ont dit qu'ils ne viendraient plus : tous les commerçants du quartier vont faire faillite. D'ailleurs, il y a toujours eu des voitures devant les écoles.", sophisme: ["generalisation-hative", "tradition"],
+        pourquoi: "Deux clients ne permettent pas de conclure sur tous les commerces (généralisation hâtive) ; et l'ancienneté d'une habitude ne la justifie pas (appel à la tradition)." },
+      { qui: "Mme Moreau", texte: "La boulangerie voisine de l'école de la rue Haute, fermée aux voitures depuis deux ans, a gardé son chiffre d'affaires, d'après sa gérante.", sophisme: null,
+        pourquoi: "Un contre-exemple précis, dont elle donne la source ; il ne prouve pas tout, mais il répond à l'objection." },
+      { qui: "M. Garcia", texte: "Fermer une rue le matin, c'est comme interdire les voitures dans toute la ville. Et demain, on ne pourra plus circuler nulle part.", sophisme: ["fausse-equivalence", "pente-glissante"],
+        pourquoi: "Un quart d'heure dans une rue n'équivaut pas à une interdiction générale (fausse équivalence) ; et rien ne justifie la suite annoncée (pente glissante)." },
+      { qui: "Sarah", texte: "Vous habitez la rue et vous sortez votre voiture le matin : c'est normal que la fermeture vous inquiète, et votre demande de dérogation est raisonnable.", sophisme: null,
+        pourquoi: "Parler de la situation de M. Garcia n'est pas ici une attaque : elle reconnaît que son intérêt est légitime, et elle discute sa proposition." },
+      { qui: "M. Petit", texte: "La fermeture ne supprimera pas tous les dangers : des parents se gareront mal un peu plus loin. Elle ne sert donc à rien.", sophisme: "nirvana",
+        pourquoi: "Il rejette une amélioration parce qu'elle n'est pas parfaite." },
+      { qui: "Mme Moreau", texte: "C'est vrai, elle ne supprimera pas tout. Les villes qui ont fermé leurs rues scolaires ont compté les voitures avant et après : je peux demander ces comptages.", sophisme: null,
+        pourquoi: "Elle reconnaît la limite de la mesure et propose de vérifier son effet : une démarche honnête." },
+      { qui: "M. Garcia", texte: "Ceux qui veulent fermer la rue sont les mêmes qui voulaient supprimer le feu d'artifice l'an dernier : des gens qui veulent tout interdire.", sophisme: ["ad-hominem", "homme-de-paille"],
+        pourquoi: "Il s'en prend aux personnes et à leurs positions passées au lieu de la proposition (attaque personnelle), et la caricature : fermer une rue un quart d'heure n'est pas « tout interdire » (homme de paille)." },
+      { qui: "Sarah", texte: "Proposons un essai d'un trimestre, avec des dérogations pour les riverains, et comptons les voitures et les clients de M. Petit avant et pendant l'essai.", sophisme: null,
+        pourquoi: "Un essai mesurable, qui tient compte des objections." }
+    ]
+  }
+);
+// Niveaux des débats : 1, sophismes nets ; 2, sophismes plus discrets ; 3, les deux débats ci-dessus
+["trottinettes", "cantine", "teletravail", "vacances"].forEach(id => { DEBATS.find(d => d.id === id).niveau = 1; });
+["barbecues", "football", "bibliotheque", "marche"].forEach(id => { DEBATS.find(d => d.id === id).niveau = 2; });
+
+// ===================== Réparer l'argument : prémisse cachée (niveau 3) =====================
+// La première proposition est la prémisse dont dépend l'argument ; les autres sont vraies ou plausibles,
+// mais l'argument n'en a pas besoin.
+const PREMISSES = {
+  "ad-hominem": ["Quelqu'un qui a raté son bac ne peut pas faire un budget juste.", "Le budget du club est en déficit.", "Le bac est obligatoire pour être trésorier.", "Un budget doit être voté par le bureau."],
+  "tu-quoque": ["Un conseil ne vaut que si celui qui le donne l'applique lui-même.", "Les téléphones nuisent à la conversation.", "Passer ses soirées sur son téléphone fatigue les yeux.", "Les repas en famille sont importants."],
+  "autorite": ["Un champion de tennis sait si un matelas soigne le mal de dos.", "Le mal de dos est fréquent.", "Les matelas fermes sont les meilleurs.", "Les sportifs dorment beaucoup."],
+  "popularite": ["Un produit très vendu est forcément efficace.", "Les rides apparaissent avec l'âge.", "Cette crème est vendue en pharmacie.", "Les crèmes chères sont les meilleures."],
+  "tradition": ["Ce qu'on a toujours fait est la meilleure façon de faire.", "Les réunions du lundi sont utiles.", "8 heures est une heure matinale.", "L'équipe préfère se réunir le matin."],
+  "nature": ["Ce qui est naturel est sans danger.", "Les enfants aiment les sirops sucrés.", "Ce sirop est vendu sans ordonnance.", "Les plantes poussent sans engrais."],
+  "emotion": ["Ce qui fait peur justifie à lui seul un achat.", "Les détecteurs de fumée sont chers.", "Les incendies sont plus fréquents l'hiver.", "Les enfants dorment dans leur chambre."],
+  "genetique": ["Une idée inventée pour de mauvaises raisons est forcément mauvaise.", "Les patrons cherchent la publicité.", "Les salariés aiment les week-ends longs.", "La semaine de quatre jours existe dans plusieurs pays."],
+  "homme-de-paille": ["Limiter les écrans à une heure revient à priver les enfants de toute technologie.", "Les enfants passent beaucoup de temps sur les écrans.", "La technologie est utile aujourd'hui.", "Une heure par jour suffit pour les devoirs."],
+  "faux-dilemme": ["Il n'existe aucune autre façon de partir en vacances qu'avec une voiture neuve.", "Les voitures neuves sont chères.", "Les vacances font du bien.", "Notre voiture actuelle consomme beaucoup."],
+  "juste-milieu": ["La vraie valeur se trouve toujours à mi-chemin entre deux estimations.", "Les prix de l'immobilier varient selon les quartiers.", "L'acheteur connaît bien le quartier.", "La maison a un grand jardin."],
+  "fausse-analogie": ["Ce qui vaut pour l'entretien d'une machine vaut aussi pour un être humain.", "Les machines doivent être entretenues.", "Les employés aiment leur travail.", "La productivité se mesure en heures."],
+  "nirvana": ["Une protection qui n'est pas parfaite ne sert à rien.", "Les accidents de vélo arrivent surtout en ville.", "Les casques sont parfois inconfortables.", "Les cyclistes roulent de plus en plus."],
+  "post-hoc": ["Ce qui précède un événement en est la cause.", "Changer de coiffeur coûte cher.", "Les recruteurs reçoivent beaucoup de candidatures.", "L'emploi était très demandé."],
+  "correlation": ["Si deux choses varient ensemble, l'une cause l'autre.", "Les lycéens se couchent tard.", "Les notes sont données sur 20.", "Le sommeil est important pour la santé."],
+  "pente-glissante": ["Autoriser une chose conduit forcément à autoriser des choses de plus en plus extrêmes.", "Les chevaux sont plus grands que les chiens.", "Les chiens aiment courir.", "Le parc a une grande pelouse."],
+  "generalisation-hative": ["Deux cas suffisent pour juger tous les stagiaires.", "Les stagiaires sont souvent jeunes.", "Arriver à l'heure est apprécié.", "Les stagiaires changent chaque année."],
+  "composition": ["Si chaque ingrédient est délicieux, le mélange l'est aussi.", "Les gâteaux maison sont appréciés.", "Le chocolat se marie bien avec la vanille.", "La recette est facile."],
+  "ignorance": ["Ce qui n'a pas été prouvé faux est vrai.", "Les compléments alimentaires se vendent en pharmacie.", "Les essais cliniques prennent du temps.", "Ce complément contient des vitamines."],
+  "cherry-picking": ["Les trois meilleurs numéros représentent bien l'ensemble.", "Les abonnés lisent surtout le titre.", "Une newsletter paraît chaque semaine.", "Les abonnés ouvrent tous les numéros."],
+  "cause-unique": ["Un phénomène complexe n'a qu'une seule cause.", "Les élèves ont souvent un téléphone.", "Les élèves lisent moins de livres qu'avant.", "Les tests de lecture changent d'une année à l'autre."]
+};
+
+// ===================== Le débat à deux : cartes contrainte =====================
+const CARTES_CONTRAINTE = [
+  "Concédez un point avant de répondre.",
+  "Trois phrases au plus.",
+  "Appuyez-vous sur un chiffre que vous pouvez sourcer.",
+  "Répondez à l'argument le plus fort de l'autre, pas au plus faible.",
+  "Commencez par poser une question à l'autre.",
+  "Donnez un exemple concret.",
+  "Citez une objection à votre propre position, puis répondez-y.",
+  "Aucun adjectif péjoratif.",
+  "Dites ce qui vous ferait changer d'avis.",
+  "Reformulez d'abord ce que l'autre vient de dire.",
+  "Parlez des conséquences pour une personne précise.",
+  "Comparez avec une autre situation, en précisant en quoi elle diffère.",
+  "Employez « parce que » au moins deux fois.",
+  "Distinguez ce que vous savez de ce que vous supposez.",
+  "Proposez un compromis possible.",
+  "Un seul argument, mais développé.",
+  "Nommez la valeur qui guide votre position : liberté, sécurité, égalité…",
+  "Indiquez votre degré de certitude, en pourcentage.",
+  "Évitez les mots « toujours » et « jamais ».",
+  "Terminez par un point d'accord avec l'autre."
+];
+
 // ===================== Outils =====================
 
 // Section « Débattre », après « Raisonner », et son pictogramme : deux bulles de dialogue
@@ -630,6 +754,10 @@ function optionsSophisme(id) {
 
 // Lien vers la fiche d'un sophisme
 const lienSophisme = id => lienVers("#sophismes/" + id, ficheSophisme(id).nom);
+
+// Sophismes d'une réplique, toujours sous forme de liste (une réplique de niveau 3 peut en contenir deux)
+const sophismesDe = r => !r.sophisme ? [] : Array.isArray(r.sophisme) ? r.sophisme : [r.sophisme];
+const nomsSophismes = ids => ids.map(id => ficheSophisme(id).nom).join(" et ");
 
 // Réciproque de la fonction de répartition de la loi normale centrée réduite (Φ⁻¹),
 // par l'approximation rationnelle de Peter Acklam (erreur relative inférieure à 1,15 × 10⁻⁹) :
@@ -672,9 +800,57 @@ function corrigerReplique(retour, r, verdict, juste) {
   retour.appendChild(paragraphe(r.pourquoi));
   if (r.sophisme) {
     const l = el("div", "voir-aussi");
-    l.appendChild(lienSophisme(r.sophisme));
+    sophismesDe(r).forEach(id => l.appendChild(lienSophisme(id)));
     retour.appendChild(l);
   }
+}
+
+// Niveau 3 : nommer le ou les sophismes parmi tous ceux de leur catégorie (choix multiple si deux sophismes)
+function nommerParmiCategories(zone, attendus, conclure) {
+  const categories = [...new Set(attendus.map(id => ficheSophisme(id).categorie))];
+  const candidats = SOPHISMES.filter(f => categories.includes(f.categorie));
+  zone.appendChild(el("p", "consigne", attendus.length > 1 ? "Cette réplique en contient deux : lesquels ?" : "Lequel ? (catégorie « " + categories[0] + " »)"));
+  const choisis = new Set();
+  const valider = el("button", "bouton large", "Valider");
+  valider.dataset.valider = "1";
+  valider.disabled = true;
+  const boutons = candidats.map((f, k) => {
+    const b = boutonChoix(f.nom, k);
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => {
+      if (choisis.has(f.id)) choisis.delete(f.id);
+      else if (choisis.size < attendus.length) choisis.add(f.id);
+      else if (attendus.length === 1) { choisis.clear(); choisis.add(f.id); }
+      boutons.forEach((x, j) => { const pris = choisis.has(candidats[j].id); x.classList.toggle("choisi", pris); x.setAttribute("aria-pressed", String(pris)); });
+      valider.disabled = choisis.size !== attendus.length;
+    });
+    zone.appendChild(b);
+    return b;
+  });
+  zone.appendChild(valider);
+  valider.addEventListener("click", () => {
+    valider.remove();
+    boutons.forEach((b, j) => {
+      b.disabled = true;
+      b.classList.remove("choisi");
+      if (attendus.includes(candidats[j].id)) b.classList.add("juste");
+      else if (choisis.has(candidats[j].id)) b.classList.add("faux");
+    });
+    const nomme = attendus.every(id => choisis.has(id));
+    conclure(nomme, nomme ? "Juste : " + nomsSophismes(attendus) + "." : "Sophisme repéré, mais il s'agit de : " + nomsSophismes(attendus) + ".");
+  });
+}
+
+// Mode chrono du débat truqué : des répliques de tous les débats, « recevable » ou « sophisme »
+function chronoDebat(zone, relancer) {
+  const toutes = DEBATS.flatMap(d => d.repliques);
+  partieChrono(zone, {
+    cle: "debat", titre: "Le débat truqué, en chrono", relancer,
+    tirer: () => {
+      const r = toutes[Math.floor(Math.random() * toutes.length)];
+      return { texte: r.qui + " : « " + r.texte + " »", options: ["Recevable", "Sophisme"], juste: r.sophisme ? 1 : 0, explication: r.pourquoi };
+    }
+  });
 }
 
 // ===================== Ateliers =====================
@@ -690,10 +866,19 @@ EXPERIENCES.push(
     titre: "Le débat truqué",
     resume: "Un débat fictif, réplique par réplique : recevable ou sophisme ? Et lequel ? Attention aux fausses alertes : un ton vif ou une autorité compétente ne font pas un sophisme. " + DEBATS.length + " débats.",
     lancer(zone) {
-      const debat = tirerNouveaux("debats", DEBATS, 1)[0];
+      // Le débat est tiré au niveau du joueur ; le niveau s'ajuste d'une partie à l'autre
+      const niveau = niveauAtelier("debat-truque").niveau;
+      const debat = tirerSelonNiveau("debats", DEBATS, 1, niveau)[0];
+      const relancer = () => EXPERIENCES.find(e => e.id === "debat-truque").lancer(zone);
       zone.innerHTML = "";
       derouler(zone, debat.repliques, (r, zone, fini) => {
-        zone.appendChild(el("p", "consigne", debat.titre));
+        if (r === debat.repliques[0]) {
+          zone.insertBefore(choixNiveau("debat-truque", relancer), zone.firstChild);
+          const chrono = el("button", "lien-bouton", "Mode chrono : 60 secondes");
+          chrono.addEventListener("click", () => chronoDebat(zone, relancer));
+          zone.insertBefore(chrono, zone.children[1]);
+        }
+        zone.appendChild(el("p", "consigne", debat.titre + " · niveau " + debat.niveau));
         zone.appendChild(paragraphe(debat.contexte, "source"));
         // Les deux répliques précédentes, pour suivre l'échange
         const k = debat.repliques.indexOf(r);
@@ -712,7 +897,7 @@ EXPERIENCES.push(
           choix[0].classList.add(r.sophisme ? "faux" : "juste");
           if (r.sophisme) choix[1].classList.add("juste");
           terminer({ sophisme: !!r.sophisme, alerte: false, nomme: false },
-            r.sophisme ? "Sophisme manqué : " + ficheSophisme(r.sophisme).nom + "." : "Juste : réplique recevable.", !r.sophisme);
+            r.sophisme ? "Sophisme manqué : " + nomsSophismes(sophismesDe(r)) + "." : "Juste : réplique recevable.", !r.sophisme);
         });
         choix[1].addEventListener("click", () => {
           choix.forEach(b => { b.disabled = true; });
@@ -723,6 +908,9 @@ EXPERIENCES.push(
             return;
           }
           choix[1].classList.add("juste");
+          const attendus = sophismesDe(r);
+          // Niveau 3 : choisir parmi tous les sophismes de la catégorie (ou des catégories) concernée(s)
+          if (debat.niveau === 3) return nommerParmiCategories(zone, attendus, (nomme, verdict) => terminer({ sophisme: true, alerte: true, nomme }, verdict, nomme));
           zone.appendChild(el("p", "consigne", "Lequel ?"));
           const options = optionsSophisme(r.sophisme);
           const boutons = options.map((o, i) => {
@@ -745,6 +933,7 @@ EXPERIENCES.push(
         const fausses = resultats.filter(x => !x.sophisme && x.alerte).length;
         const justes = resultats.filter(x => x.sophisme === x.alerte).length;
         const { d } = dPrime(detections, sophismes, fausses, recevables);
+        noterPartieEntiere("debat-truque", niveau, resultats.map(x => x.sophisme === x.alerte));
         const historique = lire("debats", []);
         historique.push({ j: aujourdHui(), d: Number(d.toFixed(2)), det: detections, s: sophismes, fa: fausses, r: recevables });
         ecrire("debats", historique.slice(-30));
@@ -790,9 +979,20 @@ EXPERIENCES.push(
         acc: "Simple accusation",
         concl: "Changement de conclusion"
       };
-      derouler(zone, tirerNouveaux("reparer", REPARATIONS, 10, x => x.id || x.s), (x, zone, fini) => {
+      // Niveaux : 1 et 2, réparer ; 3, trouver d'abord la prémisse cachée dont dépend l'argument
+      const niveauDe = x => NIVEAU_1_REPARATIONS.includes(x.s) && !x.id ? 1 : 2;
+      deroulerNiveaux(zone, {
+        id: "reparer", n: 10, libelle: "Argument", relancer: () => EXPERIENCES.find(e => e.id === "reparer").lancer(zone),
+        estJuste: justeOuPresque,
+        tirer: niveau => niveau === 3
+          ? Object.assign({ premisse: true }, tirerSelonNiveau("reparer:3", REPARATIONS.filter(x => PREMISSES[x.s] && !x.id), 1, 3, x => x.s, () => 3)[0])
+          : tirerSelonNiveau("reparer", REPARATIONS, 1, niveau, x => x.id || x.s, niveauDe)[0]
+      }, (x, zone, fini) => {
         zone.appendChild(el("p", "consigne", "Cet argument commet un sophisme : " + ficheSophisme(x.s).nom.toLowerCase()));
         zone.appendChild(el("p", "cas", x.arg));
+        // Niveau 3 : la prémisse cachée d'abord ; elle compte pour moitié
+        let pointsPremisse = null;
+        const etapeReparation = () => {
         zone.appendChild(el("p", "consigne", "Quelle réécriture le répare ?"));
         const options = melanger([["rep", x.rep[0]], ["autre", x.autre[0]], ["acc", x.acc], ["concl", x.concl]]);
         const boutons = options.map(([type, texte], i) => {
@@ -821,13 +1021,38 @@ EXPERIENCES.push(
             if (x.autre[1] !== x.s) l.appendChild(lienSophisme(x.autre[1]));
             retour.appendChild(l);
             zone.appendChild(retour);
-            fini(type === "rep", retour);
+            fini(pointsPremisse === null ? type === "rep" : (pointsPremisse + (type === "rep" ? 1 : 0)) / 2, retour);
+          });
+          zone.appendChild(b);
+          return b;
+        });
+        };
+        if (!x.premisse) return etapeReparation();
+        zone.appendChild(el("p", "consigne", "D'abord : de quelle prémisse cachée dépend cet argument ?"));
+        const premisses = melanger(PREMISSES[x.s].map((t, k) => [t, k === 0]));
+        const boutonsP = premisses.map(([t, bonne], k) => {
+          const b = boutonChoix(t, k);
+          b.addEventListener("click", () => {
+            boutonsP.forEach(y => { y.disabled = true; });
+            boutonsP[premisses.findIndex(([, j]) => j)].classList.add("juste");
+            if (!bonne) b.classList.add("faux");
+            pointsPremisse = bonne ? 1 : 0;
+            const retourP = el("div", "retour-quiz");
+            retourP.append(el("p", "verdict " + (bonne ? "juste" : "faux"), bonne ? "Juste." : "La prémisse cachée est : « " + PREMISSES[x.s][0] + " »"),
+              paragraphe("C'est elle qui, une fois écrite, montre la faille : elle est fausse ou au moins discutable. Les autres propositions peuvent être vraies, mais l'argument n'en a pas besoin."));
+            zone.appendChild(retourP);
+            const suite = el("button", "bouton", "Réparer l'argument");
+            suite.dataset.suivant = "1";
+            suite.addEventListener("click", () => { suite.remove(); etapeReparation(); });
+            retourP.appendChild(suite);
+            montrer(retourP);
           });
           zone.appendChild(b);
           return b;
         });
       }, resultats => {
-        afficherScore(zone, "reparer", resultats.filter(Boolean).length, resultats.length);
+        const totalRep = Number(sommeResultats(resultats).toFixed(1));
+        afficherScore(zone, "reparer", totalRep, resultats.length, fr(totalRep) + " / " + resultats.length);
         ajouterExplication(zone, "Critiquer, puis reconstruire", [
           "Repérer un sophisme montre qu'un argument ne prouve pas sa conclusion ; cela ne montre pas que la conclusion est fausse. Pour savoir ce qu'elle vaut, il faut chercher de meilleures raisons, pour ou contre.",
           "Une réparation garde la conclusion et lui donne un appui légitime : un fait vérifiable, une comparaison, une mesure, ou une prémisse qui rend le raisonnement valide. Quand aucun appui n'existe, la conclusion honnête est souvent plus modeste, et il faut le reconnaître."
@@ -921,6 +1146,11 @@ EXPERIENCES.push(
         return champ;
       });
       zone.appendChild(ligne);
+      const option = el("label", "option-certitude");
+      const avecCartes = el("input");
+      avecCartes.type = "checkbox";
+      option.append(avecCartes, texteNoeud(" Avec cartes contrainte (une consigne tirée au sort à chaque prise de parole)"));
+      zone.appendChild(option);
       const tirer = el("button", "bouton large", "Tirer un sujet");
       tirer.dataset.valider = "1";
       zone.appendChild(tirer);
@@ -938,6 +1168,7 @@ EXPERIENCES.push(
           ["Points d'accord", 0, "Ensemble, notez les points sur lesquels vous êtes d'accord."]
         ];
         let i = 0;
+        const cartes = melanger(CARTES_CONTRAINTE);
         const afficher = () => {
           arreter();
           zone.innerHTML = "";
@@ -950,6 +1181,7 @@ EXPERIENCES.push(
           const suivant = el("button", "bouton", i === etapes.length - 1 ? "Terminer" : "Étape suivante");
           suivant.dataset.suivant = "1";
           suivant.addEventListener("click", () => { i++; afficher(); remonter(); });
+          if (duree && avecCartes.checked) zone.appendChild(el("p", "carte-contrainte", "Carte contrainte : " + cartes[i]));
           if (duree) {
             let reste = duree, enPause = true;
             const affichage = el("p", "minuteur", "");

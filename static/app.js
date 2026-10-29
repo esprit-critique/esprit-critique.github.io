@@ -158,7 +158,7 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono"
 ];
 
 // Fiches marquées comme acquises par l'utilisateur
@@ -966,7 +966,7 @@ function tirerAuHasard() {
 // ===================== Quiz =====================
 
 const TAILLE_SERIE = 10;
-const MODES_QUIZ = [["tout", "Tout"], ["biais", "Biais"], ["sophismes", "Sophismes"], ["reviser", "À réviser"], ["proches", "Notions proches"], ["libre", "Réponse libre"]];
+const MODES_QUIZ = [["tout", "Tout"], ["biais", "Biais"], ["sophismes", "Sophismes"], ["reviser", "À réviser"], ["proches", "Notions proches"], ["libre", "Réponse libre"], ["chrono", "Chrono 60 s"]];
 const NIVEAUX_CERTITUDE = [["sur", "Sûr"], ["plutot", "Plutôt sûr"], ["hasard", "Au hasard"]];
 
 // Situations exclues du mode « Notions proches » : elles conviennent aussi à la notion voisine,
@@ -1078,13 +1078,26 @@ function afficherFiltresQuiz() {
   case_.checked = lire("certitudeQuiz", true);
   case_.addEventListener("change", () => ecrire("certitudeQuiz", case_.checked));
   option.append(case_, document.createTextNode(" Indiquer ma certitude"));
-  if (quiz.mode !== "libre") zone.after(option);   // la réponse libre ne demande pas de certitude
+  if (quiz.mode !== "libre" && quiz.mode !== "chrono") zone.after(option);   // ces modes ne demandent pas de certitude
 }
 
 function afficherQuiz() {
   afficherFiltresQuiz();
   const zone = $("zone-quiz");
   zone.innerHTML = "";
+  // Mode chrono : situations tirées au hasard, quatre propositions, 60 secondes
+  if (quiz.mode === "chrono") {
+    const fiches = [...INDEX.values()];
+    partieChrono(zone, {
+      cle: "quiz", titre: "Quiz chrono", relancer: () => lancerQuiz("tout"),
+      tirer: () => {
+        const r = fiches[Math.floor(Math.random() * fiches.length)];
+        const q = creerQuestion(r.type, r.fiche);
+        return { texte: q.cas, options: q.options.map(o => o.nom), juste: q.options.indexOf(q.fiche) };
+      }
+    });
+    return;
+  }
 
   if (quiz.serie.length === 0) {
     const carte = el("article", "carte");

@@ -83,7 +83,10 @@ f.onload = async () => {
         const choix = visibles(".choix");
         if (curseur && valider) { remplir(curseur, String(Math.round(Number(curseur.min) + 0.6 * (Number(curseur.max) - Number(curseur.min))))); valider.click(); continue; }
         if (champs.length && valider) { champs.forEach((c, k) => remplir(c, String(k % 2 ? 60 : 20))); valider.click(); continue; }
-        if (choix.length) { choix[Math.min(1, choix.length - 1)].click(); continue; }
+        // Choix multiple (double piège) : cocher des propositions différentes, puis valider dès que c'est possible
+        if (valider && choix.some(c => c.classList.contains("choisi"))) { valider.click(); continue; }
+        const libres = choix.filter(c => !c.classList.contains("choisi"));
+        if (libres.length) { libres[Math.min(1, libres.length - 1)].click(); continue; }
         const suivant = visibles("[data-suivant]").find(b => !/Rejouer|Recommencer|Nouvelle série|autres|nouvelle|Deux nouvelles|Trois autres|Quatre autres|Cinq autres/.test(b.textContent));
         if (suivant) {
           suivant.click();
@@ -136,10 +139,10 @@ f.onload = async () => {
     const DEB = w.eval("DEBATS"), REP = w.eval("REPARATIONS"), REF = w.eval("REFORMULATIONS"), SUJ = w.eval("SUJETS_DEBAT");
     const idsSoph = w.eval("SOPHISMES.map(f => f.id)");
     const repliques = DEB.flatMap(x => x.repliques);
-    const couverts = new Set(repliques.filter(r => r.sophisme).map(r => r.sophisme));
-    const inconnus = repliques.filter(r => r.sophisme && !idsSoph.includes(r.sophisme)).map(r => r.sophisme);
+    const couverts = new Set(repliques.filter(r => r.sophisme).flatMap(r => [].concat(r.sophisme)));
+    const inconnus = repliques.filter(r => r.sophisme).flatMap(r => [].concat(r.sophisme)).filter(id => !idsSoph.includes(id));
     const partRecevable = repliques.filter(r => !r.sophisme).length / repliques.length;
-    ok("débats : " + DEB.length + " débats de 10 à 14 répliques, les " + idsSoph.length + " sophismes couverts", DEB.length === 8 && DEB.every(x => x.repliques.length >= 10 && x.repliques.length <= 14) && idsSoph.every(i => couverts.has(i)) && !inconnus.length, idsSoph.filter(i => !couverts.has(i)).concat(inconnus).join(", "));
+    ok("débats : " + DEB.length + " débats de 10 à 14 répliques, les " + idsSoph.length + " sophismes couverts", DEB.length === 10 && DEB.every(x => x.repliques.length >= 10 && x.repliques.length <= 14) && idsSoph.every(i => couverts.has(i)) && !inconnus.length, idsSoph.filter(i => !couverts.has(i)).concat(inconnus).join(", "));
     ok("débats : " + Math.round(100 * partRecevable) + " % de répliques recevables (55 à 65 %)", partRecevable >= 0.55 && partRecevable <= 0.65);
     ok("débats : chaque réplique a son auteur, son texte et son explication", repliques.every(r => r.qui && r.texte && r.pourquoi && r.pourquoi.length > 20));
     const sansRep = idsSoph.filter(i => !REP.some(x => x.s === i));
@@ -292,6 +295,118 @@ f.onload = async () => {
     controler();
     w.localStorage.removeItem("niveaux");
 
+    // ---------- Lot P4 : perception et raisonnement ----------
+    const tauxObs = w.eval("tauxObservateur"), PH = w.eval("PARAMETRES_HASARD");
+    const tauxNiv = [1, 2, 3].map(n => [tauxObs(PH[n], "suite", 300), tauxObs(PH[n], "points", 100)]);
+    ok("vrai hasard : chaque niveau reste faisable mieux qu'au hasard (" + tauxNiv.map(t => t.map(x => Math.round(100 * x)).join("/")).join(" ; ") + ")", tauxNiv.every(t => t.every(x => x > 0.6)));
+    const proche = w.eval("probaAnniversaireProche"), seuil = w.eval("seuilAnniversaire");
+    ok("anniversaires : la formule générale redonne 23 personnes (50,7 %)", Math.abs(proche(23, 0) - w.eval("probaAnniversaire(23)")) < 1e-12 && seuil(n => proche(n, 0)) === 23);
+    ok("anniversaires : 253 pour le même jour que moi, 14 à un jour près", seuil(n => 1 - Math.pow(364 / 365, n)) === 253 && seuil(n => proche(n, 1)) === 14);
+    for (const [adresse, id] of [["#chiffres/correlation", "correlation"], ["#chiffres/hasard", "hasard"], ["#tests/depistage", "depistage"], ["#chiffres/graphiques", "graphiques"]]) {
+      w.localStorage.setItem("niveaux", JSON.stringify({ [id]: { niveau: 3, mode: "choisi" } }));
+      const finiN3 = await jouer(adresse);
+      ok(adresse + " niveau 3 : partie jusqu'au bilan, sans texte suspect", finiN3 && textesSuspects().length === 0, textesSuspects().join());
+      controler();
+    }
+    // Graphiques : double piège
+    w.localStorage.setItem("niveaux", JSON.stringify({ graphiques: { niveau: 3, mode: "choisi" } }));
+    await aller("accueil"); await aller("chiffres/graphiques");
+    visibles(".choix")[0].click(); await pause(10); visibles("[data-suivant]")[0].click(); await pause(10);
+    const doubles = visibles(".choix");
+    ok("graphiques niveau 3 : cinq procédés, validation bloquée tant que deux ne sont pas choisis", doubles.length === 5 && vue().querySelector("[data-valider]").disabled);
+    // Le double piège affiché : celui dont le titre apparaît à l'écran
+    const doublePiege = w.eval("DOUBLES_PIEGES")[Object.keys(w.eval("DOUBLES_PIEGES")).find(k => vue().textContent.includes(w.eval("PIEGES_GRAPHIQUES").find(x => x.id === k).creer().titre))];
+    doublePiege.justes.forEach(k => doubles[k].click());
+    vue().querySelector("[data-valider]").click(); await pause(10);
+    ok("graphiques niveau 3 : les deux bons procédés donnent « Juste »", /Juste\s?: les deux procédés/.test(vue().textContent));
+    // Tests positifs : fréquences naturelles au niveau 1, deux tests au niveau 3
+    w.localStorage.setItem("niveaux", JSON.stringify({ depistage: { niveau: 1, mode: "choisi" } }));
+    await aller("accueil"); await aller("tests/depistage");
+    ok("tests positifs niveau 1 : données en fréquences naturelles", /personnes testées/.test(vue().querySelector(".cas").textContent));
+    w.localStorage.setItem("niveaux", JSON.stringify({ depistage: { niveau: 3, mode: "choisi" } }));
+    await aller("accueil"); await aller("tests/depistage");
+    ok("tests positifs niveau 3 : deux tests successifs", /second test/.test(vue().querySelector(".cas").textContent));
+    remplir(visibles("input.champ")[0], "50"); visibles("[data-valider]")[0].click(); await pause(10);
+    ok("tests positifs niveau 3 : calcul du second test en détail", /deux positifs/.test(vue().textContent));
+    // Trouver la règle : niveau 3, budget de 8 suites
+    w.localStorage.setItem("niveaux", JSON.stringify({ "regle-246": { niveau: 3, mode: "choisi" } }));
+    await aller("accueil"); await aller("tests/regle-246");
+    ok("règle niveau 3 : budget de 8 suites annoncé", /droit à 8 suites/.test(vue().textContent));
+    for (let k = 0; k < 8; k++) {
+      const [x, y, z] = visibles("input.champ").slice(0, 3);
+      remplir(x, String(k + 1)); remplir(y, String(k + 3)); remplir(z, String(2 * k + 9));
+      visibles("[data-valider]")[0].click();
+      await pause(5);
+    }
+    ok("règle niveau 3 : après 8 suites, plus de test possible", vue().querySelectorAll(".journal li").length === 9 && !visibles("[data-valider]").length);
+    [...vue().querySelectorAll("button")].find(b => /Révéler/.test(b.textContent)).click(); await pause(10);
+    ok("règle niveau 3 : suites informatives comptées", /Suites informatives : \d+ sur 8/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")));
+    w.localStorage.removeItem("niveaux");
+    // Pour aller plus loin : présentateur distrait, THOG
+    await aller("accueil"); await aller("tests/monty-hall");
+    vue().querySelectorAll(".porte")[0].click(); await pause(10);
+    [...vue().querySelectorAll(".actions button")][1].click(); await pause(10);
+    const boutonDistrait = [...vue().querySelectorAll("button")].find(b => /distrait/.test(b.textContent));
+    if (boutonDistrait) boutonDistrait.click();
+    const pctDistrait = Number(((vue().textContent.match(/soit ([\d,]+)/) || [])[1] || "0").replace(",", "."));
+    ok("Monty Hall distrait : changer ne gagne qu'une fois sur deux (" + pctDistrait + " %)", !!boutonDistrait && pctDistrait > 47 && pctDistrait < 53);
+
+    // ---------- Lot P5 : jeux de débat ----------
+    const DEB3 = w.eval("DEBATS");
+    const parNiveauDeb = [1, 2, 3].map(n => DEB3.filter(d => d.niveau === n).length);
+    ok("débats : au moins deux débats par niveau (" + parNiveauDeb.join(" / ") + ")", parNiveauDeb.every(n => n >= 2));
+    const doubles3 = DEB3.flatMap(d => d.repliques).filter(r => Array.isArray(r.sophisme));
+    ok("débats niveau 3 : répliques à deux sophismes, tous existants", doubles3.length >= 4 && doubles3.every(r => r.sophisme.length === 2 && r.sophisme.every(id => w.eval("SOPHISMES").some(f => f.id === id))));
+    const PREM = w.eval("PREMISSES");
+    ok("réparer : au moins 20 prémisses cachées, quatre propositions distinctes", Object.keys(PREM).length >= 20 && Object.values(PREM).every(p => p.length === 4 && new Set(p).size === 4) && Object.keys(PREM).every(k => w.eval("REPARATIONS").some(x => x.s === k)));
+    ok("débat à deux : 20 cartes contrainte", w.eval("CARTES_CONTRAINTE").length === 20);
+    // Débat truqué de niveau 3 : nommer parmi la catégorie, deux sophismes
+    w.localStorage.setItem("niveaux", JSON.stringify({ "debat-truque": { niveau: 3, mode: "choisi" } }));
+    await aller("accueil"); await aller("tests/debat-truque");
+    ok("débat niveau 3 : débat de niveau 3 tiré", / · niveau 3/.test(vue().textContent));
+    let vuDouble = false;
+    for (let k = 0; k < 12; k++) {
+      const r = w.eval("DEBATS").find(d => vue().textContent.includes(d.titre)).repliques.find(x => vue().querySelector(".replique:not(.precedente) .cas").textContent.replace(/\s/g, "") === w.eval("typo")(x.texte).replace(/\s/g, ""));
+      visibles(".choix")[r && r.sophisme ? 1 : 0].click(); await pause(5);
+      if (r && Array.isArray(r.sophisme)) {
+        vuDouble = true;
+        ok("débat niveau 3 : deux sophismes, choix parmi leurs catégories, validation à deux", /en contient deux/.test(vue().textContent) && visibles("[data-valider]").length === 0);
+        const noms = r.sophisme.map(id => w.eval("SOPHISMES").find(f => f.id === id).nom);
+        visibles(".choix").filter(b => noms.includes(b.textContent.replace(/^\d/, "").trim())).forEach(b => b.click());
+        visibles("[data-valider]")[0].click(); await pause(5);
+        ok("débat niveau 3 : les deux sophismes bien nommés", /Juste\s?:/.test(vue().querySelector(".retour-quiz .verdict").textContent));
+      } else if (r && r.sophisme) {
+        visibles(".choix")[0].click(); await pause(5);
+        if (visibles("[data-valider]").length) visibles("[data-valider]")[0].click();
+        await pause(5);
+      }
+      visibles("[data-suivant]")[0].click(); await pause(5);
+    }
+    ok("débat niveau 3 : une réplique à deux sophismes rencontrée, bilan atteint", vuDouble && !!vue().querySelector(".grand-score"));
+    controler();
+    // Réparer : prémisse cachée au niveau 3
+    w.localStorage.setItem("niveaux", JSON.stringify({ reparer: { niveau: 3, mode: "choisi" } }));
+    await aller("accueil"); await aller("tests/reparer");
+    ok("réparer niveau 3 : la prémisse cachée d'abord", /prémisse cachée/.test(vue().textContent) && visibles(".choix").length === 4);
+    visibles(".choix")[0].click(); await pause(5);
+    visibles("[data-suivant]")[0].click(); await pause(5);
+    ok("réparer niveau 3 : puis la réparation", /Quelle réécriture le répare/.test(vue().textContent));
+    const finiRep = await jouer("#tests/reparer");
+    ok("réparer niveau 3 : partie jusqu'au bilan", finiRep && textesSuspects().length === 0, textesSuspects().join());
+    w.localStorage.removeItem("niveaux");
+    // Débat à deux avec cartes
+    await aller("accueil"); await aller("tests/debat-a-deux");
+    vue().querySelector(".option-certitude input").click();
+    visibles("[data-valider]")[0].click(); await pause(10);
+    ok("débat à deux : carte contrainte affichée", !!vue().querySelector(".carte-contrainte"));
+    // Chrono du débat truqué
+    await aller("accueil"); await aller("tests/debat-truque");
+    [...vue().querySelectorAll("button")].find(b => /Mode chrono/.test(b.textContent)).click(); await pause(5);
+    visibles(".choix")[0].click(); await pause(5);
+    ok("débat chrono : 60 secondes, Recevable ou Sophisme", /Reste : 60 s/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")) && visibles(".choix").length === 2);
+    await pause(61000);
+    ok("débat chrono : fin et record", /Temps écoulé/.test(vue().textContent) && JSON.parse(w.localStorage.getItem("chrono") || "{}").debat !== undefined);
+
     // ---------- Le calcul, en détail ----------
     // Tests positifs : le calcul suit chaque situation, avec ses propres chiffres
     await aller("accueil"); await aller("tests/depistage");
@@ -401,6 +516,7 @@ f.onload = async () => {
     visibles("[data-valider]")[0].click();
     await pause(20);
     ok("Wason : 2e version réussie avec les bonnes cartes", vue().querySelectorAll(".verdict.juste").length >= 1 && !!vue().querySelector(".grand-score"));
+    ok("Wason : problème THOG proposé après le bilan", /problème THOG/.test(vue().textContent));
 
     // ---------- Trouver la règle ----------
     await aller("tests/regle-246");
