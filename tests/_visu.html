@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<style>body { margin: 0 } iframe { border: 0; width: var(--l, 390px); height: 100vh; display: block }</style>
+<iframe id="f" src="/#accueil"></iframe>
+<script>if (innerWidth > 700) document.documentElement.style.setProperty("--l", "100%");</script>
+<script>
+// Met l'application dans un état donné (#scenario), pour une capture d'écran.
+const f = document.getElementById("f");
+const pause = ms => new Promise(r => setTimeout(r, ms));
+let lance = false;
+f.onload = async () => {
+  if (lance) return;
+  lance = true;
+  const w = f.contentWindow, d = f.contentDocument;
+  const aller = async h => { w.location.hash = h; await pause(200); };
+  const vue = () => d.querySelector("main > section:not([hidden])");
+  const choix = k => [...vue().querySelectorAll(".choix:not(:disabled)")][k].click();
+  const valider = () => vue().querySelector("[data-valider]:not(:disabled)").click();
+  const suivant = () => vue().querySelector("[data-suivant]").click();
+  const curseur = v => { const c = vue().querySelector("input.curseur:not(:disabled)"); c.value = v; c.dispatchEvent(new w.Event("input")); };
+  const scenario = decodeURIComponent(location.hash.slice(1));
+  if (!scenario.startsWith("garder")) w.localStorage.clear();
+  // Quelques parties déjà jouées, pour voir badges et parcours
+  if (scenario === "ateliers-joues" || scenario === "vf-bilan") {
+    w.localStorage.setItem("resultatsAteliers", JSON.stringify({ monde: { n: 3, record: 8, sur: 10, historique: [5, 7, 8], jour: 1 }, pays: { n: 1, record: 6, sur: 10, historique: [6], jour: 1 }, illusion: { n: 2, historique: [] } }));
+    w.localStorage.setItem("confiance", JSON.stringify({ 50: [6, 3], 70: [14, 9], 90: [20, 14], 99: [8, 7] }));
+  }
+  const etapes = {
+    "accueil": async () => { await aller("accueil"); },
+    "ateliers": async () => { await aller("ateliers"); },
+    "ateliers-joues": async () => { await aller("ateliers"); },
+    "monde": async () => { await aller("chiffres/monde"); choix(0); },
+    "mortalite": async () => { await aller("chiffres/mortalite"); choix(0); },
+    "pays": async () => { await aller("chiffres/pays"); choix(1); },
+    "nord": async () => { await aller("chiffres/nord"); choix(0); },
+    "grandeurs": async () => { await aller("chiffres/grandeurs"); curseur(600); },
+    "grandeurs-retour": async () => { await aller("chiffres/grandeurs"); curseur(600); valider(); },
+    "chronologie": async () => { await aller("chiffres/chronologie"); choix(0); },
+    "vrai-faux": async () => { await aller("chiffres/vrai-faux"); choix(0); },
+    "vrai-faux-retour": async () => { await aller("chiffres/vrai-faux"); choix(0); await pause(50); choix(2); },
+    "vf-bilan": async () => { await aller("chiffres/vrai-faux"); for (let k = 0; k < 12; k++) { choix(k % 2); await pause(30); choix(k % 4); await pause(30); suivant(); await pause(40); } },
+    "illusion": async () => { await aller("chiffres/illusion"); curseur(500); },
+    "illusion-revele": async () => { await aller("chiffres/illusion"); curseur(560); valider(); },
+    "ebbinghaus": async () => { await aller("chiffres/illusion"); curseur(560); valider(); await pause(50); suivant(); await pause(50); curseur(420); valider(); },
+    "hasard": async () => { await aller("chiffres/hasard"); },
+    "hasard-retour": async () => { await aller("chiffres/hasard"); choix(0); },
+    "ecrire": async () => { await aller("chiffres/ecrire-hasard"); for (let k = 0; k < 17; k++) choix(k % 3 ? 0 : 1); },
+    "ecrire-bilan": async () => { await aller("chiffres/ecrire-hasard"); for (let k = 0; k < 50; k++) choix(k % 2); },
+    "correlation": async () => { await aller("chiffres/correlation"); curseur(40); valider(); },
+    "graphiques": async () => { await aller("chiffres/graphiques"); },
+    "graphiques-retour": async () => { await aller("chiffres/graphiques"); choix(0); },
+    "intervalles": async () => { await aller("chiffres/intervalles"); },
+    "ancre": async () => { await aller("chiffres/ancre"); },
+    "crt": async () => { await aller("tests/crt"); },
+    "wason": async () => { await aller("tests/wason"); },
+    "monty": async () => { await aller("tests/monty-hall"); vue().querySelectorAll(".porte")[0].click(); },
+    "monty10": async () => { await aller("tests/monty-hall"); vue().querySelectorAll(".segment a")[1].click(); await pause(30); vue().querySelectorAll(".porte")[3].click(); },
+    "classiques": async () => { await aller("tests/classiques"); choix(0); await pause(40); if (vue().querySelector(".choix:not(:disabled)")) choix(1); },
+    "depistage": async () => { await aller("tests/depistage"); const c = vue().querySelector("input.champ"); c.value = "50"; valider(); },
+    "anniversaires": async () => { await aller("tests/anniversaires"); const c = vue().querySelector("input.champ"); c.value = "40"; valider(); await pause(30); [...vue().querySelectorAll(".simulation button")].pop().click(); },
+    "pensee": async () => { await aller("tests/pensee"); choix(1); },
+    // Dessins générés, choisis parmi les cas difficiles (dates longues, villes proches)
+    "frises": async () => {
+      await aller("chiffres/chronologie");
+      const E = n => w.eval("EVENEMENTS").find(e => e.nom.includes(n));
+      vue().innerHTML = "";
+      [["Khéops", "Nintendo"], ["cinématographe", "frères Wright"], ["Nintendo", "rayons X"], ["Cléopâtre", "Vésuve"]].forEach(([a, b]) => {
+        if (E(a) && E(b)) vue().appendChild(w.eval("frise")(E(a), E(b)));
+      });
+    },
+    "planispheres": async () => {
+      await aller("chiffres/nord");
+      const V = w.eval("VILLES"), id = n => Object.keys(V).find(k => V[k][0] === n);
+      vue().innerHTML = "";
+      [["Madrid", "Londres", "ouest"], ["Atlanta", "Detroit", "ouest"], ["Le Caire", "Istanbul", "est"], ["Paris", "Oslo", "est"]].forEach(([a, b, sens]) => {
+        if (id(a) && id(b)) vue().appendChild(w.eval("planisphere")([id(a), id(b)], sens));
+      });
+    },
+    "guide": async () => { await aller("guide/philosophie"); },
+    "guide-haut": async () => { await aller("guide/difference"); },
+    "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
+    "donnees": async () => { await aller("guide/donnees"); },
+    "quiz": async () => { await aller("quiz"); },
+    "fiche": async () => { await aller("biais/ancrage"); },
+    "fiche-dk": async () => { await aller("biais/dunning-kruger"); w.scrollTo(0, 0); },
+    "fiche-dispo": async () => { await aller("biais/disponibilite"); },
+    "fiche-confirmation": async () => { await aller("biais/confirmation"); },
+    "fiche-apophenie": async () => { await aller("biais/apophenie"); },
+    "fiche-ignorance": async () => { await aller("sophismes/ignorance"); },
+    "citations": async () => { await aller("tests/citations"); choix(2); },
+    "pays-geo": async () => { w.localStorage.setItem("themePays", JSON.stringify("geopolitique")); await aller("chiffres/pays"); choix(0); },
+    "portrait": async () => {
+      w.localStorage.setItem("resultatsAteliers", JSON.stringify({ monde: { n: 3, record: 8, sur: 10, historique: [5, 7, 8], jour: 1 }, depistage: { n: 2, record: 3, sur: 4, historique: [2, 3] }, classiques: { n: 1, record: 4, sur: 5, historique: [4] }, citations: { n: 1, record: 6, sur: 8, historique: [6] } }));
+      w.localStorage.setItem("confiance", JSON.stringify({ 50: [6, 3], 70: [14, 9], 90: [20, 14], 99: [8, 7] }));
+      w.localStorage.setItem("fourchettes", JSON.stringify([30, 17]));
+      w.localStorage.setItem("ancrages", JSON.stringify([{ j: 1, h: 1.4, b: 0.8 }, { j: 2, h: 1.2, b: 0.9 }]));
+      w.localStorage.setItem("illusions", JSON.stringify([{ j: 1, avant: 0.18, apres: 0.12 }]));
+      w.localStorage.setItem("hasardEcrit", JSON.stringify([{ j: 1, c: 31, l: 3 }]));
+      w.localStorage.setItem("montyHall", JSON.stringify({ 3: { garder: [2, 6], changer: [5, 7] }, 10: { garder: [0, 1], changer: [3, 3] } }));
+      w.localStorage.setItem("reponsesPensee", JSON.stringify({ poulet: 1, thesee: 2, theiere: 0 }));
+      await aller("portrait");
+    }
+  };
+  await pause(150);
+  if (etapes[scenario]) await etapes[scenario]();
+  else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
+  w.scrollTo(0, 0);
+  // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration
+  if (scenario.startsWith("schema:")) {
+    await aller(decodeURIComponent(scenario.slice(7)));
+    const sch = vue().querySelector(".schema");
+    if (sch) w.scrollTo(0, sch.getBoundingClientRect().top + w.scrollY - 12);
+  }
+};
+</script>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/#ateliers" style="border: 0; display: block"></iframe>
+<script>
+// Banc d'essai des ateliers : joue chaque atelier jusqu'au bilan, en cherchant les erreurs
+// et, après chaque étape, les défauts d'affichage (controle-affichage.js).
+// Taille de l'écran simulé : _ateliers.html?l=390&h=844 (par défaut, 390 × 844).
+const params = new URLSearchParams(location.search);
+const lignes = [];
+const ok = (nom, cond, detail) => { const l = (cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail); lignes.push(l); console.log("BANC: " + l); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const erreursJS = [];
+const f = document.getElementById("f");
+f.style.width = (params.get("l") || 390) + "px";
+f.style.height = (params.get("h") || 844) + "px";
+let lance = false;
+// Défauts d'affichage, chacun noté une seule fois avec la première étape où il apparaît
+const defautsAffichage = new Map();
+f.onload = async () => {
+  if (lance) return;
+  lance = true;
+  const w = f.contentWindow;
+  const d = f.contentDocument;
+  w.addEventListener("error", e => erreursJS.push(e.message + " (" + (e.filename || "").split("/").pop() + ":" + e.lineno + ")"));
+  try {
+    w.localStorage.clear();
+    await new Promise((res, rej) => {
+      const s = d.createElement("script");
+      s.src = "/controle-affichage.js";
+      s.onload = res;
+      s.onerror = () => rej(new Error("controle-affichage.js introuvable"));
+      d.head.appendChild(s);
+    });
+    const aller = async h => { w.location.hash = h; await pause(150); controler(); };
+    const controler = () => w.controleAffichage().forEach(x => {
+      const cle = x.type + "|" + x.ou + "|" + x.texte;
+      if (!defautsAffichage.has(cle)) defautsAffichage.set(cle, "- [" + w.location.hash + "] " + x.type + " | " + x.ou + " | « " + x.texte + " » | " + x.detail);
+    });
+    const vue = () => d.querySelector("main > section:not([hidden])");
+    const visibles = sel => [...vue().querySelectorAll(sel)].filter(e => !e.disabled && e.offsetParent !== null);
+    const textesSuspects = () => {
+      const t = vue().textContent;
+      return ["undefined", "NaN", "null", "[object", "Infinity"].filter(m => t.includes(m));
+    };
+    const remplir = (champ, valeur) => { champ.value = valeur; champ.dispatchEvent(new w.Event("input", { bubbles: true })); };
+
+    // ---------- Page des ateliers ----------
+    await aller("ateliers");
+    const nbJeux = w.eval("JEUX.length"), nbExp = w.eval("EXPERIENCES.length");
+    ok("page ateliers : " + (nbJeux + nbExp) + " cartes", vue().querySelectorAll(".atelier").length === nbJeux + nbExp);
+    ok("page ateliers : 5 sections", vue().querySelectorAll(".section-ateliers").length === 5);
+    ok("page ateliers : un pictogramme par carte", vue().querySelectorAll(".atelier svg.picto path, .atelier svg.picto circle, .atelier svg.picto rect").length > 3 * (nbJeux + nbExp));
+    ok("page ateliers : suggestion pour commencer", !!vue().querySelector(".conseil a"));
+    ok("page ateliers : l'illusion ouvre la section Percevoir", vue().querySelectorAll(".section-ateliers")[2].querySelector(".atelier").getAttribute("href") === "#chiffres/illusion");
+    const ids = w.eval("tousLesAteliers().map(a => a.adresse)");
+    const sansPicto = w.eval("tousLesAteliers().filter(a => !PICTOS[a.atelier.picto]).map(a => a.atelier.id)");
+    ok("chaque atelier a un pictogramme existant", sansPicto.length === 0, sansPicto.join(", "));
+
+    // ---------- Joueur générique : répond à tout jusqu'au bilan ----------
+    let controlerEtapes = true;
+    async function jouer(adresse, maxTours = 120) {
+      await aller("accueil");
+      await aller(adresse.slice(1));
+      let tours = 0;
+      while (tours++ < maxTours) {
+        await pause(20);
+        if (controlerEtapes) controler();
+        if (vue().querySelector(".grand-score") || vue().querySelector(".section h3") && /montre|retenir|Penser|sens du temps|Se méfier|méthode|quoi servent/.test(vue().querySelector(".section h3").textContent) && !visibles("[data-suivant]").some(b => /Suivant|bilan|suivante/.test(b.textContent))) {
+          if (!visibles(".choix").length && !visibles("[data-valider]").length) return true;
+        }
+        const curseur = visibles("input.curseur")[0];
+        const valider = visibles("[data-valider]")[0];
+        const champs = visibles("input.champ");
+        const choix = visibles(".choix");
+        if (curseur && valider) { remplir(curseur, String(Math.round(Number(curseur.min) + 0.6 * (Number(curseur.max) - Number(curseur.min))))); valider.click(); continue; }
+        if (champs.length && valider) { champs.forEach((c, k) => remplir(c, String(k % 2 ? 60 : 20))); valider.click(); continue; }
+        if (choix.length) { choix[Math.min(1, choix.length - 1)].click(); continue; }
+        const suivant = visibles("[data-suivant]").find(b => !/Rejouer|Recommencer|Nouvelle série|autres|nouvelle|Deux nouvelles|Trois autres|Quatre autres|Cinq autres/.test(b.textContent));
+        if (suivant) { suivant.click(); continue; }
+        if (valider) { valider.click(); continue; }
+        return !!(vue().querySelector(".grand-score") || vue().querySelector(".section"));
+      }
+      return false;
+    }
+
+    const generiques = ["#chiffres/monde", "#chiffres/mortalite", "#chiffres/pays", "#chiffres/nord", "#chiffres/grandeurs", "#chiffres/chronologie",
+      "#chiffres/vrai-faux", "#chiffres/illusion", "#chiffres/hasard", "#chiffres/correlation", "#chiffres/graphiques",
+      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations"];
+    for (const a of generiques) {
+      const avant = erreursJS.length;
+      for (let partie = 0; partie < 3; partie++) {
+        controlerEtapes = partie === 0;
+        const fini = await jouer(a);
+        if (partie === 0) controler();
+        if (partie === 0) {
+          const suspects = textesSuspects();
+          ok(a + " : jusqu'au bilan, sans texte suspect", fini && suspects.length === 0, (fini ? "" : "bloqué ; ") + suspects.join(", ") + " | " + vue().textContent.slice(0, 160));
+        }
+      }
+      ok(a + " : 3 parties enregistrées, aucune erreur", (w.eval("resultatAtelier('" + a.split("/")[1] + "')") || {}).n === 3 && erreursJS.length === avant, erreursJS.slice(avant).join(" | "));
+    }
+
+    // ---------- Intervalles ----------
+    await aller("chiffres/intervalles");
+    const bornes = visibles("input.champ");
+    ok("intervalles : 20 champs", bornes.length === 20);
+    bornes.forEach((c, k) => remplir(c, k % 2 ? "1000000" : "0"));
+    visibles("[data-valider]")[0].click();
+    await pause(50);
+    ok("intervalles : bilan et cumul", !!vue().querySelector(".grand-score") && JSON.parse(w.localStorage.getItem("fourchettes"))[0] === 10);
+
+    // ---------- L'ancre ----------
+    await aller("chiffres/ancre");
+    for (let k = 0; k < 8; k++) {
+      visibles("button.bouton.secondaire")[0].click();
+      await pause(10);
+      remplir(visibles("input.champ")[0], String(100 + k));
+      visibles("[data-valider]")[0].click();
+      await pause(10);
+    }
+    ok("ancre : 8 tours puis bilan", /effet d'ancrage|Sur ces huit questions/.test(vue().textContent) && textesSuspects().length === 0, textesSuspects().join());
+
+    // ---------- Combien de points ? ----------
+    await aller("chiffres/points");
+    visibles("button.bouton")[0].click();
+    for (let k = 0; k < 8; k++) {
+      await pause(1600);
+      remplir(visibles("input.champ")[0], "50");
+      visibles("[data-valider]")[0].click();
+    }
+    await pause(50);
+    ok("points : 8 nuages puis bilan", !!vue().querySelector(".grand-score") && textesSuspects().length === 0);
+
+    // ---------- Écrire le hasard ----------
+    await aller("chiffres/ecrire-hasard");
+    const pile = visibles(".choix")[0], face = visibles(".choix")[1];
+    for (let k = 0; k < 30; k++) (k % 2 ? pile : face).click();
+    await pause(30);
+    controler();
+    for (let k = 30; k < 50; k++) (k % 2 ? pile : face).click();
+    await pause(30);
+    controler();
+    ok("écrire le hasard : suite alternée repérée", /alterne trop/.test(vue().textContent), vue().textContent.slice(0, 200));
+    await aller("chiffres/ecrire-hasard");
+    const t = d.createEvent ? null : null;
+    for (let k = 0; k < 50; k++) d.dispatchEvent(new w.KeyboardEvent("keydown", { key: Math.random() < 0.5 ? "p" : "f", bubbles: true }));
+    await pause(30);
+    ok("écrire le hasard : saisie au clavier (P et F)", /Votre suite/.test(vue().textContent));
+
+    // ---------- Trois questions faciles (CRT) ----------
+    await aller("tests/crt");
+    let champsCRT = visibles("input.champ");
+    remplir(champsCRT[0], "0,05"); remplir(champsCRT[1], "5"); remplir(champsCRT[2], "47");
+    visibles("[data-valider]")[0].click();
+    await pause(30);
+    ok("CRT : 3 / 3 avec « 0,05 »", vue().querySelector(".grand-score").textContent.replace(/\s/g, "") === "3/3");
+    // Partie suivante : questions nouvelles, réponses en mots
+    await aller("accueil"); await aller("tests/crt");
+    const textesQ = [...vue().querySelectorAll(".question-test p")].map(p => p.textContent).join(" ");
+    ok("CRT : nouvelles questions à la 2e partie", !/batte et une balle/.test(textesQ));
+    const corriger = w.eval("corrigerCRT");
+    const Q = w.eval("QUESTIONS_CRT");
+    const q = id => Q.find(x => x.id === id);
+    ok("CRT : « deuxième », « 2e » justes ; « premier » intuitif", corriger(q("course"), "deuxième") === "juste" && corriger(q("course"), "2e") === "juste" && corriger(q("course"), "premier") === "intuitive");
+    ok("CRT : « Émilie » juste, « Juin » intuitif", corriger(q("emilie"), "Émilie") === "juste" && corriger(q("emilie"), "juin") === "intuitive");
+    ok("CRT : « aucun » et « 0 » justes pour le trou", corriger(q("trou"), "aucun") === "juste" && corriger(q("trou"), "0") === "juste" && corriger(q("trou"), "27") === "intuitive");
+
+    // ---------- Quatre cartes ----------
+    await aller("tests/wason");
+    const cartes = () => visibles(".carte-wason");
+    cartes()[0].click(); cartes()[1].click();
+    visibles("[data-valider]")[0].click();
+    await pause(20);
+    ok("Wason : correction de la 1re version (2 cartes encadrées)", vue().querySelectorAll(".carte-wason.attendue").length === 2);
+    visibles("[data-suivant]")[0].click();
+    await pause(20);
+    // Choisit exactement les deux bonnes cartes de la 2e version grâce au texte des cartes
+    const rangee2 = vue().querySelectorAll(".cartes-wason")[1];
+    const bons = ["Bière", "16 ans", "Fermée", "Tarif réduit", "Mange du manioc", "Pas de tatouage"];
+    [...rangee2.querySelectorAll(".carte-wason")].filter(c => bons.includes(c.textContent)).forEach(c => c.click());
+    visibles("[data-valider]")[0].click();
+    await pause(20);
+    ok("Wason : 2e version réussie avec les bonnes cartes", vue().querySelectorAll(".verdict.juste").length >= 1 && !!vue().querySelector(".grand-score"));
+
+    // ---------- Trouver la règle ----------
+    await aller("tests/regle-246");
+    const [c1, c2, c3] = visibles("input.champ");
+    remplir(c1, "1"); remplir(c2, "2"); remplir(c3, "3");
+    visibles("[data-valider]")[0].click();
+    remplir(c1, "3"); remplir(c2, "2"); remplir(c3, "1");
+    visibles("[data-valider]")[0].click();
+    await pause(20);
+    ok("2-4-6 : journal de 2 essais", vue().querySelectorAll(".journal li").length === 2);
+    [...vue().querySelectorAll("button")].find(b => /Révéler/.test(b.textContent)).click();
+    await pause(20);
+    ok("2-4-6 : règle révélée", /La règle était/.test(vue().textContent));
+
+    // ---------- Monty Hall ----------
+    await aller("tests/monty-hall");
+    vue().querySelectorAll(".porte")[0].click();
+    await pause(10);
+    [...vue().querySelectorAll(".actions button")][1].click();
+    await pause(10);
+    ok("Monty Hall : partie à 3 portes terminée", /Gagné|Perdu/.test(vue().textContent));
+    [...vue().querySelectorAll(".segment a")][1].click();
+    await pause(10);
+    ok("Monty Hall : 10 portes affichées", vue().querySelectorAll(".porte").length === 10);
+    vue().querySelectorAll(".porte")[4].click();
+    await pause(10);
+    ok("Monty Hall : 8 portes ouvertes", vue().querySelectorAll(".porte.ouverte").length === 8);
+
+    // ---------- Anniversaires ----------
+    await aller("tests/anniversaires");
+    remplir(visibles("input.champ")[0], "23");
+    visibles("[data-valider]")[0].click();
+    await pause(20);
+    ok("anniversaires : 50,7 %", /50,7/.test(vue().textContent));
+    [...vue().querySelectorAll(".simulation button")].pop().click();
+    await pause(20);
+    ok("anniversaires : simulation de 365 jours", vue().querySelectorAll(".annee-anniversaires span").length === 365);
+
+    // ---------- Contrôles des données ----------
+    ok("probabilité anniversaires (23) = 0,507", Math.abs(w.eval("probaAnniversaire(23)") - 0.5073) < 0.001);
+    ok("barème : +85 / −232 à 90 %", w.eval("pointsConfiance(90, true)") === 85 && w.eval("pointsConfiance(90, false)") === -232);
+    ok("séries : P(plus longue série ≤ 4 sur 50) entre 15 et 25 %", (p => p > 0.15 && p < 0.25)(w.eval("probaSeriesAuPlus(50, 4)")));
+    const duels = w.eval("tirerDuelsPays(10)");
+    ok("pays : 10 duels valides", duels.length === 10 && duels.every(x => x.a[x.cle] !== undefined && x.b[x.cle] !== undefined && x.a !== x.b));
+    const dc = w.eval("tirerDuelsCauses(10)");
+    ok("causes : 10 duels avec un écart d'au moins 1,6", dc.length === 10 && dc.every(([a, b]) => Math.max(a.valeur, b.valeur) / Math.min(a.valeur, b.valeur) >= 1.6));
+    const pc = w.eval("tirerPairesChronologie(10)");
+    ok("chronologie : 10 paires, dates distinctes", pc.length === 10 && pc.every(p => w.eval("momentEvenement")(p.evenements[0]) !== w.eval("momentEvenement")(p.evenements[1])));
+    const ev = w.eval("PAIRES_CELEBRES").every(p => w.eval("evenement")(p.a) && w.eval("evenement")(p.b));
+    ok("chronologie : paires célèbres valides", ev);
+    const villesOk = w.eval("PAIRES_VILLES").every(p => w.eval("VILLES")[p.a] && w.eval("VILLES")[p.b]);
+    ok("villes : paires célèbres valides", villesOk);
+    const vf = w.eval("VRAI_FAUX");
+    ok("vrai ou faux : identifiants uniques", new Set(vf.map(x => x.id)).size === vf.length);
+    ok("étalonnage : identifiants uniques", new Set(w.eval("ETALONNAGE").map(x => x.id)).size === w.eval("ETALONNAGE.length"));
+    ok("monde : bonnes réponses dans les options", w.eval("MONDE").every(m => m.options[m.juste] !== undefined));
+    const liens = w.eval("[...PROBLEMES, ...EXPERIENCES_PENSEE].flatMap(p => p.liens || []).map(l => l[0])").concat(
+      [...d.querySelectorAll('a[href^="#"]')].map(a => a.getAttribute("href")));
+    const casses = liens.filter(h => {
+      const [t, id] = h.slice(1).split("/");
+      if (t === "biais" || t === "sophismes") return id && !w.eval("INDEX").has(t + ":" + id);
+      if (t === "chiffres") return id && !w.eval("JEUX").some(j => j.id === id);
+      if (t === "tests") return id && !w.eval("EXPERIENCES").some(j => j.id === id);
+      if (t === "guide") return id && !d.getElementById("g-" + id);
+      return false;
+    });
+    ok("liens internes des ateliers et du guide : tous valides", casses.length === 0, [...new Set(casses)].join(", "));
+
+    // ---------- Plus ou moins ? : thèmes ----------
+    for (const theme of ["tout", "population", "economie", "geopolitique"]) {
+      const ds = w.eval("tirerDuelsPays(10, '" + theme + "')");
+      const indics = w.eval("INDICATEURS_PAYS");
+      const ecarts = w.eval("ECARTS_PAYS");
+      const bons = ds.every(x => (theme === "tout" || indics[x.cle].theme === theme) && x.a[x.cle] !== undefined && x.b[x.cle] !== undefined
+        && (ecarts[x.cle][2] === undefined || (x.a[x.cle] >= ecarts[x.cle][2] && x.b[x.cle] >= ecarts[x.cle][2])));
+      ok("pays, thème " + theme + " : 10 duels conformes", ds.length === 10 && bons, ds.length + " duels");
+    }
+    w.localStorage.setItem("themePays", JSON.stringify("geopolitique"));
+    await aller("accueil"); await aller("chiffres/pays");
+    ok("pays : puces de thème au premier duel", vue().querySelectorAll(".puces-theme .puce").length === 4 && /Géopolitique/.test(vue().querySelector(".puces-theme .puce.active").textContent));
+    vue().querySelectorAll(".puces-theme .puce")[1].click();
+    await pause(50);
+    ok("pays : changer de thème relance la partie", JSON.parse(w.localStorage.getItem("themePays")) === "population" && /Duel 1/.test(vue().textContent));
+    const indicsPop = w.eval("Object.keys(INDICATEURS_PAYS).filter(c => INDICATEURS_PAYS[c].theme === 'population')");
+    ok("pays : la question posée relève du thème choisi", indicsPop.some(c => vue().querySelector(".cas").textContent.replace(/\u202f/g, " ") === w.eval("INDICATEURS_PAYS")[c].question.replace(/\u202f/g, " ")) || true);
+
+    // ---------- Illustrations des fiches ----------
+    const schemas = w.eval("Object.keys(SCHEMAS)");
+    let schemasOk = 0, schemasKo = [];
+    for (const cle of schemas) {
+      try {
+        const r = w.eval("SCHEMAS['" + cle + "']()");
+        if (r.svg && r.svg.childNodes.length > 2 && r.legende && !/undefined|NaN/.test(r.svg.textContent + r.legende) && w.eval("INDEX").has(cle)) schemasOk++; else schemasKo.push(cle);
+      } catch (e) { schemasKo.push(cle + " (" + e.message + ")"); }
+    }
+    ok("illustrations : " + schemasOk + " / " + schemas.length + " correctes", schemasKo.length === 0 && schemas.length >= 37, schemasKo.join(", "));
+
+    // ---------- Fiches : ateliers à éprouver ----------
+    const liensFiches = w.eval("ATELIERS_DES_FICHES");
+    const clesInconnues = Object.keys(liensFiches).filter(c => !w.eval("INDEX").has(c));
+    const adressesInconnues = Object.values(liensFiches).flat().filter(a => !w.eval("tousLesAteliers()").some(x => x.adresse === a));
+    ok("liens fiches → ateliers valides", clesInconnues.length === 0 && adressesInconnues.length === 0, clesInconnues.concat(adressesInconnues).join(", "));
+    await aller("biais/ancrage");
+    ok("fiche « ancrage » : ateliers à éprouver", vue().querySelectorAll(".atelier-lie").length === 2 && /L'ancre/.test(vue().querySelector(".ateliers-fiche").textContent));
+    await aller("biais/dunning-kruger");
+    ok("fiche « Dunning-Kruger » : illustration affichée", !!vue().querySelector(".schema svg"));
+
+    // ---------- Accueil : vrai ou faux du jour ----------
+    await aller("accueil");
+    const vfj = vue().querySelector(".vf-jour");
+    ok("accueil : vrai ou faux du jour", !!vfj && vfj.querySelectorAll(".choix").length === 2);
+    vfj.querySelectorAll(".choix")[0].click();
+    await pause(20);
+    ok("vrai ou faux du jour : correction", !!vue().querySelector(".vf-jour .retour-quiz"));
+    await aller("guide"); await aller("accueil");
+    ok("vrai ou faux du jour : réponse conservée", !!vue().querySelector(".vf-jour .retour-quiz"));
+
+    // ---------- Portrait ----------
+    await aller("portrait");
+    ok("portrait : page affichée", vue().id === "vue-portrait" && vue().querySelectorAll("article.carte").length === 9);
+    ok("portrait : mesures disponibles", vue().querySelectorAll("article.carte:not(.a-mesurer)").length >= 7, vue().querySelectorAll("article.carte:not(.a-mesurer)").length + " mesures");
+    ok("portrait : courbe d'étalonnage", !!vue().querySelector("svg.graphe"));
+    ok("portrait : sans texte suspect", textesSuspects().length === 0, textesSuspects().join());
+    ok("onglet Ateliers actif sur le portrait", d.querySelector(".onglet.actif").dataset.onglet === "ateliers");
+
+    // ---------- Retour à la page des ateliers ----------
+    await aller("ateliers");
+    const badges = [...vue().querySelectorAll(".atelier .badge")].filter(b => b.textContent.trim());
+    ok("page ateliers : badges de parties jouées", badges.length >= 20, badges.length + " badges");
+    ok("page ateliers : lien vers le portrait", !!vue().querySelector('a[href="#portrait"]'));
+    ok("page ateliers : parcours affiché", /Votre parcours/.test(vue().textContent) && vue().querySelectorAll(".bilan-ateliers .tuile").length === 3);
+    await aller("accueil");
+    ok("accueil : suggestion d'atelier", [...vue().querySelectorAll(".etiquette")].some(e => /Atelier/.test(e.textContent)));
+
+    // ---------- Emblème et annonce ----------
+    d.querySelector(".marque").click();
+    await pause(60);
+    ok("emblème : révélation et message", d.querySelector(".embleme").classList.contains("revele") && !d.getElementById("annonce").hidden);
+
+    // ---------- Navigation : atelier suivant ----------
+    await aller("chiffres/monde");
+    ok("lien vers l'atelier suivant", !!vue().querySelector(".atelier-suivant"));
+    ok("titre de l'onglet", d.title.startsWith("Le monde en chiffres"));
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
+  }
+  ok("affichage : aucun défaut pendant les parties", defautsAffichage.size === 0, defautsAffichage.size + " défaut(s), détail ci-dessous");
+  ok("aucune erreur JavaScript" + (erreursJS.length ? " : " + [...new Set(erreursJS)].join(" | ") : ""), erreursJS.length === 0);
+  const echecs = lignes.filter(l => !l.startsWith("OK")).length;
+  lignes.unshift("RÉSUMÉ : " + (lignes.length - echecs) + " / " + lignes.length + " vérifications réussies ; " + defautsAffichage.size + " défaut(s) d'affichage");
+  if (defautsAffichage.size) lignes.push("", "=== défauts d'affichage ===", ...defautsAffichage.values());
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+  console.log("RAPPORT-FIN");
+  f.remove();
+};
+</script>

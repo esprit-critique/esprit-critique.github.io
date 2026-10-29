@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/#accueil" style="border: 0; display: block"></iframe>
+<script>
+// Banc d'essai général : fiches, quiz, révisions, navigation, clavier, sauvegarde. Taille : ?l=390&h=844
+const params = new URLSearchParams(location.search);
+document.getElementById("f").style.width = (params.get("l") || 390) + "px";
+document.getElementById("f").style.height = (params.get("h") || 844) + "px";
+const lignes = [];
+const ok = (nom, cond) => { const l = (cond ? "OK    " : "ÉCHEC ") + nom; lignes.push(l); console.log("BANC: " + l); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const erreursJS = [];
+const f = document.getElementById("f");
+let lance = false;
+f.onload = async () => {
+  if (lance) return;
+  lance = true;
+  try {
+    const w = f.contentWindow;
+    let d = f.contentDocument;
+    w.addEventListener("error", e => erreursJS.push(e.message));
+    const aller = async h => { w.location.hash = h; await pause(120); };
+    const vue = () => d.querySelector("main > section:not([hidden])");
+    const touche = (cle, cible) => (cible || d.body).dispatchEvent(new w.KeyboardEvent("keydown", { key: cle, bubbles: true }));
+    // Reprise des données d'une ancienne version : liste « erreurs » et mode « erreurs »
+    w.localStorage.clear();
+    w.localStorage.setItem("erreurs", JSON.stringify(["biais:ancrage", "sophismes:post-hoc", "biais:inexistant"]));
+    w.localStorage.setItem("modeQuiz", JSON.stringify("erreurs"));
+    w.localStorage.setItem("acquis", JSON.stringify(["biais:halo", "biais:supprime"]));
+    w.location.reload();
+    await new Promise(res => { f.onload = res; });
+    await pause(150);
+    d = f.contentDocument;
+    w.addEventListener("error", e => erreursJS.push(e.message));
+    const memoireReprise = JSON.parse(w.localStorage.getItem("memoire") || "{}");
+    ok("reprise : anciennes erreurs converties en révisions", Object.keys(memoireReprise).length === 2 && memoireReprise["biais:ancrage"].b === 1);
+    ok("reprise : ancienne clé « erreurs » supprimée", w.localStorage.getItem("erreurs") === null);
+    ok("reprise : 1 fiche acquise conservée, l'inconnue ignorée", d.querySelector(".tuile-nombre").textContent.startsWith("1 / 90"));
+    await aller("quiz");
+    ok("reprise : ancien mode « erreurs » devenu « À réviser »", d.querySelector("#filtres-quiz .puce.active").textContent.startsWith("À réviser"));
+    w.localStorage.clear();
+    w.location.reload();
+    await new Promise(res => { f.onload = res; });
+    await pause(150);
+    d = f.contentDocument;
+    w.addEventListener("error", e => erreursJS.push(e.message));
+    await aller("accueil");
+
+    // ---------- Accueil ----------
+    ok("accueil visible", vue().id === "vue-accueil");
+    ok("5 onglets", d.querySelectorAll(".onglet").length === 5);
+    ok("onglet Accueil actif", d.querySelector(".onglet.actif").dataset.onglet === "accueil");
+    ok("situation du jour : 4 choix", vue().querySelector("article.carte").querySelectorAll(".choix").length === 4);
+    ok("vrai ou faux du jour : 2 choix", vue().querySelectorAll(".vf-jour .choix").length === 2);
+    ok("3 tuiles de progression", vue().querySelectorAll(".tuile").length === 3);
+    ok("plus de bandeau de couleurs", !d.getElementById("bandeau"));
+    ok("emblème dans l'en-tête", !!d.querySelector(".marque .embleme"));
+    vue().querySelectorAll(".choix")[0].click();
+    ok("situation du jour : correction", !!vue().querySelector(".retour-quiz"));
+    await aller("guide"); await aller("accueil");
+    ok("situation du jour : réponse conservée", !!vue().querySelector(".retour-quiz"));
+    ok("réponse enregistrée en mémoire", Object.keys(JSON.parse(w.localStorage.getItem("memoire") || "{}")).length === 1);
+
+    // ---------- Fiches ----------
+    await aller("biais");
+    ok("liste biais : 6 groupes", vue().querySelectorAll(".groupe").length === 6);
+    ok("liste biais : 51 lignes", vue().querySelectorAll(".ligne-fiche").length === 51);
+    ok("onglet Fiches actif", d.querySelector(".onglet.actif").dataset.onglet === "fiches");
+    ok("titre de page", d.title === "Biais · Esprit critique");
+    await aller("sophismes");
+    ok("liste sophismes : 8 groupes, 39 lignes", vue().querySelectorAll(".groupe").length === 8 && vue().querySelectorAll(".ligne-fiche").length === 39);
+    const r = d.getElementById("recherche");
+    r.value = "kahneman"; r.dispatchEvent(new Event("input"));
+    ok("recherche sophismes « kahneman » → suggestion vers les biais", !!vue().querySelector('.vide a[href="#biais"]'));
+    vue().querySelector('.vide a[href="#biais"]').click(); await pause(120);
+    ok("recherche conservée en changeant de type : " + vue().querySelectorAll(".ligne-fiche").length + " biais", vue().querySelectorAll(".ligne-fiche").length > 5 && r.value === "kahneman");
+    r.value = ""; r.dispatchEvent(new Event("input"));
+    [...d.querySelectorAll("#filtres .puce")].find(p => p.textContent.includes("Mémoire")).click();
+    ok("filtre Mémoire et attention : 7 fiches", vue().querySelectorAll(".ligne-fiche").length === 7);
+    [...d.querySelectorAll("#filtres .puce")].find(p => p.textContent === "Toutes").click();
+
+    // Toutes les pages de fiches
+    let manquants = [], schemas = 0, distinctions = 0;
+    const INDEX = w.eval("INDEX");
+    for (const [cle, { type, fiche }] of INDEX) {
+      w.location.hash = type + "/" + fiche.id;
+      w.dispatchEvent(new HashChangeEvent("hashchange"));
+      const titre = vue().querySelector(".fiche-titre");
+      if (!titre || titre.textContent !== fiche.nom) manquants.push(cle);
+      if (vue().querySelector(".schema svg")) schemas++;
+      if (vue().querySelector(".distinction a")) distinctions++;
+    }
+    ok("90 pages de fiches" + (manquants.length ? " — manquantes : " + manquants.join(", ") : ""), manquants.length === 0 && INDEX.size === 90);
+    ok("illustrations affichées : " + schemas, schemas === Object.keys(w.eval("SCHEMAS")).length);
+    ok("« Ne pas confondre » : " + distinctions, distinctions === 90);
+    await aller("biais/ancrage");
+    vue().querySelector(".bouton-acquis").click();
+    ok("marquer comme acquise", vue().querySelector(".bouton-acquis").classList.contains("oui"));
+    await aller("biais");
+    ok("coche dans la liste", [...vue().querySelectorAll(".ligne-fiche")].some(l => l.href.endsWith("#biais/ancrage") && l.querySelector(".lf-etat").textContent === "✓"));
+
+    // ---------- Leurres du quiz : jamais une notion proche ----------
+    const choisirOptions = w.eval("choisirOptions"), PROCHES = w.eval("PROCHES");
+    let problemes = 0, tailles = new Set();
+    for (const [cle, { type, fiche }] of INDEX) {
+      for (let k = 0; k < 30; k++) {
+        const opts = choisirOptions(type, fiche);
+        tailles.add(opts.length);
+        if (!opts.includes(fiche) || new Set(opts).size !== 4) problemes++;
+        if (opts.some(o => o !== fiche && (PROCHES.get(cle) || new Set()).has(type + ":" + o.id))) problemes++;
+      }
+    }
+    ok("2 700 tirages de leurres sans notion proche ni doublon", problemes === 0 && tailles.size === 1 && tailles.has(4));
+
+    // ---------- Quiz ----------
+    await aller("quiz");
+    ok("quiz : 4 modes", vue().querySelectorAll("#filtres-quiz .puce").length === 4);
+    touche("2");
+    ok("clavier : touche 2 répond", !!vue().querySelector(".retour-quiz"));
+    touche("Enter");
+    ok("clavier : Entrée passe à la question 2", vue().querySelector(".quiz-entete").textContent.includes("Question 2 / 10"));
+    for (let i = 1; i < 10; i++) {
+      vue().querySelectorAll(".choix")[0].click();
+      vue().querySelector("[data-suivant]").click();
+      await pause(5);
+    }
+    ok("quiz : bilan", vue().textContent.includes("Bilan de la série"));
+    const mem = JSON.parse(w.localStorage.getItem("memoire"));
+    ok("mémoire : " + Object.keys(mem).length + " fiches suivies", Object.keys(mem).length >= 10);
+    // Simule des révisions dues : on avance toutes les dates
+    Object.values(mem).forEach(m => { m.d = 0; });
+    w.localStorage.setItem("memoire", JSON.stringify(mem));
+    w.location.reload();
+    await new Promise(res => { f.onload = res; });
+    await pause(150);
+    d = f.contentDocument;
+    w.addEventListener("error", e => erreursJS.push(e.message));
+    await aller("quiz");
+    const puceRev = [...d.querySelectorAll("#filtres-quiz .puce")].find(p => p.textContent.startsWith("À réviser"));
+    ok("révisions dues : " + puceRev.textContent, /\((1[0-9]|[2-9][0-9])\)/.test(puceRev.textContent));
+    puceRev.click(); await pause(50);
+    ok("série de révision : 10 questions", vue().querySelector(".quiz-entete").textContent.includes("/ 10"));
+    await aller("accueil");
+    ok("accueil : carte de révision", vue().textContent.includes("à revoir aujourd'hui"));
+    ok("accueil : rubrique « À renforcer » (barres ou message d'attente)", vue().querySelectorAll(".barre-ligne").length > 0 || vue().textContent.includes("catégories les plus fragiles"));
+
+    // ---------- Ateliers ----------
+    await aller("ateliers");
+    ok("ateliers : 24 cartes", vue().querySelectorAll(".atelier").length === 24);
+    ok("onglet Ateliers actif", d.querySelector(".onglet.actif").dataset.onglet === "ateliers");
+    await aller("chiffres");
+    ok("#chiffres renvoie à la liste", vue().id === "vue-ateliers");
+    for (const id of ["monde", "mortalite", "pays", "nord", "grandeurs", "chronologie", "vrai-faux", "intervalles", "ancre", "points", "illusion", "hasard", "ecrire-hasard", "correlation", "graphiques"]) {
+      await aller("chiffres/" + id);
+      ok("jeu " + id + " : page et lien retour", vue().id === "vue-chiffres" && !!vue().querySelector('a[href="#ateliers"]'));
+    }
+    for (const id of ["crt", "wason", "regle-246", "monty-hall", "classiques", "depistage", "anniversaires", "pensee", "citations"]) {
+      await aller("tests/" + id);
+      ok("expérience " + id, vue().id === "vue-tests" && !!vue().querySelector(".fiche-titre"));
+    }
+    // Entrée dans les champs : passe au suivant, puis valide
+    await aller("tests/crt");
+    const champs = vue().querySelectorAll(".champ");
+    champs[0].focus(); champs[0].value = "5"; touche("Enter", champs[0]);
+    ok("Entrée : passe au champ suivant", d.activeElement === champs[1]);
+    champs[1].value = "5"; champs[2].value = "47"; touche("Enter", champs[2]);
+    ok("Entrée : valide le test (3/3)", (vue().querySelector(".grand-score") || {}).textContent.replace(/\s/g, "") === "3/3");
+    await aller("ateliers");
+    ok("ateliers : partie du test marquée", [...vue().querySelectorAll(".atelier .badge")].filter(b => b.textContent).length === 1);
+
+    // ---------- Guide ----------
+    await aller("guide/methode");
+    ok("guide : section méthode", vue().id === "vue-guide" && !!d.getElementById("g-methode"));
+    ok("guide : lexique", d.querySelectorAll("#g-lexique dt").length >= 15);
+    ok("bouton effacer présent", !!d.getElementById("btn-effacer"));
+    // Liens internes du guide valides
+    const liensCasses = [...d.querySelectorAll('#vue-guide a[href^="#biais/"], #vue-guide a[href^="#sophismes/"]')]
+      .filter(a => { const [t, id] = a.getAttribute("href").slice(1).split("/"); return !w.eval("INDEX").has(t + ":" + id); });
+    ok("liens du guide vers les fiches : tous valides", liensCasses.length === 0);
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
+  }
+  ok("aucune erreur JavaScript" + (erreursJS.length ? " : " + erreursJS.join(" | ") : ""), erreursJS.length === 0);
+  const echecs = lignes.filter(l => !l.startsWith("OK")).length;
+  lignes.unshift("RÉSUMÉ : " + (lignes.length - echecs) + " / " + lignes.length + " vérifications réussies");
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+  console.log("RAPPORT-FIN");
+  f.remove();
+};
+</script>

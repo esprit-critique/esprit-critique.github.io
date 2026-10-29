@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/#accueil" style="border: 0; display: block"></iframe>
+<script>
+// Banc d'essai de l'affichage : dessine toutes les variantes des dessins générés (controleDonnees),
+// puis ouvre chaque page du site et y cherche les défauts de mise en page (controleAffichage).
+// Taille de l'écran simulé : _affichage.html?l=390&h=844 (par défaut, 390 × 844).
+
+// Exceptions vérifiées à l'œil : défauts signalés à tort. Chaque entrée précise le type de défaut,
+// le dessin (« ou ») et le texte concernés, par des expressions régulières, et la raison.
+// Vérifiées le 29 octobre 2026 sur captures à 390 px : dans ces diagrammes en barres, la valeur est écrite
+// au bout de la barre colorée, donc sur la piste grise ou juste après elle ; elle reste lisible.
+const EXCEPTIONS = [
+  { type: "texte-hors-de-sa-forme", ou: /Taux de succès de deux traitements/, texte: /%/, raison: "Simpson : valeur au bout de la barre, sur la piste" },
+  { type: "texte-hors-de-sa-forme", ou: /Choix d'abonnement/, texte: /%/, raison: "leurre : valeur au bout de la barre, sur la piste" },
+  { type: "texte-hors-de-sa-forme", ou: /Durée de rédaction d'un mémoire/, texte: /jours$/, raison: "planification : valeur au bout de la barre, sur la piste" },
+  { type: "texte-hors-de-sa-forme", ou: /Part des participants qui gardent/, texte: /%/, raison: "dotation : valeur au bout de la barre, sur la piste" },
+  { type: "texte-hors-de-sa-forme", ou: /Part de l'humanité vivant dans l'extrême pauvreté/, texte: /%/, raison: "négativité : valeur au bout de la barre, sur la piste" }
+];
+
+const params = new URLSearchParams(location.search);
+const f = document.getElementById("f");
+f.style.width = (params.get("l") || 390) + "px";
+f.style.height = (params.get("h") || 844) + "px";
+
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const erreursJS = [];
+const excuse = d => EXCEPTIONS.find(x => x.type === d.type && x.ou.test(d.ou) && x.texte.test(d.texte));
+let lance = false;
+
+f.onload = async () => {
+  if (lance) return;
+  lance = true;
+  const w = f.contentWindow, doc = f.contentDocument;
+  w.addEventListener("error", e => erreursJS.push(e.message + " (" + (e.filename || "").split("/").pop() + ":" + e.lineno + ")"));
+  const trouves = [], ignores = [];
+  const noter = (adresse, defauts) => defauts.forEach(d => {
+    d.adresse = adresse;
+    (excuse(d) ? ignores : trouves).push(d);
+  });
+  try {
+    w.localStorage.clear();
+    await new Promise((ok, ko) => {
+      const s = doc.createElement("script");
+      s.src = "/controle-affichage.js";
+      s.onload = ok;
+      s.onerror = () => ko(new Error("controle-affichage.js introuvable"));
+      doc.head.appendChild(s);
+    });
+    const aller = async h => { w.location.hash = h; await pause(150); w.scrollTo(0, 0); await pause(20); };
+
+    // 1. Toutes les variantes des dessins générés à partir des données
+    await aller("accueil");
+    noter("variantes des dessins", w.controleDonnees());
+
+    // 2. Chaque page du site
+    const adresses = ["accueil", "biais", "sophismes", "quiz", "ateliers"];
+    w.eval("[...INDEX.keys()]").forEach(cle => adresses.push(cle.replace(":", "/")));
+    adresses.push("guide");
+    [...doc.querySelectorAll('[id^="g-"]')].forEach(a => adresses.push("guide/" + a.id.slice(2)));
+    for (const a of adresses) {
+      await aller(a);
+      noter("#" + a, w.controleAffichage());
+    }
+
+    // 3. Le portrait, avec des mesures pour que chaque bloc soit rempli
+    const mesures = {
+      resultatsAteliers: { monde: { n: 3, record: 8, sur: 10, historique: [5, 7, 8], jour: 1 }, depistage: { n: 2, record: 3, sur: 4, historique: [2, 3] }, classiques: { n: 1, record: 4, sur: 5, historique: [4] }, citations: { n: 1, record: 6, sur: 8, historique: [6] } },
+      confiance: { 50: [6, 3], 70: [14, 9], 90: [20, 14], 99: [8, 7] },
+      fourchettes: [30, 17],
+      ancrages: [{ j: 1, h: 1.4, b: 0.8 }, { j: 2, h: 1.2, b: 0.9 }],
+      illusions: [{ j: 1, avant: 0.18, apres: 0.12 }],
+      hasardEcrit: [{ j: 1, c: 31, l: 3 }],
+      montyHall: { 3: { garder: [2, 6], changer: [5, 7] }, 10: { garder: [0, 1], changer: [3, 3] } },
+      reponsesPensee: { poulet: 1, thesee: 2, theiere: 0 }
+    };
+    await aller("portrait");
+    noter("#portrait (vide)", w.controleAffichage());
+    Object.entries(mesures).forEach(([k, v]) => w.localStorage.setItem(k, JSON.stringify(v)));
+    await aller("accueil");
+    await aller("portrait");
+    noter("#portrait (rempli)", w.controleAffichage());
+
+    // Rapport : résumé, puis défauts regroupés par type
+    const lignes = [];
+    const types = [...new Set(trouves.map(d => d.type))];
+    lignes.push("RÉSUMÉ : " + trouves.length + " défaut" + (trouves.length > 1 ? "s" : "") + " (" + types.map(t => t + " " + trouves.filter(d => d.type === t).length).join(", ") + (types.length ? "" : "aucun") + ") ; " + ignores.length + " exception(s) ignorée(s) ; " + adresses.length + " pages ; " + erreursJS.length + " erreur(s) JavaScript");
+    types.forEach(t => {
+      lignes.push("", "=== " + t + " ===");
+      trouves.filter(d => d.type === t).forEach(d => lignes.push("- [" + d.adresse + "] " + d.ou + " | « " + d.texte + " » | " + d.detail));
+    });
+    if (ignores.length) {
+      lignes.push("", "=== exceptions ignorées ===");
+      ignores.forEach(d => lignes.push("- " + d.type + " [" + d.adresse + "] " + d.ou + " | « " + d.texte + " » — " + excuse(d).raison));
+    }
+    if (erreursJS.length) lignes.push("", "=== erreurs JavaScript ===", ...new Set(erreursJS));
+    document.getElementById("out").textContent = lignes.join("\n");
+    lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+    console.log("RAPPORT-FIN");
+  } catch (e) {
+    document.getElementById("out").textContent = "EXCEPTION " + e.message + "\n" + e.stack;
+    console.log("RAPPORT: RÉSUMÉ : EXCEPTION " + e.message);
+    console.log("RAPPORT-FIN");
+  }
+  f.remove();
+};
+</script>

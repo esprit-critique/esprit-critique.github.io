@@ -55,6 +55,27 @@ connecté au même réseau Wi-Fi.
 
 La publication sur GitHub Pages est automatique : voir `.github/workflows/publier.yml`.
 
+## Tests
+
+Les bancs d'essai s'exécutent dans Chrome sans fenêtre (macOS, Chrome installé, aucune autre dépendance) :
+
+```
+tests/lancer.sh                        # tous les bancs, à 390 et 1 280 px, en clair et en sombre
+tests/lancer.sh affichage              # un seul banc : affichage, ateliers ou test
+CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
+```
+
+| Fichier | Rôle |
+|---|---|
+| `tests/_test.html` | fiches, quiz, révisions, navigation, clavier, reprise des anciennes données |
+| `tests/_ateliers.html` | joue chaque atelier jusqu'au bilan ; contrôle l'affichage à chaque étape |
+| `tests/_affichage.html` | contrôle l'affichage de chaque page et de toutes les variantes des dessins générés |
+| `tests/controle-affichage.js` | détection des textes coupés ou superposés, des débordements, du défilement horizontal |
+| `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |
+| `tests/pays/` | `telecharger.sh` puis `generer_pays.py` : régénère `static/pays.js` (Banque mondiale, HCR) |
+
+Les rapports et les captures vont dans `tests/rapports/`, qui n'est pas versionné.
+
 ## Licences
 
 Code sous licence [MIT](LICENSE) ; textes sous licence [CC BY 4.0](LICENCE-CONTENU.md). Les données
