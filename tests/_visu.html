@@ -118,6 +118,18 @@ f.onload = async () => {
       const t = vue().querySelector(".titre-carnet");
       if (t) w.scrollTo(0, t.getBoundingClientRect().top + w.scrollY - 10);
     },
+    "niveau-auto": async () => { await aller("chiffres/monde"); },
+    "niveau-3": async () => { w.localStorage.setItem("niveaux", JSON.stringify({ "vrai-faux": { niveau: 3, mode: "choisi" } })); await aller("chiffres/vrai-faux"); },
+    "niveau-bilan": async () => { await aller("chiffres/monde"); for (let k = 0; k < 10; k++) { choix(0); await pause(10); suivant(); await pause(10); } },
+    "portrait-niveaux": async () => {
+      w.localStorage.setItem("resultatsAteliers", JSON.stringify({ monde: { n: 5, record: 9, sur: 10, historique: [6, 7, 9, 8, 9], niveaux: { 1: { n: 2, record: 7, sur: 10, historique: [6, 7] }, 2: { n: 2, record: 9, sur: 10, historique: [9, 8] }, 3: { n: 1, record: 9, sur: 10, historique: [9], reussites90: 1 } } },
+        pays: { n: 4, record: 10, sur: 10, historique: [9, 10, 10, 9], niveaux: { 3: { n: 4, record: 10, sur: 10, historique: [9, 10, 10, 9], reussites90: 4 } } } }));
+      w.localStorage.setItem("niveaux", JSON.stringify({ monde: { niveau: 2, mode: "auto" }, pays: { niveau: 3, mode: "auto" } }));
+      await aller("portrait");
+      const t = vue().querySelector(".tableau-niveaux");
+      if (t) w.scrollTo(0, t.getBoundingClientRect().top + w.scrollY - 80);
+    },
+    "intervalles-niveau": async () => { await aller("chiffres/intervalles"); },
     "guide": async () => { await aller("guide/philosophie"); },
     "guide-haut": async () => { await aller("guide/difference"); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
@@ -146,7 +158,7 @@ f.onload = async () => {
   await pause(150);
   if (etapes[scenario]) await etapes[scenario]();
   else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
-  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet"].includes(scenario)) w.scrollTo(0, 0);
+  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux"].includes(scenario)) w.scrollTo(0, 0);
   // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration
   if (scenario.startsWith("schema:")) {
     await aller(decodeURIComponent(scenario.slice(7)));

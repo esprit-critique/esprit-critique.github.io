@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/#accueil" style="border: 0; display: block; width: 390px; height: 844px"></iframe>
+<script>
+// Banc du moteur de progression (niveaux.js) : joueurs simulés, records par niveau, migration des
+// anciennes sauvegardes, choix manuel du niveau, tirage selon le niveau.
+const lignes = [];
+const ok = (nom, cond, detail) => { lignes.push((cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail)); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const erreursJS = [];
+const f = document.getElementById("f");
+let lance = false;
+f.onload = async () => {
+  if (lance) return;
+  lance = true;
+  const w = f.contentWindow, d = f.contentDocument;
+  w.addEventListener("error", e => erreursJS.push(e.message + " (" + (e.filename || "").split("/").pop() + ":" + e.lineno + ")"));
+  const ev = x => w.eval(x);
+  try {
+    w.localStorage.clear();
+    const vue = () => d.querySelector("main > section:not([hidden])");
+    const aller = async h => { w.location.hash = h; await pause(150); };
+
+    // ---------- Escalier : joueurs simulés ----------
+    // Probabilité de réussite selon le niveau ; on mesure le temps passé à chaque niveau sur 4 000 questions
+    const simuler = (p, graine) => {
+      w.localStorage.removeItem("niveaux");
+      const alea = ev("generateur")(graine);
+      const temps = [0, 0, 0];
+      let justes = 0, niveau = 1;
+      for (let k = 0; k < 4000; k++) {
+        temps[niveau - 1]++;
+        const juste = alea() < p[niveau - 1];
+        if (juste) justes++;
+        niveau = ev("suivreReponse")("simulation", juste);
+      }
+      return { temps: temps.map(t => t / 4000), reussite: justes / 4000 };
+    };
+    const moyen = simuler([0.95, 0.80, 0.55], 1);
+    ok("joueur moyen (95 / 80 / 55 %) : surtout au niveau 2, réussite proche de 79,4 % (Levitt) (" + moyen.temps.map(t => Math.round(100 * t)).join(" / ") + " ; " + Math.round(100 * moyen.reussite) + " %)",
+      moyen.temps[1] >= Math.max(moyen.temps[0], moyen.temps[2]) && moyen.reussite > 0.74 && moyen.reussite < 0.85);
+    const faible = simuler([0.60, 0.30, 0.10], 2);
+    ok("joueur débutant (60 / 30 / 10 %) : reste au niveau 1 (" + faible.temps.map(t => Math.round(100 * t)).join(" / ") + ")", faible.temps[0] > 0.8);
+    const fort = simuler([0.99, 0.99, 0.97], 3);
+    ok("joueur expert (99 / 99 / 97 %) : surtout au niveau 3 (" + fort.temps.map(t => Math.round(100 * t)).join(" / ") + ")", fort.temps[2] > 0.85);
+    // Escalier exact : 3 réussites font monter, 1 erreur fait descendre
+    w.localStorage.removeItem("niveaux");
+    const suivre = ev("suivreReponse");
+    const pas = [suivre("e", true), suivre("e", true), suivre("e", true), suivre("e", true), suivre("e", false)];
+    ok("escalier : 1, 1, 2 après trois réussites, puis 2, puis 1 après une erreur", pas.join(",") === "1,1,2,2,1", pas.join(","));
+    ev("enregistrerNiveau")("e", { mode: "choisi", niveau: 3 });
+    ok("niveau choisi : fixe, quelles que soient les réponses", suivre("e", false) === 3 && suivre("e", false) === 3);
+    const partie = ev("suivrePartie");
+    ev("enregistrerNiveau")("p", { mode: "auto", niveau: 1 });
+    ok("ajustement par partie : monte à 8 / 10, descend sous 5 / 10", partie("p", 8, 10) === 2 && partie("p", 6, 10) === 2 && partie("p", 4, 10) === 1);
+
+    // ---------- Niveau d'une partie et tirage ----------
+    ok("niveau d'une partie : le plus fréquent, le plus élevé à égalité", ev("niveauDePartie")([1, 1, 2, 2, 3]) === 2 && ev("niveauDePartie")([1, 3, 3, 2]) === 3);
+    w.localStorage.removeItem("vus");
+    const items = [1, 1, 1, 2, 2, 3, 3, 3].map((niveau, k) => ({ id: "i" + k, niveau }));
+    const tir = ev("tirerSelonNiveau");
+    const t3 = tir("essai", items, 3, 3);
+    ok("tirage : d'abord le niveau demandé", t3.every(x => x.niveau === 3));
+    const t3b = tir("essai", items, 2, 3);
+    ok("tirage : niveau épuisé, on passe au voisin", t3b.every(x => x.niveau === 2));
+    const t1 = tir("essai", items, 4, 1);
+    ok("tirage : jamais deux fois le même élément dans un tirage", new Set(t1.map(x => x.id)).size === 4);
+
+    // ---------- Records par niveau et maîtrise ----------
+    w.localStorage.removeItem("resultatsAteliers");
+    const noter = ev("noterPartie");
+    noter("sim", 9, 10, 3); noter("sim", 7, 10, 1); noter("sim", 10, 10, 3); noter("sim", 9, 10, 3);
+    const r = ev("resultatAtelier")("sim");
+    ok("records par niveau : 10 / 10 au niveau 3, 7 / 10 au niveau 1", r.niveaux[3].record === 10 && r.niveaux[1].record === 7 && r.niveaux[3].n === 3 && r.n === 4);
+    ok("maîtrise : trois parties à 90 % ou plus au niveau 3", ev("atelierMaitrise")("sim") === true);
+    noter("sim2", 10, 10, 3); noter("sim2", 8, 10, 3); noter("sim2", 10, 10, 3);
+    ok("pas de maîtrise avec deux parties à 90 % seulement", ev("atelierMaitrise")("sim2") === false);
+
+    // ---------- Ancienne sauvegarde, sans niveaux ----------
+    w.localStorage.clear();
+    w.localStorage.setItem("resultatsAteliers", JSON.stringify({ monde: { n: 2, record: 8, sur: 10, historique: [6, 8], jour: 1 }, illusion: { n: 1, historique: [] } }));
+    w.localStorage.setItem("vus", JSON.stringify({ monde: ["pauvrete", "vaccins"], grandeurs: ["arbres"] }));
+    w.location.reload();
+    await new Promise(res => { f.onload = res; });
+    await pause(150);
+    w.addEventListener("error", e => erreursJS.push(e.message + " (" + (e.filename || "").split("/").pop() + ":" + e.lineno + ")"));
+    const d2 = f.contentDocument;
+    const vue2 = () => d2.querySelector("main > section:not([hidden])");
+    const r2 = ev("resultatAtelier")("monde");
+    ok("migration : les anciens résultats comptent au niveau 1", r2.niveaux[1].record === 8 && r2.niveaux[1].historique.length === 2 && r2.record === 8);
+    ok("migration : sans clé « niveaux », niveau 1 en mode auto", ev("niveauAtelier")("monde").niveau === 1 && ev("niveauAtelier")("monde").mode === "auto");
+    w.location.hash = "ateliers"; await pause(150);
+    w.location.hash = "portrait"; await pause(150);
+    ok("migration : pages ateliers et portrait sans erreur", vue2().id === "vue-portrait" && erreursJS.length === 0, erreursJS.join(" | "));
+
+    // ---------- Une partie complète, niveau choisi à la main ----------
+    w.location.hash = "chiffres/monde"; await pause(150);
+    ok("choix du niveau : puces Auto · 1 · 2 · 3, Auto actif", [...vue2().querySelectorAll(".puces-niveau .puce")].map(b => b.textContent).join(" ") === "Auto 1 2 3" && vue2().querySelector(".puces-niveau .puce.active").textContent === "Auto");
+    ok("premier passage : question au niveau 1", /Question 1 \/ 10 · niveau 1/.test(vue2().textContent));
+    vue2().querySelectorAll(".puces-niveau .puce")[2].click();
+    await pause(30);
+    ok("niveau 2 choisi : mémorisé et affiché", ev("niveauAtelier")("monde").mode === "choisi" && ev("niveauAtelier")("monde").niveau === 2 && /niveau 2/.test(vue2().querySelector(".quiz-entete").textContent) && vue2().querySelectorAll(".puces-niveau .puce")[2].getAttribute("aria-pressed") === "true");
+    const niveauxPoses = [];
+    for (let k = 0; k < 10; k++) {
+      const q = ev("MONDE").find(m => vue2().querySelector(".cas").textContent.replace(/\s/g, "") === ev("typo")(m.question).replace(/\s/g, ""));
+      if (q) niveauxPoses.push(q.niveau);
+      vue2().querySelectorAll(".choix")[0].click();
+      await pause(5);
+      vue2().querySelector("[data-suivant]").click();
+      await pause(5);
+    }
+    ok("niveau choisi : questions de niveau 2 tant qu'il en reste (" + niveauxPoses.join(",") + ")", niveauxPoses.length === 10 && niveauxPoses.filter(n => n === 2).length >= 9);
+    ok("bilan : niveau de la partie et réponses par niveau", /Partie jouée au niveau 2/.test(vue2().textContent) && /Réponses justes par niveau/.test(vue2().textContent));
+    const r3 = ev("resultatAtelier")("monde");
+    ok("bilan : partie enregistrée au niveau 2, anciens résultats conservés", r3.niveaux[2] && r3.niveaux[2].n === 1 && r3.niveaux[1].record === 8 && r3.n === 3);
+    w.location.hash = "portrait"; await pause(150);
+    ok("portrait : tableau des niveaux", /Niveaux/.test(vue2().textContent) && !!vue2().querySelector("table.tableau-niveaux"));
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
+  }
+  ok("aucune erreur JavaScript" + (erreursJS.length ? " : " + [...new Set(erreursJS)].join(" | ") : ""), erreursJS.length === 0);
+  const echecs = lignes.filter(l => !l.startsWith("OK")).length;
+  lignes.unshift("RÉSUMÉ : " + (lignes.length - echecs) + " / " + lignes.length + " vérifications réussies");
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+  console.log("RAPPORT-FIN");
+  f.remove();
+};
+</script>

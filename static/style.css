@@ -1051,3 +1051,15 @@ h3.titre-bloc {
 .trait-felicite-point { fill: var(--vert); }
 .trait-reprimande-point { fill: var(--rouge); }
 .trait-neutre-point { fill: var(--discret); }
+
+/* ===================== Niveaux ===================== */
+.choix-niveau { margin: 0 0 12px; }
+.choix-niveau .puces-niveau { flex-wrap: wrap; overflow: visible; margin: 0; }
+.choix-niveau .puces-niveau .puce { min-width: 44px; justify-content: center; }
+.choix-niveau .source { margin: 4px 0 0; }
+.bilan-niveaux p { margin: 4px 0; }
+.tableau-niveaux { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.tableau-niveaux th, .tableau-niveaux td { border-bottom: 1px solid var(--trait-doux); padding: 6px 4px; text-align: right; vertical-align: top; }
+.tableau-niveaux th { font-size: 12.5px; color: var(--discret); font-weight: 600; }
+.tableau-niveaux th:first-child, .tableau-niveaux td:first-child { text-align: left; }
+.tableau-niveaux .bloc { display: block; font-size: 12.5px; }

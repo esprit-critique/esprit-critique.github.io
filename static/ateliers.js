@@ -63,9 +63,10 @@ function ajouterExplication(zone, titre, paragraphes, liens) {
 }
 
 // En-tête d'une question : « Question 3 / 10 » et jauge d'avancement
-function entete(zone, numero, total, libelle) {
+// « niveau » (facultatif) : niveau de la question, affiché discrètement
+function entete(zone, numero, total, libelle, niveau) {
   const e = el("div", "quiz-entete");
-  e.appendChild(el("span", null, (libelle || "Question") + " " + numero + " / " + total));
+  e.appendChild(el("span", null, (libelle || "Question") + " " + numero + " / " + total + (niveau ? " · niveau " + niveau : "")));
   zone.appendChild(e);
   const jauge = el("div", "jauge");
   const rempli = el("div");
@@ -234,35 +235,66 @@ function tirerNouveaux(cle, elements, n, idDe = e => e.id) {
 // ===================== Résultats des parties =====================
 // resultats[id] = { n: parties terminées, record, sur, historique: [derniers scores], jour }
 
-function noterPartie(id, score, sur) {
+// Avec un niveau, les records et historiques sont aussi tenus par niveau : r.niveaux[niveau] = { n, record, sur,
+// historique, reussites90 }. Les champs généraux (n, record, historique) restent tenus pour toutes les parties.
+function noterPartie(id, score, sur, niveau) {
   const tous = lire("resultatsAteliers", {});
-  const r = tous[id] || { n: 0, historique: [] };
+  const r = migrerResultat(tous[id] || { n: 0, historique: [] });
   const ancienRecord = r.record;
   r.n++;
   r.jour = aujourdHui();
+  let parNiveau = null, ancienRecordNiveau;
   if (score !== undefined && score !== null) {
     r.sur = sur;
     r.historique = [...(r.historique || []), score].slice(-12);
     if (r.record === undefined || score > r.record) r.record = score;
+    if (niveau) {
+      r.niveaux = r.niveaux || {};
+      parNiveau = r.niveaux[niveau] || { n: 0, historique: [] };
+      ancienRecordNiveau = parNiveau.record;
+      parNiveau.n++;
+      parNiveau.sur = sur;
+      parNiveau.historique = [...parNiveau.historique, score].slice(-12);
+      if (parNiveau.record === undefined || score > parNiveau.record) parNiveau.record = score;
+      if (score / sur >= 0.9) parNiveau.reussites90 = (parNiveau.reussites90 || 0) + 1;
+      r.niveaux[niveau] = parNiveau;
+    }
   }
   tous[id] = r;
   ecrire("resultatsAteliers", tous);
   noterActivite();
+  if (parNiveau) return { record: parNiveau.record, ancienRecord: ancienRecordNiveau, nouveauRecord: ancienRecordNiveau !== undefined && score > ancienRecordNiveau, parties: parNiveau.n, historique: parNiveau.historique, niveau };
   return { record: r.record, ancienRecord, nouveauRecord: ancienRecord !== undefined && score > ancienRecord, parties: r.n, historique: r.historique };
 }
 
+// Résultats enregistrés avant les niveaux : ils comptent comme des parties de niveau 1
+function migrerResultat(r) {
+  if (r.niveaux || !r.historique || !r.historique.length || r.sur === undefined) return r;
+  return Object.assign({}, r, { niveaux: { 1: { n: r.historique.length, record: r.record, sur: r.sur, historique: r.historique.slice() } } });
+}
+
 function resultatAtelier(id) {
-  return lire("resultatsAteliers", {})[id] || null;
+  const r = lire("resultatsAteliers", {})[id];
+  return r ? migrerResultat(r) : null;
 }
 
 // Affiche le score final d'une partie, l'éventuel record et les dernières parties
+// Pour un atelier à niveaux (deroulerNiveaux), le record et l'historique affichés sont ceux du niveau de la partie
 function afficherScore(zone, id, score, sur, texteScore) {
-  const r = noterPartie(id, score, sur);
+  const partie = PARTIES_EN_COURS[id];
+  const niveau = partie ? niveauDePartie(partie.niveaux) : undefined;
+  const r = noterPartie(id, score, sur, niveau);
+  const auNiveau = niveau ? " au niveau " + niveau : "";
   zone.appendChild(el("p", "consigne", "Bilan"));
   zone.appendChild(el("p", "grand-score", texteScore || (score + " / " + sur)));
-  if (r.nouveauRecord) zone.appendChild(el("p", "verdict juste", "Nouveau record ! L'ancien était de " + r.ancienRecord + " / " + sur + "."));
-  else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", "Votre record : " + r.record + " / " + sur + " · " + pluriel(r.parties, "partie") + " jouées."));
+  if (partie) {
+    zone.appendChild(bilanNiveaux(id));
+    delete PARTIES_EN_COURS[id];
+  }
+  if (r.nouveauRecord) zone.appendChild(el("p", "verdict juste", "Nouveau record" + auNiveau + " ! L'ancien était de " + r.ancienRecord + " / " + sur + "."));
+  else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", "Votre record" + auNiveau + " : " + r.record + " / " + sur + " · " + pluriel(r.parties, "partie") + " jouées."));
   if (r.historique && r.historique.length > 1) zone.appendChild(histogrammeParties(r.historique, sur));
+  if (niveau === 3 && atelierMaitrise(id)) zone.appendChild(el("p", "source", "Atelier maîtrisé : au moins 90 % au niveau 3 sur trois parties."));
 }
 
 // Petites barres : les dernières parties, de la plus ancienne à la plus récente
@@ -669,6 +701,31 @@ function afficherPortrait() {
     const { d } = dPrime(tot("det"), tot("s"), tot("fa"), tot("r"));
     ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", paragraphe("Sur " + pluriel(debats.length, "débat") + ", vous avez repéré " + tot("det") + " sophismes sur " + tot("s") + ", avec " + pluriel(tot("fa"), "fausse alerte", "fausses alertes") + " sur " + tot("r") + " répliques recevables. Sensibilité d′ cumulée : " + fr(Number(d.toFixed(2))) + " (0 : hasard ; 2 ou plus : très bonne distinction)."));
   } else ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", null, "Repérez-vous les sophismes d'un débat sans crier au sophisme à tort ?");
+
+  // 13. Niveaux des ateliers : niveau atteint, réussite moyenne par niveau, maîtrise
+  const aNiveaux = tousLesAteliers().filter(({ atelier }) => { const r = resultatAtelier(atelier.id); return r && r.niveaux; });
+  if (aNiveaux.length) {
+    const table = el("table", "tableau-niveaux");
+    const tete = el("tr");
+    ["Atelier", "Atteint", "1", "2", "3"].forEach(t => tete.appendChild(el("th", null, t)));
+    table.appendChild(tete);
+    aNiveaux.forEach(({ atelier, adresse }) => {
+      const r = resultatAtelier(atelier.id);
+      const tr = el("tr");
+      const nom = el("td");
+      nom.appendChild(lienVers(adresse, atelier.titre));
+      if (atelierMaitrise(atelier.id)) nom.appendChild(el("span", "source bloc", "maîtrisé"));
+      tr.append(nom, el("td", null, String(niveauAtelier(atelier.id).niveau)));
+      [1, 2, 3].forEach(n => {
+        const x = r.niveaux[n];
+        tr.appendChild(el("td", null, x && x.historique.length ? pct(moyenne(x.historique) / x.sur) : "—"));
+      });
+      table.appendChild(tr);
+    });
+    const bloc = el("div");
+    bloc.append(table, paragraphe("« Atteint » : niveau actuel. Colonnes 1, 2 et 3 : réussite moyenne des parties jouées à chaque niveau. Un atelier est maîtrisé après trois parties à 90 % ou plus au niveau 3.", "source"));
+    ajouter("Niveaux", "#44546a", "#ateliers", bloc);
+  } else ajouter("Niveaux", "#44546a", "#ateliers", null, "Jusqu'où montez-vous ? Les ateliers ajustent leur difficulté à vos réponses.");
 
   const mesures = blocs.filter(b => b.contenu);
   zone.appendChild(el("p", "source", mesures.length + " mesure" + (mesures.length > 1 ? "s" : "") + " sur " + blocs.length + " disponible" + (mesures.length > 1 ? "s" : "") + "."));

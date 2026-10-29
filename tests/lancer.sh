@@ -3,18 +3,18 @@
 # en clair puis en sombre, et rassemble les rapports dans tests/rapports/.
 #
 #   tests/lancer.sh                       tous les bancs, dans les quatre configurations
-#   tests/lancer.sh affichage             un seul banc (affichage, ateliers ou test)
+#   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux ou items)
 #   CONFIGS="390 clair" tests/lancer.sh   une seule configuration
 #
 # Les bancs sont copiés dans static/ le temps du test, puis enlevés ; le serveur local est arrêté à la fin.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test"}
+BANCS=${*:-"affichage ateliers test niveaux items"}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair
 1280 sombre"}
-COPIES="_affichage.html _ateliers.html _test.html controle-affichage.js"
+COPIES="_affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js"
 mkdir -p tests/rapports
 
 nettoyer() {
@@ -35,7 +35,8 @@ echo "$CONFIGS" | while read -r largeur theme; do
   hauteur=$([ "$largeur" = 390 ] && echo 844 || echo 900)
   for banc in $BANCS; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
-    python3 tests/chrome.py "http://localhost:8000/_$banc.html?l=$largeur&h=$hauteur" "$largeur,$hauteur" "$theme" "$rapport"
+    page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
+    python3 tests/chrome.py "http://localhost:8000/$page?l=$largeur&h=$hauteur" "$largeur,$hauteur" "$theme" "$rapport"
     echo "== $banc, $largeur px, $theme : $(grep -m1 '^RÉSUMÉ' "$rapport" || head -1 "$rapport")"
   done
 done

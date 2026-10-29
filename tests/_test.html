@@ -209,7 +209,11 @@ f.onload = async () => {
       await aller("tests/" + id);
       ok("expérience " + id, vue().id === "vue-tests" && !!vue().querySelector(".fiche-titre"));
     }
-    // Entrée dans les champs : passe au suivant, puis valide
+    // Entrée dans les champs : passe au suivant, puis valide (les trois questions originales, comme au premier passage)
+    const vusCrt = JSON.parse(w.localStorage.getItem("vus") || "{}");
+    delete vusCrt.crt;
+    w.localStorage.setItem("vus", JSON.stringify(vusCrt));
+    await aller("accueil");
     await aller("tests/crt");
     const champs = vue().querySelectorAll(".champ");
     champs[0].focus(); champs[0].value = "5"; touche("Enter", champs[0]);

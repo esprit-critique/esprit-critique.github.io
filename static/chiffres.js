@@ -71,8 +71,10 @@ const JEUX = [
     titre: "Le monde en chiffres",
     resume: "Dix questions sur l'état du monde, avec les données les plus récentes. En 2017, des milliers de personnes ont fait moins bien que le hasard.",
     lancer(zone) {
-      const questions = tirerNouveaux("monde", MONDE, 10);
-      derouler(zone, questions, (q, zone, fini) => {
+      deroulerNiveaux(zone, {
+        id: "monde", n: 10, relancer: () => JEUX.find(j => j.id === "monde").lancer(zone),
+        tirer: niveau => tirerSelonNiveau("monde", MONDE, 1, niveau)[0]
+      }, (q, zone, fini) => {
         zone.appendChild(el("p", "cas", q.question));
         const boutons = q.options.map((texte, k) => {
           const b = boutonChoix(texte, k);
@@ -116,7 +118,12 @@ const JEUX = [
     titre: "Qu'est-ce qui tue le plus ?",
     resume: "Dix duels entre causes de décès dans le monde, d'après l'OMS et l'ONU. Les risques spectaculaires sont rarement les plus meurtriers.",
     lancer(zone) {
-      derouler(zone, tirerDuelsCauses(10), ([a, b], zone, fini) => {
+      const exclus = new Set();
+      deroulerNiveaux(zone, {
+        id: "mortalite", n: 10, libelle: "Duel", relancer: () => JEUX.find(j => j.id === "mortalite").lancer(zone),
+        // Un duel sur deux oppose un risque très médiatisé à une cause plus meurtrière
+        tirer: (niveau, i) => auNiveau(niveau, n => tirerDuelsCauses(1, { niveau: n, media: i % 2 === 0, exclus })[0]) || tirerDuelsCauses(1, { exclus })[0]
+      }, ([a, b], zone, fini) => {
         zone.appendChild(el("p", "consigne", "Chaque année, dans le monde, qu'est-ce qui cause le plus de décès ?"));
         const boutons = [a, b].map((cause, k) => {
           const bouton = boutonChoix(cause.nom, k);
@@ -152,7 +159,7 @@ const JEUX = [
           "Les chiffres proviennent de sources et d'années différentes (2021 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins."
         ], [["#biais/disponibilite", "Heuristique de disponibilité"], ["#biais/negativite", "Biais de négativité"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "mortalite").lancer(zone));
-      }, "Duel");
+      });
     }
   },
 
@@ -167,11 +174,13 @@ const JEUX = [
     resume: "Dix duels entre " + PAYS.length + " pays : population, revenu, espérance de vie, dépenses militaires, réfugiés… Données 2024-2025 de la Banque mondiale et du HCR. Quatre thèmes au choix.",
     lancer(zone) {
       const theme = lire("themePays", "tout");
-      const duels = tirerDuelsPays(10, theme);
-      derouler(zone, duels, (duel, zone, fini) => {
+      const indicateurs = [];
+      deroulerNiveaux(zone, {
+        id: "pays", n: 10, libelle: "Duel", relancer: () => JEUX.find(j => j.id === "pays").lancer(zone),
+        avant: zone => zone.appendChild(choixThemePays(zone, theme)),   // choix du thème, au premier duel
+        tirer: niveau => auNiveau(niveau, n => tirerDuelsPays(1, theme, { niveau: n, indicateurs })[0]) || tirerDuelsPays(1, theme, { indicateurs })[0]
+      }, (duel, zone, fini) => {
         const ind = INDICATEURS_PAYS[duel.cle];
-        // Choix du thème, au premier duel seulement
-        if (duel === duels[0]) zone.insertBefore(choixThemePays(zone, theme), zone.firstChild);
         zone.appendChild(el("p", "cas", ind.question));
         const boutons = [duel.a, duel.b].map((p, k) => {
           const b = boutonChoix(p.nom, k);
@@ -225,7 +234,7 @@ const JEUX = [
         zone.appendChild(el("p", "consigne", "Rejouer sur un thème"));
         zone.appendChild(choixThemePays(zone, lire("themePays", "tout")));
         boutonRejouer(zone, () => JEUX.find(j => j.id === "pays").lancer(zone));
-      }, "Duel");
+      });
     }
   },
 
@@ -239,7 +248,11 @@ const JEUX = [
     titre: "Le nord est où ?",
     resume: "Rome ou New York, Lima ou Miami : laquelle est la plus au nord, la plus à l'est ? Notre carte mentale aligne ce qui ne l'est pas.",
     lancer(zone) {
-      derouler(zone, tirerPairesVilles(10), (q, zone, fini) => {
+      const exclus = new Set();
+      deroulerNiveaux(zone, {
+        id: "nord", n: 10, relancer: () => JEUX.find(j => j.id === "nord").lancer(zone),
+        tirer: (niveau, i) => tirerPaireVillesNiveau(niveau, i, exclus)
+      }, (q, zone, fini) => {
         const [a, b] = q.villes;
         const libelle = { nord: "la plus au nord", est: "la plus à l'est", ouest: "la plus à l'ouest" }[q.sens];
         zone.appendChild(el("p", "cas", "Quelle ville est " + libelle + " ?"));
@@ -290,9 +303,12 @@ const JEUX = [
     titre: "Ordres de grandeur",
     resume: "Combien d'arbres sur Terre ? De neurones dans un cerveau ? Placez huit quantités sur une échelle logarithmique.",
     lancer(zone) {
-      const questions = tirerNouveaux("grandeurs", GRANDEURS, 8);
       zone.innerHTML = "";
-      derouler(zone, questions, (q, zone, fini) => {
+      deroulerNiveaux(zone, {
+        id: "grandeurs", n: 8, relancer: () => JEUX.find(j => j.id === "grandeurs").lancer(zone),
+        tirer: niveau => tirerSelonNiveau("grandeurs", GRANDEURS, 1, niveau)[0],
+        estJuste: points => points >= 2   // moins d'un facteur 3
+      }, (q, zone, fini) => {
         const vraie = Math.log10(q.v);
         // Fenêtre de 9 puissances de dix, décalée au hasard pour que sa position ne trahisse pas la réponse
         const debut = Math.max(0, Math.floor(vraie) - 2 - Math.floor(Math.random() * 5));
@@ -358,7 +374,11 @@ const JEUX = [
     titre: "Avant ou après ?",
     resume: "Dix paires d'événements historiques : lequel a eu lieu en premier ? Certaines paires bousculent notre sens du temps.",
     lancer(zone) {
-      derouler(zone, tirerPairesChronologie(10), (paire, zone, fini) => {
+      const exclus = new Set();
+      deroulerNiveaux(zone, {
+        id: "chronologie", n: 10, libelle: "Paire", relancer: () => JEUX.find(j => j.id === "chronologie").lancer(zone),
+        tirer: (niveau, i) => tirerPaireChronologieNiveau(niveau, i, exclus)
+      }, (paire, zone, fini) => {
         zone.appendChild(el("p", "consigne", "Lequel a eu lieu en premier ?"));
         const [a, b] = paire.evenements;
         const boutons = [a, b].map((e, k) => {
@@ -409,11 +429,13 @@ const JEUX = [
     titre: "Vrai ou faux ?",
     resume: "Douze affirmations, et pour chacune votre degré de certitude. Quand vous êtes sûr à 90 %, avez-vous raison 9 fois sur 10 ?",
     lancer(zone) {
-      const affirmations = melanger([
-        ...tirerNouveaux("vrai-faux:v", VRAI_FAUX.filter(a => a.vrai), 6),
-        ...tirerNouveaux("vrai-faux:f", VRAI_FAUX.filter(a => !a.vrai), 6)
-      ]);
-      derouler(zone, affirmations, (a, zone, fini) => {
+      // Six affirmations vraies et six fausses, dans un ordre aléatoire
+      const sens = melanger([true, true, true, true, true, true, false, false, false, false, false, false]);
+      deroulerNiveaux(zone, {
+        id: "vrai-faux", n: 12, libelle: "Affirmation", relancer: () => JEUX.find(j => j.id === "vrai-faux").lancer(zone),
+        tirer: (niveau, i) => tirerSelonNiveau(sens[i] ? "vrai-faux:v" : "vrai-faux:f", VRAI_FAUX.filter(a => a.vrai === sens[i]), 1, niveau)[0],
+        estJuste: r => r.juste
+      }, (a, zone, fini) => {
         zone.appendChild(el("p", "cas", a.texte));
         const reponses = [["Vrai", true], ["Faux", false]].map(([texte, valeur], k) => {
           const b = boutonChoix(texte, k);
@@ -489,7 +511,7 @@ const JEUX = [
           "Vos réponses s'accumulent d'une partie à l'autre : après quelques parties, la courbe devient fiable. Les " + VRAI_FAUX.length + " affirmations sont proposées sans répétition tant que vous ne les avez pas toutes vues."
         ], [["#biais/surprecision", "Excès de précision"], ["#biais/dunning-kruger", "Effet Dunning-Kruger"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "vrai-faux").lancer(zone));
-      }, "Affirmation");
+      });
     }
   },
 
@@ -504,7 +526,10 @@ const JEUX = [
     resume: "Pour dix quantités, donnez une fourchette dont vous êtes sûr à 90 %. Combien contiendront la bonne réponse ?",
     lancer(zone) {
       zone.innerHTML = "";
-      const questions = tirerNouveaux("intervalles", ETALONNAGE, 10);
+      // Questions toutes affichées ensemble : le niveau s'ajuste d'une partie à l'autre
+      const niveau = niveauAtelier("intervalles").niveau;
+      zone.appendChild(choixNiveau("intervalles", () => JEUX.find(j => j.id === "intervalles").lancer(zone)));
+      const questions = tirerSelonNiveau("intervalles", ETALONNAGE, 10, niveau);
       zone.appendChild(paragraphe("Pour chaque quantité, indiquez une valeur basse et une valeur haute telles que vous soyez sûr à 90 % que la vraie valeur se trouve entre les deux. Si vous ne savez pas, élargissez la fourchette : le but n'est pas d'être précis, mais d'être juste sur votre degré de certitude."));
       zone.appendChild(paragraphe("Bien étalonné, vous devriez avoir environ 9 bonnes fourchettes sur 10.", "source"));
 
@@ -551,6 +576,7 @@ const JEUX = [
           liste.appendChild(ligneIntervalle(q, x, y, ok));
         });
         noterFourchettes(questions.length, dedans);
+        noterPartieEntiere("intervalles", niveau, questions.map((q, k) => q.v >= reponses[k][0] && q.v <= reponses[k][1]));
         afficherScore(zone, "intervalles", dedans, questions.length);
         zone.appendChild(paragraphe(dedans >= 8
           ? "Votre étalonnage est bon : vos fourchettes reflètent correctement votre incertitude."
@@ -718,8 +744,10 @@ const JEUX = [
 // Duels entre causes de décès : écart d'au moins 1,6 (les chiffres sont des estimations),
 // pas de comparaison entre un facteur de risque et les maladies qu'il provoque,
 // et une fois sur deux un « piège » : une cause médiatique face à une cause plus meurtrière.
-function tirerDuelsCauses(n) {
+// options : { niveau, media (impose un duel « risque médiatique » ou l'interdit), exclus (clés déjà tirées) }
+function tirerDuelsCauses(n, options = {}) {
   const ids = Object.keys(CAUSES);
+  const exclus = options.exclus || new Set();
   const recents = new Set(lire("vus", {}).duels || []);
   const duels = [];
   const pris = new Set();
@@ -728,16 +756,18 @@ function tirerDuelsCauses(n) {
     const b = ids[Math.floor(Math.random() * ids.length)];
     const A = CAUSES[a], B = CAUSES[b];
     const cle = [a, b].sort().join("|");
-    if (a === b || pris.has(cle) || (essai < 3000 && recents.has(cle))) continue;
+    if (a === b || pris.has(cle) || exclus.has(cle) || (essai < 3000 && recents.has(cle))) continue;
     if (A.facteur && B.facteur) continue;
     if ((A.exclure || []).includes(b) || (B.exclure || []).includes(a)) continue;
     const rapport = Math.max(A.valeur, B.valeur) / Math.min(A.valeur, B.valeur);
     if (rapport < 1.6 || rapport > 2000) continue;
-    if (duels.length % 2 === 0) {
+    if (options.niveau && niveauDuelCauses(rapport) !== options.niveau) continue;
+    if (options.media !== undefined ? options.media : duels.length % 2 === 0) {
       const media = A.mediatique && !B.mediatique ? A : B.mediatique && !A.mediatique ? B : null;
       if (!media || media.valeur > Math.min(A.valeur, B.valeur)) continue;
     }
     pris.add(cle);
+    exclus.add(cle);
     duels.push(melanger([A, B]));
   }
   const vus = lire("vus", {});
@@ -790,13 +820,14 @@ const INDICATEURS_PAYS = {
   femmes: { theme: "geopolitique", poids: 2, question: "Dans quel pays les femmes occupent-elles la plus grande part des sièges au parlement ?", format: v => fr(Math.round(v)) + " % des sièges", source: "Union interparlementaire, via la Banque mondiale" }
 };
 
-function tirerDuelsPays(n, theme = "tout") {
+// options : { niveau, indicateurs (indicateurs déjà posés dans la partie, pour limiter les répétitions) }
+function tirerDuelsPays(n, theme = "tout", options = {}) {
   const retenus = Object.keys(INDICATEURS_PAYS).filter(c => theme === "tout" || INDICATEURS_PAYS[c].theme === theme);
   const cles = retenus.flatMap(c => Array(INDICATEURS_PAYS[c].poids).fill(c));
   const plafond = Math.max(2, Math.ceil(n / retenus.length));
   const recents = new Set(lire("vus", {}).pays || []);
   const duels = [];
-  const indicateursPris = [];
+  const indicateursPris = options.indicateurs || [];
   for (let essai = 0; duels.length < n && essai < 20000; essai++) {
     const cle = cles[Math.floor(Math.random() * cles.length)];
     // Pas plus de deux duels sur le même indicateur dans une partie (un peu plus si le thème en compte peu)
@@ -812,6 +843,7 @@ function tirerDuelsPays(n, theme = "tout") {
     if (minimum !== undefined && (va < minimum || vb < minimum)) continue;
     const ecart = mode === "ratio" ? Math.max(va, vb) / Math.max(Math.min(va, vb), 1e-9) : Math.abs(va - vb);
     if (ecart < bas || ecart > haut) continue;
+    if (options.niveau && niveauDuelPays(cle, va, vb) !== options.niveau) continue;
     indicateursPris.push(cle);
     duels.push({ cle, a, b, id });
   }
@@ -837,16 +869,61 @@ function choixThemePays(zone, actuel) {
   return puces;
 }
 
+// ===================== Niveaux des ateliers fondés sur des données =====================
+// Le niveau se calcule à partir des données : plus l'écart entre les deux réponses est faible,
+// plus la question est difficile. t mesure la place de l'écart dans la plage admise (0 = le plus serré).
+const tiers = t => t >= 2 / 3 ? 1 : t >= 1 / 3 ? 2 : 3;
+
+// Plus ou moins ? : place de l'écart dans les bornes d'ECARTS_PAYS (rapport sur une échelle logarithmique, ou différence)
+function niveauDuelPays(cle, va, vb) {
+  const [mode, [bas, haut]] = ECARTS_PAYS[cle];
+  const t = mode === "ratio"
+    ? Math.log(Math.max(va, vb) / Math.max(Math.min(va, vb), 1e-9) / bas) / Math.log(haut / bas)
+    : (Math.abs(va - vb) - bas) / (haut - bas);
+  return tiers(t);
+}
+
+// Qu'est-ce qui tue le plus ? : rapport entre les deux causes (de 1,6 à 2 000) ; 10 et plus : niveau 1, 3 et plus : niveau 2
+const niveauDuelCauses = rapport => rapport >= 10 ? 1 : rapport >= 3 ? 2 : 3;
+
+// Avant ou après ? : écart entre les deux dates, rapporté à l'écart maximal admis pour des dates de cette
+// ancienneté (12 ans, ou le quart de l'ancienneté de la plus ancienne)
+function niveauPaireChronologie(a, b) {
+  const ecart = Math.abs(momentEvenement(a) - momentEvenement(b));
+  return tiers(ecart / Math.max(12, 0.25 * (2026 - Math.min(a.annee, b.annee))));
+}
+
+// Le nord est où ? : écart de latitude (0,8 à 9°) ou de longitude (0,8 à 14°)
+function niveauPaireVilles(a, b, sens) {
+  const lat = sens === "nord", max = lat ? 9 : 14;
+  return tiers((Math.abs(lat ? VILLES[a][1] - VILLES[b][1] : VILLES[a][2] - VILLES[b][2]) - 0.8) / (max - 0.8));
+}
+
+// Les paires célèbres (« Avant ou après ? », « Le nord est où ? ») sont des pièges classiques : niveau 2,
+// sauf niveau indiqué dans les données
+const niveauPaireCelebre = p => p.niveau || 2;
+
+// Tente un tirage au niveau demandé, puis aux niveaux voisins
+function auNiveau(niveau, tirage) {
+  for (const n of [niveau, niveau - 1, niveau + 1, niveau - 2, niveau + 2].filter(x => x >= 1 && x <= 3)) {
+    const r = tirage(n);
+    if (r) return r;
+  }
+  return null;
+}
+
 // Paires d'événements : d'abord les paires célèbres pas encore vues, puis des paires au hasard
 // dont l'écart est faible au regard de leur ancienneté (sinon la réponse serait évidente)
 const evenement = id => EVENEMENTS.find(e => e.id === id);
 const momentEvenement = e => e.date ? Date.parse(e.date + "T12:00:00Z") / (365.25 * 86400000) + 1970 : e.annee + 0.5;
 
-function tirerPairesChronologie(n) {
-  const celebres = tirerNouveaux("chronologie:celebres", PAIRES_CELEBRES, 3, p => p.a + "|" + p.b)
+// options : { niveau, sansCelebres, exclus (clés des paires déjà tirées dans la partie) }
+function tirerPairesChronologie(n, options = {}) {
+  const celebres = options.sansCelebres ? [] : tirerNouveaux("chronologie:celebres", PAIRES_CELEBRES, 3, p => p.a + "|" + p.b)
     .map(p => ({ evenements: melanger([evenement(p.a), evenement(p.b)]), note: p.note }));
   const paires = [...celebres];
-  const prises = new Set(celebres.map(p => p.evenements.map(e => e.id).sort().join("|")));
+  const prises = options.exclus || new Set();
+  celebres.forEach(p => prises.add(p.evenements.map(e => e.id).sort().join("|")));
   for (let essai = 0; paires.length < n && essai < 20000; essai++) {
     const a = EVENEMENTS[Math.floor(Math.random() * EVENEMENTS.length)];
     const b = EVENEMENTS[Math.floor(Math.random() * EVENEMENTS.length)];
@@ -858,6 +935,7 @@ function tirerPairesChronologie(n) {
     if (ecart === 0 && !(a.date && b.date)) continue;
     if (ecart > Math.max(12, 0.25 * anciennete)) continue;
     if (ecart < 2 && !(a.date && b.date)) continue;
+    if (options.niveau && niveauPaireChronologie(a, b) !== options.niveau) continue;
     prises.add(cle);
     paires.push({ evenements: melanger([a, b]) });
   }
@@ -866,12 +944,14 @@ function tirerPairesChronologie(n) {
 
 
 // Paires de villes : d'abord des paires célèbres, puis des paires au hasard assez proches pour être difficiles
-function tirerPairesVilles(n) {
-  const celebres = tirerNouveaux("nord", PAIRES_VILLES, 4, p => p.a + "|" + p.b + "|" + p.sens)
+// options : { niveau, sansCelebres, exclus (clés des paires déjà tirées dans la partie) }
+function tirerPairesVilles(n, options = {}) {
+  const celebres = options.sansCelebres ? [] : tirerNouveaux("nord", PAIRES_VILLES, 4, p => p.a + "|" + p.b + "|" + p.sens)
     .map(p => ({ villes: melanger([p.a, p.b]), sens: p.sens, note: p.note }));
   const ids = Object.keys(VILLES);
   const paires = [...celebres];
-  const prises = new Set(celebres.map(p => p.villes.slice().sort().join("|")));
+  const prises = options.exclus || new Set();
+  celebres.forEach(p => prises.add(p.villes.slice().sort().join("|")));
   for (let essai = 0; paires.length < n && essai < 20000; essai++) {
     const a = ids[Math.floor(Math.random() * ids.length)], b = ids[Math.floor(Math.random() * ids.length)];
     const cle = [a, b].sort().join("|");
@@ -880,10 +960,37 @@ function tirerPairesVilles(n) {
     const ecart = Math.abs(sens === "nord" ? VILLES[a][1] - VILLES[b][1] : VILLES[a][2] - VILLES[b][2]);
     // Assez proches pour hésiter, assez éloignées pour que les coordonnées tranchent sans ambiguïté
     if (ecart < 0.8 || ecart > (sens === "nord" ? 9 : 14)) continue;
+    if (options.niveau && niveauPaireVilles(a, b, sens) !== options.niveau) continue;
     prises.add(cle);
     paires.push({ villes: [a, b], sens });
   }
   return melanger(paires);
+}
+
+// Une question de « Le nord est où ? » au niveau demandé : une sur trois est une paire célèbre
+function tirerPaireVillesNiveau(niveau, i, exclus) {
+  if (i % 3 === 0) {
+    const libres = PAIRES_VILLES.filter(p => !exclus.has([p.a, p.b].sort().join("|")));
+    const p = tirerSelonNiveau("nord", libres, 1, niveau, x => x.a + "|" + x.b + "|" + x.sens, niveauPaireCelebre)[0];
+    if (p) {
+      exclus.add([p.a, p.b].sort().join("|"));
+      return { villes: melanger([p.a, p.b]), sens: p.sens, note: p.note };
+    }
+  }
+  return auNiveau(niveau, n => tirerPairesVilles(1, { niveau: n, sansCelebres: true, exclus })[0]);
+}
+
+// Une question de « Avant ou après ? » au niveau demandé : une sur trois est une paire célèbre
+function tirerPaireChronologieNiveau(niveau, i, exclus) {
+  if (i % 3 === 0) {
+    const libres = PAIRES_CELEBRES.filter(p => !exclus.has([p.a, p.b].sort().join("|")));
+    const p = tirerSelonNiveau("chronologie:celebres", libres, 1, niveau, x => x.a + "|" + x.b, niveauPaireCelebre)[0];
+    if (p) {
+      exclus.add([p.a, p.b].sort().join("|"));
+      return { evenements: melanger([evenement(p.a), evenement(p.b)]), note: p.note };
+    }
+  }
+  return auNiveau(niveau, n => tirerPairesChronologie(1, { niveau: n, sansCelebres: true, exclus })[0]);
 }
 
 // « 41,9° N, 12,5° E »

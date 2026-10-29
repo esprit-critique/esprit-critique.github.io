@@ -29,6 +29,8 @@ pour l'utiliser comme une application.
   - *philosopher* : expériences de pensée, citations vraies ou fausses.
 - **S'entraîner** : chaque fiche de sophisme propose trois mini-exercices tirés des débats.
 - **Un portrait** qui rassemble ce que vos réponses révèlent : étalonnage, ancrage, perception du hasard…
+- **Une progression** : les ateliers à questions ajustent leur difficulté (niveaux 1 à 3) à vos réponses ; on peut aussi
+  choisir son niveau. Records par niveau, et tableau des niveaux dans le portrait.
 - **Un guide** : méthode pour examiner une affirmation, débattre honnêtement, outils philosophiques, lexique.
 
 ## Principes
@@ -57,6 +59,7 @@ connecté au même réseau Wi-Fi.
 | `static/schemas.js` | illustrations des fiches (SVG) |
 | `static/app.js` | navigation, accueil, fiches, quiz, révisions |
 | `static/ateliers.js` | page des ateliers, portrait, outils communs |
+| `static/niveaux.js` | progression : niveaux, ajustement automatique, records par niveau |
 | `static/chiffres.js`, `static/perception.js`, `static/experiences.js` | les ateliers |
 | `static/raisonner.js` | logique contre croyance, moniteur de vol, deux études, résoudre à plusieurs, carnet de prévisions |
 | `static/debattre.js` | section « Débattre » : débats, réparations, reformulations (contenus fictifs) |
@@ -79,6 +82,8 @@ CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 |---|---|
 | `tests/_test.html` | fiches, quiz, révisions, navigation, clavier, reprise des anciennes données |
 | `tests/_ateliers.html` | joue chaque atelier jusqu'au bilan ; contrôle l'affichage à chaque étape |
+| `tests/_niveaux.html` | moteur de progression : joueurs simulés, records par niveau, migration |
+| `tests/niveaux.html` | nombre d'items par niveau, en rouge quand il en manque (`tests/lancer.sh items`) |
 | `tests/_affichage.html` | contrôle l'affichage de chaque page et de toutes les variantes des dessins générés |
 | `tests/controle-affichage.js` | détection des textes coupés ou superposés, des débordements, du défilement horizontal |
 | `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |

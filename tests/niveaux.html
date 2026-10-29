@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>Niveaux des ateliers</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; color: #1c1b19; background: #f6f4ef; }
+  table { border-collapse: collapse; background: #fffefb; }
+  th, td { border: 1px solid #dcd7cc; padding: 4px 10px; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  .manque { color: #a5281b; font-weight: 700; }
+  iframe { display: none; }
+</style>
+<h1>Items par niveau</h1>
+<p>Chaque niveau doit compter au moins deux fois le nombre de questions d'une partie. En rouge : il en manque.
+Pour les ateliers fondés sur des données, on compte toutes les paires que le jeu peut tirer.</p>
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/#accueil"></iframe>
+<script>
+// Ouvrir avec le serveur local : copier ce fichier dans static/, puis http://localhost:8000/niveaux.html
+// (tests/lancer.sh niveaux le fait et écrit le rapport dans tests/rapports/).
+const f = document.getElementById("f");
+f.onload = () => {
+  const w = f.contentWindow;
+  const ev = x => w.eval(x);
+  const lignes = [];
+  const parNiveau = (liste, niveauDe = e => e.niveau || 1) => [1, 2, 3].map(n => liste.filter(e => niveauDe(e) === n).length);
+
+  // Ateliers à contenu écrit : [nom, items, questions par partie]
+  const ecrits = [
+    ["Le monde en chiffres", ev("MONDE"), 10],
+    ["Vrai ou faux ? (vraies)", ev("VRAI_FAUX.filter(a => a.vrai)"), 6],
+    ["Vrai ou faux ? (fausses)", ev("VRAI_FAUX.filter(a => !a.vrai)"), 6],
+    ["Ordres de grandeur", ev("GRANDEURS"), 8],
+    ["Êtes-vous sûr à 90 % ?", ev("ETALONNAGE"), 10],
+    ["Trois questions faciles", ev("QUESTIONS_CRT"), 3],
+    ["Problèmes classiques", ev("PROBLEMES"), 5],
+    ["Qui l'a vraiment dit ?", ev("CITATIONS"), 8]
+  ].map(([nom, items, n]) => [nom, parNiveau(items), n]);
+
+  // Ateliers fondés sur des données : toutes les paires admises par le jeu
+  const pays = [0, 0, 0];
+  Object.keys(ev("INDICATEURS_PAYS")).forEach(cle => {
+    const [mode, [bas, haut], minimum] = ev("ECARTS_PAYS")[cle];
+    const P = ev("PAYS").filter(p => p[cle] !== undefined && (minimum === undefined || p[cle] >= minimum));
+    for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+      const va = P[i][cle], vb = P[j][cle];
+      const ecart = mode === "ratio" ? Math.max(va, vb) / Math.max(Math.min(va, vb), 1e-9) : Math.abs(va - vb);
+      if (ecart >= bas && ecart <= haut) pays[ev("niveauDuelPays")(cle, va, vb) - 1]++;
+    }
+  });
+  const causes = [0, 0, 0], C = ev("CAUSES"), idsC = Object.keys(C);
+  idsC.forEach((a, i) => idsC.slice(i + 1).forEach(b => {
+    const A = C[a], B = C[b];
+    if (A.facteur && B.facteur) return;
+    if ((A.exclure || []).includes(b) || (B.exclure || []).includes(a)) return;
+    const r = Math.max(A.valeur, B.valeur) / Math.min(A.valeur, B.valeur);
+    if (r >= 1.6 && r <= 2000) causes[ev("niveauDuelCauses")(r) - 1]++;
+  }));
+  const chrono = parNiveau(ev("PAIRES_CELEBRES"), ev("niveauPaireCelebre")), E = ev("EVENEMENTS"), moment = ev("momentEvenement");
+  E.forEach((a, i) => E.slice(i + 1).forEach(b => {
+    if ((a.vers && b.vers) || (a.sujet && a.sujet === b.sujet)) return;
+    const ecart = Math.abs(a.annee - b.annee), anciennete = 2026 - Math.min(a.annee, b.annee);
+    if (ecart === 0 && !(a.date && b.date)) return;
+    if (ecart > Math.max(12, 0.25 * anciennete)) return;
+    if (ecart < 2 && !(a.date && b.date)) return;
+    if (moment(a) === moment(b)) return;
+    chrono[ev("niveauPaireChronologie")(a, b) - 1]++;
+  }));
+  const villes = parNiveau(ev("PAIRES_VILLES"), ev("niveauPaireCelebre")), V = ev("VILLES"), idsV = Object.keys(V);
+  idsV.forEach((a, i) => idsV.slice(i + 1).forEach(b => ["nord", "est"].forEach(sens => {
+    const ecart = Math.abs(sens === "nord" ? V[a][1] - V[b][1] : V[a][2] - V[b][2]);
+    if (ecart >= 0.8 && ecart <= (sens === "nord" ? 9 : 14)) villes[ev("niveauPaireVilles")(a, b, sens) - 1]++;
+  })));
+  const donnees = [["Plus ou moins ?", pays, 10], ["Qu'est-ce qui tue le plus ?", causes, 10], ["Avant ou après ?", chrono, 10], ["Le nord est où ?", villes, 10]];
+
+  const tous = [...donnees, ...ecrits];
+  let manques = 0;
+  const table = document.createElement("table");
+  table.innerHTML = "<tr><th>Atelier</th><th>Par partie</th><th>Niveau 1</th><th>Niveau 2</th><th>Niveau 3</th></tr>";
+  tous.forEach(([nom, compte, n]) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + nom + "</td><td>" + n + "</td>" + compte.map(c => "<td" + (c < 2 * n ? ' class="manque"' : "") + ">" + c + (c < 2 * n ? " (−" + (2 * n - c) + ")" : "") + "</td>").join("");
+    table.appendChild(tr);
+    compte.forEach((c, k) => {
+      if (c < 2 * n) { manques++; lignes.push("MANQUE " + nom + ", niveau " + (k + 1) + " : " + c + " pour " + 2 * n + " attendus"); }
+    });
+  });
+  document.body.insertBefore(table, document.getElementById("out"));
+  lignes.unshift("RÉSUMÉ : " + manques + " niveau(x) sans assez d'items, sur " + 3 * tous.length);
+  tous.forEach(([nom, compte]) => lignes.push("- " + nom + " : " + compte.join(" / ")));
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => console.log("RAPPORT: " + l));
+  console.log("RAPPORT-FIN");
+};
+</script>

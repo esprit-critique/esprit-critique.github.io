@@ -8,20 +8,21 @@
 // Test de réflexion cognitive : trois questions de Frederick (2005) et quatre du « CRT-2 »
 // de Thomson et Oppenheimer (2016). « reussite » : part de bonnes réponses dans l'étude de 2016
 // (travailleurs en ligne américains, environ 140 personnes).
+// Niveaux : 1, les trois questions originales (Frederick, 2005) ; 2, celles de Thomson et Oppenheimer (2016).
 const QUESTIONS_CRT = [
-  { id: "batte", texte: "Une batte et une balle coûtent 1,10 € au total. La batte coûte 1 € de plus que la balle. Combien coûte la balle ?", unite: "centimes", juste: 5, intuitive: 10, euros: true,
+  { id: "batte", niveau: 1, texte: "Une batte et une balle coûtent 1,10 € au total. La batte coûte 1 € de plus que la balle. Combien coûte la balle ?", unite: "centimes", juste: 5, intuitive: 10, euros: true,
     explication: "Si la balle coûtait 10 centimes, la batte coûterait 1,10 € et le total 1,20 €. Avec x le prix de la balle : x + (x + 1) = 1,10, donc x = 0,05 €.", reussite: 48 },
-  { id: "machines", texte: "Si 5 machines fabriquent 5 objets en 5 minutes, combien de temps faut-il à 100 machines pour fabriquer 100 objets ?", unite: "minutes", juste: 5, intuitive: 100,
+  { id: "machines", niveau: 1, texte: "Si 5 machines fabriquent 5 objets en 5 minutes, combien de temps faut-il à 100 machines pour fabriquer 100 objets ?", unite: "minutes", juste: 5, intuitive: 100,
     explication: "Chaque machine fabrique un objet en 5 minutes. 100 machines fabriquent donc 100 objets en 5 minutes.", reussite: 34 },
-  { id: "nenuphars", texte: "Dans un lac, une étendue de nénuphars double de surface chaque jour. Il lui faut 48 jours pour couvrir tout le lac. Combien de jours lui faut-il pour en couvrir la moitié ?", unite: "jours", juste: 47, intuitive: 24,
+  { id: "nenuphars", niveau: 1, texte: "Dans un lac, une étendue de nénuphars double de surface chaque jour. Il lui faut 48 jours pour couvrir tout le lac. Combien de jours lui faut-il pour en couvrir la moitié ?", unite: "jours", juste: 47, intuitive: 24,
     explication: "La surface double chaque jour : la veille du jour où le lac est couvert, elle en couvrait la moitié.", reussite: 52 },
-  { id: "course", texte: "Pendant une course, vous dépassez la personne qui est en deuxième position. À quelle place êtes-vous ?", unite: "e place", juste: 2, intuitive: 1, mots: { 1: ["premier", "premiere", "1er", "1re"], 2: ["deuxieme", "second", "seconde", "2e", "2eme"] },
+  { id: "course", niveau: 2, texte: "Pendant une course, vous dépassez la personne qui est en deuxième position. À quelle place êtes-vous ?", unite: "e place", juste: 2, intuitive: 1, mots: { 1: ["premier", "premiere", "1er", "1re"], 2: ["deuxieme", "second", "seconde", "2e", "2eme"] },
     explication: "En dépassant le deuxième, vous prenez sa place : vous êtes deuxième. Le premier est toujours devant vous.", reussite: 63 },
-  { id: "moutons", texte: "Un fermier a 15 moutons. Tous meurent sauf 8. Combien en reste-t-il ?", unite: "moutons", juste: 8, intuitive: 7,
+  { id: "moutons", niveau: 2, texte: "Un fermier a 15 moutons. Tous meurent sauf 8. Combien en reste-t-il ?", unite: "moutons", juste: 8, intuitive: 7,
     explication: "« Tous sauf 8 » : il en reste 8. La soustraction 15 − 8 s'impose à l'esprit avant la lecture attentive.", reussite: 83 },
-  { id: "emilie", texte: "Le père d'Émilie a trois filles. Les deux premières s'appellent Avril et Mai. Comment s'appelle la troisième ?", unite: "", texteLibre: true, juste: "emilie", intuitive: "juin",
+  { id: "emilie", niveau: 2, texte: "Le père d'Émilie a trois filles. Les deux premières s'appellent Avril et Mai. Comment s'appelle la troisième ?", unite: "", texteLibre: true, juste: "emilie", intuitive: "juin",
     explication: "Émilie, puisque c'est la fille de son père. La suite des mois suggère « Juin ».", reussite: 62 },
-  { id: "trou", texte: "Combien y a-t-il de mètres cubes de terre dans un trou de 3 m de profondeur, 3 m de largeur et 3 m de longueur ?", unite: "m³", juste: 0, intuitive: 27, mots: { 0: ["aucun", "rien", "zero", "0"] },
+  { id: "trou", niveau: 2, texte: "Combien y a-t-il de mètres cubes de terre dans un trou de 3 m de profondeur, 3 m de largeur et 3 m de longueur ?", unite: "m³", juste: 0, intuitive: 27, mots: { 0: ["aucun", "rien", "zero", "0"] },
     explication: "Aucun : un trou est vide. Le calcul 3 × 3 × 3 = 27 s'impose avant la question elle-même.", reussite: 16 }
 ];
 
@@ -81,39 +82,41 @@ const REGLES_246 = [
 
 // Problèmes classiques. type « choix » : une bonne réponse ; « nombre » : réponse chiffrée ;
 // « paire » : deux choix successifs, dont on vérifie la cohérence.
+// Niveaux : 1, problèmes à une étape, très connus ; 2, problèmes qui demandent de comparer ou de combiner ;
+// 3, problèmes qui demandent un calcul de probabilité conditionnelle ou de repérer une variable cachée.
 const PROBLEMES = [
-  { id: "linda", titre: "Linda", type: "choix",
+  { id: "linda", niveau: 1, titre: "Linda", type: "choix",
     enonce: "Linda a 31 ans. Elle est célibataire, franche et très brillante. Elle a étudié la philosophie. Étudiante, elle se préoccupait beaucoup des questions de discrimination et de justice sociale, et a participé à des manifestations antinucléaires. Quelle affirmation est la plus probable ?",
     options: ["Linda est guichetière dans une banque.", "Linda est guichetière dans une banque et militante féministe."], juste: 0,
     resultat: "Tversky et Kahneman (1983) : environ 85 % des participants choisissent la seconde réponse, parce que la description ressemble au stéréotype d'une militante.",
     explication: "Toutes les guichetières féministes sont des guichetières : la probabilité de « guichetière et féministe » ne peut pas dépasser celle de « guichetière ». P(A et B) ≤ P(A), quelle que soit la description.",
     liens: [["#biais/conjonction", "Erreur de conjonction"]] },
-  { id: "maternites", titre: "Les deux maternités", type: "choix",
+  { id: "maternites", niveau: 2, titre: "Les deux maternités", type: "choix",
     enonce: "Une ville compte deux maternités. Dans la grande naissent environ 45 bébés par jour, dans la petite environ 15. Environ 50 % des bébés sont des garçons, mais la proportion varie d'un jour à l'autre. Pendant un an, chaque maternité a compté les jours où plus de 60 % des bébés nés étaient des garçons. Laquelle en a compté le plus ?",
     options: ["La grande maternité", "La petite maternité", "À peu près autant (à 5 % près)"], juste: 1,
     resultat: "Tversky et Kahneman (1974) : 56 % des participants répondent « à peu près autant », 22 % « la grande » et 22 % « la petite ».",
     explication: "Plus un échantillon est petit, plus ses proportions s'écartent de la moyenne. Pour une pièce équilibrée, plus de 60 % de garçons se produit environ 55 jours par an avec 15 naissances, contre environ 25 jours avec 45 naissances (calcul exact par la loi binomiale).",
     simulation: "maternites",
     liens: [["#biais/taille-echantillon", "Insensibilité à la taille de l'échantillon"]] },
-  { id: "taxi", titre: "Le taxi", type: "nombre",
+  { id: "taxi", niveau: 3, titre: "Le taxi", type: "nombre",
     enonce: "Dans une ville, 85 % des taxis sont verts et 15 % sont bleus. Un taxi a renversé un piéton de nuit et pris la fuite. Un témoin affirme qu'il était bleu. Testé dans les mêmes conditions de visibilité, ce témoin reconnaît correctement la couleur dans 80 % des cas et se trompe dans 20 % des cas. Quelle est la probabilité que le taxi soit bleu ?",
     unite: "%", reponse: 41, tolerance: 5,
     resultat: "La réponse la plus fréquente est 80 % : la fiabilité du témoin, sans tenir compte de la rareté des taxis bleus (Tversky et Kahneman, 1982).",
     explication: "Sur 100 accidents de ce type : 15 impliquent un taxi bleu, que le témoin reconnaît 12 fois ; 85 impliquent un taxi vert, que le témoin prend pour un bleu 17 fois. Parmi les 29 taxis désignés comme bleus, 12 le sont vraiment : 12 / 29 ≈ 41 %.",
     liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
-  { id: "dick", titre: "Ingénieurs et avocats", type: "nombre",
+  { id: "dick", niveau: 2, titre: "Ingénieurs et avocats", type: "nombre",
     enonce: "Un groupe compte 30 ingénieurs et 70 avocats. On en tire une personne au hasard. Sa description : « Dick a 30 ans. Il est marié, sans enfants. Très capable et très motivé, il promet de réussir dans son domaine. Ses collègues l'apprécient. » Quelle est la probabilité que Dick soit ingénieur ?",
     unite: "%", reponse: 30, tolerance: 5,
     resultat: "Kahneman et Tversky (1973) : les participants répondaient 50 %, que le groupe compte 30 % ou 70 % d'ingénieurs. Sans description, ils utilisaient correctement les proportions.",
     explication: "La description ne dit rien de la profession : elle ne doit pas modifier la proportion de départ, 30 %. Une information sans valeur suffit pourtant à faire oublier le taux de base.",
     liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
-  { id: "steve", titre: "Steve", type: "choix",
+  { id: "steve", niveau: 1, titre: "Steve", type: "choix",
     enonce: "« Steve est très timide et renfermé, toujours serviable, mais peu intéressé par les gens ou par le monde réel. Doux et ordonné, il a besoin d'ordre et de structure, et la passion du détail. » Steve est-il plus probablement bibliothécaire ou agriculteur ?",
     options: ["Bibliothécaire", "Agriculteur"], juste: 1,
     resultat: "Tversky et Kahneman (1974) : on classe les métiers selon leur ressemblance avec le stéréotype, sans tenir compte du nombre de personnes qui les exercent.",
     explication: "La description évoque le stéréotype du bibliothécaire, mais les agriculteurs sont bien plus nombreux : même si une faible part d'entre eux lui ressemble, ils l'emportent en nombre. Kahneman (2011) rappelle qu'aux États-Unis on compte plus de vingt agriculteurs pour un bibliothécaire, parmi les hommes.",
     liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
-  { id: "epidemie", titre: "L'épidémie", type: "paire",
+  { id: "epidemie", niveau: 1, titre: "L'épidémie", type: "paire",
     enonce: "Une épidémie inhabituelle menace de tuer 600 personnes. Deux programmes sont proposés. Programme A : 200 personnes seront sauvées. Programme B : une chance sur trois de sauver les 600 personnes, deux chances sur trois de ne sauver personne.",
     options: ["Programme A", "Programme B"],
     enonce2: "Même situation, deux autres programmes. Programme C : 400 personnes mourront. Programme D : une chance sur trois que personne ne meure, deux chances sur trois que les 600 meurent.",
@@ -122,7 +125,7 @@ const PROBLEMES = [
     resultat: "Tversky et Kahneman (1981), auprès de deux groupes différents : 72 % choisissent A dans la première formulation, 78 % choisissent D dans la seconde.",
     explication: "A et C décrivent exactement la même issue (200 survivants, 400 morts), comme B et D. Présentée en vies sauvées, l'option sûre attire ; présentée en morts, c'est le pari. Vous avez vu les deux formulations à la suite, ce qui aide à rester cohérent : l'effet est bien plus fort quand chacun n'en voit qu'une.",
     liens: [["#biais/cadrage", "Effet de cadrage"], ["#biais/aversion-perte", "Aversion à la perte"]] },
-  { id: "allais", titre: "Deux loteries", type: "paire",
+  { id: "allais", niveau: 2, titre: "Deux loteries", type: "paire",
     enonce: "Choisissez entre deux loteries. A : 2 500 € avec une probabilité de 33 %, 2 400 € avec 66 %, rien avec 1 %. B : 2 400 € à coup sûr.",
     options: ["A", "B"],
     enonce2: "Choisissez maintenant entre C : 2 500 € avec une probabilité de 33 %, rien sinon ; et D : 2 400 € avec une probabilité de 34 %, rien sinon.",
@@ -131,7 +134,7 @@ const PROBLEMES = [
     resultat: "Kahneman et Tversky (1979), avec des montants en livres israéliennes : 82 % choisissent B, 83 % choisissent C, et 61 % font les deux choix à la fois.",
     explication: "Le second choix s'obtient en retirant du premier une chance de 66 % de gagner 2 400 €, commune à A et B. Selon la théorie de l'utilité espérée, qui préfère B doit donc préférer D. Préférer B puis C, c'est le paradoxe d'Allais (1953) : la certitude pèse plus lourd que la probabilité ne le justifie (effet de certitude).",
     liens: [["#biais/aversion-perte", "Aversion à la perte"]] },
-  { id: "ellsberg", titre: "L'urne d'Ellsberg", type: "paire",
+  { id: "ellsberg", niveau: 2, titre: "L'urne d'Ellsberg", type: "paire",
     enonce: "Une urne contient 90 boules : 30 rouges, et 60 noires ou jaunes dans des proportions inconnues. On tire une boule ; vous gagnez 100 € si elle est de la couleur choisie. Pariez-vous sur le rouge ou sur le noir ?",
     options: ["Rouge", "Noir"],
     enonce2: "Même urne. Pariez-vous sur « rouge ou jaune », ou sur « noir ou jaune » ?",
@@ -140,7 +143,7 @@ const PROBLEMES = [
     resultat: "La plupart des gens choisissent le rouge, puis « noir ou jaune » (Ellsberg, 1961) : ils préfèrent les probabilités connues, 1/3 puis 2/3.",
     explication: "Préférer le rouge, c'est penser qu'il y a moins de 30 boules noires, donc plus de 30 jaunes ; préférer ensuite « noir ou jaune », c'est penser le contraire. Aucune croyance sur l'urne ne justifie ces deux choix : ils traduisent l'aversion à l'ambiguïté.",
     liens: [["#biais/statu-quo", "Biais du statu quo"]] },
-  { id: "etats-finaux", titre: "Gagner ou perdre", type: "paire",
+  { id: "etats-finaux", niveau: 2, titre: "Gagner ou perdre", type: "paire",
     enonce: "On vous donne 1 000 €. Choisissez : A, une chance sur deux de gagner 1 000 € de plus ; ou B, 500 € de plus à coup sûr.",
     options: ["A : le pari", "B : 500 € sûrs"],
     enonce2: "On vous donne 2 000 €. Choisissez : C, une chance sur deux de perdre 1 000 € ; ou D, perdre 500 € à coup sûr.",
@@ -149,31 +152,31 @@ const PROBLEMES = [
     resultat: "Kahneman et Tversky (1979) : 84 % choisissent B dans le premier cas, 69 % choisissent C dans le second.",
     explication: "En richesse finale, les deux problèmes sont identiques : A et C donnent 1 000 ou 2 000 € avec une chance sur deux, B et D donnent 1 500 € à coup sûr. Nous jugeons les gains et les pertes par rapport à un point de référence : prudents face aux gains, joueurs face aux pertes.",
     liens: [["#biais/aversion-perte", "Aversion à la perte"], ["#biais/cadrage", "Effet de cadrage"]] },
-  { id: "sally-clark", titre: "1 sur 73 millions", type: "choix",
+  { id: "sally-clark", niveau: 3, titre: "1 sur 73 millions", type: "choix",
     enonce: "En 1999, l'Anglaise Sally Clark est jugée pour le meurtre de ses deux bébés, morts subitement. Un pédiatre affirme que la probabilité que deux enfants d'une telle famille meurent de mort subite du nourrisson est de 1 sur 73 millions. Que vaut ce chiffre ?",
     options: ["C'est la probabilité qu'elle soit innocente", "Il ne donne pas la probabilité de son innocence, et il est mal calculé", "Il prouve sa culpabilité au-delà du doute raisonnable"], juste: 1,
     resultat: "Condamnée en novembre 1999, Sally Clark est libérée en appel en janvier 2003. La Royal Statistical Society avait dénoncé en 2001 un chiffre « sans fondement statistique ».",
     explication: "Deux erreurs. Le calcul (1 sur 8 543 au carré) suppose les deux décès indépendants, alors que des facteurs génétiques ou familiaux communs rendent un second décès plus probable. Surtout, il faut comparer deux explications rares : deux morts subites, ou deux meurtres d'enfants par leur mère, eux aussi extrêmement rares. Confondre la probabilité des indices si l'accusée est innocente avec la probabilité qu'elle soit innocente au vu des indices, c'est le sophisme du procureur.",
     liens: [["#biais/procureur", "Sophisme du procureur"]] },
-  { id: "monte-carlo", titre: "Après cinq « pile »", type: "choix",
+  { id: "monte-carlo", niveau: 1, titre: "Après cinq « pile »", type: "choix",
     enonce: "Une pièce équilibrée vient de tomber cinq fois de suite sur « pile ». Au prochain lancer :",
     options: ["« Face » est plus probable", "« Pile » est plus probable", "Les deux sont également probables"], juste: 2,
     resultat: "Le 18 août 1913, au casino de Monte-Carlo, la bille est tombée 26 fois de suite sur le noir. Des joueurs ont perdu des millions de francs en misant sur le rouge, persuadés qu'il « devait » sortir.",
     explication: "La pièce n'a pas de mémoire : chaque lancer est indépendant. Une série de cinq « pile » avait une chance sur 32 de se produire ; une fois qu'elle s'est produite, le lancer suivant reste à une chance sur deux.",
     liens: [["#biais/erreur-du-joueur", "Erreur du joueur"]] },
-  { id: "instructeurs", titre: "Les instructeurs de vol", type: "choix",
+  { id: "instructeurs", niveau: 1, titre: "Les instructeurs de vol", type: "choix",
     enonce: "Des instructeurs de l'armée de l'air israélienne constatent qu'après avoir félicité un élève pour une manœuvre particulièrement réussie, sa manœuvre suivante est souvent moins bonne ; et qu'après avoir réprimandé un élève pour une manœuvre ratée, la suivante est souvent meilleure. Ils en concluent que les réprimandes sont plus efficaces que les félicitations. Ont-ils raison ?",
     options: ["Oui, les faits le montrent", "Non : on observerait la même chose sans félicitations ni réprimandes", "Non : les félicitations sont toujours plus efficaces"], juste: 1,
     resultat: "Daniel Kahneman raconte cet épisode, vécu lors d'une formation d'instructeurs de vol, dans « Système 1 / Système 2 » (2011).",
     explication: "Une performance exceptionnelle doit en partie à la chance : la suivante sera en moyenne plus proche de la normale, quoi qu'on fasse. C'est la régression vers la moyenne ; elle fait croire à l'efficacité des punitions et à l'inefficacité des récompenses.",
     liens: [["#biais/regression-moyenne", "Régression vers la moyenne"]] },
-  { id: "berkeley", titre: "Les admissions de Berkeley", type: "choix",
+  { id: "berkeley", niveau: 3, titre: "Les admissions de Berkeley", type: "choix",
     enonce: "À l'automne 1973, l'université de Berkeley a admis 44 % des 8 442 hommes candidats et 35 % des 4 321 femmes candidates. Ces chiffres prouvent-ils une discrimination contre les femmes ?",
     options: ["Oui, l'écart est trop grand pour être dû au hasard", "Pas forcément : il faut regarder département par département", "Non, l'écart est trop faible pour compter"], juste: 1,
     resultat: "Bickel, Hammel et O'Connell (1975) : département par département, les femmes n'étaient pas désavantagées. Elles postulaient davantage aux départements les plus sélectifs.",
     explication: "C'est le paradoxe de Simpson : une tendance globale peut disparaître, voire s'inverser, dans chaque sous-groupe, parce que les groupes ne se répartissent pas de la même façon. Il faut se demander quelle comparaison répond à la question posée.",
     liens: [["#biais/simpson", "Paradoxe de Simpson"]] },
-  { id: "comtes", titre: "Les comtés ruraux", type: "choix",
+  { id: "comtes", niveau: 3, titre: "Les comtés ruraux", type: "choix",
     enonce: "Aux États-Unis, les comtés où le taux de cancer du rein est le plus bas sont surtout ruraux, peu peuplés et situés dans le Midwest, le Sud et l'Ouest. Quelle explication privilégier ?",
     options: ["La vie rurale protège : air pur, eau propre, alimentation saine", "Leurs petites populations produisent des taux extrêmes, dans un sens comme dans l'autre", "Les cancers y sont moins bien diagnostiqués"], juste: 1,
     resultat: "L'exemple, tiré de Wainer et Zwerling (2006), est repris par Kahneman (2011) : les comtés où le taux est le plus élevé sont… eux aussi surtout ruraux et peu peuplés.",
@@ -309,14 +312,12 @@ const EXPERIENCES = [
     resume: "Le test de réflexion cognitive : des problèmes simples dont la première réponse qui vient à l'esprit est fausse. " + QUESTIONS_CRT.length + " questions, trois par partie.",
     lancer(zone) {
       zone.innerHTML = "";
-      // Première partie : les trois questions originales ; ensuite, en priorité celles pas encore vues
-      const premiere = !resultatAtelier("crt");
-      const questions = premiere ? QUESTIONS_CRT.slice(0, 3) : tirerNouveaux("crt", QUESTIONS_CRT, 3);
-      if (premiere) {
-        const vus = lire("vus", {});
-        vus.crt = questions.map(q => q.id);
-        ecrire("vus", vus);
-      }
+      // Questions toutes affichées ensemble : le niveau s'ajuste d'une partie à l'autre. Le niveau 1 réunit
+      // les trois questions originales (Frederick, 2005), le niveau 2 celles de Thomson et Oppenheimer (2016).
+      const niveau = niveauAtelier("crt").niveau;
+      zone.appendChild(choixNiveau("crt", () => EXPERIENCES.find(e => e.id === "crt").lancer(zone)));
+      const questions = tirerSelonNiveau("crt", QUESTIONS_CRT, 3, niveau).sort((a, b) => QUESTIONS_CRT.indexOf(a) - QUESTIONS_CRT.indexOf(b));
+      const justes = [];
       const zonesResultat = [];
       const champs = questions.map((q, i) => {
         const bloc = el("div", "question-test");
@@ -348,6 +349,7 @@ const EXPERIENCES = [
           champs[i].disabled = true;
           resultat.hidden = false;
           resultat.className = verdict === "juste" ? "juste-texte" : "faux-texte";
+          justes[i] = verdict === "juste";
           if (verdict === "juste") {
             bonnes++;
             resultat.textContent = typo("Juste. " + q.explication);
@@ -358,6 +360,7 @@ const EXPERIENCES = [
           resultat.appendChild(el("span", "source bloc", "Dans l'étude de Thomson et Oppenheimer (2016), " + q.reussite + " % de bonnes réponses."));
         });
         valider.remove();
+        noterPartieEntiere("crt", niveau, questions.map((q, i) => !!justes[i]));
         afficherScore(zone, "crt", bonnes, 3);
         if (intuitives) zone.appendChild(paragraphe("Dont " + pluriel(intuitives, "réponse intuitive", "réponses intuitives") + " : exactement l'erreur que la question tend."));
         ajouterExplication(zone, "Ce que montre ce test", [
@@ -657,7 +660,11 @@ const EXPERIENCES = [
     titre: "Problèmes classiques",
     resume: "Linda, les deux maternités, le taxi, l'urne d'Ellsberg, Sally Clark… " + PROBLEMES.length + " problèmes célèbres, cinq par partie, avec les résultats des études originales.",
     lancer(zone) {
-      derouler(zone, tirerNouveaux("classiques", PROBLEMES, 5), (p, zone, fini) => {
+      deroulerNiveaux(zone, {
+        id: "classiques", n: 5, libelle: "Problème", relancer: () => EXPERIENCES.find(e => e.id === "classiques").lancer(zone),
+        tirer: niveau => tirerSelonNiveau("classiques", PROBLEMES, 1, niveau)[0],
+        estJuste: r => r !== false   // null : problème de préférence, sans réponse fausse
+      }, (p, zone, fini) => {
         zone.appendChild(el("p", "consigne", p.titre));
         zone.appendChild(el("p", "cas", p.enonce));
         const conclure = (juste, retour, verdictTexte) => {
@@ -742,7 +749,7 @@ const EXPERIENCES = [
           "Les problèmes que vous n'avez pas encore vus passent en priorité : " + PROBLEMES.length + " en tout."
         ], [["#biais", "Toutes les fiches de biais"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "classiques").lancer(zone), "Cinq autres problèmes");
-      }, "Problème");
+      });
     }
   },
 
@@ -854,7 +861,10 @@ const EXPERIENCES = [
     lancer(zone) {
       const statuts = [["authentique", "Authentique : bien de cet auteur"], ["deformee", "Déformée : l'original est différent"], ["apocryphe", "Inventée ou mal attribuée"]];
       const verdicts = { authentique: "Authentique.", deformee: "Déformée.", apocryphe: "Inventée ou mal attribuée." };
-      derouler(zone, tirerNouveaux("citations", CITATIONS, 8), (c, zone, fini) => {
+      deroulerNiveaux(zone, {
+        id: "citations", n: 8, libelle: "Citation", relancer: () => EXPERIENCES.find(e => e.id === "citations").lancer(zone),
+        tirer: niveau => tirerSelonNiveau("citations", CITATIONS, 1, niveau)[0]
+      }, (c, zone, fini) => {
         zone.appendChild(el("blockquote", "citation", "« " + c.texte + " »"));
         zone.appendChild(el("p", "auteur-citation", "— attribuée à " + c.auteur));
         zone.appendChild(el("p", "consigne", "Cette citation est-elle…"));
@@ -883,7 +893,7 @@ const EXPERIENCES = [
           "Avant de citer : chercher l'œuvre, la date et le contexte ; se méfier des phrases trop bien tournées et des auteurs « aimants » ; consulter des sites spécialisés comme Wikiquote ou Quote Investigator, qui recherchent la première trace écrite."
         ], [["#sophismes/autorite", "Argument d'autorité"], ["#sophismes/hors-contexte", "Citation hors contexte"], ["#biais/faux-souvenirs", "Faux souvenirs"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "citations").lancer(zone), "Huit autres citations");
-      }, "Citation");
+      });
     }
   },
 
