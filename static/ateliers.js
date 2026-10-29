@@ -170,6 +170,50 @@ function derouler(zone, elements, afficher, bilan, libelle) {
   etape();
 }
 
+// ===================== Fichier d'agenda (iCalendar) =====================
+// evenements : [{ jour, titre, description, url }], « jour » au format d'aujourdHui() (jours depuis 1970).
+// Un événement « toute la journée » par entrée. Format RFC 5545 : fins de ligne CRLF, lignes repliées
+// à 75 octets, identifiants uniques, dates au format VALUE=DATE.
+function fichierAgenda(nomFichier, evenements) {
+  const date = jour => new Date(jour * 86400000).toISOString().slice(0, 10).replace(/-/g, "");
+  const echapper = t => String(t).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const encodeur = new TextEncoder();
+  // Replie une ligne trop longue : chaque suite commence par une espace, sans couper un caractère
+  const replier = ligne => {
+    const morceaux = [];
+    let courant = "", limite = 75;
+    for (const c of ligne) {
+      if (encodeur.encode(courant + c).length > limite) { morceaux.push(courant); courant = ""; limite = 74; }
+      courant += c;
+    }
+    morceaux.push(courant);
+    return morceaux.join("\r\n ");
+  };
+  const maintenant = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+  const lignes = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Esprit critique//esprit-critique.github.io//FR", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+  evenements.forEach((e, k) => {
+    lignes.push("BEGIN:VEVENT",
+      "UID:" + date(e.jour) + "-" + k + "-" + Math.random().toString(36).slice(2, 10) + "@esprit-critique.github.io",
+      "DTSTAMP:" + maintenant,
+      "DTSTART;VALUE=DATE:" + date(e.jour),
+      "DTEND;VALUE=DATE:" + date(e.jour + 1),
+      "SUMMARY:" + echapper(e.titre));
+    if (e.description) lignes.push("DESCRIPTION:" + echapper(e.description));
+    if (e.url) lignes.push("URL:" + e.url);
+    lignes.push("TRANSP:TRANSPARENT", "END:VEVENT");
+  });
+  lignes.push("END:VCALENDAR");
+  const texte = lignes.map(replier).join("\r\n") + "\r\n";
+  const lien = document.createElement("a");
+  lien.href = URL.createObjectURL(new Blob([texte], { type: "text/calendar;charset=utf-8" }));
+  lien.download = nomFichier;
+  document.body.appendChild(lien);
+  lien.click();
+  lien.remove();
+  setTimeout(() => URL.revokeObjectURL(lien.href), 1000);
+  return texte;
+}
+
 // Tire n éléments au hasard, en privilégiant ceux que l'utilisateur n'a pas encore vus.
 // Quand tout a été vu, on repart de zéro (les plus anciens redeviennent nouveaux).
 function tirerNouveaux(cle, elements, n, idDe = e => e.id) {
@@ -572,6 +616,51 @@ function afficherPortrait() {
     vues.forEach(x => liste.appendChild(el("li", null, x.titre + " : « " + x.options[reponses[x.id]] + " »")));
     ajouter("Vos réponses philosophiques", "#44546a", "#tests/pensee", liste);
   } else ajouter("Vos réponses philosophiques", "#44546a", "#tests/pensee", null, "Que répondez-vous au poulet de Russell, au navire de Thésée ?");
+
+  // 10. Notions proches (quiz)
+  const duels = Object.entries(lire("duels", {})).filter(([cle, [n]]) => n && INDEX.has(cle));
+  if (duels.length) {
+    const confondues = duels.filter(([, [n, j]]) => j < n).sort((a, b) => a[1][1] / a[1][0] - b[1][1] / b[1][0]);
+    const bloc = el("div");
+    const total = duels.reduce((t, [, [n]]) => t + n, 0), justes = duels.reduce((t, [, [, j]]) => t + j, 0);
+    bloc.appendChild(paragraphe(pct(justes / total) + " de bonnes réponses sur " + pluriel(total, "duel") + " entre notions proches." + (confondues.length ? "" : " Aucune paire confondue pour l'instant.")));
+    if (confondues.length) {
+      const liste = el("ul", "liste-simple");
+      confondues.slice(0, 8).forEach(([cle, [n, j]]) => {
+        const { type, fiche } = INDEX.get(cle);
+        const voisine = INDEX.get(fiche.distinction[0]);
+        const li = el("li");
+        li.append(lienVers("#" + type + "/" + fiche.id, fiche.nom), document.createTextNode(" / "),
+          lienVers("#" + voisine.type + "/" + voisine.fiche.id, voisine.fiche.nom), document.createTextNode(typo(" : " + pluriel(n - j, "erreur") + " sur " + n)));
+        liste.appendChild(li);
+      });
+      bloc.append(el("p", "consigne", "Les paires que vous confondez"), liste);
+    }
+    ajouter("Les notions proches", "#2a8a5c", "#quiz/proches", bloc);
+  } else ajouter("Les notions proches", "#2a8a5c", "#quiz/proches", null, "Distinguez-vous un biais de sa notion voisine ?");
+
+  // 11. Certitude au quiz
+  const certitudes = lire("certitudes", {});
+  const niveaux = NIVEAUX_CERTITUDE.filter(([k]) => certitudes[k] && certitudes[k][0]);
+  if (niveaux.length) {
+    const bloc = el("div");
+    const liste = el("ul", "liste-simple");
+    niveaux.forEach(([k, libelle]) => liste.appendChild(el("li", null, libelle + " : " + pct(certitudes[k][1] / certitudes[k][0]) + " de bonnes réponses (" + pluriel(certitudes[k][0], "réponse") + ")")));
+    bloc.appendChild(liste);
+    const sures = lire("erreursSures", []).filter(e => INDEX.has(e.cle)).reverse();
+    if (sures.length) {
+      const l = el("ul", "liste-simple");
+      sures.slice(0, 10).forEach(e => {
+        const { type, fiche } = INDEX.get(e.cle);
+        const li = el("li");
+        li.appendChild(lienVers("#" + type + "/" + fiche.id, fiche.nom));
+        l.appendChild(li);
+      });
+      bloc.append(el("p", "consigne", "Erreurs commises en étant sûr"), l,
+        paragraphe("Elles reviennent dès le lendemain : on corrige mieux une erreur commise avec assurance (Butterfield et Metcalfe, 2001), mais elle réapparaît si la correction est oubliée (Butler, Fazio et Marsh, 2011).", "source"));
+    }
+    ajouter("Certitude au quiz", "#2a8a5c", "#quiz", bloc);
+  } else ajouter("Certitude au quiz", "#2a8a5c", "#quiz", null, "Quand vous êtes sûr de votre réponse au quiz, avez-vous raison ?");
 
   const mesures = blocs.filter(b => b.contenu);
   zone.appendChild(el("p", "source", mesures.length + " mesure" + (mesures.length > 1 ? "s" : "") + " sur " + blocs.length + " disponible" + (mesures.length > 1 ? "s" : "") + "."));

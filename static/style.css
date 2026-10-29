@@ -715,6 +715,18 @@ h3.titre-bloc {
 /* ===================== Éléments communs des jeux ===================== */
 
 .choix.choisi:not(.juste):not(.faux) { background: var(--c-clair, var(--accent-doux)); border-color: var(--c-fort, var(--accent)); font-weight: 600; }
+
+/* Certitude au quiz : demandée entre le choix et la correction */
+.certitude { margin-top: 12px; animation: apparition 0.2s ease-out; }
+.certitude .consigne { margin-bottom: 6px; }
+.certitude-boutons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.certitude-boutons .bouton { display: flex; align-items: center; justify-content: center; gap: 6px; padding-left: 6px; padding-right: 6px; }
+.certitude-boutons kbd { font-size: 11px; color: var(--discret); }
+@media (hover: none) { .certitude-boutons kbd { display: none; } }
+/* Cinq modes : la rangée passe à la ligne plutôt que de cacher le dernier */
+#filtres-quiz { flex-wrap: wrap; overflow: visible; }
+.option-certitude { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--discret); margin: 0 0 12px; }
+.option-certitude input { width: 16px; height: 16px; accent-color: var(--accent); }
 .source.bloc { display: block; margin-top: 4px; }
 
 .curseur {

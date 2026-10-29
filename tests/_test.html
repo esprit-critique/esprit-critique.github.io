@@ -9,7 +9,7 @@ const params = new URLSearchParams(location.search);
 document.getElementById("f").style.width = (params.get("l") || 390) + "px";
 document.getElementById("f").style.height = (params.get("h") || 844) + "px";
 const lignes = [];
-const ok = (nom, cond) => { const l = (cond ? "OK    " : "ÉCHEC ") + nom; lignes.push(l); console.log("BANC: " + l); };
+const ok = (nom, cond, detail) => { const l = (cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail); lignes.push(l); console.log("BANC: " + l); };
 const pause = ms => new Promise(r => setTimeout(r, ms));
 const erreursJS = [];
 const f = document.getElementById("f");
@@ -116,16 +116,22 @@ f.onload = async () => {
 
     // ---------- Quiz ----------
     await aller("quiz");
-    ok("quiz : 4 modes", vue().querySelectorAll("#filtres-quiz .puce").length === 4);
+    ok("quiz : 5 modes", vue().querySelectorAll("#filtres-quiz .puce").length === 5);
+    ok("quiz : option « Indiquer ma certitude » cochée par défaut", vue().querySelector(".option-certitude input").checked);
     touche("2");
-    ok("clavier : touche 2 répond", !!vue().querySelector(".retour-quiz"));
+    ok("certitude : demandée avant la correction", !!vue().querySelector(".certitude") && !vue().querySelector(".retour-quiz"));
+    touche("7");
+    ok("clavier : touche 2 puis 7 (Sûr) répond", !!vue().querySelector(".retour-quiz") && !vue().querySelector(".certitude"));
     touche("Enter");
     ok("clavier : Entrée passe à la question 2", vue().querySelector(".quiz-entete").textContent.includes("Question 2 / 10"));
     for (let i = 1; i < 10; i++) {
       vue().querySelectorAll(".choix")[0].click();
+      vue().querySelectorAll(".certitude [data-niveau]")[i % 3].click();
       vue().querySelector("[data-suivant]").click();
       await pause(5);
     }
+    const cert = JSON.parse(w.localStorage.getItem("certitudes") || "{}");
+    ok("certitude : 10 réponses comptées par niveau", ["sur", "plutot", "hasard"].reduce((t, k) => t + (cert[k] ? cert[k][0] : 0), 0) === 10);
     ok("quiz : bilan", vue().textContent.includes("Bilan de la série"));
     const mem = JSON.parse(w.localStorage.getItem("memoire"));
     ok("mémoire : " + Object.keys(mem).length + " fiches suivies", Object.keys(mem).length >= 10);
@@ -144,7 +150,50 @@ f.onload = async () => {
     ok("série de révision : 10 questions", vue().querySelector(".quiz-entete").textContent.includes("/ 10"));
     await aller("accueil");
     ok("accueil : carte de révision", vue().textContent.includes("à revoir aujourd'hui"));
-    ok("accueil : rubrique « À renforcer » (barres ou message d'attente)", vue().querySelectorAll(".barre-ligne").length > 0 || vue().textContent.includes("catégories les plus fragiles"));
+    ok("accueil : rubrique « À renforcer » (barres ou message d'attente)", vue().querySelectorAll(".barre-ligne").length > 0 || vue().textContent.includes("catégories les plus fragiles"), [...vue().querySelectorAll(".carte")].map(c => c.textContent.slice(0, 60)).join(" | "));
+    const ics = w.eval("exporterRevisions()");
+    const lignesIcs = ics.split("\r\n");
+    ok("agenda : fichier iCalendar (CRLF, VALUE=DATE, UID uniques, lignes ≤ 75 octets)",
+      ics.startsWith("BEGIN:VCALENDAR\r\n") && ics.endsWith("END:VCALENDAR\r\n") && /DTSTART;VALUE=DATE:\d{8}/.test(ics) && !/[^\r]\n/.test(ics)
+      && new Set(lignesIcs.filter(l => l.startsWith("UID:"))).size === lignesIcs.filter(l => l.startsWith("BEGIN:VEVENT")).length
+      && lignesIcs.every(l => new TextEncoder().encode(l).length <= 75) && /notions? à réviser/.test(ics));
+
+    // ---------- Certitude et boîtes de révision ----------
+    const memC = w.eval("memoire");
+    const cleT = [...w.eval("INDEX").keys()][5];
+    delete memC[cleT];
+    w.eval("enregistrerReponse")(cleT, true, "hasard");
+    ok("certitude : bonne réponse au hasard, la notion ne monte pas de boîte", memC[cleT].b === 0 && memC[cleT].d === w.eval("aujourdHui()") + 1);
+    w.eval("enregistrerReponse")(cleT, true, "sur");
+    ok("certitude : bonne réponse sûre, la notion monte", memC[cleT].b === 1);
+    w.eval("enregistrerReponse")(cleT, false, "sur");
+    w.eval("noterCertitude")(cleT, "sur", false);
+    ok("certitude : erreur sûre en boîte 1, révision demain, notée", memC[cleT].b === 1 && memC[cleT].d === w.eval("aujourdHui()") + 1 && JSON.parse(w.localStorage.getItem("erreursSures")).some(e => e.cle === cleT));
+
+    // ---------- Mode « Notions proches » ----------
+    await aller("quiz/proches");
+    const serieP = w.eval("quiz.serie");
+    const douteuses = w.eval("SITUATIONS_DOUTEUSES");
+    ok("notions proches : 10 duels à deux réponses, X et sa voisine", serieP.length === 10 && serieP.every(q => q.options.length === 2 && q.options.includes(q.fiche) && q.options.includes(q.voisine.fiche) && q.fiche.distinction[0] === w.eval("cleFiche")(q.voisine.type, q.voisine.fiche)));
+    ok("notions proches : aucune situation douteuse", serieP.every(q => !douteuses.has(w.eval("cleFiche")(q.type, q.fiche) + "#" + (q.cas === q.fiche.cas ? 1 : 2))));
+    ok("notions proches : situations douteuses toutes valides", [...douteuses].every(x => w.eval("INDEX").has(x.split("#")[0])));
+    const memAvant = JSON.stringify(w.eval("memoire"));
+    vue().querySelectorAll(".choix")[0].click();
+    vue().querySelectorAll(".certitude [data-niveau]")[1].click();
+    ok("notions proches : « Ce qui les distingue » et liens vers les deux fiches", /Ce qui les distingue/.test(vue().textContent) && vue().querySelectorAll(".retour-quiz .voir-aussi a").length === 2);
+    ok("notions proches : résultat dans « duels », pas dans les boîtes", JSON.stringify(w.eval("memoire")) === memAvant && Object.keys(JSON.parse(w.localStorage.getItem("duels"))).length === 1);
+    for (let i = 1; i < 10; i++) {
+      vue().querySelector("[data-suivant]").click();
+      await pause(5);
+      vue().querySelectorAll(".choix")[1].click();
+      vue().querySelectorAll(".certitude [data-niveau]")[2].click();
+    }
+    vue().querySelector("[data-suivant]").click();
+    await pause(5);
+    ok("notions proches : bilan", /Bilan de la série/.test(vue().textContent));
+    await aller("portrait");
+    ok("portrait : notions proches et certitude", /Les notions proches/.test(vue().textContent) && /Certitude au quiz/.test(vue().textContent) && /Erreurs commises en étant sûr/.test(vue().textContent));
+    await aller("quiz/tout");
 
     // ---------- Ateliers ----------
     await aller("ateliers");

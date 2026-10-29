@@ -12,7 +12,9 @@ pour l'utiliser comme une application.
 
 - **90 fiches** : 51 biais cognitifs et 39 sophismes, avec définition, mécanisme, exemple, cas célèbre,
   « ne pas confondre avec », parade et sources. 37 fiches sont illustrées.
-- **Un quiz** à révision espacée : les notions ratées reviennent après 1, 3, 7, 14 puis 30 jours.
+- **Un quiz** à révision espacée : les notions ratées reviennent après 1, 3, 7, 14 puis 30 jours. On y indique sa
+  certitude (les erreurs commises en étant sûr reviennent dès le lendemain) ; un mode « Notions proches » oppose
+  chaque notion à sa voisine ; les révisions prévues s'exportent dans un agenda (fichier .ics).
 - **24 ateliers** :
   - *le monde en chiffres* : état du monde, causes de décès, duels entre 155 pays (démographie, économie,
     géopolitique), cartes mentales, ordres de grandeur, chronologie ;

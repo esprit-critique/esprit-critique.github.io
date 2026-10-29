@@ -157,7 +157,8 @@ function effacer(cle) {
 const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
-  "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour"
+  "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
+  "duels", "certitudeQuiz", "certitudes", "erreursSures"
 ];
 
 // Fiches marquées comme acquises par l'utilisateur
@@ -187,19 +188,38 @@ const memoire = lire("memoire", {});
   effacer("erreurs");
 })();
 
-function enregistrerReponse(cle, juste) {
+// « certitude » (facultative) : "sur", "plutot" ou "hasard". Une bonne réponse donnée au hasard ne fait pas
+// monter la notion de boîte ; une erreur commise en étant sûr la ramène en boîte 1, comme toute erreur.
+function enregistrerReponse(cle, juste, certitude) {
   const m = memoire[cle] || { b: 0, d: 0, n: 0, j: 0 };
   m.n++;
   if (juste) {
     m.j++;
-    m.b = Math.min(5, m.b + 1);
+    if (certitude !== "hasard") m.b = Math.min(5, m.b + 1);
   } else {
     m.b = 1;
   }
-  m.d = aujourdHui() + INTERVALLES[m.b];
+  m.d = aujourdHui() + Math.max(1, INTERVALLES[m.b]);
   memoire[cle] = m;
   ecrire("memoire", memoire);
   noterActivite();
+}
+
+// Fichier .ics des révisions prévues sur les 60 prochains jours (les révisions en retard comptent pour aujourd'hui)
+function exporterRevisions() {
+  const auj = aujourdHui();
+  const parJour = {};
+  Object.keys(memoire).filter(c => INDEX.has(c)).forEach(c => {
+    const jour = Math.max(auj, memoire[c].d);
+    if (jour < auj + 60) parJour[jour] = (parJour[jour] || 0) + 1;
+  });
+  const evenements = Object.keys(parJour).map(Number).sort((a, b) => a - b).map(jour => ({
+    jour,
+    titre: "Esprit critique : " + pluriel(parJour[jour], "notion") + " à réviser",
+    description: "Révisions du quiz : https://esprit-critique.github.io/#quiz/reviser",
+    url: "https://esprit-critique.github.io/#quiz"
+  }));
+  return fichierAgenda("revisions-esprit-critique.ics", evenements);
 }
 
 // Fiches dont la révision est due, les plus en retard d'abord
@@ -266,21 +286,49 @@ function creerQuestion(type, fiche, alea = Math.random) {
 
 // Affiche une question dans « carte ». « surReponse(option) » est appelé au premier clic ;
 // « actions(zone) » ajoute les boutons de suite sous la correction.
+// Avec « q.certitude », la certitude est demandée entre le choix et la correction ;
+// « surReponse(option, certitude) » reçoit alors "sur", "plutot" ou "hasard".
 function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
   carte.style.setProperty("--c", "#2a8a5c");
-  carte.append(el("p", "consigne", TYPES[q.type].consigneQuiz), el("p", "cas", q.cas));
+  carte.append(el("p", "consigne", q.consigne || TYPES[q.type].consigneQuiz), el("p", "cas", q.cas));
 
   const boutons = q.options.map((option, i) => {
     const b = el("button", "choix");
     b.append(el("kbd", null, String(i + 1)), el("span", null, option.nom));
     b.addEventListener("click", () => {
       if (carte.dataset.repondu) return;
-      surReponse(option);
-      corriger(option);
+      if (!q.certitude) {
+        surReponse(option);
+        corriger(option);
+        return;
+      }
+      carte.dataset.repondu = "1";
+      boutons.forEach(x => { x.disabled = true; });
+      b.classList.add("choisi");
+      demanderCertitude(option);
     });
     carte.appendChild(b);
     return b;
   });
+
+  function demanderCertitude(option) {
+    const bloc = el("div", "certitude");
+    bloc.appendChild(el("p", "consigne", "Votre certitude ?"));
+    const rangee = el("div", "certitude-boutons");
+    NIVEAUX_CERTITUDE.forEach(([niveau, libelle], k) => {
+      const b = el("button", "bouton secondaire");
+      b.dataset.niveau = niveau;
+      b.append(el("kbd", null, String(7 + k)), el("span", null, libelle));
+      b.addEventListener("click", () => {
+        bloc.remove();
+        surReponse(option, niveau);
+        corriger(option);
+      });
+      rangee.appendChild(b);
+    });
+    bloc.appendChild(rangee);
+    carte.appendChild(bloc);
+  }
 
   function corriger(option) {
     carte.dataset.repondu = "1";
@@ -289,6 +337,7 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
     carte.style.setProperty("--c", COULEURS[q.fiche.categorie]);
     boutons.forEach((b, i) => {
       b.disabled = true;
+      b.classList.remove("choisi");
       if (q.options[i] === q.fiche) b.classList.add("juste");
       else if (q.options[i] === option) b.classList.add("faux");
     });
@@ -298,6 +347,15 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
       el("p", null, q.fiche.definition)
     );
     if (!juste) retour.appendChild(el("p", "source", "Votre réponse, « " + option.nom + " », désigne autre chose : " + option.definition));
+    // Duel entre notions proches : ce qui les distingue, et les deux fiches
+    if (q.voisine) {
+      const p = el("p", "distinction");
+      p.append(el("strong", null, "Ce qui les distingue : "), document.createTextNode(typo(q.fiche.distinction[1])));
+      retour.appendChild(p);
+      const liens = el("div", "voir-aussi");
+      [[q.type, q.fiche], [q.voisine.type, q.voisine.fiche]].forEach(([t, f]) => liens.appendChild(lienVers("#" + t + "/" + f.id, f.nom)));
+      retour.appendChild(liens);
+    }
     const zoneActions = el("div", "actions");
     actions(zoneActions);
     retour.appendChild(zoneActions);
@@ -366,6 +424,14 @@ function afficherAccueil() {
     const b = el("button", "bouton secondaire", "Une série de découverte");
     b.addEventListener("click", () => lancerQuiz("tout"));
     carteRevision.appendChild(b);
+  }
+  // Rappels dans l'agenda : un événement par jour où au moins une notion est due, sur 60 jours
+  const programmees = Object.keys(memoire).filter(c => INDEX.has(c));
+  if (programmees.length) {
+    const agenda = el("button", "bouton secondaire", "Ajouter mes révisions à mon agenda");
+    agenda.style.marginTop = "10px";
+    agenda.addEventListener("click", () => exporterRevisions());
+    carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
   zone.appendChild(carteRevision);
 
@@ -696,7 +762,57 @@ function tirerAuHasard() {
 // ===================== Quiz =====================
 
 const TAILLE_SERIE = 10;
-const MODES_QUIZ = [["tout", "Tout"], ["biais", "Biais"], ["sophismes", "Sophismes"], ["reviser", "À réviser"]];
+const MODES_QUIZ = [["tout", "Tout"], ["biais", "Biais"], ["sophismes", "Sophismes"], ["reviser", "À réviser"], ["proches", "Notions proches"]];
+const NIVEAUX_CERTITUDE = [["sur", "Sûr"], ["plutot", "Plutôt sûr"], ["hasard", "Au hasard"]];
+
+// Situations exclues du mode « Notions proches » : elles conviennent aussi à la notion voisine,
+// ou la fiche est une forme particulière de sa voisine. Détail et réécritures proposées :
+// tests/paires-douteuses.md. « #1 » désigne le champ cas, « #2 » le champ cas2.
+const SITUATIONS_DOUTEUSES = new Set([
+  "biais:procureur#1", "biais:procureur#2", "biais:planification#1", "biais:planification#2",
+  "sophismes:tu-quoque#1", "sophismes:tu-quoque#2", "biais:taux-de-base#2", "biais:regression-moyenne#1",
+  "biais:regression-moyenne#2", "biais:taille-echantillon#2", "biais:ikea#1", "biais:negativite#1",
+  "biais:illusion-controle#1", "sophismes:emotion#1"
+]);
+
+// Mode « Notions proches » : une situation de la fiche X, et deux réponses, X et sa voisine (champ distinction).
+// Une situation par fiche ; priorité aux paires jamais jouées ou souvent confondues.
+function serieDeDuels() {
+  const duels = lire("duels", {});
+  const parFiche = [...INDEX.entries()].map(([cle, { type, fiche }]) => {
+    const voisine = fiche.distinction && INDEX.get(fiche.distinction[0]);
+    const situations = voisine ? [[fiche.cas, 1], [fiche.cas2, 2]].filter(([cas, k]) => cas && !SITUATIONS_DOUTEUSES.has(cle + "#" + k)) : [];
+    if (!situations.length) return null;
+    const [n, j] = duels[cle] || [0, 0];
+    return { cle, type, fiche, voisine, situations, poids: (n ? j / n : -0.5) + Math.random() * 1.2 };
+  }).filter(Boolean);
+  return parFiche.sort((a, b) => a.poids - b.poids).slice(0, TAILLE_SERIE).map(x => ({
+    type: x.type, fiche: x.fiche, voisine: x.voisine,
+    cas: melanger(x.situations)[0][0],
+    options: melanger([x.fiche, x.voisine.fiche]),
+    consigne: "Laquelle de ces deux notions proches décrit la situation ?"
+  }));
+}
+
+function noterDuel(cle, juste) {
+  const duels = lire("duels", {});
+  const [n, j] = duels[cle] || [0, 0];
+  duels[cle] = [n + 1, j + (juste ? 1 : 0)];
+  ecrire("duels", duels);
+}
+
+// Taux de réussite par niveau de certitude, et dernières erreurs commises en étant sûr
+function noterCertitude(cle, certitude, juste) {
+  const stats = lire("certitudes", {});
+  const [n, j] = stats[certitude] || [0, 0];
+  stats[certitude] = [n + 1, j + (juste ? 1 : 0)];
+  ecrire("certitudes", stats);
+  if (certitude === "sur" && !juste) {
+    const liste = lire("erreursSures", []).filter(e => e.cle !== cle);
+    liste.push({ cle, j: aujourdHui() });
+    ecrire("erreursSures", liste.slice(-30));
+  }
+}
 const ANCIENS_MODES = { "les deux": "tout", "erreurs": "reviser" };
 
 const quiz = {
@@ -709,6 +825,12 @@ if (!MODES_QUIZ.some(([m]) => m === quiz.mode)) quiz.mode = "tout";
 
 function nouvelleSerie() {
   let choisies;
+  if (quiz.mode === "proches") {
+    quiz.serie = serieDeDuels();
+    quiz.index = 0;
+    quiz.bonnes = 0;
+    return;
+  }
   if (quiz.mode === "reviser") {
     choisies = clesAReviser().slice(0, TAILLE_SERIE).map(c => INDEX.get(c));
   } else {
@@ -736,12 +858,21 @@ function lancerQuiz(mode) {
 function afficherFiltresQuiz() {
   const zone = $("filtres-quiz");
   zone.innerHTML = "";
+  document.querySelectorAll(".option-certitude").forEach(o => o.remove());
   MODES_QUIZ.forEach(([mode, libelle]) => {
     const texte = mode === "reviser" ? libelle + " (" + clesAReviser().length + ")" : libelle;
     const puce = el("button", "puce" + (quiz.mode === mode ? " active" : ""), texte);
     puce.addEventListener("click", () => lancerQuiz(mode));
     zone.appendChild(puce);
   });
+  // Option : indiquer sa certitude avant la correction
+  const option = el("label", "option-certitude");
+  const case_ = el("input");
+  case_.type = "checkbox";
+  case_.checked = lire("certitudeQuiz", true);
+  case_.addEventListener("change", () => ecrire("certitudeQuiz", case_.checked));
+  option.append(case_, document.createTextNode(" Indiquer ma certitude"));
+  zone.after(option);
 }
 
 function afficherQuiz() {
@@ -786,11 +917,16 @@ function afficherQuiz() {
   jauge.style.marginBottom = "14px";
 
   const carte = el("article", "carte");
-  rendreQuestion(carte, q, q.reponse, option => {
+  if (!q.reponse) q.certitude = lire("certitudeQuiz", true);
+  rendreQuestion(carte, q, q.reponse, (option, certitude) => {
     q.reponse = option;
+    q.niveau = certitude;
     const juste = option === q.fiche;
+    const cle = cleFiche(q.type, q.fiche);
     if (juste) quiz.bonnes++;
-    enregistrerReponse(cleFiche(q.type, q.fiche), juste);
+    // Les duels n'entrent pas dans les boîtes de révision : un choix entre deux est trop facile
+    if (q.voisine) { noterDuel(cle, juste); noterActivite(); } else enregistrerReponse(cle, juste, certitude);
+    if (certitude) noterCertitude(cle, certitude, juste);
     entete.lastChild.textContent = pluriel(quiz.bonnes, "bonne réponse", "bonnes réponses");
   }, actions => {
     actions.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, "Voir la fiche", "bouton secondaire"));
@@ -835,14 +971,21 @@ function afficherBilan(zone) {
     carte.appendChild(el("p", "source", "Meilleur score précédent dans ce mode : " + ancien + " / " + TAILLE_SERIE + "."));
   }
   if (ratees.length > 0) {
-    carte.appendChild(el("p", "consigne", "Reviendront demain"));
+    carte.appendChild(el("p", "consigne", quiz.mode === "proches" ? "Paires à revoir" : "Reviendront demain"));
     const ul = el("ul", "liste-simple");
     ratees.forEach(q => {
       const li = el("li");
       li.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, q.fiche.nom));
+      if (q.voisine) {
+        li.appendChild(document.createTextNode(" / "));
+        li.appendChild(lienVers("#" + q.voisine.type + "/" + q.voisine.fiche.id, q.voisine.fiche.nom));
+      }
       ul.appendChild(li);
     });
     carte.appendChild(ul);
+  }
+  if (quiz.serie.some(q => q.niveau === "sur" && q.reponse !== q.fiche) && quiz.mode !== "proches") {
+    carte.appendChild(el("p", "source", "Les erreurs commises en étant sûr reviennent dès demain : on les corrige mieux que les autres (Butterfield et Metcalfe, 2001), mais elles réapparaissent si la correction est oubliée (Butler, Fazio et Marsh, 2011)."));
   }
 
   const actions = el("div", "actions");
@@ -925,6 +1068,12 @@ function afficherPage() {
 
   if (vue === "quiz") {
     titre = "Quiz";
+    // #quiz/proches ouvre directement un mode
+    if (id && id !== quiz.mode && MODES_QUIZ.some(([m]) => m === id)) {
+      quiz.mode = id;
+      ecrire("modeQuiz", id);
+      quiz.serie = [];
+    }
     // Nouvelle série si aucune n'est en cours, ou si la précédente est terminée
     if (quiz.serie.length === 0 || (precedent.vue !== "quiz" && quiz.index >= quiz.serie.length)) nouvelleSerie();
     afficherQuiz();
@@ -1072,6 +1221,10 @@ document.addEventListener("keydown", e => {
   if (/^[1-4]$/.test(e.key)) {
     const choix = section.querySelectorAll(".choix:not(:disabled)");
     if (choix[Number(e.key) - 1]) { e.preventDefault(); choix[Number(e.key) - 1].click(); }
+  } else if (/^[789]$/.test(e.key)) {
+    // Certitude au quiz : 7 Sûr, 8 Plutôt sûr, 9 Au hasard (les touches 1 à 4 restent aux réponses)
+    const bouton = section.querySelectorAll(".certitude [data-niveau]")[Number(e.key) - 7];
+    if (bouton) { e.preventDefault(); bouton.click(); }
   } else if (e.key === "Enter" || e.key === "ArrowRight") {
     const suite = section.querySelector("[data-suivant]");
     if (suite && !cible.matches("a, button")) { e.preventDefault(); suite.click(); }

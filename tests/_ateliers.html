@@ -332,7 +332,7 @@ f.onload = async () => {
 
     // ---------- Portrait ----------
     await aller("portrait");
-    ok("portrait : page affichée", vue().id === "vue-portrait" && vue().querySelectorAll("article.carte").length === 9);
+    ok("portrait : page affichée", vue().id === "vue-portrait" && vue().querySelectorAll("article.carte").length === 11);
     ok("portrait : mesures disponibles", vue().querySelectorAll("article.carte:not(.a-mesurer)").length >= 7, vue().querySelectorAll("article.carte:not(.a-mesurer)").length + " mesures");
     ok("portrait : courbe d'étalonnage", !!vue().querySelector("svg.graphe"));
     ok("portrait : sans texte suspect", textesSuspects().length === 0, textesSuspects().join());
