@@ -19,7 +19,7 @@ def texte(brut):
     # La console de Chrome échappe les caractères non ASCII (\u00e9…) et les guillemets
     return brut.encode("latin-1", "replace").decode("unicode_escape").encode("latin-1", "replace").decode("utf-8", "replace")
 
-lignes, fini, tampon, fin = [], False, b"", time.time() + delai
+lignes, progres, fini, tampon, fin = [], [], False, b"", time.time() + delai
 try:
     while time.time() < fin and not fini:
         pret, _, _ = select.select([p.stderr], [], [], 1)
@@ -31,6 +31,8 @@ try:
         tampon += morceau
         *completes, tampon = tampon.split(b"\n")
         for l in completes:
+            etape = re.search(rb'"BANC: (.*)", source', l)
+            if etape: progres.append(texte(etape.group(1).decode("latin-1")))
             m = re.search(rb'"RAPPORT(-FIN|: ?(.*))", source', l)
             if not m: continue
             if m.group(1) == b"-FIN": fini = True
@@ -39,5 +41,7 @@ finally:
     try: os.killpg(p.pid, signal.SIGKILL)
     except OSError: pass
     shutil.rmtree(profil, ignore_errors=True)
-if not fini: lignes.insert(0, "RÉSUMÉ : INACHEVÉ (délai de " + str(delai) + " s dépassé ou page bloquée)")
+if not fini:
+    # Banc inachevé : on garde les vérifications déjà faites, pour savoir où il s'est arrêté
+    lignes = ["RÉSUMÉ : INACHEVÉ (délai de " + str(delai) + " s dépassé ou page bloquée)", "Dernières étapes :"] + progres[-15:]
 open(sortie, "w").write("\n".join(lignes) + "\n")

@@ -178,9 +178,25 @@ const JEUX = [
       deroulerNiveaux(zone, {
         id: "pays", n: 10, libelle: "Duel", relancer: () => JEUX.find(j => j.id === "pays").lancer(zone),
         avant: zone => zone.appendChild(choixThemePays(zone, theme)),   // choix du thème, au premier duel
-        tirer: niveau => auNiveau(niveau, n => tirerDuelsPays(1, theme, { niveau: n, indicateurs })[0]) || tirerDuelsPays(1, theme, { indicateurs })[0]
+        estJuste: justeOuPresque,
+        // Niveaux 1 et 2 : duels ; niveau 3 : classer quatre pays
+        tirer: niveau => (niveau === 3 && tirerClassementPays(theme)) || auNiveau(niveau, n => tirerDuelsPays(1, theme, { niveau: n, indicateurs })[0]) || tirerDuelsPays(1, theme, { indicateurs })[0]
       }, (duel, zone, fini) => {
         const ind = INDICATEURS_PAYS[duel.cle];
+        if (duel.classement) {
+          zone.appendChild(el("p", "cas", ind.question));
+          zone.appendChild(el("p", "consigne", "Classez ces quatre pays, en commençant par la réponse"));
+          classementInteractif(zone, duel.pays, p => p.nom, ordre => {
+            const annee = p => (p.annees && p.annees[duel.cle]) || ANNEES_PAYS[duel.cle];
+            const source = p => ind.source ? (ind.source.includes(String(annee(p))) ? ind.source : ind.source + ", " + annee(p)) : "Banque mondiale, " + annee(p);
+            const bon = [...duel.pays].sort((a, b) => b[duel.cle] - a[duel.cle]);
+            const retour = el("div", "retour-quiz");
+            const part = corrigerClassement(retour, ordre, bon, p => p.nom, p => ind.format(p[duel.cle]) + " (" + source(p) + ")");
+            zone.appendChild(retour);
+            fini(part, retour);
+          });
+          return;
+        }
         zone.appendChild(el("p", "cas", ind.question));
         const boutons = [duel.a, duel.b].map((p, k) => {
           const b = boutonChoix(p.nom, k);
@@ -222,8 +238,8 @@ const JEUX = [
           fini(juste, retour);
         }
       }, resultats => {
-        const bonnes = resultats.filter(Boolean).length;
-        afficherScore(zone, "pays", bonnes, resultats.length);
+        const bonnes = Number(sommeResultats(resultats).toFixed(1));
+        afficherScore(zone, "pays", bonnes, resultats.length, fr(bonnes) + " / " + resultats.length);
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Nos images des pays vieillissent mal. La fécondité a fortement baissé presque partout (2,2 enfants par femme dans le monde en 2024, contre 4,7 en 1960), l'espérance de vie a progressé partout, et beaucoup de pays dits « pauvres » ne le sont plus.",
           "Hans Rosling appelait « instinct du fossé » la tendance à diviser le monde en deux camps, riches et pauvres, alors que la plupart des pays se situent entre les deux.",
@@ -251,8 +267,22 @@ const JEUX = [
       const exclus = new Set();
       deroulerNiveaux(zone, {
         id: "nord", n: 10, relancer: () => JEUX.find(j => j.id === "nord").lancer(zone),
-        tirer: (niveau, i) => tirerPaireVillesNiveau(niveau, i, exclus)
+        estJuste: justeOuPresque,
+        // Niveau 3 : classer quatre villes
+        tirer: (niveau, i) => (niveau === 3 && tirerClassementVilles()) || tirerPaireVillesNiveau(niveau, i, exclus)
       }, (q, zone, fini) => {
+        if (q.classement) {
+          zone.appendChild(el("p", "cas", q.sens === "nord" ? "Classez ces villes du nord au sud." : "Classez ces villes d'ouest en est."));
+          classementInteractif(zone, q.villes, v => VILLES[v][0], ordre => {
+            const bon = [...q.villes].sort((a, b) => q.sens === "nord" ? VILLES[b][1] - VILLES[a][1] : VILLES[a][2] - VILLES[b][2]);
+            const retour = el("div", "retour-quiz");
+            const part = corrigerClassement(retour, ordre, bon, v => VILLES[v][0], coordonnees);
+            retour.appendChild(planisphere(bon, q.sens, true));   // numéros du bon ordre, comme la liste
+            zone.appendChild(retour);
+            fini(part, retour);
+          });
+          return;
+        }
         const [a, b] = q.villes;
         const libelle = { nord: "la plus au nord", est: "la plus à l'est", ouest: "la plus à l'ouest" }[q.sens];
         zone.appendChild(el("p", "cas", "Quelle ville est " + libelle + " ?"));
@@ -281,8 +311,8 @@ const JEUX = [
           fini(juste, retour);
         }
       }, resultats => {
-        const bonnes = resultats.filter(Boolean).length;
-        afficherScore(zone, "nord", bonnes, resultats.length);
+        const bonnes = Number(sommeResultats(resultats).toFixed(1));
+        afficherScore(zone, "nord", bonnes, resultats.length, fr(bonnes) + " / " + resultats.length);
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Nous ne mémorisons pas une carte précise, mais des relations simplifiées. Barbara Tversky (1981) a montré que nous « alignons » les régions voisines : des étudiants pensaient que Rome était au sud de Philadelphie et Boston à l'ouest de Rio de Janeiro. Ces erreurs persistaient même quand on les prévenait.",
           "Nous raisonnons aussi de façon hiérarchique : la Californie est à l'ouest du Nevada, donc toute ville californienne serait à l'ouest de toute ville du Nevada. Stevens et Coupe (1978) ont montré que San Diego était ainsi placée à l'ouest de Reno, alors que c'est l'inverse.",
@@ -306,9 +336,13 @@ const JEUX = [
       zone.innerHTML = "";
       deroulerNiveaux(zone, {
         id: "grandeurs", n: 8, relancer: () => JEUX.find(j => j.id === "grandeurs").lancer(zone),
-        tirer: niveau => tirerSelonNiveau("grandeurs", GRANDEURS, 1, niveau)[0],
+        // Niveau 3 : une question sur deux suit la méthode de Fermi (décomposer avant d'estimer)
+        tirer: (niveau, i) => niveau === 3 && i % 2 === 1
+          ? { fermiDe: tirerSelonNiveau("grandeurs:fermi", FERMI, 1, 3, f => f.id, () => 3)[0] }
+          : tirerSelonNiveau("grandeurs", GRANDEURS, 1, niveau)[0],
         estJuste: points => points >= 2   // moins d'un facteur 3
       }, (q, zone, fini) => {
+        if (q.fermiDe) return afficherFermi(q.fermiDe, zone, fini);
         const vraie = Math.log10(q.v);
         // Fenêtre de 9 puissances de dix, décalée au hasard pour que sa position ne trahisse pas la réponse
         const debut = Math.max(0, Math.floor(vraie) - 2 - Math.floor(Math.random() * 5));
@@ -377,8 +411,21 @@ const JEUX = [
       const exclus = new Set();
       deroulerNiveaux(zone, {
         id: "chronologie", n: 10, libelle: "Paire", relancer: () => JEUX.find(j => j.id === "chronologie").lancer(zone),
-        tirer: (niveau, i) => tirerPaireChronologieNiveau(niveau, i, exclus)
+        estJuste: justeOuPresque,
+        // Niveau 3 : placer quatre événements dans l'ordre
+        tirer: (niveau, i) => (niveau === 3 && tirerClassementChronologie()) || tirerPaireChronologieNiveau(niveau, i, exclus)
       }, (paire, zone, fini) => {
+        if (paire.classement) {
+          zone.appendChild(el("p", "cas", "Classez ces événements du plus ancien au plus récent."));
+          classementInteractif(zone, paire.evenements, e => e.nom, ordre => {
+            const bon = [...paire.evenements].sort((a, b) => momentEvenement(a) - momentEvenement(b));
+            const retour = el("div", "retour-quiz");
+            const part = corrigerClassement(retour, ordre, bon, e => e.nom, dateEvenement);
+            zone.appendChild(retour);
+            fini(part, retour);
+          });
+          return;
+        }
         zone.appendChild(el("p", "consigne", "Lequel a eu lieu en premier ?"));
         const [a, b] = paire.evenements;
         const boutons = [a, b].map((e, k) => {
@@ -407,8 +454,8 @@ const JEUX = [
           fini(juste, retour);
         }
       }, resultats => {
-        const bonnes = resultats.filter(Boolean).length;
-        afficherScore(zone, "chronologie", bonnes, resultats.length);
+        const bonnes = Number(sommeResultats(resultats).toFixed(1));
+        afficherScore(zone, "chronologie", bonnes, resultats.length, fr(bonnes) + " / " + resultats.length);
         ajouterExplication(zone, "Notre sens du temps", [
           "Nous rangeons les événements dans des cases apprises séparément : « l'Antiquité », « la révolution industrielle », « le Japon des samouraïs ». Des faits classés dans des chapitres différents semblent appartenir à des mondes éloignés, alors qu'ils sont parfois contemporains.",
           "À l'inverse, une même étiquette regroupe des périodes immenses : l'Égypte des pharaons a duré environ 3 000 ans, et Cléopâtre est plus proche de nous que des bâtisseurs de la grande pyramide.",
@@ -540,40 +587,55 @@ const JEUX = [
       const niveau = niveauAtelier("intervalles").niveau;
       zone.appendChild(choixNiveau("intervalles", () => JEUX.find(j => j.id === "intervalles").lancer(zone)));
       const questions = tirerSelonNiveau("intervalles", ETALONNAGE, 10, niveau);
-      zone.appendChild(paragraphe("Pour chaque quantité, indiquez une valeur basse et une valeur haute telles que vous soyez sûr à 90 % que la vraie valeur se trouve entre les deux. Si vous ne savez pas, élargissez la fourchette : le but n'est pas d'être précis, mais d'être juste sur votre degré de certitude."));
-      zone.appendChild(paragraphe("Bien étalonné, vous devriez avoir environ 9 bonnes fourchettes sur 10.", "source"));
+      // Niveau 3 : deux fourchettes par quantité, à 50 % et à 90 %
+      const double = niveau === 3;
+      zone.appendChild(paragraphe(double
+        ? "Pour chaque quantité, donnez deux fourchettes : une dont vous êtes sûr à 50 %, et une, plus large, dont vous êtes sûr à 90 %. La première doit tenir dans la seconde."
+        : "Pour chaque quantité, indiquez une valeur basse et une valeur haute telles que vous soyez sûr à 90 % que la vraie valeur se trouve entre les deux. Si vous ne savez pas, élargissez la fourchette : le but n'est pas d'être précis, mais d'être juste sur votre degré de certitude."));
+      zone.appendChild(paragraphe(double ? "Bien étalonné, environ 5 fourchettes à 50 % et 9 fourchettes à 90 % sur 10 contiennent la bonne réponse." : "Bien étalonné, vous devriez avoir environ 9 bonnes fourchettes sur 10.", "source"));
 
       const champs = questions.map((q, k) => {
         const bloc = el("div", "question-test");
         bloc.appendChild(paragraphe((k + 1) + ". " + q.q + (q.unite ? " (" + q.unite + ")" : "")));
-        const ligne = el("div", "ligne");
-        const bas = el("input", "champ");
-        const haut = el("input", "champ");
-        [bas, haut].forEach(c => { c.inputMode = "decimal"; c.style.width = "7em"; });
-        bas.placeholder = "au moins";
-        haut.placeholder = "au plus";
-        bas.setAttribute("aria-label", "Valeur basse");
-        haut.setAttribute("aria-label", "Valeur haute");
-        ligne.append(bas, el("span", "source", "à"), haut);
-        bloc.appendChild(ligne);
+        const paire = etiquette => {
+          const ligne = el("div", "ligne");
+          const bas = el("input", "champ");
+          const haut = el("input", "champ");
+          [bas, haut].forEach(c => { c.inputMode = "decimal"; c.style.width = "7em"; });
+          bas.placeholder = "au moins";
+          haut.placeholder = "au plus";
+          bas.setAttribute("aria-label", "Valeur basse" + (etiquette ? ", " + etiquette : ""));
+          haut.setAttribute("aria-label", "Valeur haute" + (etiquette ? ", " + etiquette : ""));
+          if (etiquette) ligne.appendChild(el("span", "source etiquette-fourchette", etiquette));
+          ligne.append(bas, el("span", "source", "à"), haut);
+          bloc.appendChild(ligne);
+          return [bas, haut];
+        };
+        const champsQ = double ? [...paire("à 50 %"), ...paire("à 90 %")] : paire();
         zone.appendChild(bloc);
-        return [bas, haut];
+        return champsQ;
       });
 
       const valider = el("button", "bouton large", "Voir les réponses");
       valider.dataset.valider = "1";
       zone.appendChild(valider);
       valider.addEventListener("click", () => {
-        const reponses = champs.map(([b, h]) => {
+        const lirePaire = (b, h) => {
           let x = lireNombre(b.value), y = lireNombre(h.value);
           if (x > y) [x, y] = [y, x];
           return [x, y];
-        });
-        const vides = reponses.filter(([x, y]) => isNaN(x) || isNaN(y)).length;
+        };
+        // Au niveau 3 : [bas, haut] à 90 % ; et [bas, haut] à 50 % dans « cinquante »
+        const reponses = champs.map(c => double ? lirePaire(c[2], c[3]) : lirePaire(c[0], c[1]));
+        const cinquante = double ? champs.map(c => lirePaire(c[0], c[1])) : null;
+        const vides = champs.flat().filter(c => isNaN(lireNombre(c.value))).length;
         if (vides) {
-          valider.textContent = "Il manque " + pluriel(vides, "fourchette") + " à remplir";
-          const premier = champs.flat().find(c => isNaN(lireNombre(c.value)));
-          if (premier) premier.focus();
+          valider.textContent = "Il manque " + pluriel(vides, "valeur") + " à remplir";
+          champs.flat().find(c => isNaN(lireNombre(c.value))).focus();
+          return;
+        }
+        if (double && cinquante.some(([x, y], k) => x < reponses[k][0] || y > reponses[k][1])) {
+          valider.textContent = "Chaque fourchette à 50 % doit tenir dans celle à 90 %";
           return;
         }
         zone.innerHTML = "";
@@ -586,11 +648,27 @@ const JEUX = [
           liste.appendChild(ligneIntervalle(q, x, y, ok));
         });
         noterFourchettes(questions.length, dedans);
+        const couts = questions.map((q, k) => scoreFourchette(q, reponses[k][0], reponses[k][1], 0.1));
+        const moyenneCout = couts.reduce((a, b) => a + b, 0) / couts.length;
+        const dedans50 = double ? questions.filter((q, k) => q.v >= cinquante[k][0] && q.v <= cinquante[k][1]).length : null;
+        const couts50 = double ? questions.map((q, k) => scoreFourchette(q, cinquante[k][0], cinquante[k][1], 0.5)) : null;
         noterPartieEntiere("intervalles", niveau, questions.map((q, k) => q.v >= reponses[k][0] && q.v <= reponses[k][1]));
         afficherScore(zone, "intervalles", dedans, questions.length);
         zone.appendChild(paragraphe(dedans >= 8
           ? "Votre étalonnage est bon : vos fourchettes reflètent correctement votre incertitude."
           : "Vos fourchettes étaient trop étroites : vous étiez plus sûr de vous que vos connaissances ne le justifiaient."));
+        zone.appendChild(el("p", "verdict", "Score de fourchette : " + fr(Number(moyenneCout.toFixed(2))) + " (plus il est bas, mieux c'est)"));
+        zone.appendChild(paragraphe("Une fourchette étroite et juste vaut mieux qu'une fourchette large ; une fourchette fausse coûte cher. Une fourchette juste, d'un facteur 4 de large, coûte environ 0,6 ; manquer la vraie valeur d'un facteur 10 coûte 20 de plus.", "source"));
+        if (double) zone.appendChild(paragraphe("Fourchettes à 50 % justes : " + dedans50 + " sur 10 (objectif : environ 5). Fourchettes à 90 % justes : " + dedans + " sur 10 (objectif : environ 9)." + (dedans50 > 7 ? " Vos fourchettes à 50 % sont trop larges : vous pouvez les resserrer." : dedans50 < 3 ? " Vos fourchettes à 50 % sont trop étroites." : "")));
+        const pire = couts.indexOf(Math.max(...couts));
+        zone.appendChild(calculEnDetail([
+          "Pour une fourchette [b, h] donnée au niveau de confiance 1 − α, et une vraie valeur v :",
+          "= coût = (h − b) + (2/α) × (b − v) si v est en dessous ; + (2/α) × (v − h) si v est au-dessus",
+          "À 90 %, α = 0,1, donc 2/α = 20 : sortir de la fourchette coûte vingt fois plus cher que de l'élargir. À 50 %, 2/α = 4. Le score est une règle propre (Gneiting et Raftery, 2007) : on obtient le meilleur score moyen en donnant des fourchettes qui reflètent exactement son incertitude.",
+          "Les écarts se mesurent en ordres de grandeur (log₁₀ : un facteur 10 vaut 1) ; les années, en siècles.",
+          "= Votre fourchette la plus coûteuse : « " + questions[pire].q + " », de " + fr(reponses[pire][0]) + " à " + fr(reponses[pire][1]) + " pour " + fr(questions[pire].v) + " : coût " + fr(Number(couts[pire].toFixed(2))),
+          double ? "= Score moyen à 50 % : " + fr(Number((couts50.reduce((a, b) => a + b, 0) / 10).toFixed(2))) + " ; à 90 % : " + fr(Number(moyenneCout.toFixed(2))) : "= Score moyen : " + fr(Number(moyenneCout.toFixed(2))) + " sur " + questions.length + " fourchettes"
+        ]));
         const [total, reussies] = lire("fourchettes", [0, 0]);
         if (total > questions.length) zone.appendChild(paragraphe("Toutes parties confondues : " + reussies + " fourchettes justes sur " + total + ", soit " + Math.round(100 * reussies / total) + " % (objectif : 90 %).", "source"));
         zone.appendChild(liste);
@@ -913,6 +991,49 @@ function niveauPaireVilles(a, b, sens) {
 // sauf niveau indiqué dans les données
 const niveauPaireCelebre = p => p.niveau || 2;
 
+// ===================== Classements du niveau 3 =====================
+// Quatre éléments à ranger ; chaque paire doit être nettement séparée, pour qu'un seul ordre soit défendable.
+
+// Plus ou moins ? : quatre pays sur un indicateur, deux à deux séparés d'au moins la borne basse d'ECARTS_PAYS
+function tirerClassementPays(theme) {
+  const retenus = Object.keys(INDICATEURS_PAYS).filter(c => theme === "tout" || INDICATEURS_PAYS[c].theme === theme);
+  for (let essai = 0; essai < 3000; essai++) {
+    const cle = retenus[Math.floor(Math.random() * retenus.length)];
+    const [mode, [bas], minimum] = ECARTS_PAYS[cle];
+    const quatre = melanger(PAYS.filter(p => p[cle] !== undefined && (minimum === undefined || p[cle] >= minimum))).slice(0, 4);
+    const ecart = (a, b) => mode === "ratio" ? Math.max(a, b) / Math.max(Math.min(a, b), 1e-9) : Math.abs(a - b);
+    if (quatre.every((a, i) => quatre.slice(i + 1).every(b => ecart(a[cle], b[cle]) >= bas))) return { classement: true, cle, pays: quatre };
+  }
+  return null;
+}
+
+// Le nord est où ? : quatre villes, séparées d'au moins 1,5°, sur moins de 20° de latitude ou 35° de longitude
+function tirerClassementVilles() {
+  const ids = Object.keys(VILLES);
+  for (let essai = 0; essai < 5000; essai++) {
+    const sens = Math.random() < 0.5 ? "nord" : "est";
+    const quatre = melanger(ids).slice(0, 4);
+    const v = quatre.map(id => sens === "nord" ? VILLES[id][1] : VILLES[id][2]).sort((a, b) => a - b);
+    if (v.every((x, i) => i === 0 || x - v[i - 1] >= 1.5) && v[3] - v[0] <= (sens === "nord" ? 20 : 35)) return { classement: true, sens, villes: quatre };
+  }
+  return null;
+}
+
+// Avant ou après ? : quatre événements de sujets différents, séparés d'au moins deux ans (sauf dates précises),
+// sur une période courte au regard de leur ancienneté
+function tirerClassementChronologie() {
+  for (let essai = 0; essai < 5000; essai++) {
+    const quatre = melanger(EVENEMENTS).slice(0, 4);
+    if (quatre.filter(e => e.vers).length > 1) continue;
+    const sujets = quatre.map(e => e.sujet).filter(Boolean);
+    if (new Set(sujets).size < sujets.length) continue;
+    const tries = [...quatre].sort((a, b) => momentEvenement(a) - momentEvenement(b));
+    const separes = tries.every((e, i) => i === 0 || (e.date && tries[i - 1].date ? momentEvenement(e) > momentEvenement(tries[i - 1]) : e.annee - tries[i - 1].annee >= 2));
+    if (separes && tries[3].annee - tries[0].annee <= Math.max(40, 0.3 * (2026 - tries[0].annee))) return { classement: true, evenements: quatre };
+  }
+  return null;
+}
+
 // Tente un tirage au niveau demandé, puis aux niveaux voisins
 function auNiveau(niveau, tirage) {
   for (const n of [niveau, niveau - 1, niveau + 1, niveau - 2, niveau + 2].filter(x => x >= 1 && x <= 3)) {
@@ -1010,14 +1131,15 @@ function coordonnees(v) {
 }
 
 // Planisphère schématique : méridiens et parallèles tous les 30°, et les deux villes
-function planisphere(villes, sens) {
-  const s = svg("svg", { viewBox: "0 0 320 170", class: "planisphere", role: "img", "aria-label": "Position des deux villes sur un planisphère" });
+// numeros : les points portent leur rang (1, 2…) au lieu du nom, pour quatre villes parfois très proches
+function planisphere(villes, sens, numeros) {
+  const s = svg("svg", { viewBox: "0 0 320 170", class: "planisphere", role: "img", "aria-label": numeros ? "Position des villes sur un planisphère, numérotées dans l'ordre" : "Position des deux villes sur un planisphère" });
   const x = lon => 10 + 300 * (lon + 180) / 360, y = lat => 10 + 150 * (90 - lat) / 180;
   s.appendChild(svg("rect", { x: 10, y: 10, width: 300, height: 150, class: "graphe-fond" }));
   for (let lon = -150; lon <= 150; lon += 30) s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: "graphe-grille" }));
   for (let lat = -60; lat <= 60; lat += 30) s.appendChild(svg("line", { x1: 10, y1: y(lat), x2: 310, y2: y(lat), class: lat === 0 ? "equateur" : "graphe-grille" }));
   s.appendChild(texteSvg(306, y(0) - 3, "équateur", { class: "sch-petit", "text-anchor": "end" }));
-  const points = villes.map(v => ({ nom: VILLES[v][0], px: x(VILLES[v][2]), py: y(VILLES[v][1]) }));
+  const points = villes.map((v, k) => ({ nom: numeros ? String(k + 1) : VILLES[v][0], px: x(VILLES[v][2]), py: y(VILLES[v][1]) }));
   villes.forEach((v, k) => {
     const [, lat, lon] = VILLES[v];
     // Ligne de repère : le parallèle (nord) ou le méridien (est) de chaque ville
@@ -1089,6 +1211,46 @@ function frise(a, b) {
   return bloc;
 }
 
+// Méthode de Fermi : le joueur estime chaque facteur ; on compare le produit à la vraie valeur (mêmes points
+// qu'une estimation directe : 3 points à moins d'un facteur 2, 2 à moins de 3, 1 à moins de 10)
+function afficherFermi(f, zone, fini) {
+  const q = GRANDEURS.find(g => g.id === f.id);
+  zone.appendChild(el("p", "consigne", "Méthode de Fermi : décomposez avant d'estimer"));
+  zone.appendChild(el("p", "cas", q.q));
+  zone.appendChild(paragraphe("Estimez chaque facteur ; le site fera le calcul." + (f.facteurs.some(x => x[3]) ? " Les facteurs marqués « ÷ » divisent le résultat." : ""), "source"));
+  const champs = f.facteurs.map(([libelle, , , diviser]) => {
+    const ligne = el("div", "ligne ligne-fermi");
+    const champ = el("input", "champ");
+    champ.inputMode = "decimal";
+    champ.setAttribute("aria-label", libelle);
+    ligne.append(el("span", "facteur-fermi", (diviser ? "÷ " : "× ") + libelle), champ);
+    zone.appendChild(ligne);
+    return champ;
+  });
+  const valider = el("button", "bouton large", "Calculer");
+  valider.dataset.valider = "1";
+  zone.appendChild(valider);
+  valider.addEventListener("click", () => {
+    const valeurs = champs.map(c => lireNombre(c.value));
+    const vide = champs.find((c, k) => isNaN(valeurs[k]) || valeurs[k] <= 0);
+    if (vide) { vide.focus(); return; }
+    champs.forEach(c => { c.disabled = true; });
+    valider.remove();
+    const produit = valeurs.reduce((t, v, k) => f.facteurs[k][3] ? t / v : t * v, 1);
+    const ecart = Math.abs(Math.log10(produit) - Math.log10(q.v));
+    const points = ecart <= Math.log10(2) ? 3 : ecart <= Math.log10(3) ? 2 : ecart <= 1 ? 1 : 0;
+    const retour = el("div", "retour-quiz");
+    retour.appendChild(el("p", "verdict " + (points >= 2 ? "juste" : "faux"), "Votre produit : environ " + enClair(produit, 2) + " ; la réponse : environ " + enClair(q.v, 3) + "."));
+    const liste = el("ul", "liste-simple");
+    f.facteurs.forEach(([libelle, vrai, source], k) => liste.appendChild(el("li", null, libelle + " : vous, " + fr(Number(valeurs[k].toPrecision(3))) + " ; en réalité, " + fr(vrai) + " (" + source + ")")));
+    retour.append(el("p", "consigne", "Facteur par facteur"), liste);
+    retour.appendChild(paragraphe(points === 3 ? "3 points : moins d'un facteur 2 d'écart." : points === 2 ? "2 points : moins d'un facteur 3." : points === 1 ? "1 point : moins d'un facteur 10." : "Aucun point : plus d'un facteur 10 d'écart.", "source"));
+    retour.appendChild(paragraphe("Décomposer une grandeur inconnue en facteurs que l'on connaît mieux limite les erreurs : celles des facteurs se compensent souvent. Enrico Fermi était célèbre pour ces estimations rapides.", "source"));
+    zone.appendChild(retour);
+    fini(points, retour);
+  });
+}
+
 // Échelle logarithmique de 10^debut à 10^fin, graduée à chaque puissance de dix
 function echelleLog(debut, fin) {
   const echelle = el("div", "echelle-log");
@@ -1143,6 +1305,20 @@ function courbeEtalonnage(cumul, partie) {
 }
 
 // Ligne graphique d'un intervalle : fourchette de l'utilisateur et vraie valeur
+// Score de fourchette (« interval score », Gneiting et Raftery, 2007), règle de score propre : pour une fourchette
+// [b, h] au niveau 1 − α et une vraie valeur v, coût = (h − b) + (2/α) × (b − v) si v < b, + (2/α) × (v − h) si v > h.
+// À 90 %, α = 0,1 et 2/α = 20 ; à 50 %, 2/α = 4. Une fourchette étroite et juste coûte peu, une fourchette fausse cher.
+// Les quantités s'étendent sur plusieurs ordres de grandeur : on mesure en log₁₀ (un facteur 10 vaut 1). Les années
+// se mesurent en siècles (un siècle vaut 1), pour qu'une erreur de date pèse comme une erreur d'ordre de grandeur.
+const estAnnee = q => q.unite === "" && q.v >= 1000 && q.v <= 2100;
+function echelleFourchette(q) {
+  return estAnnee(q) ? x => x / 100 : x => Math.log10(Math.max(x, Math.abs(q.v) / 1e6));
+}
+function scoreFourchette(q, bas, haut, alpha) {
+  const t = echelleFourchette(q), b = t(bas), h = t(haut), v = t(q.v);
+  return (h - b) + (2 / alpha) * Math.max(0, b - v) + (2 / alpha) * Math.max(0, v - h);
+}
+
 function ligneIntervalle(q, bas, haut, ok) {
   const ligne = el("div", "barre-ligne");
   ligne.appendChild(el("div", "barre-nom", q.q + " : " + fr(q.v) + (q.unite ? " " + q.unite : "") + (q.note ? " (" + q.note + ")" : "")));

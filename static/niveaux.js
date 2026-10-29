@@ -172,3 +172,76 @@ function noterPartieEntiere(id, niveau, justes) {
   enregistrerNiveau(id, { parties: niveauAtelier(id).parties + 1 });
   suivrePartie(id, justes.filter(Boolean).length, justes.length);
 }
+
+// ===================== Classements (niveau 3) =====================
+// Éléments à mettre dans l'ordre avec des boutons ↑ et ↓, utilisables au doigt et au clavier.
+// libelle(e) donne le texte d'un élément ; surValidation(ordre) reçoit l'ordre choisi.
+function classementInteractif(zone, elements, libelle, surValidation) {
+  let ordre = melanger(elements);
+  const liste = el("ol", "classement");
+  liste.setAttribute("aria-live", "polite");
+  const dessiner = focus => {
+    liste.innerHTML = "";
+    ordre.forEach((e, k) => {
+      const li = el("li");
+      const haut = el("button", "bouton-pas", "↑"), bas = el("button", "bouton-pas", "↓");
+      haut.setAttribute("aria-label", "Monter " + libelle(e));
+      bas.setAttribute("aria-label", "Descendre " + libelle(e));
+      haut.disabled = k === 0;
+      bas.disabled = k === ordre.length - 1;
+      const deplacer = (vers, sens) => {
+        [ordre[k], ordre[vers]] = [ordre[vers], ordre[k]];
+        dessiner([vers, sens]);
+      };
+      haut.addEventListener("click", () => deplacer(k - 1, "haut"));
+      bas.addEventListener("click", () => deplacer(k + 1, "bas"));
+      li.append(el("span", "classement-rang", String(k + 1)), el("span", "classement-nom", libelle(e)), haut, bas);
+      liste.appendChild(li);
+    });
+    // Le focus suit l'élément déplacé, pour enchaîner les déplacements au clavier
+    if (focus) {
+      const boutons = liste.children[focus[0]].querySelectorAll("button");
+      const b = focus[1] === "haut" ? boutons[0] : boutons[1];
+      (b.disabled ? (focus[1] === "haut" ? boutons[1] : boutons[0]) : b).focus();
+    }
+  };
+  dessiner();
+  const valider = el("button", "bouton large", "Valider le classement");
+  valider.dataset.valider = "1";
+  valider.addEventListener("click", () => {
+    liste.querySelectorAll("button").forEach(b => { b.disabled = true; });
+    valider.remove();
+    surValidation(ordre);
+  });
+  zone.append(liste, valider);
+}
+
+// Part des paires rangées dans le bon ordre : complément de la distance de Kendall, rapportée au nombre de paires.
+// rang(e) : place exacte de l'élément (plus petit = premier). Un classement presque juste rapporte presque tous les points.
+function pairesConcordantes(ordre, rang) {
+  let justes = 0, total = 0;
+  const inversees = [];
+  for (let i = 0; i < ordre.length; i++) {
+    for (let j = i + 1; j < ordre.length; j++) {
+      total++;
+      if (rang(ordre[i]) < rang(ordre[j])) justes++; else inversees.push([ordre[j], ordre[i]]);
+    }
+  }
+  return { part: justes / total, justes, total, inversees };
+}
+
+// Somme des résultats d'une partie qui mêle questions à une réponse (true / false) et classements (part de 0 à 1)
+const sommeResultats = resultats => resultats.reduce((t, r) => t + (r === true ? 1 : typeof r === "number" ? r : 0), 0);
+const justeOuPresque = r => r === true || (typeof r === "number" && r >= 0.8);
+
+// Correction d'un classement : verdict, bon ordre (avec un détail par élément) et paires inversées
+function corrigerClassement(retour, ordre, bonOrdre, libelle, detail) {
+  const p = pairesConcordantes(ordre, e => bonOrdre.indexOf(e));
+  retour.appendChild(el("p", "verdict " + (p.part === 1 ? "juste" : p.part >= 0.8 ? "" : "faux"),
+    p.part === 1 ? "Classement exact." : p.justes + " paires sur " + p.total + " dans le bon ordre."));
+  const ol = el("ol", "liste-simple");
+  bonOrdre.forEach(e => ol.appendChild(el("li", null, libelle(e) + " : " + detail(e))));
+  retour.append(el("p", "consigne", "Le bon ordre"), ol);
+  if (p.inversees.length) retour.appendChild(paragraphe("Paires inversées, dans le bon ordre : " + p.inversees.map(([a, b]) => libelle(a) + " avant " + libelle(b)).join(" ; ") + ".", "source"));
+  return Number(p.part.toFixed(2));
+}

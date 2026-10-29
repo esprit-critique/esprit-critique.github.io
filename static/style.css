@@ -1079,3 +1079,14 @@ h3.titre-bloc {
 .suggestions li { padding: 9px 12px; cursor: pointer; border-top: 1px solid var(--trait-doux); }
 .suggestions li:first-child { border-top: 0; }
 .suggestions li.active, .suggestions li:hover { background: var(--accent-doux); }
+
+/* Classements de niveau 3 */
+.classement { list-style: none; margin: 8px 0 12px; padding: 0; }
+.classement li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 6px; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); }
+.classement-rang { min-width: 18px; color: var(--discret); font-variant-numeric: tabular-nums; }
+.classement-nom { flex: 1; min-width: 0; }
+.classement .bouton-pas { flex: none; }
+.etiquette-fourchette { min-width: 3.4em; }
+.ligne-fermi { align-items: center; margin: 6px 0; }
+.facteur-fermi { flex: 1; min-width: 0; font-size: 15px; }
+.ligne-fermi .champ { width: 8em; flex: none; }

@@ -133,6 +133,10 @@ f.onload = async () => {
     "libre": async () => { await aller("quiz/libre"); const c = vue().querySelector(".reponse-libre input"); c.value = "ancr"; c.dispatchEvent(new w.Event("input")); c.focus(); },
     "defi": async () => { w.localStorage.removeItem("defiJour"); await aller("accueil"); [...vue().querySelectorAll(".defi-jour button")].find(b => /Relever/.test(b.textContent)).click(); await pause(20); vue().querySelector(".defi-jour .choix").click(); await pause(20); const c = vue().querySelector(".defi-jour"); w.scrollTo(0, c.getBoundingClientRect().top + w.scrollY - 10); },
     "calcul-vf": async () => { await aller("chiffres/vrai-faux"); for (let k = 0; k < 12; k++) { choix(k % 2); await pause(10); choix(2); await pause(10); suivant(); await pause(10); } const dd = vue().querySelector("details.calcul-detail"); dd.open = true; w.scrollTo(0, dd.getBoundingClientRect().top + w.scrollY - 10); },
+    "classement-pays": async () => { w.localStorage.setItem("niveaux", JSON.stringify({ pays: { niveau: 3, mode: "choisi" } })); await aller("chiffres/pays"); },
+    "classement-nord": async () => { w.localStorage.setItem("niveaux", JSON.stringify({ nord: { niveau: 3, mode: "choisi" } })); await aller("chiffres/nord"); vue().querySelector("[data-valider]").click(); await pause(30); const r = vue().querySelector(".retour-quiz"); w.scrollTo(0, r.getBoundingClientRect().top + w.scrollY - 10); },
+    "fourchettes-3": async () => { w.localStorage.setItem("niveaux", JSON.stringify({ intervalles: { niveau: 3, mode: "choisi" } })); await aller("chiffres/intervalles"); },
+    "fermi": async () => { w.localStorage.setItem("niveaux", JSON.stringify({ grandeurs: { niveau: 3, mode: "choisi" } })); await aller("chiffres/grandeurs"); curseur(450); valider(); await pause(20); suivant(); await pause(20); const c = vue().querySelectorAll("input.champ"); c.forEach((x, k) => { x.value = ["70", "500000", "80", "8000000000", "0.015", "365", "300000", "30000000"][k] || "10"; }); vue().querySelector("[data-valider]").click(); await pause(30); },
     "guide": async () => { await aller("guide/philosophie"); },
     "guide-haut": async () => { await aller("guide/difference"); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
@@ -161,7 +165,7 @@ f.onload = async () => {
   await pause(150);
   if (etapes[scenario]) await etapes[scenario]();
   else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
-  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux", "defi", "calcul-vf"].includes(scenario)) w.scrollTo(0, 0);
+  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux", "defi", "calcul-vf", "classement-nord"].includes(scenario)) w.scrollTo(0, 0);
   // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration
   if (scenario.startsWith("schema:")) {
     await aller(decodeURIComponent(scenario.slice(7)));

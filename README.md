@@ -33,6 +33,8 @@ pour l'utiliser comme une application.
 - **Un portrait** qui rassemble ce que vos réponses révèlent : étalonnage, ancrage, perception du hasard…
 - **Une progression** : les ateliers à questions ajustent leur difficulté (niveaux 1 à 3) à vos réponses ; on peut aussi
   choisir son niveau. Records par niveau, et tableau des niveaux dans le portrait.
+  Au niveau 3 : classer quatre pays, villes ou événements (score par paires), deux fourchettes à 50 et 90 %
+  avec un score de fourchette, et des estimations par la méthode de Fermi.
 - **Un guide** : méthode pour examiner une affirmation, débattre honnêtement, outils philosophiques, lexique.
 
 ## Principes

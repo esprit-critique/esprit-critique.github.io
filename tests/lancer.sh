@@ -23,6 +23,13 @@ nettoyer() {
 }
 trap nettoyer EXIT
 
+# Syntaxe des scripts des bancs : une erreur empêcherait tout le banc de tourner, sans message
+for f in tests/_*.html tests/niveaux.html; do
+  python3 -c "import re,sys; open('/tmp/banc-syntaxe.js','w').write('\n'.join(re.findall(r'<script>(.*?)</script>', open(sys.argv[1]).read(), re.S)))" "$f"
+  verdict=$(osascript -l JavaScript -e "ObjC.import('Foundation'); var t = \$.NSString.stringWithContentsOfFileEncodingError('/tmp/banc-syntaxe.js', \$.NSUTF8StringEncoding, null).js; try { new Function(t); 'ok' } catch (e) { e + ' (ligne ' + e.line + ')' }")
+  [ "$verdict" != ok ] && echo "!! $f : $verdict"
+done
+
 for f in $COPIES; do cp "tests/$f" static/; done
 if ! curl -s -o /dev/null http://localhost:8000/; then
   python3 app.py > /dev/null 2>&1 &

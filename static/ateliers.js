@@ -304,8 +304,8 @@ function afficherScore(zone, id, score, sur, texteScore) {
     zone.appendChild(bilanNiveaux(id));
     delete PARTIES_EN_COURS[id];
   }
-  if (r.nouveauRecord) zone.appendChild(el("p", "verdict juste", "Nouveau record" + auNiveau + " ! L'ancien était de " + r.ancienRecord + " / " + sur + "."));
-  else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", "Votre record" + auNiveau + " : " + r.record + " / " + sur + " · " + pluriel(r.parties, "partie") + " jouées."));
+  if (r.nouveauRecord) zone.appendChild(el("p", "verdict juste", "Nouveau record" + auNiveau + " ! L'ancien était de " + fr(r.ancienRecord) + " / " + sur + "."));
+  else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", "Votre record" + auNiveau + " : " + fr(r.record) + " / " + sur + " · " + pluriel(r.parties, "partie") + " jouées."));
   if (r.historique && r.historique.length > 1) zone.appendChild(histogrammeParties(r.historique, sur));
   if (niveau === 3 && atelierMaitrise(id)) zone.appendChild(el("p", "source", "Atelier maîtrisé : au moins 90 % au niveau 3 sur trois parties."));
 }

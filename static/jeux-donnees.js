@@ -733,6 +733,38 @@ const GRANDEURS = [
   { id: "soleil-volume", niveau: 3, q: "Nombre de Terres qui tiendraient dans le volume du Soleil", v: 1304000, source: "NASA : volume du Soleil égal à 1 304 000 fois celui de la Terre" }
 ];
 
+// Méthode de Fermi (niveau 3 d'« Ordres de grandeur ») : quantités de GRANDEURS décomposées en facteurs sourcés.
+// Facteur : [libellé, valeur, source, diviser (vrai si l'on divise par ce facteur)]. Le produit doit retrouver la quantité.
+const FERMI = [
+  { id: "battements", facteurs: [
+    ["Battements de cœur par minute, au repos", 70, "valeur typique ; la plage normale au repos est d'environ 50 à 90"],
+    ["Minutes dans une année", 525600, "calcul : 60 × 24 × 365"],
+    ["Années de vie", 80, "donnée de la question"]] },
+  { id: "naissances-jour", facteurs: [
+    ["Habitants de la Terre", 8.2e9, "Banque mondiale, 2025"],
+    ["Naissances par habitant et par an", 0.0163, "taux de natalité de 16,3 ‰ en 2024 (Banque mondiale)"],
+    ["Jours dans une année", 365, "calendrier", true]] },
+  { id: "deces-jour", facteurs: [
+    ["Décès par an dans le monde", 61e6, "OMS, 2023"],
+    ["Jours dans une année", 365, "calendrier", true]] },
+  { id: "internautes", facteurs: [
+    ["Habitants de la Terre", 8.2e9, "Banque mondiale, 2025"],
+    ["Part de la population qui utilise Internet", 0.74, "74 % en 2025 (Banque mondiale)"]] },
+  { id: "lumiere-an", facteurs: [
+    ["Vitesse de la lumière, en km par seconde", 299792, "valeur exacte depuis la définition du mètre : 299 792,458 km/s"],
+    ["Secondes dans une année", 31557600, "calcul : 365,25 jours de 86 400 secondes"]] },
+  { id: "piscine", facteurs: [
+    ["Volume du bassin, en m³", 2500, "calcul : 50 × 25 × 2"],
+    ["Litres dans un mètre cube", 1000, "définition du litre"]] },
+  { id: "secondes-an", facteurs: [
+    ["Secondes dans une heure", 3600, "calcul : 60 × 60"],
+    ["Heures dans une journée", 24, "calendrier"],
+    ["Jours dans une année", 365, "calendrier"]] },
+  { id: "rotation", facteurs: [
+    ["Circonférence de la Terre à l'équateur, en km", 40075, "NASA : rayon équatorial de 6 378 km"],
+    ["Durée d'un tour de la Terre sur elle-même, en heures", 23.93, "jour sidéral : 23 h 56 min", true]] }
+];
+
 // ===================== Le nord est où ? =====================
 // Coordonnées des villes (latitude, longitude en degrés ; sud et ouest négatifs).
 const VILLES = {

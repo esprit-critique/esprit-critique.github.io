@@ -261,6 +261,37 @@ f.onload = async () => {
     ok("carnet : glissement des souvenirs (+10 vers l'issue)", / 10 points plus proche/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")));
     controler();
 
+    // ---------- Niveau 3 : classements ----------
+    const paires = w.eval("pairesConcordantes");
+    ok("classement : score par paires (exact 6/6, une inversion 5/6, inverse 0/6)", paires([1, 2, 3, 4], x => x).part === 1 && paires([2, 1, 3, 4], x => x).justes === 5 && paires([4, 3, 2, 1], x => x).justes === 0);
+    for (const id of ["pays", "nord", "chronologie"]) {
+      w.localStorage.setItem("niveaux", JSON.stringify({ [id]: { niveau: 3, mode: "choisi" } }));
+      await aller("accueil"); await aller("chiffres/" + id);
+      ok(id + " niveau 3 : classement de quatre éléments, boutons ↑ ↓", vue().querySelectorAll(".classement li").length === 4 && vue().querySelectorAll(".classement .bouton-pas").length === 8);
+      const premier = vue().querySelector(".classement li .classement-nom").textContent;
+      vue().querySelectorAll(".classement li")[0].querySelectorAll("button")[1].click();
+      ok(id + " niveau 3 : ↓ déplace l'élément et garde le focus", vue().querySelectorAll(".classement li")[1].querySelector(".classement-nom").textContent === premier && d.activeElement && d.activeElement.closest("li") === vue().querySelectorAll(".classement li")[1]);
+      const fini = await jouer("#chiffres/" + id);
+      ok(id + " niveau 3 : partie jusqu'au bilan, score décimal lisible", fini && /\d+(,\d)? \/ 10/.test(vue().querySelector(".grand-score").textContent) && textesSuspects().length === 0, textesSuspects().join() + vue().querySelector(".grand-score").textContent);
+      controler();
+    }
+    w.localStorage.removeItem("niveaux");
+
+    // ---------- Méthode de Fermi ----------
+    const fermi = w.eval("FERMI"), gr = w.eval("GRANDEURS");
+    const ecartsFermi = fermi.map(f => { const v = gr.find(g => g.id === f.id).v; const p = f.facteurs.reduce((t, x) => x[3] ? t / x[1] : t * x[1], 1); return Math.abs(p / v - 1); });
+    ok("Fermi : 8 quantités, le produit des facteurs retrouve la valeur à 2 % près", fermi.length >= 8 && ecartsFermi.every(e => e < 0.02), ecartsFermi.map(e => e.toFixed(3)).join(", "));
+    w.localStorage.setItem("niveaux", JSON.stringify({ grandeurs: { niveau: 3, mode: "choisi" } }));
+    await aller("accueil"); await aller("chiffres/grandeurs");
+    remplir(visibles("input.curseur")[0], "450"); visibles("[data-valider]")[0].click(); await pause(10);
+    visibles("[data-suivant]")[0].click(); await pause(10);
+    ok("Fermi : au niveau 3, la deuxième question se décompose en facteurs", vue().querySelectorAll(".ligne-fermi").length >= 2);
+    visibles("input.champ").forEach(c => remplir(c, "10"));
+    visibles("[data-valider]")[0].click(); await pause(10);
+    ok("Fermi : produit, vraie valeur et facteurs sourcés", /Votre produit/.test(vue().textContent) && /Facteur par facteur/.test(vue().textContent) && textesSuspects().length === 0, textesSuspects().join());
+    controler();
+    w.localStorage.removeItem("niveaux");
+
     // ---------- Le calcul, en détail ----------
     // Tests positifs : le calcul suit chaque situation, avec ses propres chiffres
     await aller("accueil"); await aller("tests/depistage");
@@ -281,6 +312,22 @@ f.onload = async () => {
     visibles("[data-valider]")[0].click();
     await pause(50);
     ok("intervalles : bilan et cumul", !!vue().querySelector(".grand-score") && JSON.parse(w.localStorage.getItem("fourchettes"))[0] === 10);
+    ok("intervalles : score de fourchette affiché, calcul en détail", /Score de fourchette/.test(vue().textContent) && !!vue().querySelector("details.calcul-detail") && textesSuspects().length === 0, textesSuspects().join());
+    const sf = w.eval("scoreFourchette");
+    const qEssai = { q: "essai", unite: "m", v: 100 };
+    ok("score de fourchette : juste et étroit coûte peu, faux coûte cher (Gneiting et Raftery)",
+      Math.abs(sf(qEssai, 50, 200, 0.1) - Math.log10(4)) < 1e-9 && Math.abs(sf(qEssai, 1000, 10000, 0.1) - (1 + 20 * 1)) < 1e-9 && sf(qEssai, 1, 1e6, 0.1) > sf(qEssai, 50, 200, 0.1));
+    ok("score de fourchette : les années comptent en siècles", Math.abs(sf({ q: "a", unite: "", v: 1789 }, 1700, 1800, 0.1) - 1) < 1e-9);
+    // Niveau 3 : deux fourchettes par quantité
+    w.localStorage.setItem("niveaux", JSON.stringify({ intervalles: { niveau: 3, mode: "choisi" } }));
+    await aller("accueil"); await aller("chiffres/intervalles");
+    const champs3 = visibles("input.champ");
+    ok("intervalles niveau 3 : 40 champs (50 % et 90 %)", champs3.length === 40);
+    champs3.forEach((c, k) => remplir(c, ["1", "1000", "0", "10000000"][k % 4]));
+    visibles("[data-valider]")[0].click();
+    await pause(30);
+    ok("intervalles niveau 3 : étalonnage à 50 % et à 90 %", /Fourchettes à 50 % justes/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")) && /Score moyen à 50/.test(vue().textContent) && textesSuspects().length === 0, vue().textContent.slice(0, 200));
+    w.localStorage.removeItem("niveaux");
 
     // ---------- L'ancre ----------
     await aller("chiffres/ancre");

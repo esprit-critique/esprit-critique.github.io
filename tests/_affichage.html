@@ -54,6 +54,17 @@ f.onload = async () => {
     // 1. Toutes les variantes des dessins générés à partir des données
     await aller("accueil");
     noter("variantes des dessins", w.controleDonnees());
+    // Planisphères à quatre villes (classements du niveau 3 de « Le nord est où ? »)
+    const banc4 = doc.createElement("div");
+    banc4.style.cssText = "width: 340px; position: absolute; left: 0; top: 0;";
+    doc.querySelector("main section.vue:not([hidden])").prepend(banc4);
+    for (let k = 0; k < 300; k++) {
+      const c = w.eval("tirerClassementVilles()");
+      banc4.innerHTML = "";
+      banc4.appendChild(w.eval("planisphere")(c.villes, c.sens, true));
+      noter("planisphère à quatre villes", w.controleAffichage(banc4).map(d => Object.assign(d, { ou: c.villes.map(v => w.eval("VILLES")[v][0]).join(", ") + " · " + d.ou })));
+    }
+    banc4.remove();
 
     // 2. Chaque page du site
     const adresses = ["accueil", "biais", "sophismes", "quiz", "ateliers"];
