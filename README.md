@@ -3,7 +3,7 @@
 Un site en français pour apprendre à repérer les **biais cognitifs** et les **sophismes**, et pour éprouver
 son propre jugement dans des ateliers fondés sur des données réelles.
 
-**Le site : https://goatier-project.github.io/esprit-critique/**
+**Le site : https://esprit-critique.github.io/**
 
 Il fonctionne sur ordinateur comme sur téléphone. Sur iPhone : Safari → Partager → « Sur l'écran d'accueil »
 pour l'utiliser comme une application.
