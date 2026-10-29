@@ -10,25 +10,34 @@ Les ateliers fondés sur des données (« Plus ou moins ? », « Qu'est-ce qui t
 
 ## Problèmes classiques
 
-Niveau 1 : linda, steve, monte-carlo, instructeurs, epidemie. Niveau 2 : maternites, dick, allais, ellsberg,
-etats-finaux. Niveau 3 : taxi, sally-clark, berkeley, comtes.
+Niveau 1 : linda, steve, monte-carlo, instructeurs, epidemie, et les ajouts moise, naissances, chaussettes, des-11-12,
+dollar-manquant. Niveau 2 : maternites, dick, allais, ellsberg, etats-finaux, et factorielle, lettre-k, quatre-lancers,
+vitesse-moyenne, interets. Niveau 3 : taxi, sally-clark, berkeley, comtes, et taxi-30, taxi-5, taxi-50, bertrand, mere,
+qi-moyen. Pour les ajouts sans chiffres d'étude vérifiés, le résultat affiché se limite au calcul exact.
 
 ## Trois questions faciles
 
-Niveau 1 : les trois questions originales de Frederick (batte, machines, nenuphars). Niveau 2 : les quatre de
-Thomson et Oppenheimer (course, moutons, emilie, trou). Aucune question de niveau 3 pour l'instant.
+Niveau 1 : questions réussies par au moins un tiers des participants (batte, machines, nenuphars, moutons, course,
+emilie). Niveau 2 : variantes de même structure (stylo, raquette, imprimantes, virus) et lecture attentive (mois,
+pommes). Niveau 3 : problèmes à deux étapes (nenuphars-quart, deux-plants, bacteries, couturiers, escargot) et la
+question la moins réussie (trou, 16 %). Les variantes n'ont pas de taux de réussite publié : aucun n'est affiché.
 
-## Nouveaux items de ce lot
+## Nouveaux items, tous vérifiés
 
-« Vrai ou faux ? », niveau 3, affirmations fausses telles qu'elles sont formulées : nil, perihelie, tournesol, big-ben,
-einstein-nobel, pole-sud, edison, annee, eiffel-hauteur, colomb-premier. Chacune a été vérifiée (Wikipédia, Fondation
-Nobel, Atamian et al., Science, 2016) ; leur explication dit ce qui est vrai.
+- « Vrai ou faux ? » : 10 affirmations fausses de niveau 3 (nil, perihelie, tournesol, big-ben, einstein-nobel,
+  pole-sud, edison, annee, eiffel-hauteur, colomb-premier) et 4 vraies de niveau 1 (baleines, tomate, araignees, coeur).
+- « Le monde en chiffres » : 26 questions, valeurs de la Banque mondiale et du HCR (pays.js), sauf l'Union européenne
+  et le Pacifique (Wikipédia).
+- « Ordres de grandeur » : 16 quantités (NASA, Insee, ONU, Wikipédia, ou calcul).
+- « Qui l'a vraiment dit ? » : 14 citations (Wikiquote, Wikisource, Quote Investigator).
+- Écartées faute de source vérifiable : « Impossible n'est pas français » (Napoléon), une phrase de Spinoza, et les
+  chiffres de plusieurs études classiques (Lecoutre 1992, Tversky et Kahneman 1971 et 1972).
 
 ## Le monde en chiffres
 
 Niveaux : d'après la part de bonnes réponses du public dans l'enquête Gapminder de 2017 quand elle est connue (plus de 30 % : niveau 1 ; 15 à 30 % : niveau 2 ; moins de 15 % : niveau 3), sinon d'après la notoriété de la donnée.
 
-**Niveau 1** (7)
+**Niveau 1** (20)
 
 - `esperance` Quelle est l'espérance de vie à la naissance dans le monde ? → 70 ans
 - `fecondite` Combien d'enfants une femme a-t-elle en moyenne dans le monde ? → environ 2,2
@@ -37,8 +46,21 @@ Niveaux : d'après la part de bonnes réponses du public dans l'enquête Gapmind
 - `population` Combien d'êtres humains vivent sur Terre en 2025 ? → 8,2 milliards
 - `refugies-revenus` Où vivent la plupart des réfugiés du monde ? → dans des pays à revenu faible ou intermédiaire
 - `pib` Depuis 1990, le revenu moyen par habitant dans le monde, corrigé de l'inflation, a… → nettement augmenté
+- `inde-peuple` Quel est le pays le plus peuplé du monde ? → l'Inde
+- `etats-unis-3e` Quel est le troisième pays le plus peuplé du monde ? → les États-Unis
+- `russie-vaste` Quel est le pays le plus vaste du monde ? → la Russie
+- `nigeria-afrique` Quel est le pays le plus peuplé d'Afrique ? → le Nigeria
+- `bresil-amsud` Quel est le pays le plus peuplé d'Amérique du Sud ? → le Brésil
+- `indonesie` Lequel de ces pays compte le plus d'habitants ? → l'Indonésie
+- `japon-ev` Dans lequel de ces pays l'espérance de vie à la naissance est-elle la plus élevée ? → le Japon
+- `monaco` Lequel de ces pays compte le moins d'habitants ? → Monaco
+- `tchad-fecondite` Dans lequel de ces pays une femme a-t-elle en moyenne le plus d'enfants ? → le Tchad
+- `ue-27` Combien d'États compte l'Union européenne ? → 27
+- `population-1950` Depuis 1950, la population mondiale a… → plus que triplé
+- `esperance-1960` Depuis 1960, l'espérance de vie à la naissance dans le monde a augmenté de… → plus de 20 ans
+- `croissance-pop` À quel rythme la population mondiale augmente-t-elle aujourd'hui ? → environ 0,9 % par an
 
-**Niveau 2** (14)
+**Niveau 2** (20)
 
 - `electricite` Quelle part de la population mondiale a accès à l'électricité ? → 80 %
 - `revenus` Où vit la majorité de la population mondiale ? → dans des pays à revenu intermédiaire
@@ -54,8 +76,14 @@ Niveaux : d'après la part de bonnes réponses du public dans l'enquête Gapmind
 - `pic` Selon les projections de l'ONU, la population mondiale… → culminera vers 2085, à environ 10,3 milliards
 - `forets` Quelle part des terres émergées est couverte de forêts ? → 31 %
 - `refugies` Combien de personnes ont été forcées de quitter leur foyer (réfugiés et déplacés internes) dans le monde ? → 120 millions
+- `japon-age65` Quelle part de la population du Japon a 65 ans ou plus ? → 30 %
+- `bangladesh-dense` Lequel de ces pays est le plus densément peuplé ? → le Bangladesh
+- `chomage-monde` Quel est le taux de chômage dans le monde ? → environ 5 %
+- `militaire-pib` Quelle part de la richesse produite dans le monde est consacrée aux dépenses militaires ? → environ 2,5 %
+- `co2-habitant` Combien de CO₂ un habitant de la Terre émet-il en moyenne chaque année ? → environ 4,7 tonnes
+- `pacifique-terres` L'océan Pacifique est-il plus vaste que l'ensemble des terres émergées ? → oui
 
-**Niveau 3** (13)
+**Niveau 3** (20)
 
 - `pauvrete` Depuis 1990, la part de l'humanité vivant dans l'extrême pauvreté a… → été divisée par plus de deux
 - `vaccins` Quelle part des enfants d'un an dans le monde a reçu au moins un vaccin ? → 80 %
@@ -70,12 +98,19 @@ Niveaux : d'après la part de bonnes réponses du public dans l'enquête Gapmind
 - `etats-unis-armee` Quelle part des dépenses militaires mondiales les États-Unis représentent-ils ? → 37 %
 - `autocraties` Quelle part de la population mondiale vit dans un pays classé comme autocratie ? → environ les trois quarts
 - `refugies-iran` Quel pays accueillait le plus de réfugiés fin 2024 ? → l'Iran
+- `transferts-tadjikistan` Dans quel pays l'argent envoyé par les émigrés à leur famille pèse-t-il le plus dans l'économie ? → le Tadjikistan
+- `femmes-rwanda` Quel pays compte la plus forte part de femmes dans son parlement ? → le Rwanda
+- `armee-ukraine` Quel pays consacre la plus grande part de sa richesse à ses dépenses militaires ? → l'Ukraine
+- `refugies-liban` Quel pays accueille le plus de réfugiés par rapport à sa population ? → le Liban
+- `foret-gabon` Dans lequel de ces pays la forêt couvre-t-elle la plus grande part du territoire ? → le Gabon
+- `mortalite-infantile` Dans le monde, combien de bébés sur 1 000 meurent avant leur premier anniversaire ? → environ 28
+- `densite-monde` Combien d'habitants compte en moyenne un kilomètre carré de terres émergées ? → environ 60
 
 ## Vrai ou faux ?
 
 Niveaux : 1, idées reçues très connues ; 2, faits qui demandent une connaissance précise ; 3, comparaisons ou chiffres contre-intuitifs, où l'intuition se trompe le plus souvent.
 
-**Niveau 1** (25)
+**Niveau 1** (29)
 
 - `cerveau-10` [faux] Nous n'utilisons que 10 % de notre cerveau.
 - `muraille-lune` [faux] La Grande Muraille de Chine est visible à l'œil nu depuis la Lune.
@@ -102,6 +137,10 @@ Niveaux : 1, idées reçues très connues ; 2, faits qui demandent une connaissa
 - `oiseaux` [vrai] Les oiseaux sont des dinosaures.
 - `villes` [vrai] Plus de la moitié de l'humanité vit en ville.
 - `huit-milliards` [vrai] La population mondiale a dépassé 8 milliards d'habitants.
+- `baleines` [vrai] Les baleines sont des mammifères.
+- `tomate` [vrai] Au sens botanique, la tomate est un fruit.
+- `araignees` [vrai] Les araignées ne sont pas des insectes.
+- `coeur` [vrai] Le cœur humain compte quatre cavités.
 
 **Niveau 2** (39)
 
@@ -181,7 +220,7 @@ Niveaux : 1, idées reçues très connues ; 2, faits qui demandent une connaissa
 
 Niveaux : 1, quantités familières ou souvent citées ; 2, quantités qu'on peut reconstituer par un raisonnement ; 3, très grands nombres sans repère quotidien.
 
-**Niveau 1** (12)
+**Niveau 1** (16)
 
 - `langues` Nombre de langues parlées dans le monde
 - `islande` Nombre d'habitants de l'Islande
@@ -195,8 +234,12 @@ Niveaux : 1, quantités familières ou souvent citées ; 2, quantités qu'on peu
 - `communes` Nombre de communes en France
 - `naissances-fr` Nombre de naissances en France en 2025
 - `lune-humains` Nombre de personnes ayant marché sur la Lune
+- `secondes-an` Nombre de secondes dans une année de 365 jours
+- `piscine` Volume d'eau d'un bassin olympique de 50 m sur 25 m et 2 m de profondeur, en litres
+- `paris` Nombre d'habitants de la ville de Paris
+- `pop-1950` Population mondiale en 1950
 
-**Niveau 2** (12)
+**Niveau 2** (17)
 
 - `neurones` Nombre de neurones dans un cerveau humain
 - `etoiles` Nombre d'étoiles dans la Voie lactée
@@ -210,8 +253,13 @@ Niveaux : 1, quantités familières ou souvent citées ; 2, quantités qu'on peu
 - `monaco-surface` Superficie de Monaco, en km²
 - `muraille` Longueur totale de la Grande Muraille de Chine, en kilomètres
 - `soleil-diametre` Diamètre du Soleil, en kilomètres
+- `mammiferes` Nombre d'espèces de mammifères actuelles décrites
+- `oiseaux` Nombre d'espèces d'oiseaux actuelles
+- `globules` Nombre de globules rouges dans le corps d'un adulte
+- `terre-diametre` Diamètre de la Terre, en kilomètres
+- `dinosaures` Temps écoulé depuis la disparition des dinosaures non aviens, en années
 
-**Niveau 3** (9)
+**Niveau 3** (16)
 
 - `cellules` Nombre de cellules humaines dans le corps d'un adulte
 - `bacteries` Nombre de bactéries hébergées par le corps d'un adulte
@@ -222,6 +270,13 @@ Niveaux : 1, quantités familières ou souvent citées ; 2, quantités qu'on peu
 - `proxima` Distance de l'étoile la plus proche du Soleil (Proxima du Centaure), en kilomètres
 - `humains-ayant-vecu` Nombre d'êtres humains nés depuis l'apparition de notre espèce
 - `co2` Émissions mondiales annuelles de CO₂ du secteur électrique, en tonnes
+- `masse-terre` Masse de la Terre, en kilogrammes
+- `insectes` Nombre d'espèces d'insectes décrites
+- `atmosphere` Masse de l'atmosphère terrestre, en kilogrammes
+- `andromede` Distance de la galaxie d'Andromède, en années-lumière
+- `neptune` Distance moyenne entre le Soleil et Neptune, en kilomètres
+- `rotation` Vitesse d'un point de l'équateur entraîné par la rotation de la Terre, en km/h
+- `soleil-volume` Nombre de Terres qui tiendraient dans le volume du Soleil
 
 ## Êtes-vous sûr à 90 % ?
 
@@ -320,7 +375,7 @@ Niveaux : 1, quantités et dates très connues ; 2, connaissances de culture gé
 
 Niveaux : 1, citations dont l'attribution est très connue ou très discutée ; 2, citations courantes dont l'origine l'est moins ; 3, attributions erronées tenaces ou citations authentiques peu connues.
 
-**Niveau 1** (14)
+**Niveau 1** (16)
 
 - `galilee` [apocryphe] Galilée, après son procès (1633) : « Et pourtant, elle tourne. »
 - `louis14` [apocryphe] Louis XIV : « L'État, c'est moi. »
@@ -336,8 +391,10 @@ Niveaux : 1, citations dont l'attribution est très connue ou très discutée ; 
 - `montaigne` [authentique] Michel de Montaigne : « Que sais-je ? »
 - `candide` [authentique] Voltaire : « Il faut cultiver notre jardin. »
 - `boileau` [authentique] Nicolas Boileau : « Ce que l'on conçoit bien s'énonce clairement. »
+- `lafontaine` [authentique] Jean de La Fontaine : « La raison du plus fort est toujours la meilleure. »
+- `beauvoir` [authentique] Simone de Beauvoir : « On ne naît pas femme : on le devient. »
 
-**Niveau 2** (11)
+**Niveau 2** (16)
 
 - `voltaire` [apocryphe] Voltaire : « Je ne suis pas d'accord avec ce que vous dites, mais je me battrai jus »
 - `einstein-folie` [apocryphe] Albert Einstein : « La folie, c'est de faire toujours la même chose et de s'attendre à un  »
@@ -350,8 +407,13 @@ Niveaux : 1, citations dont l'attribution est très connue ou très discutée ; 
 - `rabelais` [authentique] François Rabelais : « Science sans conscience n'est que ruine de l'âme. »
 - `einstein-des` [authentique] Albert Einstein : « Dieu ne joue pas aux dés. »
 - `nietzsche` [authentique] Friedrich Nietzsche : « Ce qui ne me tue pas me rend plus fort. »
+- `pascal-roseau` [authentique] Blaise Pascal : « L'homme n'est qu'un roseau, le plus faible de la nature ; mais c'est u »
+- `descartes-bon-sens` [authentique] René Descartes : « Le bon sens est la chose du monde la mieux partagée. »
+- `rousseau` [authentique] Jean-Jacques Rousseau : « L'homme est né libre, et partout il est dans les fers. »
+- `twain` [deformee] Mark Twain : « Les rumeurs de ma mort sont très exagérées. »
+- `einstein-imagination` [authentique] Albert Einstein : « L'imagination est plus importante que le savoir. »
 
-**Niveau 3** (9)
+**Niveau 3** (16)
 
 - `darwin` [apocryphe] Charles Darwin : « Ce n'est pas le plus fort de l'espèce qui survit, ni le plus intellige »
 - `burke` [apocryphe] Edmund Burke : « Pour triompher, le mal n'a besoin que de l'inaction des gens de bien. »
@@ -362,4 +424,11 @@ Niveaux : 1, citations dont l'attribution est très connue ou très discutée ; 
 - `russell` [authentique] Bertrand Russell : « Le problème de ce monde, c'est que les imbéciles sont sûrs d'eux, alor »
 - `feynman` [authentique] Richard Feynman : « Le premier principe est de ne pas se tromper soi-même, et vous êtes la »
 - `hume` [authentique] David Hume : « Le sage proportionne sa croyance aux preuves. »
+- `einstein-abeilles` [apocryphe] Albert Einstein : « Si l'abeille venait à disparaître, l'homme n'aurait plus que quatre an »
+- `einstein-infini` [apocryphe] Albert Einstein : « Deux choses sont infinies : l'univers et la bêtise humaine ; mais pour »
+- `churchill-succes` [apocryphe] Winston Churchill : « Le succès, c'est d'aller d'échec en échec sans perdre son enthousiasme »
+- `terre-enfants` [apocryphe] Antoine de Saint-Exupéry : « Nous n'héritons pas de la terre de nos ancêtres, nous l'empruntons à n »
+- `platon-guerre` [apocryphe] Platon : « Seuls les morts ont vu la fin de la guerre. »
+- `hume-passions` [authentique] David Hume : « La raison est, et ne doit être, que l'esclave des passions. »
+- `pasteur-hasard` [authentique] Louis Pasteur : « Le hasard ne favorise que les esprits préparés. »
 

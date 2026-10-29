@@ -8,7 +8,9 @@
 // Test de réflexion cognitive : trois questions de Frederick (2005) et quatre du « CRT-2 »
 // de Thomson et Oppenheimer (2016). « reussite » : part de bonnes réponses dans l'étude de 2016
 // (travailleurs en ligne américains, environ 140 personnes).
-// Niveaux : 1, les trois questions originales (Frederick, 2005) ; 2, celles de Thomson et Oppenheimer (2016).
+// Niveaux : 1, questions réussies par au moins un tiers des participants (Frederick, 2005 ; Thomson et Oppenheimer, 2016) ;
+// 2, variantes de même structure, et deux questions de lecture attentive ; 3, problèmes à deux étapes, et la question
+// la moins réussie (le trou, 16 %). Les variantes n'ont pas de taux de réussite publié : aucun n'est affiché.
 const QUESTIONS_CRT = [
   { id: "batte", niveau: 1, texte: "Une batte et une balle coûtent 1,10 € au total. La batte coûte 1 € de plus que la balle. Combien coûte la balle ?", unite: "centimes", juste: 5, intuitive: 10, euros: true,
     explication: "Si la balle coûtait 10 centimes, la batte coûterait 1,10 € et le total 1,20 €. Avec x le prix de la balle : x + (x + 1) = 1,10, donc x = 0,05 €.", reussite: 48 },
@@ -16,14 +18,37 @@ const QUESTIONS_CRT = [
     explication: "Chaque machine fabrique un objet en 5 minutes. 100 machines fabriquent donc 100 objets en 5 minutes.", reussite: 34 },
   { id: "nenuphars", niveau: 1, texte: "Dans un lac, une étendue de nénuphars double de surface chaque jour. Il lui faut 48 jours pour couvrir tout le lac. Combien de jours lui faut-il pour en couvrir la moitié ?", unite: "jours", juste: 47, intuitive: 24,
     explication: "La surface double chaque jour : la veille du jour où le lac est couvert, elle en couvrait la moitié.", reussite: 52 },
-  { id: "course", niveau: 2, texte: "Pendant une course, vous dépassez la personne qui est en deuxième position. À quelle place êtes-vous ?", unite: "e place", juste: 2, intuitive: 1, mots: { 1: ["premier", "premiere", "1er", "1re"], 2: ["deuxieme", "second", "seconde", "2e", "2eme"] },
+  { id: "course", niveau: 1, texte: "Pendant une course, vous dépassez la personne qui est en deuxième position. À quelle place êtes-vous ?", unite: "e place", juste: 2, intuitive: 1, mots: { 1: ["premier", "premiere", "1er", "1re"], 2: ["deuxieme", "second", "seconde", "2e", "2eme"] },
     explication: "En dépassant le deuxième, vous prenez sa place : vous êtes deuxième. Le premier est toujours devant vous.", reussite: 63 },
-  { id: "moutons", niveau: 2, texte: "Un fermier a 15 moutons. Tous meurent sauf 8. Combien en reste-t-il ?", unite: "moutons", juste: 8, intuitive: 7,
+  { id: "moutons", niveau: 1, texte: "Un fermier a 15 moutons. Tous meurent sauf 8. Combien en reste-t-il ?", unite: "moutons", juste: 8, intuitive: 7,
     explication: "« Tous sauf 8 » : il en reste 8. La soustraction 15 − 8 s'impose à l'esprit avant la lecture attentive.", reussite: 83 },
-  { id: "emilie", niveau: 2, texte: "Le père d'Émilie a trois filles. Les deux premières s'appellent Avril et Mai. Comment s'appelle la troisième ?", unite: "", texteLibre: true, juste: "emilie", intuitive: "juin",
+  { id: "emilie", niveau: 1, texte: "Le père d'Émilie a trois filles. Les deux premières s'appellent Avril et Mai. Comment s'appelle la troisième ?", unite: "", texteLibre: true, juste: "emilie", intuitive: "juin",
     explication: "Émilie, puisque c'est la fille de son père. La suite des mois suggère « Juin ».", reussite: 62 },
-  { id: "trou", niveau: 2, texte: "Combien y a-t-il de mètres cubes de terre dans un trou de 3 m de profondeur, 3 m de largeur et 3 m de longueur ?", unite: "m³", juste: 0, intuitive: 27, mots: { 0: ["aucun", "rien", "zero", "0"] },
-    explication: "Aucun : un trou est vide. Le calcul 3 × 3 × 3 = 27 s'impose avant la question elle-même.", reussite: 16 }
+  { id: "trou", niveau: 3, texte: "Combien y a-t-il de mètres cubes de terre dans un trou de 3 m de profondeur, 3 m de largeur et 3 m de longueur ?", unite: "m³", juste: 0, intuitive: 27, mots: { 0: ["aucun", "rien", "zero", "0"] },
+    explication: "Aucun : un trou est vide. Le calcul 3 × 3 × 3 = 27 s'impose avant la question elle-même.", reussite: 16 },
+  // Variantes : même structure que les questions publiées, autres nombres (réponses vérifiées par le calcul)
+  { id: "stylo", niveau: 2, texte: "Un stylo et une gomme coûtent 2,40 € au total. Le stylo coûte 2 € de plus que la gomme. Combien coûte la gomme ?", unite: "centimes", juste: 20, intuitive: 40, euros: true,
+    explication: "Avec x le prix de la gomme : x + (x + 2) = 2,40, donc x = 0,20 €. À 40 centimes, le stylo coûterait 2,40 € à lui seul." },
+  { id: "raquette", niveau: 2, texte: "Une raquette et un volant coûtent 3,30 € au total. La raquette coûte 3 € de plus que le volant. Combien coûte le volant ?", unite: "centimes", juste: 15, intuitive: 30, euros: true,
+    explication: "Avec x le prix du volant : x + (x + 3) = 3,30, donc x = 0,15 €. À 30 centimes, le total serait de 3,60 €." },
+  { id: "imprimantes", niveau: 2, texte: "Si 3 imprimantes impriment 3 affiches en 3 minutes, combien de temps faut-il à 60 imprimantes pour imprimer 60 affiches ?", unite: "minutes", juste: 3, intuitive: 60,
+    explication: "Chaque imprimante imprime une affiche en 3 minutes : 60 imprimantes impriment 60 affiches en 3 minutes." },
+  { id: "virus", niveau: 2, texte: "Un virus informatique double chaque heure le nombre de fichiers infectés. Il lui faut 10 heures pour infecter tout le disque. Combien d'heures lui faut-il pour en infecter la moitié ?", unite: "heures", juste: 9, intuitive: 5,
+    explication: "Le nombre de fichiers infectés double chaque heure : une heure avant que tout soit infecté, la moitié l'était." },
+  { id: "mois", niveau: 2, texte: "Combien de mois de l'année comptent 28 jours ?", unite: "mois", juste: 12, intuitive: 1, mots: { 12: ["douze", "tous"], 1: ["un", "fevrier"] },
+    explication: "Tous les mois comptent au moins 28 jours : douze. La question fait penser à février, le seul mois qui n'en compte parfois que 28." },
+  { id: "pommes", niveau: 2, texte: "Il y a trois pommes sur une table. Vous en prenez deux. Combien de pommes avez-vous ?", unite: "pommes", juste: 2, intuitive: 1, mots: { 2: ["deux"], 1: ["une", "un"] },
+    explication: "Vous en avez deux : celles que vous avez prises. La soustraction 3 − 2 répond à une autre question, combien il en reste sur la table." },
+  { id: "nenuphars-quart", niveau: 3, texte: "Dans un lac, une étendue de nénuphars double de surface chaque jour. Il lui faut 48 jours pour couvrir tout le lac. Combien de jours lui faut-il pour en couvrir le quart ?", unite: "jours", juste: 46, intuitive: 12,
+    explication: "La veille du 48e jour, elle couvre la moitié du lac ; l'avant-veille, le quart : 46 jours." },
+  { id: "deux-plants", niveau: 3, texte: "Un plant de nénuphar double de surface chaque jour et couvre tout un lac en 48 jours. Si l'on avait commencé avec deux plants identiques au lieu d'un, combien de jours aurait-il fallu ?", unite: "jours", juste: 47, intuitive: 24,
+    explication: "Deux plants, c'est la surface qu'un seul plant atteint au bout d'un jour : on gagne une journée, pas la moitié du temps." },
+  { id: "bacteries", niveau: 3, texte: "Une culture de bactéries triple de volume chaque heure et remplit un flacon en 12 heures. Au bout de combien d'heures remplissait-elle le tiers du flacon ?", unite: "heures", juste: 11, intuitive: 4,
+    explication: "Le volume triple chaque heure : une heure avant que le flacon soit plein, il l'était au tiers." },
+  { id: "couturiers", niveau: 3, texte: "5 couturiers cousent 5 robes en 5 jours. Combien de jours faut-il à 10 couturiers pour coudre 20 robes ?", unite: "jours", juste: 10, intuitive: 5,
+    explication: "Un couturier coud une robe en 5 jours. 10 couturiers cousent 10 robes en 5 jours, donc 20 robes en 10 jours." },
+  { id: "escargot", niveau: 3, texte: "Un escargot grimpe le long d'un mur de 10 m. Chaque jour, il monte de 3 m ; chaque nuit, il redescend de 2 m. En combien de jours atteint-il le haut du mur ?", unite: "jours", juste: 8, intuitive: 10,
+    explication: "Chaque jour suivi d'une nuit le fait monter de 1 m : au matin du 8e jour, il est à 7 m. Ce jour-là, il monte de 3 m et atteint le haut, sans redescendre."  }
 ];
 
 // Tâche de Wason : versions abstraites (presque toujours ratées) et versions concrètes
@@ -181,7 +206,96 @@ const PROBLEMES = [
     options: ["La vie rurale protège : air pur, eau propre, alimentation saine", "Leurs petites populations produisent des taux extrêmes, dans un sens comme dans l'autre", "Les cancers y sont moins bien diagnostiqués"], juste: 1,
     resultat: "L'exemple, tiré de Wainer et Zwerling (2006), est repris par Kahneman (2011) : les comtés où le taux est le plus élevé sont… eux aussi surtout ruraux et peu peuplés.",
     explication: "Dans une petite population, quelques cas suffisent à faire varier fortement un taux : on trouve donc les petits comtés aux deux extrêmes. Avant d'expliquer un taux extrême, il faut se demander sur combien de cas il repose.",
-    liens: [["#biais/taille-echantillon", "Insensibilité à la taille de l'échantillon"]] }
+    liens: [["#biais/taille-echantillon", "Insensibilité à la taille de l'échantillon"]] },
+  // Problèmes ajoutés pour la progression. Quand l'étude d'origine ne donne pas de chiffres vérifiés,
+  // le résultat se limite au calcul exact.
+  { id: "moise", niveau: 1, titre: "L'arche", type: "choix",
+    enonce: "Combien d'animaux de chaque espèce Moïse a-t-il embarqués dans l'arche ?",
+    options: ["Deux", "Sept", "Aucun : c'est Noé qui a construit l'arche"], juste: 2,
+    resultat: "Dans l'expérience d'Erickson et Mattson (1981), seule une petite minorité des participants a relevé l'erreur, alors que tous savaient que l'arche est celle de Noé.",
+    explication: "La question parle de Moïse, et non de Noé. Les deux personnages appartiennent au même récit biblique et leurs noms se ressemblent : on répond à la question qu'on attend, sans vérifier ses termes." },
+  { id: "naissances", niveau: 1, titre: "Six naissances", type: "choix",
+    enonce: "Dans une famille de six enfants, quelle suite de naissances est la plus probable : fille, garçon, fille, garçon, garçon, fille ; ou garçon, garçon, garçon, garçon, garçon, garçon ? (On suppose une chance sur deux à chaque naissance.)",
+    options: ["La première", "La seconde", "Les deux sont aussi probables"], juste: 2,
+    resultat: "Calcul : chaque suite précise de six naissances a une probabilité de (1/2)⁶, soit 1 sur 64.",
+    explication: "La première suite « a l'air » plus aléatoire, mais elle n'est pas plus probable que la seconde : c'est l'heuristique de représentativité décrite par Kahneman et Tversky (1972). Ce qui est plus probable, c'est d'avoir trois filles et trois garçons dans n'importe quel ordre.",
+    liens: [["#biais/erreur-du-joueur", "Erreur du joueur"]] },
+  { id: "chaussettes", niveau: 1, titre: "Les chaussettes", type: "nombre",
+    enonce: "Un tiroir contient 10 chaussettes noires et 10 blanches, mélangées. Dans le noir, combien faut-il en sortir, au minimum, pour être sûr d'avoir deux chaussettes de la même couleur ?",
+    unite: "chaussettes", reponse: 3, tolerance: 0,
+    resultat: "Raisonnement : avec deux couleurs, trois chaussettes suffisent toujours.",
+    explication: "Les deux premières peuvent être de couleurs différentes ; la troisième est forcément de la couleur de l'une d'elles. La réponse 11, fréquente, répond à une autre question : être sûr d'avoir deux chaussettes noires." },
+  { id: "des-11-12", niveau: 1, titre: "Onze ou douze", type: "choix",
+    enonce: "On lance deux dés et l'on fait la somme des points. Qu'est-ce qui est le plus probable : obtenir 11, ou obtenir 12 ?",
+    options: ["Obtenir 11", "Obtenir 12", "Les deux sont aussi probables"], juste: 0,
+    resultat: "Calcul : 2 chances sur 36 pour 11, 1 sur 36 pour 12.",
+    explication: "11 s'obtient de deux façons (5 puis 6, ou 6 puis 5), 12 d'une seule (6 et 6). Penser les deux dés comme un tout fait oublier que les combinaisons ne sont pas toutes aussi nombreuses." },
+  { id: "dollar-manquant", niveau: 1, titre: "L'euro manquant", type: "choix",
+    enonce: "Trois amis paient une chambre 30 €, 10 € chacun. Le patron s'aperçoit qu'elle coûte 25 € et charge le groom de rendre 5 €. Le groom garde 2 € et rend 1 € à chacun. Chacun a donc payé 9 €, soit 27 €, plus les 2 € du groom : 29 €. Où est passé le dernier euro ?",
+    options: ["Le groom l'a gardé en plus", "Nulle part : il ne faut pas ajouter les 2 € du groom aux 27 €", "Le patron l'a gardé"], juste: 1,
+    resultat: "Énigme classique, dite « du dollar manquant ».",
+    explication: "Les 27 € payés se répartissent en 25 € pour le patron et 2 € pour le groom. Les ajouter de nouveau compte les 2 € deux fois. Le bon compte : 27 € payés + 3 € rendus = 30 €." },
+  { id: "factorielle", niveau: 2, titre: "Cinq secondes de calcul", type: "choix",
+    enonce: "Sans calculer, en cinq secondes : à quoi le produit 8 × 7 × 6 × 5 × 4 × 3 × 2 × 1 est-il le plus proche ?",
+    options: ["Environ 500", "Environ 2 000", "Environ 40 000"], juste: 2,
+    resultat: "Tversky et Kahneman (1974) ont posé la question dans les deux ordres : l'estimation médiane était de 2 250 en partant de 8, et de 512 en partant de 1. Le résultat exact est 40 320.",
+    explication: "On calcule les premiers produits, puis on extrapole à partir de ce début : un ancrage. Les deux groupes restent très en dessous, et celui qui commence par les petits nombres plus encore.",
+    liens: [["#biais/ancrage", "Effet d'ancrage"]] },
+  { id: "lettre-k", niveau: 2, titre: "La lettre K", type: "choix",
+    enonce: "Dans un texte en anglais, la lettre K est-elle plus souvent la première lettre d'un mot, ou la troisième ?",
+    options: ["La première", "La troisième", "Autant l'une que l'autre"], juste: 1,
+    resultat: "Tversky et Kahneman (1973) ont posé cette question : les participants surestimaient les mots commençant par K.",
+    explication: "Il est facile de chercher des mots par leur première lettre (kitchen, kind), beaucoup moins par leur troisième (ask, make, like). La facilité à trouver des exemples sert d'estimation de la fréquence : c'est l'heuristique de disponibilité.",
+    liens: [["#biais/disponibilite", "Heuristique de disponibilité"]] },
+  { id: "quatre-lancers", niveau: 2, titre: "Au moins un six", type: "choix",
+    enonce: "On lance un dé quatre fois. La probabilité d'obtenir au moins un six dépasse-t-elle une chance sur deux ?",
+    options: ["Oui, elle est d'environ 52 %", "Non, elle est d'environ 33 %", "Oui, elle est de 4 chances sur 6, soit 67 %"], juste: 0,
+    resultat: "Calcul : 1 − (5/6)⁴ ≈ 0,518.",
+    explication: "On ne peut pas additionner les chances (4 × 1/6) : ce calcul compterait deux fois les parties où plusieurs six sortent. On calcule plutôt la probabilité de n'avoir aucun six, (5/6)⁴ ≈ 0,482, et son complément." },
+  { id: "vitesse-moyenne", niveau: 2, titre: "L'aller et le retour", type: "nombre",
+    enonce: "Vous faites un trajet aller à 60 km/h, puis le même trajet retour à 40 km/h. Quelle est votre vitesse moyenne sur l'ensemble ?",
+    unite: "km/h", reponse: 48, tolerance: 0.5,
+    resultat: "Calcul : pour 60 km de trajet, l'aller dure 1 h, le retour 1 h 30 ; 120 km en 2 h 30 font 48 km/h.",
+    explication: "La réponse intuitive, 50 km/h, fait la moyenne des deux vitesses. Mais on roule plus longtemps à 40 km/h qu'à 60 : la vitesse lente pèse davantage." },
+  { id: "interets", niveau: 2, titre: "1 % par mois", type: "nombre",
+    enonce: "Un placement rapporte 1 % par mois, et les intérêts sont réinvestis chaque mois. Combien rapporte-t-il en un an, en pourcentage ? (Une décimale.)",
+    unite: "%", reponse: 12.7, tolerance: 0.15,
+    resultat: "Calcul : 1,01¹² ≈ 1,1268, soit 12,7 % par an.",
+    explication: "La réponse intuitive, 12 %, oublie que les intérêts de chaque mois rapportent à leur tour : c'est l'effet des intérêts composés, qui croît vite avec la durée." },
+  { id: "taxi-30", niveau: 3, titre: "Le taxi, autre ville", type: "nombre",
+    enonce: "Dans une autre ville, 70 % des taxis sont verts et 30 % sont bleus. Un témoin affirme que le taxi d'un accident était bleu ; testé dans les mêmes conditions, il reconnaît la bonne couleur 80 fois sur 100. Quelle est la probabilité que le taxi ait vraiment été bleu ?",
+    unite: "%", reponse: 63, tolerance: 3,
+    resultat: "Calcul : 24 / (24 + 14) ≈ 63 %.",
+    explication: "Sur 100 accidents : 30 impliquent un taxi bleu, que le témoin reconnaît 24 fois ; 70 un taxi vert, qu'il prend pour un bleu 14 fois. Parmi les 38 taxis désignés comme bleus, 24 le sont vraiment.",
+    liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
+  { id: "taxi-5", niveau: 3, titre: "Le taxi rare", type: "nombre",
+    enonce: "Dans une ville, 95 % des taxis sont verts et 5 % sont bleus. Un témoin affirme qu'un taxi en fuite était bleu ; il reconnaît la bonne couleur 90 fois sur 100. Quelle est la probabilité que le taxi ait vraiment été bleu ?",
+    unite: "%", reponse: 32, tolerance: 3,
+    resultat: "Calcul : 45 / (45 + 95) ≈ 32 %.",
+    explication: "Sur 1 000 accidents : 50 impliquent un taxi bleu, reconnu 45 fois ; 950 un taxi vert, pris pour un bleu 95 fois. Même avec un témoin fiable à 90 %, un taxi désigné comme bleu est plus souvent vert, parce que les bleus sont rares.",
+    liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
+  { id: "taxi-50", niveau: 3, titre: "Le taxi, moitié-moitié", type: "nombre",
+    enonce: "Dans une ville, la moitié des taxis sont verts et l'autre moitié bleus. Un témoin, qui reconnaît la bonne couleur 80 fois sur 100, affirme que le taxi était bleu. Quelle est la probabilité que le taxi ait vraiment été bleu ?",
+    unite: "%", reponse: 80, tolerance: 3,
+    resultat: "Calcul : 40 / (40 + 10) = 80 %.",
+    explication: "Quand les deux couleurs sont aussi fréquentes, le taux de base ne déplace rien, et la fiabilité du témoin donne directement la réponse. C'est seulement dans ce cas que la réponse intuitive est juste.",
+    liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
+  { id: "bertrand", niveau: 3, titre: "Les trois coffrets", type: "choix",
+    enonce: "Trois coffrets : l'un contient deux pièces d'or, un autre deux pièces d'argent, le dernier une pièce d'or et une d'argent. On choisit un coffret au hasard et l'on en tire une pièce au hasard : elle est en or. Quelle est la probabilité que l'autre pièce du coffret soit aussi en or ?",
+    options: ["1 chance sur 2", "2 chances sur 3", "1 chance sur 3"], juste: 1,
+    resultat: "Paradoxe des coffrets de Joseph Bertrand (1889). Calcul : 2 chances sur 3.",
+    explication: "Il y a trois pièces d'or en tout, et chacune avait autant de chances d'être tirée. Deux d'entre elles sont dans le coffret « or-or » : dans deux cas sur trois, l'autre pièce est en or. Raisonner sur les coffrets (« or-or ou or-argent, une chance sur deux ») oublie que le coffret « or-or » donne de l'or à coup sûr." },
+  { id: "mere", niveau: 3, titre: "Le pari du chevalier de Méré", type: "choix",
+    enonce: "Qu'est-ce qui est le plus probable : obtenir au moins un six en lançant un dé 4 fois, ou obtenir au moins un double six en lançant deux dés 24 fois ?",
+    options: ["Au moins un six en 4 lancers", "Au moins un double six en 24 lancers", "Les deux sont aussi probables"], juste: 0,
+    resultat: "Problème discuté par Pascal et Fermat en 1654. Calcul : 1 − (5/6)⁴ ≈ 51,8 % ; 1 − (35/36)²⁴ ≈ 49,1 %.",
+    explication: "Le raisonnement « 4 lancers pour une chance sur 6, donc 24 pour une chance sur 36 » suppose que les chances s'additionnent. Elles ne s'additionnent pas : on calcule la probabilité de ne jamais réussir, puis son complément." },
+  { id: "qi-moyen", niveau: 3, titre: "Le premier élève", type: "nombre",
+    enonce: "Dans une ville, le QI moyen des élèves de quatrième est de 100. On tire au hasard 50 élèves. Le premier testé a un QI de 150. Quel QI moyen faut-il attendre pour l'ensemble des 50 ?",
+    unite: "points", reponse: 101, tolerance: 0.5,
+    resultat: "Calcul : (150 + 49 × 100) / 50 = 101.",
+    explication: "Les 49 autres élèves ne « compensent » pas le premier : on attend pour eux la moyenne habituelle, 100. Répondre 100 revient à croire que le hasard rééquilibre de lui-même un écart, comme dans l'erreur du joueur.",
+    liens: [["#biais/erreur-du-joueur", "Erreur du joueur"]] }
 ];
 
 // Scénarios de dépistage réels ; d'autres sont créés au hasard (voir scenarioAuHasard)
@@ -316,7 +430,11 @@ const EXPERIENCES = [
       // les trois questions originales (Frederick, 2005), le niveau 2 celles de Thomson et Oppenheimer (2016).
       const niveau = niveauAtelier("crt").niveau;
       zone.appendChild(choixNiveau("crt", () => EXPERIENCES.find(e => e.id === "crt").lancer(zone)));
-      const questions = tirerSelonNiveau("crt", QUESTIONS_CRT, 3, niveau).sort((a, b) => QUESTIONS_CRT.indexOf(a) - QUESTIONS_CRT.indexOf(b));
+      // Premier passage : les trois questions originales de Frederick, dans leur ordre
+      const premiere = !resultatAtelier("crt") && !(lire("vus", {}).crt || []).length;
+      const questions = (premiere ? QUESTIONS_CRT.slice(0, 3) : tirerSelonNiveau("crt", QUESTIONS_CRT, 3, niveau))
+        .sort((a, b) => QUESTIONS_CRT.indexOf(a) - QUESTIONS_CRT.indexOf(b));
+      if (premiere) { const vus = lire("vus", {}); vus.crt = questions.map(q => q.id); ecrire("vus", vus); }
       const justes = [];
       const zonesResultat = [];
       const champs = questions.map((q, i) => {
@@ -357,7 +475,7 @@ const EXPERIENCES = [
             if (verdict === "intuitive") intuitives++;
             resultat.textContent = typo((verdict === "intuitive" ? "C'est la réponse intuitive, mais elle est fausse. " : "Réponse attendue : " + (q.texteLibre ? "Émilie" : q.juste + " " + q.unite) + ". ") + q.explication);
           }
-          resultat.appendChild(el("span", "source bloc", "Dans l'étude de Thomson et Oppenheimer (2016), " + q.reussite + " % de bonnes réponses."));
+          if (q.reussite) resultat.appendChild(el("span", "source bloc", "Dans l'étude de Thomson et Oppenheimer (2016), " + q.reussite + " % de bonnes réponses."));
         });
         valider.remove();
         noterPartieEntiere("crt", niveau, questions.map((q, i) => !!justes[i]));
@@ -708,7 +826,7 @@ const EXPERIENCES = [
             champ.disabled = true;
             ok.remove();
             const juste = Math.abs(v - p.reponse) <= p.tolerance;
-            conclure(juste, el("div", "retour-quiz"), (juste ? "Juste : " : "Réponse : ") + "environ " + p.reponse + " " + p.unite + ".");
+            conclure(juste, el("div", "retour-quiz"), (juste ? "Juste : " : "Réponse : ") + "environ " + fr(p.reponse) + " " + p.unite + ".");
           });
         } else {
           // Deux choix successifs : on vérifie leur cohérence
