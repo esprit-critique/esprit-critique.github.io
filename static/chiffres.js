@@ -26,13 +26,14 @@ function enClair(x, chiffres = 2) {
   return p(x / 1e15) + (x < 2e15 ? " million" : " millions") + " de milliards";
 }
 
+// Exposant en caractères surélevés : 12 → « ¹² »
+const exposant = e => String(e).split("").map(c => c === "-" ? "⁻" : "⁰¹²³⁴⁵⁶⁷⁸⁹"[Number(c)]).join("");
+
 // Notation scientifique lisible : 3,04e12 → « 3 × 10¹² »
 function puissanceDeDix(x) {
   const e = Math.floor(Math.log10(x));
   const m = x / Math.pow(10, e);
-  const exposants = "⁰¹²³⁴⁵⁶⁷⁸⁹";
-  const exp = String(e).split("").map(c => c === "-" ? "⁻" : exposants[Number(c)]).join("");
-  return (Math.abs(m - 1) < 0.05 ? "" : fr(Number(m.toFixed(1))) + " × ") + "10" + exp;
+  return (Math.abs(m - 1) < 0.05 ? "" : fr(Number(m.toFixed(1))) + " × ") + "10" + exposant(e);
 }
 
 // Barres comparées : [{ nom, valeur, texte, source, forte }] ; « reference » ajoute un repère
@@ -378,7 +379,8 @@ const JEUX = [
           const retour = el("div", "retour-quiz");
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Non : ") + premier.nom.charAt(0).toLowerCase() + premier.nom.slice(1) + "."));
           retour.appendChild(frise(a, b));
-          const ecart = Math.abs(a.annee - b.annee);
+          // Il n'y a pas d'an 0 : de 30 av. J.-C. (−30) à 79, il s'écoule 108 ans, et non 109
+          const ecart = Math.abs(a.annee - b.annee) - (a.annee * b.annee < 0 ? 1 : 0);
           retour.appendChild(paragraphe(ecart === 0 ? "Les deux ont eu lieu la même année." : (a.vers || b.vers ? "Environ " : "") + pluriel(ecart, "an") + " d'écart."));
           if (paire.note) retour.appendChild(paragraphe(paire.note));
           zone.appendChild(retour);
@@ -646,7 +648,7 @@ const JEUX = [
         [["Après un nombre élevé", mh], ["Après un nombre faible", mb]].forEach(([libelle, m]) => {
           const ligne = el("div", "barre-ligne");
           const pct = Math.round((m - 1) * 100);
-          ligne.appendChild(el("div", "barre-nom", libelle + " : " + (pct >= 0 ? "+" : "") + pct + " % par rapport à la vraie valeur"));
+          ligne.appendChild(el("div", "barre-nom", libelle + " : " + signe(pct) + " % par rapport à la vraie valeur"));
           const fond = el("div", "barre-fond centre");
           const barre = el("div", "barre");
           const largeur = Math.min(50, Math.abs(Math.log2(m)) * 25);
@@ -898,16 +900,44 @@ function planisphere(villes, sens) {
   for (let lon = -150; lon <= 150; lon += 30) s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: "graphe-grille" }));
   for (let lat = -60; lat <= 60; lat += 30) s.appendChild(svg("line", { x1: 10, y1: y(lat), x2: 310, y2: y(lat), class: lat === 0 ? "equateur" : "graphe-grille" }));
   s.appendChild(texteSvg(306, y(0) - 3, "équateur", { class: "sch-petit", "text-anchor": "end" }));
+  const points = villes.map(v => ({ nom: VILLES[v][0], px: x(VILLES[v][2]), py: y(VILLES[v][1]) }));
   villes.forEach((v, k) => {
-    const [nom, lat, lon] = VILLES[v];
+    const [, lat, lon] = VILLES[v];
     // Ligne de repère : le parallèle (nord) ou le méridien (est) de chaque ville
     if (sens === "nord") s.appendChild(svg("line", { x1: 10, y1: y(lat), x2: 310, y2: y(lat), class: k === 0 ? "repere-a" : "repere-b" }));
     else s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: k === 0 ? "repere-a" : "repere-b" }));
     s.appendChild(svg("circle", { cx: x(lon), cy: y(lat), r: 4.5, class: k === 0 ? "ville-a" : "ville-b" }));
-    const aDroite = x(lon) < 230;
-    s.appendChild(texteSvg(x(lon) + (aDroite ? 8 : -8), y(lat) + (k === 0 ? -6 : 13), nom, { class: "sch-texte sch-gras", "text-anchor": aDroite ? "start" : "end" }));
   });
+  placerEtiquettes(points, [[306 - 44, y(0) - 13, 306, y(0) - 1]])
+    .forEach(e => s.appendChild(texteSvg(e.x, e.y, e.nom, { class: "sch-texte sch-gras", "text-anchor": e.ancre })));
   return s;
+}
+
+// Étiquettes des villes du planisphère : la ville la plus au nord porte la sienne au-dessus, l'autre en dessous.
+// La largeur du texte est estimée (le dessin n'est pas encore affiché, getBBox() est indisponible) ;
+// on essaie plusieurs positions jusqu'à n'en toucher ni l'autre étiquette, ni un point, ni le bord, ni « obstacles ».
+function placerEtiquettes(points, obstacles) {
+  const largeur = nom => 7.2 * nom.length;          // gras, 12 px : 7,2 unités par caractère, avec marge
+  const seCoupent = (a, b) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
+  const ordre = [...points].sort((a, b) => a.py - b.py);   // du nord au sud
+  const places = [];
+  ordre.forEach((p, k) => {
+    const autres = points.filter(q => q !== p).map(q => [q.px - 6, q.py - 6, q.px + 6, q.py + 6]);
+    const w = largeur(p.nom);
+    const dessus = k === 0;
+    const droite = p.px < 230;
+    const candidats = [];
+    [dessus, !dessus].forEach(haut => [droite, !droite].forEach(adr => [0, 10, 20].forEach(d => candidats.push({ haut, adr, d }))));
+    const choix = candidats.map(c => {
+      const ty = c.haut ? p.py - 7 - c.d : p.py + 15 + c.d;
+      const tx = c.adr ? p.px + 6 : p.px - 6;
+      const boite = [c.adr ? tx : tx - w, ty - 10, c.adr ? tx + w : tx, ty + 3];
+      return { nom: p.nom, x: tx, y: ty, ancre: c.adr ? "start" : "end", boite };
+    }).find(c => c.boite[0] >= 2 && c.boite[2] <= 318 && c.boite[1] >= 2 && c.boite[3] <= 168
+      && ![...autres, ...obstacles, ...places.map(e => e.boite)].some(o => seCoupent(c.boite, o)));
+    places.push(choix || { nom: p.nom, x: p.px + 6, y: dessus ? p.py - 7 : p.py + 15, ancre: "start", boite: [0, 0, 0, 0] });
+  });
+  return places;
 }
 
 // ===================== Illustrations des jeux =====================
@@ -929,9 +959,11 @@ function frise(a, b) {
   const s = svg("svg", { viewBox: "0 0 320 56", class: "frise-svg", role: "img", "aria-label": "Frise chronologique" });
   s.appendChild(svg("line", { x1: 8, y1: 28, x2: 312, y2: 28, class: "sch-trait" }));
   s.appendChild(svg("path", { d: "M306 23l6 5-6 5", class: "sch-trait" }));
-  [[p, 40], [q, 280]].forEach(([e, x], k) => {
+  // Date de gauche alignée sur le bord gauche, date de droite sur le bord droit : les plus longues
+  // (« 23 septembre 1889 », « vers 2560 av. J.-C. ») ne sont jamais coupées
+  [[p, 40, 4, "start"], [q, 280, 316, "end"]].forEach(([e, x, xTexte, ancre], k) => {
     s.appendChild(svg("circle", { cx: x, cy: 28, r: 7, class: k === 0 ? "sch-c" : "sch-clair-fort" }));
-    s.appendChild(texteSvg(x, 14, dateEvenement(e), { class: "sch-texte sch-gras", "text-anchor": "middle" }));
+    s.appendChild(texteSvg(xTexte, 14, dateEvenement(e), { class: "sch-texte sch-gras", "text-anchor": ancre }));
   });
   bloc.appendChild(s);
   const liste = el("ol", "frise-liste");
@@ -944,7 +976,8 @@ function frise(a, b) {
 function echelleLog(debut, fin) {
   const echelle = el("div", "echelle-log");
   for (let e = debut; e <= fin; e++) {
-    const g = el("span", "graduation" + ((e - debut) % 2 === 0 ? " etiquetee" : ""));
+    // Une graduation sur deux est étiquetée ; sur un écran très étroit, une sur quatre (classe « secondaire »)
+    const g = el("span", "graduation" + ((e - debut) % 2 === 0 ? " etiquetee" : "") + ((e - debut) % 4 === 2 ? " secondaire" : ""));
     g.style.left = (100 * (e - debut) / (fin - debut)) + "%";
     if ((e - debut) % 2 === 0) g.dataset.texte = typo(etiquettePuissance(e));
     echelle.appendChild(g);
@@ -952,13 +985,12 @@ function echelleLog(debut, fin) {
   return echelle;
 }
 
-// Étiquette courte d'une puissance de dix : 1, 10, 100, 1 000, 10 k, 1 M, 1 Md…
+// Étiquette courte d'une puissance de dix : 1, 10, 100, 1 000, 10 k, 100 k, 1 M, 10 M, 100 M, puis 10⁹, 10¹⁰…
 function etiquettePuissance(e) {
   if (e < 4) return fr(Math.pow(10, e));
   if (e < 6) return fr(Math.pow(10, e - 3)) + " k";
   if (e < 9) return fr(Math.pow(10, e - 6)) + " M";
-  if (e < 15) return fr(Math.pow(10, e - 9)) + " Md";
-  return "10^" + e;
+  return "10" + exposant(e);
 }
 
 // Points du barème logarithmique : +100·(1 + log2 p) si juste, +100·(1 + log2 (1 − p)) sinon
@@ -969,7 +1001,7 @@ function pointsConfiance(niveau, juste) {
 
 // Courbe d'étalonnage : pour chaque niveau de confiance, la part de réponses justes
 function courbeEtalonnage(cumul, partie) {
-  const s = svg("svg", { viewBox: "0 0 320 230", class: "graphe", role: "img", "aria-label": "Courbe d'étalonnage" });
+  const s = svg("svg", { viewBox: "0 0 320 236", class: "graphe", role: "img", "aria-label": "Courbe d'étalonnage" });
   const x = c => 46 + 250 * (c - 50) / 50;          // confiance de 50 à 100 %
   const y = r => 200 - 180 * r / 100;                // réussite de 0 à 100 %
   s.appendChild(svg("rect", { x: 46, y: 20, width: 250, height: 180, class: "graphe-fond" }));

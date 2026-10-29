@@ -630,7 +630,7 @@ const EXPERIENCES = [
       function simulation() {
         let gardeGagne = 0;
         for (let k = 0; k < 1000; k++) if (Math.floor(Math.random() * nbPortes) === Math.floor(Math.random() * nbPortes)) gardeGagne++;
-        message.textContent = typo("Sur 1 000 parties simulées à " + nbPortes + " portes : en gardant, " + gardeGagne + " voitures (" + fr(gardeGagne / 10) + " %) ; en changeant, " + (1000 - gardeGagne) + " (" + fr((1000 - gardeGagne) / 10) + " %).");
+        message.textContent = typo("Sur 1 000 parties simulées à " + nbPortes + " portes : en gardant, " + fr(gardeGagne) + " voitures (" + fr(gardeGagne / 10) + " %) ; en changeant, " + fr(1000 - gardeGagne) + " (" + fr((1000 - gardeGagne) / 10) + " %).");
       }
 
       function expliquer() {
@@ -1070,7 +1070,8 @@ function courbeAnniversaires(estimation) {
   s.appendChild(texteSvg(x(23) + 8, y(probaAnniversaire(23)) + 14, "23", { class: "sch-texte sch-gras" }));
   if (estimation > 0 && estimation <= 80 && estimation !== 23) {
     s.appendChild(svg("circle", { cx: x(estimation), cy: y(probaAnniversaire(estimation)), r: 5, class: "graphe-point-partie" }));
-    s.appendChild(texteSvg(x(estimation), y(probaAnniversaire(estimation)) - 10, "vous", { class: "sch-petit", "text-anchor": "middle" }));
+    // En haut à gauche du point : la courbe, croissante, passe à sa droite et en dessous à sa gauche
+    s.appendChild(texteSvg(x(estimation) - 7, y(probaAnniversaire(estimation)) - 7, "vous", { class: "sch-petit sch-gras", "text-anchor": "end" }));
   }
   return s;
 }

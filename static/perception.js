@@ -627,8 +627,15 @@ function tracerDroite(s, points) {
   points.forEach(([x, y]) => { sxy += (x - mx) * (y - my); sxx += (x - mx) ** 2; });
   const pente = sxy / sxx;
   const e = echellesNuage(points);
-  const ligne = svg("line", { x1: e.x(e.x0), y1: e.y(my + pente * (e.x0 - mx)), x2: e.x(e.x1), y2: e.y(my + pente * (e.x1 - mx)), class: "droite-regression" });
-  s.appendChild(ligne);
+  let [xa, ya, xb, yb] = [e.x(e.x0), e.y(my + pente * (e.x0 - mx)), e.x(e.x1), e.y(my + pente * (e.x1 - mx))];
+  // La droite s'arrête au bord du graphique (y de 20 à 270) plutôt que d'en sortir
+  const couper = (y, yAutre, x, xAutre) => {
+    const borne = y < 20 ? 20 : y > 270 ? 270 : y;
+    return borne === y ? [x, y] : [x + (xAutre - x) * (borne - y) / (yAutre - y), borne];
+  };
+  [xa, ya] = couper(ya, yb, xa, xb);
+  [xb, yb] = couper(yb, ya, xb, xa);
+  s.appendChild(svg("line", { x1: xa, y1: ya, x2: xb, y2: yb, class: "droite-regression" }));
 }
 
 // Bilan : estimation de l'utilisateur en fonction de la vraie corrélation
@@ -651,7 +658,8 @@ function grapheEstimations(resultats) {
 
 // Graphique en barres. barres : [{ libelle, valeur, forte }] ; min et max : bornes de l'axe vertical
 function grapheBarres(barres, min, max, options = {}) {
-  const s = svg("svg", { viewBox: "0 0 300 210", class: "graphe graphe-barres", role: "img", "aria-label": options.titre || "Graphique en barres" });
+  // Quatre unités de marge à gauche et à droite : les graduations longues (« 54,25 % ») restent dans le cadre
+  const s = svg("svg", { viewBox: "-4 0 308 210", class: "graphe graphe-barres", role: "img", "aria-label": options.titre || "Graphique en barres" });
   const y = v => 180 - 160 * (v - min) / (max - min);
   s.appendChild(svg("rect", { x: 44, y: 20, width: 246, height: 160, class: "graphe-fond" }));
   const pas = options.pas || (max - min) / 4;
@@ -673,7 +681,7 @@ function grapheBarres(barres, min, max, options = {}) {
 
 // Graphique en courbe. series : [{ points: [[x, y]…], classe }] ; inverse : axe vertical inversé
 function grapheCourbe(series, xmin, xmax, ymin, ymax, options = {}) {
-  const s = svg("svg", { viewBox: "0 0 300 210", class: "graphe", role: "img", "aria-label": options.titre || "Graphique en courbe" });
+  const s = svg("svg", { viewBox: "-4 0 308 210", class: "graphe", role: "img", "aria-label": options.titre || "Graphique en courbe" });
   const x = v => 44 + 236 * (v - xmin) / (xmax - xmin);
   const y = v => options.inverse ? 20 + 160 * (v - ymin) / (ymax - ymin) : 180 - 160 * (v - ymin) / (ymax - ymin);
   s.appendChild(svg("rect", { x: 44, y: 20, width: 236, height: 160, class: "graphe-fond" }));
@@ -925,7 +933,8 @@ function grilleRisque(avant, apres) {
     fig.appendChild(el("figcaption", null, titre + " : " + n + " sur 10 000"));
     const s = svg("svg", { viewBox: "0 0 100 100", class: "grille-10000", role: "img", "aria-label": titre });
     s.appendChild(svg("rect", { x: 0, y: 0, width: 100, height: 100, class: "grille-fond" }));
-    for (let k = 0; k < n; k++) s.appendChild(svg("rect", { x: 17 + 31 * k, y: 41 + 7 * k, width: 1.6, height: 1.6, class: "grille-cas" }));
+    // Positions dispersées mais toujours dans le cadre (pas de 37 et 23 modulo 80 et 76)
+    for (let k = 0; k < n; k++) s.appendChild(svg("rect", { x: 10 + (17 + 37 * k) % 80, y: 12 + (41 + 23 * k) % 76, width: 1.6, height: 1.6, class: "grille-cas" }));
     fig.appendChild(s);
     bloc.appendChild(fig);
   });

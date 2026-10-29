@@ -136,18 +136,18 @@ const SCHEMAS = {
     const clip = "clip-conj-" + (++compteurFleches);
     const defs = S("defs");
     const cp = S("clipPath", { id: clip });
-    cp.appendChild(S("circle", { cx: 125, cy: 98, r: 72 }));
+    cp.appendChild(S("circle", { cx: 112, cy: 96, r: 76 }));
     defs.appendChild(cp);
     svg.appendChild(defs);
-    svg.appendChild(S("circle", { cx: 125, cy: 98, r: 72, class: "sch-clair" }));
-    svg.appendChild(S("circle", { cx: 195, cy: 98, r: 72, class: "sch-clair" }));
-    svg.appendChild(S("circle", { cx: 195, cy: 98, r: 72, class: "sch-c", "clip-path": "url(#" + clip + ")", opacity: 0.55 }));
-    svg.appendChild(S("circle", { cx: 125, cy: 98, r: 72, class: "sch-c-trait" }));
-    svg.appendChild(S("circle", { cx: 195, cy: 98, r: 72, class: "sch-c-trait" }));
-    ecrireTexte(svg, 86, 102, "Guichetières", "sch-texte sch-gras", "middle");
-    ecrireTexte(svg, 236, 96, "Militantes", "sch-texte sch-gras", "middle");
-    ecrireTexte(svg, 236, 111, "féministes", "sch-texte sch-gras", "middle");
-    ecrireTexte(svg, 160, 102, "les deux", "sch-petit", "middle");
+    svg.appendChild(S("circle", { cx: 112, cy: 96, r: 76, class: "sch-clair" }));
+    svg.appendChild(S("circle", { cx: 208, cy: 96, r: 76, class: "sch-clair" }));
+    svg.appendChild(S("circle", { cx: 208, cy: 96, r: 76, class: "sch-c", "clip-path": "url(#" + clip + ")", opacity: 0.55 }));
+    svg.appendChild(S("circle", { cx: 112, cy: 96, r: 76, class: "sch-c-trait" }));
+    svg.appendChild(S("circle", { cx: 208, cy: 96, r: 76, class: "sch-c-trait" }));
+    ecrireTexte(svg, 83, 100, "Guichetières", "sch-texte sch-gras", "middle");
+    ecrireTexte(svg, 238, 94, "Militantes", "sch-texte sch-gras", "middle");
+    ecrireTexte(svg, 238, 109, "féministes", "sch-texte sch-gras", "middle");
+    ecrireTexte(svg, 160, 100, "les deux", "sch-petit", "middle");
     ecrireTexte(svg, 160, 186, "P(guichetière et féministe) ≤ P(guichetière)", "sch-texte", "middle");
     return {
       svg,
@@ -288,11 +288,11 @@ const SCHEMAS = {
     let d = "";
     for (let x = -100; x <= 100; x += 2) d += (x === -100 ? "M" : "L") + (ox + x * ex).toFixed(1) + " " + (oy - v(x) * ey).toFixed(1) + " ";
     svg.appendChild(S("path", { d, class: "sch-c-trait", "stroke-width": 3 }));
-    [[100, "gagner 100 € : +" + Math.round(v(100))], [-100, "perdre 100 € : " + Math.round(v(-100))]].forEach(([x, libelle]) => {
+    [[100, "gagner 100 € : +" + Math.round(v(100))], [-100, "perdre 100 € : −" + Math.round(-v(-100))]].forEach(([x, libelle]) => {
       const px = ox + x * ex, py = oy - v(x) * ey;
       svg.appendChild(S("line", { x1: px, y1: oy, x2: px, y2: py, class: "sch-pointille" }));
       svg.appendChild(S("circle", { cx: px, cy: py, r: 4, class: "sch-c" }));
-      ecrireTexte(svg, x > 0 ? px - 4 : px + 4, x > 0 ? py - 8 : py + 4, libelle, "sch-petit", x > 0 ? "end" : "start");
+      ecrireTexte(svg, x > 0 ? px - 4 : px + 10, x > 0 ? py - 8 : py + 4, libelle, "sch-petit", x > 0 ? "end" : "start");
     });
     ecrireTexte(svg, 300, oy + 16, "gains", "sch-petit", "end");
     ecrireTexte(svg, 22, oy - 6, "pertes", "sch-petit");
@@ -488,7 +488,7 @@ const SCHEMAS = {
     svg.appendChild(S("polyline", { points: valeurs.slice(8, 16).map((v, i) => x(i + 8) + "," + y(v)).join(" "), class: "sch-rouge-trait" }));
     svg.appendChild(S("circle", { cx: x(8), cy: y(15.2), r: 4, class: "sch-rouge" }));
     ecrireTexte(svg, x(11.5), 28, "fenêtre choisie", "sch-petit sch-gras", "middle");
-    ecrireTexte(svg, x(24), y(13.4), "tendance d'ensemble", "sch-petit", "end");
+    ecrireTexte(svg, x(24), 24, "tendance d'ensemble", "sch-petit sch-halo", "end");
     [0, 8, 16, 24].forEach(i => ecrireTexte(svg, x(i), 186, "an " + (i + 1), "sch-petit", i === 24 ? "end" : "middle"));
     return { svg, legende: "Données fictives. La tendance d'ensemble monte nettement ; en partant d'un pic exceptionnel (en rouge), une fenêtre bien choisie suggère pourtant une baisse." };
   },
@@ -560,17 +560,18 @@ const SCHEMAS = {
     const svg = toile(320, 210, "Deux ensembles emboîtés : la règle réelle (nombres croissants) contient l'hypothèse (nombres pairs croissant de 2). Seuls les tests hors de l'hypothèse permettent de les distinguer.");
     svg.appendChild(S("rect", { x: 10, y: 24, width: 300, height: 176, rx: 4, class: "sch-fond" }));
     ecrireTexte(svg, 18, 18, "Toutes les suites de trois nombres", "sch-petit");
-    svg.appendChild(S("ellipse", { cx: 160, cy: 116, rx: 138, ry: 76, class: "sch-clair" }));
-    svg.appendChild(S("ellipse", { cx: 160, cy: 116, rx: 138, ry: 76, class: "sch-c-trait" }));
-    ecrireTexte(svg, 160, 56, "Règle réelle : nombres croissants", "sch-texte sch-gras", "middle");
-    svg.appendChild(S("ellipse", { cx: 116, cy: 128, rx: 74, ry: 42, class: "sch-carte" }));
-    svg.appendChild(S("ellipse", { cx: 116, cy: 128, rx: 74, ry: 42, class: "sch-c-trait" }));
-    ecrireTexte(svg, 116, 108, "Hypothèse : pairs, de 2 en 2", "sch-petit sch-gras", "middle");
-    ecrireTexte(svg, 116, 132, "8, 10, 12 : oui", "sch-texte", "middle");
-    ecrireTexte(svg, 116, 150, "(ne tranche rien)", "sch-petit", "middle");
-    ecrireTexte(svg, 238, 128, "1, 5, 9 : oui", "sch-texte sch-gras", "middle");
-    ecrireTexte(svg, 238, 146, "(réfute l'hypothèse)", "sch-petit", "middle");
-    ecrireTexte(svg, 268, 190, "3, 2, 1 : non", "sch-petit", "middle");
+    svg.appendChild(S("ellipse", { cx: 160, cy: 116, rx: 146, ry: 78, class: "sch-clair" }));
+    svg.appendChild(S("ellipse", { cx: 160, cy: 116, rx: 146, ry: 78, class: "sch-c-trait" }));
+    ecrireTexte(svg, 160, 66, "Règle réelle : nombres croissants", "sch-petit sch-gras", "middle");
+    svg.appendChild(S("ellipse", { cx: 108, cy: 132, rx: 84, ry: 48, class: "sch-carte" }));
+    svg.appendChild(S("ellipse", { cx: 108, cy: 132, rx: 84, ry: 48, class: "sch-c-trait" }));
+    ecrireTexte(svg, 108, 112, "Hypothèse :", "sch-petit sch-gras", "middle");
+    ecrireTexte(svg, 108, 125, "pairs, de 2 en 2", "sch-petit sch-gras", "middle");
+    ecrireTexte(svg, 108, 147, "8, 10, 12 : oui", "sch-texte", "middle");
+    ecrireTexte(svg, 108, 162, "(ne tranche rien)", "sch-petit", "middle");
+    ecrireTexte(svg, 248, 128, "1, 5, 9 : oui", "sch-texte sch-gras", "middle");
+    ecrireTexte(svg, 248, 144, "(la réfute)", "sch-petit", "middle");
+    ecrireTexte(svg, 272, 192, "3, 2, 1 : non", "sch-petit", "middle");
     return { svg, legende: "La tâche 2, 4, 6 de Wason (1960). Les suites qui respectent l'hypothèse la confirment sans pouvoir la mettre en défaut ; seule une suite choisie hors de l'hypothèse, comme 1, 5, 9, peut révéler qu'elle est trop étroite." };
   },
 
@@ -583,12 +584,16 @@ const SCHEMAS = {
     const cases = Array(40).fill(0);
     points.forEach(([x, y]) => { cases[Math.min(7, Math.floor(x / 40)) + 8 * Math.min(4, Math.floor(y / 40))]++; });
     const pleine = cases.indexOf(Math.max(...cases)), vide = cases.indexOf(Math.min(...cases));
+    const etiquettes = [];
     [[pleine, "sch-c-trait", "grappe"], [vide, "sch-rouge-trait", "vide"]].forEach(([k, classe, libelle]) => {
-      const cx = 40 * (k % 8) + 20, cy = 40 * Math.floor(k / 8) + 20;
+      // Cercle de rayon 27 centré sur la case, mais jamais hors du cadre
+      const cx = Math.min(291, Math.max(29, 40 * (k % 8) + 20)), cy = Math.min(171, Math.max(29, 40 * Math.floor(k / 8) + 20));
       svg.appendChild(S("circle", { cx, cy, r: 27, class: classe, "stroke-dasharray": "4 3" }));
-      ecrireTexte(svg, cx, cy < 100 ? cy + 40 : cy - 31, libelle, "sch-petit sch-gras", "middle");
+      etiquettes.push([cx, cy < 100 ? cy + 42 : cy - 33, libelle]);
     });
     points.forEach(([x, y]) => svg.appendChild(S("circle", { cx: x, cy: y, r: 2.6, class: "sch-discret" })));
+    // Étiquettes dessinées après les points, avec un liseré, pour rester lisibles
+    etiquettes.forEach(([x, y, libelle]) => ecrireTexte(svg, x, y, libelle, "sch-petit sch-gras sch-halo", "middle"));
     return { svg, legende: "160 points tirés au hasard, chacun indépendamment des autres (données simulées). La « grappe » et le « vide » entourés sont dus au seul hasard : un hasard parfaitement régulier serait, lui, suspect." };
   },
 
@@ -649,10 +654,14 @@ const SCHEMAS = {
   "sophismes:ignorance": () => {
     const svg = toile(320, 130, "Trois états : prouvé vrai, non prouvé, prouvé faux. Le sophisme passe directement de « non prouvé » à « faux » ou à « vrai ».");
     const fleche = definirFleche(svg);
-    [["Prouvé vrai", 10, "sch-vert"], ["Ni prouvé ni réfuté", 115, "sch-gris"], ["Prouvé faux", 220, "sch-rouge"]].forEach(([t, x, classe]) => {
-      svg.appendChild(S("rect", { x, y: 34, width: 90, height: 40, rx: 4, class: classe, opacity: 0.85 }));
+    [["Prouvé vrai", 10, "sch-vert"], ["Prouvé faux", 220, "sch-rouge"]].forEach(([t, x, classe]) => {
+      svg.appendChild(S("rect", { x, y: 34, width: 90, height: 40, rx: 4, class: classe }));
       ecrireTexte(svg, x + 45, 58, t, "sch-sur-c", "middle");
     });
+    // L'état « en suspens » : fond d'encadré et texte normal, lisibles dans les deux thèmes
+    svg.appendChild(S("rect", { x: 115, y: 34, width: 90, height: 40, rx: 4, class: "sch-fond sch-contour" }));
+    ecrireTexte(svg, 160, 51, "Ni prouvé", "sch-texte sch-gras", "middle");
+    ecrireTexte(svg, 160, 65, "ni réfuté", "sch-texte sch-gras", "middle");
     svg.appendChild(S("path", { d: "M160 80 Q 210 118 262 80", class: "sch-rouge-trait", "marker-end": fleche }));
     svg.appendChild(S("path", { d: "M160 80 Q 110 118 58 80", class: "sch-rouge-trait", "marker-end": fleche }));
     ecrireTexte(svg, 160, 22, "« Personne n'a prouvé le contraire »", "sch-petit sch-gras", "middle");
@@ -675,15 +684,15 @@ const SCHEMAS = {
   "sophismes:ad-hominem": () => {
     const svg = toile(320, 150, "L'attaque vise la personne qui avance l'argument, et non l'argument lui-même, qui reste sans réponse.");
     const fleche = definirFleche(svg);
-    svg.appendChild(S("circle", { cx: 70, cy: 60, r: 26, class: "sch-clair" }));
-    svg.appendChild(S("circle", { cx: 70, cy: 60, r: 26, class: "sch-c-trait" }));
+    svg.appendChild(S("circle", { cx: 70, cy: 60, r: 36, class: "sch-clair" }));
+    svg.appendChild(S("circle", { cx: 70, cy: 60, r: 36, class: "sch-c-trait" }));
     ecrireTexte(svg, 70, 64, "La personne", "sch-petit sch-gras", "middle");
     svg.appendChild(S("rect", { x: 160, y: 34, width: 150, height: 52, rx: 4, class: "sch-carte" }));
     svg.appendChild(S("rect", { x: 160, y: 34, width: 150, height: 52, rx: 4, class: "sch-c-trait" }));
     ecrireTexte(svg, 235, 56, "Son argument", "sch-texte sch-gras", "middle");
     ecrireTexte(svg, 235, 74, "(prémisses, conclusion)", "sch-petit", "middle");
-    svg.appendChild(S("line", { x1: 98, y1: 60, x2: 156, y2: 60, class: "sch-trait" }));
-    svg.appendChild(S("line", { x1: 70, y1: 130, x2: 70, y2: 92, class: "sch-rouge-trait", "marker-end": fleche }));
+    svg.appendChild(S("line", { x1: 107, y1: 60, x2: 159, y2: 60, class: "sch-trait" }));
+    svg.appendChild(S("line", { x1: 70, y1: 132, x2: 70, y2: 100, class: "sch-rouge-trait", "marker-end": fleche }));
     ecrireTexte(svg, 70, 146, "l'attaque", "sch-petit sch-gras", "middle");
     ecrireTexte(svg, 235, 112, "aucune réponse", "sch-petit", "middle");
     ecrireTexte(svg, 235, 127, "sur le fond", "sch-petit", "middle");

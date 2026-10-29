@@ -76,6 +76,11 @@ f.onload = async () => {
         if (id(a) && id(b)) vue().appendChild(w.eval("planisphere")([id(a), id(b)], sens));
       });
     },
+    "echelles": async () => {
+      await aller("chiffres/grandeurs");
+      const carte = vue().querySelector(".carte") || vue();
+      [[0, 9], [5, 14], [9, 18]].forEach(([a, b]) => carte.appendChild(w.eval("echelleLog")(a, b)));
+    },
     "guide": async () => { await aller("guide/philosophie"); },
     "guide-haut": async () => { await aller("guide/difference"); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },

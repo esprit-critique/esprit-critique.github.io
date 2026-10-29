@@ -482,6 +482,10 @@ h3.titre-bloc {
 .sch-clair { fill: var(--c-clair, var(--accent-doux)); }
 .sch-discret { fill: var(--discret); }
 .sch-gris { fill: var(--trait); }
+/* En sombre, le gris des traits disparaît sur le fond : points et carrés neutres plus clairs (3,4:1 sur le fond) */
+@media (prefers-color-scheme: dark) { .sch-gris { fill: #73685a; } }
+/* Liseré couleur de carte autour d'un texte posé sur un tracé */
+.sch-halo { paint-order: stroke; stroke: var(--carte); stroke-width: 3.5px; stroke-linejoin: round; }
 .sch-rouge { fill: var(--rouge); }
 .sch-rouge-trait { stroke: var(--rouge); stroke-width: 2.4; fill: none; }
 .sch-orange-trait { stroke: var(--orange); stroke-width: 2; fill: none; }
@@ -695,7 +699,8 @@ h3.titre-bloc {
 }
 
 .nav-atelier { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.atelier-suivant { text-align: right; color: var(--discret); max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Le titre de l'atelier suivant passe à la ligne plutôt que d'être tronqué */
+.atelier-suivant { text-align: right; color: var(--discret); max-width: 60%; }
 .tete-atelier { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
 .tete-atelier .fiche-titre { margin: 0; font-size: 26px; }
 
@@ -754,6 +759,7 @@ h3.titre-bloc {
   transform: translateX(-50%);
   font-size: 11px; color: var(--discret); white-space: nowrap;
 }
+@media (max-width: 359px) { .graduation.secondaire::after { content: none; } }
 .repere-vrai {
   position: absolute; top: -9px;
   width: 16px; height: 16px; margin-left: -8px;
@@ -826,9 +832,12 @@ h3.titre-bloc {
 .grille-nuage { stroke: var(--discret); stroke-width: 0.6; stroke-dasharray: 2 2; }
 
 /* Suites pile ou face */
-.suite-cases { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; margin: 4px 0 8px; }
+/* minmax(0, 1fr) et min-width: 0 : sans eux, Safari déduit une largeur minimale des cases
+   de leur hauteur (aspect-ratio), et la grille déborde de la carte */
+.suite-cases { display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 2px; margin: 4px 0 8px; }
 .suite-cases span {
   aspect-ratio: 1;
+  min-width: 0;
   display: flex; align-items: center; justify-content: center;
   font-size: 10px; font-weight: 700;
   border-radius: 2px;
