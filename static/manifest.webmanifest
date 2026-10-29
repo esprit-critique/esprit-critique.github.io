@@ -1,0 +1,16 @@
+{
+  "name": "Esprit critique",
+  "short_name": "Esprit critique",
+  "description": "Biais cognitifs et sophismes : fiches, quiz, ateliers fondés sur des données réelles, expériences classiques et philosophie.",
+  "lang": "fr",
+  "start_url": "./#accueil",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f4ef",
+  "theme_color": "#f6f4ef",
+  "icons": [
+    { "src": "icone.png?v=3", "sizes": "180x180", "type": "image/png" },
+    { "src": "icone-512.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "favicon.svg?v=3", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

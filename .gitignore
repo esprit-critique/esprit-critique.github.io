@@ -1,0 +1,4 @@
+# Fichiers du système et de Python, inutiles dans le dépôt
+.DS_Store
+__pycache__/
+*.pyc

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <!-- Adapte la page à la largeur de l'écran du téléphone -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- Réglages pour l'ajout à l'écran d'accueil de l'iPhone -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Esprit critique">
+  <meta name="description" content="Biais cognitifs et sophismes : fiches, quiz, jeux d'estimation et expériences.">
+  <!-- Icônes : l'emblème de l'en-tête. « ?v=3 » oblige le navigateur à oublier les anciennes. -->
+  <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
+  <link rel="icon" href="icone-32.png?v=3" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="icone.png?v=3">
+  <link rel="manifest" href="manifest.webmanifest?v=3">
+  <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
+  <title>Esprit critique</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="conteneur">
+    <header class="entete">
+      <a class="marque" href="#accueil" title="Les deux traits ont la même longueur">
+        <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
+          <path class="embleme-guide" d="M10 2v24M30 2v24"/>
+          <path class="embleme-trait" d="M10 8h20M10 20h20"/>
+          <path class="embleme-ailette" d="M10 8 5 3M10 8l-5 5M30 8l5-5M30 8l5 5M10 20l5-5M10 20l5 5M30 20l-5-5M30 20l-5 5"/>
+        </svg>
+        <span>Esprit critique</span>
+      </a>
+
+      <!-- Navigation : en bas de l'écran sur téléphone, en haut sur ordinateur -->
+      <nav class="navigation" aria-label="Navigation principale">
+        <a class="onglet" href="#accueil" data-onglet="accueil" style="--c: #1d4f91">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>
+          <span>Accueil</span>
+        </a>
+        <a class="onglet" href="#biais" data-onglet="fiches" style="--c: #2f6db5">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h10.5a2 2 0 0 1 2 2V20H7a2 2 0 0 1-2-2z"/><path d="M5 18a2 2 0 0 1 2-2h10.5"/><path d="M9 8.5h5M9 11.5h5"/></svg>
+          <span>Fiches</span>
+        </a>
+        <a class="onglet" href="#quiz" data-onglet="quiz" style="--c: #2a8a5c">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.7"/><path d="M12 17h.01"/></svg>
+          <span>Quiz</span>
+        </a>
+        <a class="onglet" href="#ateliers" data-onglet="ateliers" style="--c: #c0601b">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 3.5h5M10.5 3.5v5.2L5 18.2A1.5 1.5 0 0 0 6.3 20.5h11.4a1.5 1.5 0 0 0 1.3-2.3l-5.5-9.5V3.5"/><path d="M7.4 14.5h9.2"/></svg>
+          <span>Ateliers</span>
+        </a>
+        <a class="onglet" href="#guide" data-onglet="guide" style="--c: #44546a">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+          <span>Guide</span>
+        </a>
+      </nav>
+
+    </header>
+
+    <div id="annonce" class="annonce" role="status" aria-live="polite" hidden></div>
+
+    <!-- Les vues : une seule est visible à la fois, selon l'adresse (#accueil, #biais, #quiz…) -->
+    <main>
+      <section id="vue-accueil" class="vue" hidden></section>
+
+      <section id="vue-fiches" class="vue" hidden>
+        <div id="outils-liste">
+          <h1 class="page-titre">Fiches</h1>
+          <nav class="segment" id="segment-type" aria-label="Type de fiches"></nav>
+          <label class="invisible" for="recherche">Rechercher</label>
+          <input id="recherche" class="recherche" type="search" placeholder="Rechercher…" autocomplete="off">
+          <div id="filtres" class="puces"></div>
+          <div class="barre-outils">
+            <div class="progression">
+              <span id="texte-progression"></span>
+              <div class="jauge"><div id="jauge"></div></div>
+            </div>
+            <button id="btn-hasard" class="bouton secondaire">Au hasard</button>
+          </div>
+        </div>
+        <div id="liste"></div>
+      </section>
+
+      <section id="vue-quiz" class="vue" hidden>
+        <h1 class="page-titre">Quiz</h1>
+        <p class="page-intro">Dix situations : à vous d'identifier le biais ou le sophisme. Les notions ratées reviennent dans « À réviser », à intervalles croissants.</p>
+        <div id="filtres-quiz" class="puces"></div>
+        <div id="zone-quiz" aria-live="polite"></div>
+      </section>
+
+      <section id="vue-ateliers" class="vue" hidden></section>
+      <section id="vue-chiffres" class="vue" hidden></section>
+      <section id="vue-tests" class="vue" hidden></section>
+      <section id="vue-portrait" class="vue" hidden></section>
+
+      <!-- Guide : texte fixe -->
+      <section id="vue-guide" class="vue guide" hidden>
+        <h1 class="page-titre">Guide</h1>
+        <p class="page-intro">Les notions de base, une méthode pour examiner une affirmation et quelques outils pour débattre.</p>
+
+        <nav class="carte" aria-label="Sommaire du guide">
+          <ul class="sommaire">
+            <li><a href="#guide/difference">Biais ou sophisme ?</a></li>
+            <li><a href="#guide/systemes">Deux modes de pensée</a></li>
+            <li><a href="#guide/origine">Pourquoi les biais existent</a></li>
+            <li><a href="#guide/logique">Valide, vrai, solide</a></li>
+            <li><a href="#guide/methode">Examiner une affirmation</a></li>
+            <li><a href="#guide/debattre">Débattre honnêtement</a></li>
+            <li><a href="#guide/philosophie">Outils philosophiques</a></li>
+            <li><a href="#guide/decision">Avant une décision</a></li>
+            <li><a href="#guide/recherche">L'état de la recherche</a></li>
+            <li><a href="#guide/lexique">Lexique</a></li>
+            <li><a href="#guide/lectures">Pour aller plus loin</a></li>
+            <li><a href="#guide/donnees">Vos données</a></li>
+          </ul>
+        </nav>
+
+        <article class="carte" id="g-difference">
+          <h2>Biais ou sophisme ?</h2>
+          <p>Un <strong>biais cognitif</strong> est une déviation systématique du jugement par rapport à une norme (logique, probabilités, intérêt bien compris). Il concerne la personne qui raisonne : il est involontaire, et touche aussi ceux qui le connaissent.</p>
+          <p>Un <strong>sophisme</strong> concerne un argument : sa structure ou son contenu ne permet pas d'établir la conclusion, même s'il en donne l'apparence. La tradition française distingue le <em>paralogisme</em>, commis de bonne foi, du <em>sophisme</em> au sens strict, employé pour tromper.</p>
+          <figure class="schema figure-guide">
+            <svg viewBox="0 0 320 120" role="img" aria-label="Illusion de Müller-Lyer : deux traits de même longueur qui paraissent inégaux">
+              <path class="sch-c-trait" d="M90 34h140M90 86h140"/>
+              <path class="sch-trait" d="M90 34 72 20M90 34 72 48M230 34l18-14M230 34l18 14M90 86l18-14M90 86l18 14M230 86l-18-14M230 86l-18 14"/>
+              <path class="sch-pointille" d="M90 12v96M230 12v96"/>
+            </svg>
+            <figcaption>Les deux traits ont exactement la même longueur, et le savoir ne change rien à ce que l'on voit. Il en va de même des biais : les connaître ne suffit pas à s'en protéger. <a href="#chiffres/illusion">Mesurer cette illusion →</a></figcaption>
+          </figure>
+          <p>Les deux sont liés : un biais rend souvent un sophisme convaincant. L'argument d'autorité fonctionne parce que nous sommes enclins à la <a href="#biais/autorite">soumission à l'autorité</a> ; l'appel à la popularité, parce que nous tendons au <a href="#biais/conformisme">conformisme</a>.</p>
+        </article>
+
+        <article class="carte" id="g-systemes">
+          <h2>Deux modes de pensée</h2>
+          <p>Une description courante distingue deux modes de traitement de l'information :</p>
+          <ul>
+            <li><strong>Système 1</strong> : rapide, automatique, sans effort, associatif. Il reconnaît un visage ou répond « 10 centimes » à la question de la batte et de la balle.</li>
+            <li><strong>Système 2</strong> : lent, délibéré, coûteux en attention. Il effectue un calcul ou vérifie un raisonnement.</li>
+          </ul>
+          <p>La plupart des biais apparaissent quand une réponse du système 1 est acceptée sans contrôle par le système 2. Les termes viennent de Stanovich et West (2000) et ont été popularisés par Daniel Kahneman (<em>Thinking, Fast and Slow</em>, 2011 ; trad. <em>Système 1 / Système 2</em>, 2012). Il s'agit d'un modèle simplificateur, non de deux régions du cerveau.</p>
+          <p><a href="#tests/crt">Tester avec trois questions →</a></p>
+        </article>
+
+        <article class="carte" id="g-origine">
+          <h2>Pourquoi les biais existent</h2>
+          <p>Les biais sont le revers d'heuristiques, des raccourcis qui donnent rapidement une réponse souvent correcte. Gerd Gigerenzer insiste sur ce point : dans leur environnement habituel, ces raccourcis sont souvent plus efficaces qu'un calcul complet.</p>
+          <p>Buster Benson (2016) regroupe environ 180 biais selon quatre problèmes auxquels ils répondent :</p>
+          <ol>
+            <li><strong>Trop d'information</strong> : on filtre, en retenant ce qui est récent, répété, surprenant ou conforme à nos attentes.</li>
+            <li><strong>Pas assez de sens</strong> : on comble les vides avec des motifs, des stéréotypes et des suppositions.</li>
+            <li><strong>Besoin d'agir vite</strong> : on tranche, en privilégiant la confiance, le statu quo et le court terme.</li>
+            <li><strong>Mémoire limitée</strong> : on simplifie et on généralise, au prix d'oublis et de reconstructions.</li>
+          </ol>
+          <p>John Manoogian III a tiré de ce classement une illustration très diffusée, le <em>Cognitive Bias Codex</em>.</p>
+        </article>
+
+        <article class="carte" id="g-logique">
+          <h2>Valide, vrai, solide</h2>
+          <p>Un argument est <strong>valide</strong> si sa conclusion découle nécessairement de ses prémisses. La vérité concerne les affirmations, la validité concerne le lien entre elles. Un argument valide dont les prémisses sont vraies est dit <strong>solide</strong> (en anglais <em>sound</em>).</p>
+          <ul>
+            <li>« Tous les chats volent ; Félix est un chat ; donc Félix vole » est valide, mais pas solide.</li>
+            <li>« S'il pleut, la route est mouillée ; la route est mouillée ; donc il pleut » n'est pas valide, même si sa conclusion peut être vraie.</li>
+          </ul>
+          <p>Les <strong>sophismes formels</strong> sont des erreurs de structure, repérables en remplaçant les termes par des lettres (voir <a href="#sophismes/affirmation-consequent">affirmation du conséquent</a>). Les <strong>sophismes informels</strong> sont des erreurs de contenu ou de pertinence : la forme peut être correcte, mais une prémisse est fausse, non pertinente ou suppose la conclusion.</p>
+        </article>
+
+        <article class="carte" id="g-methode">
+          <h2>Examiner une affirmation en six questions</h2>
+          <ol>
+            <li><strong>Que dit-elle exactement ?</strong> Reformuler, préciser les termes, demander les chiffres absolus derrière les pourcentages. <small>(<a href="#sophismes/equivoque">équivoque</a>, <a href="#biais/cadrage">cadrage</a>)</small></li>
+            <li><strong>Qui l'affirme, et sur quelle base ?</strong> Compétence dans ce domaine précis, intérêts en jeu, source d'origine. <small>(<a href="#sophismes/autorite">argument d'autorité</a>, <a href="#sophismes/hors-contexte">citation hors contexte</a>)</small></li>
+            <li><strong>Quelles preuves ?</strong> Une anecdote, une étude, plusieurs études ? Sur combien de cas, avec quel groupe de comparaison ? <small>(<a href="#sophismes/generalisation-hative">généralisation hâtive</a>, <a href="#biais/taille-echantillon">taille de l'échantillon</a>)</small></li>
+            <li><strong>Par rapport à quoi ?</strong> Quel est le taux de base, la période complète, l'ensemble des données ? <small>(<a href="#biais/taux-de-base">taux de base</a>, <a href="#sophismes/cherry-picking">cueillette de cerises</a>)</small></li>
+            <li><strong>Quelles autres explications ?</strong> Le hasard, un facteur commun, une causalité inverse, un retour à la moyenne. <small>(<a href="#sophismes/correlation">corrélation</a>, <a href="#biais/regression-moyenne">régression</a>)</small></li>
+            <li><strong>Qu'est-ce qui me ferait changer d'avis ?</strong> Si rien ne le pourrait, le problème vient peut-être de moi. <small>(<a href="#biais/raisonnement-motive">raisonnement motivé</a>, <a href="#biais/confirmation">confirmation</a>)</small></li>
+          </ol>
+        </article>
+
+        <article class="carte" id="g-debattre">
+          <h2>Débattre honnêtement</h2>
+          <p><strong>Le principe de charité</strong> (Neil Wilson, 1959 ; Donald Davidson) consiste à interpréter les propos de l'autre dans leur version la plus cohérente avant de les critiquer. C'est le meilleur antidote à l'<a href="#sophismes/homme-de-paille">homme de paille</a>.</p>
+          <p><strong>L'homme d'acier</strong> (en anglais <em>steelman</em>) va plus loin : reformuler la position adverse dans sa version la plus forte, puis répondre à celle-ci.</p>
+          <p><strong>Les règles de Rapoport</strong>, rapportées par Daniel Dennett (<em>Intuition Pumps</em>, 2013), pour critiquer une position :</p>
+          <ol>
+            <li>la reformuler si clairement que son auteur dise : « Merci, je n'aurais pas dit mieux » ;</li>
+            <li>énumérer les points d'accord ;</li>
+            <li>mentionner ce qu'on en a appris ;</li>
+            <li>seulement ensuite, formuler sa critique.</li>
+          </ol>
+          <p>Enfin, nommer un sophisme ne suffit pas : un argument mal construit peut défendre une conclusion vraie (<a href="#sophismes/sophisme-sophisme">sophisme du sophisme</a>).</p>
+        </article>
+
+        <article class="carte" id="g-philosophie">
+          <h2>Outils philosophiques</h2>
+          <p>Quelques principes, forgés par des philosophes, qui servent au quotidien à trier les affirmations.</p>
+          <dl class="lexique">
+            <dt>Le rasoir d'Ockham</dt>
+            <dd>Entre deux explications qui rendent également compte des faits, préférer celle qui suppose le moins de choses. Le principe est attribué à Guillaume d'Ockham (XIVe siècle), qui n'a pourtant jamais écrit la formule célèbre « les entités ne doivent pas être multipliées sans nécessité ». C'est une règle de prudence, pas une preuve : l'explication la plus simple peut être fausse.</dd>
+            <dt>La charge de la preuve</dt>
+            <dd>C'est à celui qui affirme d'apporter des preuves, pas aux autres de démontrer qu'il a tort. Bertrand Russell l'illustrait par une théière invisible en orbite autour du Soleil (1952) ; Christopher Hitchens l'a résumé ainsi : « Ce qui peut être affirmé sans preuve peut être rejeté sans preuve. »</dd>
+            <dt>Des preuves à la hauteur</dt>
+            <dd>« Des affirmations extraordinaires demandent des preuves extraordinaires » (Carl Sagan, 1979). L'idée est déjà chez Laplace en 1814 : plus une affirmation contredit ce que l'on sait, plus les preuves doivent être solides.</dd>
+            <dt>La réfutabilité</dt>
+            <dd>Pour Karl Popper (1934), une théorie scientifique doit pouvoir être contredite par une observation possible. Une théorie que tout confirme, quoi qu'il arrive, n'apprend rien : c'est un défaut, pas une force.</dd>
+            <dt>Le problème de l'induction</dt>
+            <dd>David Hume (1739) : aucune quantité d'observations passées ne garantit logiquement la suivante. Nous généralisons quand même, et c'est raisonnable ; mais une régularité reste une hypothèse, pas une certitude.</dd>
+            <dt>Le doute méthodique</dt>
+            <dd>René Descartes (« Discours de la méthode », 1637) : ne tenir pour vrai que ce que l'on ne peut mettre en doute. À petite dose, c'est le cœur de l'esprit critique ; poussé à l'extrême, il ne laisse plus rien à croire. L'objectif réaliste n'est pas la certitude, mais une confiance proportionnée aux preuves.</dd>
+            <dt>Savoir ce que l'on ne sait pas</dt>
+            <dd>La formule « Je sais que je ne sais rien » ne figure pas telle quelle chez Platon. Dans l'« Apologie », Socrate dit plutôt qu'il est plus sage qu'un autre en ceci qu'il ne croit pas savoir ce qu'il ne sait pas : connaître les limites de son savoir est un point de départ.</dd>
+          </dl>
+          <p><a href="#tests/pensee">Éprouver ses intuitions : les expériences de pensée →</a></p>
+        </article>
+
+        <article class="carte" id="g-decision">
+          <h2>Avant une décision importante</h2>
+          <p>Huit vérifications, à faire avant un choix coûteux ou difficile à annuler.</p>
+          <ul class="verif" id="verif">
+            <li><label><input type="checkbox"> <span>J'ai cherché activement les arguments contre mon choix. <small>(<a href="#biais/confirmation">confirmation</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>Je connais la fréquence habituelle de ce genre de situation. <small>(<a href="#biais/taux-de-base">taux de base</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>Je me suis fait une estimation avant d'entendre le premier chiffre. <small>(<a href="#biais/ancrage">ancrage</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>Je ne continue pas seulement à cause de ce que j'ai déjà investi. <small>(<a href="#biais/couts-irrecuperables">coûts irrécupérables</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>J'ai reformulé les options autrement, et ma préférence n'a pas changé. <small>(<a href="#biais/cadrage">cadrage</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>J'ai estimé le délai à partir de projets comparables, pas de mon plan idéal. <small>(<a href="#biais/planification">planification</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>J'ai recueilli des avis indépendants avant toute discussion de groupe. <small>(<a href="#biais/pensee-groupe">pensée de groupe</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>J'ai noté ce que j'attends, pour pouvoir juger la décision et non seulement son résultat. <small>(<a href="#biais/resultat">biais du résultat</a>)</small></span></label></li>
+          </ul>
+          <button class="lien" id="btn-verif">Tout décocher</button>
+        </article>
+
+        <article class="carte" id="g-recherche">
+          <h2>L'état de la recherche</h2>
+          <p>Depuis les années 2010, la psychologie traverse une « crise de la réplication ». En 2015, l'Open Science Collaboration a tenté de reproduire 100 études publiées : environ un tiers seulement ont donné un résultat significatif comparable.</p>
+          <p>Certains effets très médiatisés, comme l'amorçage social ou l'« épuisement de l'ego », sont aujourd'hui fortement contestés et ne figurent pas ici. Les fiches retenues portent sur des effets bien établis ; lorsqu'un résultat est discuté (effet Dunning-Kruger, expérience de Hofling, illusion de contrôle, biais d'omission…), la fiche le signale.</p>
+        </article>
+
+        <article class="carte" id="g-lexique">
+          <h2>Lexique</h2>
+          <dl class="lexique">
+            <dt>Heuristique</dt><dd>Règle de jugement simple et rapide, souvent efficace, mais source d'erreurs systématiques dans certaines situations.</dd>
+            <dt>Prémisse, conclusion</dt><dd>Les prémisses sont les affirmations dont part un argument ; la conclusion est ce qu'il prétend établir.</dd>
+            <dt>Taux de base</dt><dd>Fréquence d'un phénomène dans la population, avant toute information particulière sur le cas étudié.</dd>
+            <dt>Probabilité conditionnelle</dt><dd>P(A | B) : probabilité de A sachant B. Elle est en général différente de P(B | A).</dd>
+            <dt>Corrélation</dt><dd>Lien statistique entre deux variables qui varient ensemble. Elle ne suffit pas à établir une relation de cause à effet.</dd>
+            <dt>Facteur de confusion</dt><dd>Variable qui influence à la fois la cause supposée et l'effet observé, créant un lien apparent entre eux.</dd>
+            <dt>Groupe témoin</dt><dd>Groupe comparable à celui qui reçoit une intervention, mais qui ne la reçoit pas, pour mesurer ce qui se serait passé sans elle.</dd>
+            <dt>Essai randomisé</dt><dd>Étude où l'intervention est attribuée par tirage au sort, ce qui répartit équitablement les facteurs de confusion entre les groupes.</dd>
+            <dt>Échantillon représentatif</dt><dd>Sous-ensemble dont la composition reflète celle de la population étudiée.</dd>
+            <dt>Significativité statistique</dt><dd>Un résultat est dit significatif lorsqu'il serait peu probable d'observer un écart au moins aussi grand si l'effet n'existait pas. Cela ne dit rien de l'ampleur ni de l'importance de l'effet.</dd>
+            <dt>Réplication</dt><dd>Reproduction d'une étude par d'autres chercheurs, pour vérifier que le résultat tient.</dd>
+            <dt>Méta-analyse</dt><dd>Synthèse statistique de nombreuses études sur une même question.</dd>
+            <dt>Biais de publication</dt><dd>Tendance à publier plus volontiers les résultats positifs que les résultats nuls, ce qui fausse l'image d'ensemble.</dd>
+            <dt>Falsifiabilité</dt><dd>Critère proposé par Karl Popper (1934) : une affirmation scientifique doit pouvoir être contredite par une observation.</dd>
+            <dt>Charge de la preuve</dt><dd>Obligation, pour celui qui avance une affirmation, de la justifier.</dd>
+            <dt>Rasoir d'Ockham</dt><dd>Principe attribué à Guillaume d'Ockham (XIVe siècle) : entre deux explications qui rendent compte des faits, préférer celle qui fait le moins d'hypothèses.</dd>
+          </dl>
+        </article>
+
+        <article class="carte" id="g-lectures">
+          <h2>Pour aller plus loin</h2>
+          <ul>
+            <li>Daniel Kahneman, <em>Système 1 / Système 2. Les deux vitesses de la pensée</em>, Flammarion, 2012.</li>
+            <li>Daniel Kahneman, Olivier Sibony et Cass Sunstein, <em>Noise</em>, Odile Jacob, 2021.</li>
+            <li>Hans Rosling, <em>Factfulness</em>, Flammarion, 2019.</li>
+            <li>Normand Baillargeon, <em>Petit cours d'autodéfense intellectuelle</em>, Lux, 2005.</li>
+            <li>Arthur Schopenhauer, <em>L'Art d'avoir toujours raison</em> (1864), éditions diverses.</li>
+            <li>Gérald Bronner, <em>La Démocratie des crédules</em>, PUF, 2013.</li>
+            <li>Gerd Gigerenzer, <em>Le Génie de l'intuition</em>, Belfond, 2009.</li>
+            <li>Annie Duke, <em>Thinking in Bets</em>, Portfolio, 2018 (en anglais).</li>
+          </ul>
+        </article>
+
+        <article class="carte" id="g-donnees">
+          <h2>Vos données</h2>
+          <p>Votre progression (fiches acquises, réponses au quiz, révisions, résultats des ateliers) est enregistrée uniquement dans ce navigateur, sur cet appareil. Rien n'est envoyé ailleurs.</p>
+          <p>Pour retrouver votre progression sur un autre appareil (du Mac à l'iPhone, par exemple), enregistrez-la dans un fichier, puis ouvrez ce fichier depuis l'autre appareil.</p>
+          <div class="actions actions-donnees">
+            <button class="bouton secondaire" id="btn-exporter">Enregistrer dans un fichier</button>
+            <label class="bouton secondaire" for="fichier-import">Restaurer depuis un fichier</label>
+            <input type="file" id="fichier-import" accept="application/json,.json" hidden>
+          </div>
+          <button class="bouton secondaire bouton-danger" id="btn-effacer">Effacer ma progression</button>
+        </article>
+      </section>
+    </main>
+
+    <p class="pied">Esprit critique · contenu sourcé · aucune donnée ne quitte cet appareil</p>
+  </div>
+
+  <script src="donnees.js"></script>
+  <script src="schemas.js"></script>
+  <script src="pays.js"></script>
+  <script src="jeux-donnees.js"></script>
+  <script src="ateliers.js"></script>
+  <script src="experiences.js"></script>
+  <script src="chiffres.js"></script>
+  <script src="perception.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

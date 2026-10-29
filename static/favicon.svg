@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -6 40 40">
+  <!-- Emblème d'Esprit critique : illusion de Müller-Lyer. Les deux traits ont la même longueur. -->
+  <style>
+    .trait { stroke: #1c1b19; }
+    .ailette { stroke: #1d4f91; }
+    @media (prefers-color-scheme: dark) {
+      .trait { stroke: #ecebe7; }
+      .ailette { stroke: #8db3e8; }
+    }
+  </style>
+  <g fill="none" stroke-linecap="round">
+    <path class="trait" stroke-width="2.6" d="M10 8h20M10 20h20"/>
+    <path class="ailette" stroke-width="2.2" d="M10 8 5 3M10 8l-5 5M30 8l5-5M30 8l5 5M10 20l5-5M10 20l5 5M30 20l-5-5M30 20l-5 5"/>
+  </g>
+</svg>
