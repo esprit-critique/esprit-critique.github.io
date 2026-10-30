@@ -787,6 +787,8 @@ const JEUX = [
           tableau.appendChild(tr);
         });
         zone.appendChild(tableau);
+        const notes = tours.filter(t => t.q.note).map(t => t.q.q + " : " + t.q.note);
+        if (notes.length) zone.appendChild(paragraphe("Sources et précisions. " + notes.join(". ") + ".", "source"));
 
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Un nombre que l'on sait arbitraire suffit à tirer les estimations vers lui. Tversky et Kahneman (1974) utilisaient une roue de loterie truquée ; d'autres études ont utilisé les deux derniers chiffres du numéro de sécurité sociale des participants (Ariely, Loewenstein et Prelec, 2003).",
