@@ -34,6 +34,14 @@ f.onload = async () => {
       const q = w.eval("quiz").serie[w.eval("quiz").index];
       vue().querySelectorAll(".choix")[q.options.findIndex(o => o !== q.fiche)].click();
     },
+    "quiz-faux-verdict": async () => {
+      w.localStorage.setItem("certitudeQuiz", "false");
+      await aller("quiz/tout");
+      const q = w.eval("quiz").serie[w.eval("quiz").index];
+      vue().querySelectorAll(".choix")[q.options.findIndex(o => o !== q.fiche)].click();
+      await pause(50);
+      w.scrollTo(0, vue().querySelector(".cas").getBoundingClientRect().top + w.scrollY - 12);
+    },
     "ateliers": async () => { await aller("ateliers"); },
     "ateliers-joues": async () => { await aller("ateliers"); },
     "monde": async () => { await aller("chiffres/monde"); choix(0); },
@@ -181,7 +189,7 @@ f.onload = async () => {
   await pause(150);
   if (etapes[scenario]) await etapes[scenario]();
   else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
-  if (!["accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux", "defi", "calcul-vf", "classement-nord", "double-piege", "thog"].includes(scenario)) w.scrollTo(0, 0);
+  if (!["quiz-faux-verdict", "accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux", "defi", "calcul-vf", "classement-nord", "double-piege", "thog"].includes(scenario)) w.scrollTo(0, 0);
   // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration
   if (scenario.startsWith("schema:")) {
     await aller(decodeURIComponent(scenario.slice(7)));

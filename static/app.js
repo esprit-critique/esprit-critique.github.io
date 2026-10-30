@@ -1646,6 +1646,14 @@ if ("serviceWorker" in navigator && window.top === window && (location.protocol 
   navigator.serviceWorker.register("sw.js").catch(() => { /* hors ligne indisponible : le site fonctionne normalement */ });
 }
 
+// Verdicts longs (plus d'une ligne environ) : italique en 17 px au lieu de 19, moins fatigant à lire
+new MutationObserver(mutations => mutations.forEach(m => m.addedNodes.forEach(n => {
+  if (n.nodeType !== 1) return;
+  [n, ...n.querySelectorAll(".verdict")].forEach(v => {
+    if (v.classList.contains("verdict") && v.textContent.length > 48) v.classList.add("verdict-long");
+  });
+}))).observe(document.querySelector("main"), { childList: true, subtree: true });
+
 // L'emblème est une illusion de Müller-Lyer : un clic montre que les deux traits sont égaux
 document.querySelector(".marque").addEventListener("click", () => {
   const embleme = document.querySelector(".embleme");

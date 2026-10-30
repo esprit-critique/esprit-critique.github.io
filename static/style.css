@@ -1250,3 +1250,12 @@ h3.titre-bloc {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M6 5 11 0.8M6 5 11 9.2M0 5H6' stroke='black' stroke-width='1.4' fill='none'/%3E%3C/svg%3E") right center / 12px 10px no-repeat,
     linear-gradient(black, black) center / calc(100% - 22px) 1.2px no-repeat;
 }
+/* Le crayon du correcteur : la réponse fausse est barrée en rouge (le texte « Réponse attendue » reste l'information),
+   le verdict est une annotation en italique du caractère de titre ; au-delà d'une ligne, il redescend à 17 px */
+.choix.faux > span, .choix.faux:not(:has(> span)) {
+  text-decoration: line-through;
+  text-decoration-color: var(--rouge);
+  text-decoration-thickness: 2px;
+}
+.verdict { font-family: var(--titre); font-style: italic; font-size: 19px; font-weight: 500; line-height: 1.35; }
+.verdict.verdict-long { font-size: 17px; }
