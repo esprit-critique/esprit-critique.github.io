@@ -3,10 +3,10 @@
 Le mode « Notions proches » du quiz présente une situation d'une fiche X (champ `cas` ou `cas2`) et deux réponses :
 X et la notion de son champ `distinction`. Une situation qui convient aussi à cette voisine rend le duel injuste.
 
-J'ai relu les 180 situations (90 fiches × 2). Les 14 situations ci-dessous sont exclues du mode, par la liste
-`SITUATIONS_DOUTEUSES` d'`app.js`. Elles restent utilisées par le quiz ordinaire, où la voisine n'est jamais
-proposée comme mauvaise réponse. **Aucune situation de `donnees.js` n'a été modifiée** : les réécritures
-proposées attendent ton accord. Une fois une situation réécrite, il suffit de retirer sa ligne de la liste.
+J'ai relu les 180 situations (90 fiches × 2). 14 situations posaient problème. Les 8 qui débordaient sur leur
+voisine ont été réécrites le 30 octobre 2026, après relecture, et sont revenues dans le mode. Les 6 situations
+de notions emboîtées restent exclues par la liste `SITUATIONS_DOUTEUSES` d'`app.js` ; elles restent utilisées
+par le quiz ordinaire, où la voisine n'est jamais proposée comme mauvaise réponse.
 
 Notation : `cas` = première situation, `cas2` = seconde.
 
@@ -23,9 +23,9 @@ La fiche elle-même dit que X est une forme particulière de sa voisine : choisi
 Proposition : garder ces situations hors du mode. Pour ces paires, un duel n'a de sens que dans l'autre sens
 (une situation d'attaque personnelle qui n'est pas un « toi aussi », par exemple), ce qui est déjà le cas.
 
-## Situations qui débordent sur la voisine
+## Situations qui débordaient sur la voisine (réécrites)
 
-| Situation | Voisine | Problème | Réécriture proposée |
+| Situation | Voisine | Problème | Réécriture appliquée |
 |---|---|---|---|
 | `biais:taux-de-base` cas2 (le taxi) | Sophisme du procureur | C'est un juge qui conclut, au sujet d'un accident : la forme judiciaire, donc aussi le procureur. | Remplacer « Le juge en conclut » par « Une compagnie d'assurance en conclut », et « impliqué dans un accident » par « impliqué dans un accrochage déclaré à l'assurance ». |
 | `biais:regression-moyenne` cas (le manager) | Post hoc | Le manager attribue l'amélioration aux reproches qui l'ont précédée : c'est aussi un post hoc. | « Un manager prévoit que les dix meilleurs commerciaux du mois feront aussi bien le mois suivant, et fixe leurs objectifs en conséquence. Le mois suivant, la plupart ont des résultats plus proches de la moyenne, et il s'étonne qu'ils se soient relâchés. » |

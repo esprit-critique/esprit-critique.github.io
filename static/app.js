@@ -1064,13 +1064,11 @@ const MODES_QUIZ = [["tout", "Tout"], ["biais", "Biais"], ["sophismes", "Sophism
 const NIVEAUX_CERTITUDE = [["sur", "Sûr"], ["plutot", "Plutôt sûr"], ["hasard", "Au hasard"]];
 
 // Situations exclues du mode « Notions proches » : elles conviennent aussi à la notion voisine,
-// ou la fiche est une forme particulière de sa voisine. Détail et réécritures proposées :
+// la fiche étant une forme particulière de sa voisine. Détail :
 // tests/paires-douteuses.md. « #1 » désigne le champ cas, « #2 » le champ cas2.
 const SITUATIONS_DOUTEUSES = new Set([
   "biais:procureur#1", "biais:procureur#2", "biais:planification#1", "biais:planification#2",
-  "sophismes:tu-quoque#1", "sophismes:tu-quoque#2", "biais:taux-de-base#2", "biais:regression-moyenne#1",
-  "biais:regression-moyenne#2", "biais:taille-echantillon#2", "biais:ikea#1", "biais:negativite#1",
-  "biais:illusion-controle#1", "sophismes:emotion#1"
+  "sophismes:tu-quoque#1", "sophismes:tu-quoque#2"
 ]);
 
 // Mode « Notions proches » : une situation de la fiche X, et deux réponses, X et sa voisine (champ distinction).
