@@ -51,6 +51,10 @@ pour l'utiliser comme une application.
 - **Un guide** : méthode pour examiner une affirmation, débattre honnêtement, outils philosophiques, lexique.
 - **Un journal des repérages** : « Je l'ai repéré » sur chaque fiche, avec une note facultative ; le portrait en fait le bilan.
 - **Thème clair ou sombre** au choix (en bas de page), et **lecture hors ligne** une fois le site visité (service worker).
+- **Sauvegardes automatiques** dans le navigateur : une copie de la progression par jour et une avant chaque import ou
+  restauration (quatre au plus), restaurables depuis « Vos données » ; et l'export dans un fichier.
+- **Pages légales** : mentions légales, politique de confidentialité, conditions d'utilisation, page 404 ; `robots.txt`
+  et `sitemap.xml` pour les moteurs de recherche ; aperçu de partage (`apercu.png`, 1 200 × 630).
 
 ## Principes
 
@@ -88,6 +92,8 @@ puis ouvrir http://localhost:8000. Le serveur n'accepte que les connexions de l'
 | `static/pratiques.js` | ateliers du lot 5 : Wald, fabriquer un résultat, foule intérieure, cécité au choix, bingo, qui doit prouver, pyramide, décision guidée, comprenez-vous, démonter, lecture latérale, bilan avant et après |
 | `static/indices.js` | « Trouver l'indice » : le passage révélateur de chacune des 180 situations |
 | `static/sw.js` | mode hors ligne ; à chaque nouveau fichier, l'ajouter à la liste et changer le numéro de version |
+| `static/mentions-legales.html`, `confidentialite.html`, `cgu.html`, `404.html` | pages fixes, générées par `tests/pages/generer_pages.py` (ne pas les modifier à la main) |
+| `static/robots.txt`, `static/sitemap.xml`, `static/apercu.png` | référencement et aperçu de partage (source de l'image : `tests/pages/apercu.html`) |
 | `static/jeux-donnees.js`, `static/pays.js` | contenus et données des ateliers |
 | `app.py` | petit serveur local (Python, sans dépendance) |
 
@@ -111,6 +117,7 @@ CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 | `tests/niveaux.html` | nombre d'items par niveau, en rouge quand il en manque (`tests/lancer.sh items`) |
 | `tests/_affichage.html` | contrôle l'affichage de chaque page et de toutes les variantes des dessins générés |
 | `tests/controle-affichage.js` | détection des textes coupés ou superposés, des débordements, du défilement horizontal, des boutons et champs sans nom accessible, des identifiants en double |
+| `tests/pages/optimiser_png.py` | recompression des PNG en Python pur, sans perte (option `--palette` : 256 couleurs) |
 | `tests/csp.py` | ouvre la vraie page, hors cadre, sur 14 adresses : aucun blocage de la CSP ni erreur JavaScript (les autres bancs utilisent une copie sans CSP, `_site.html`, car ils lisent l'état du site avec `eval`) |
 | `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |
 | `tests/pays/` | `telecharger.sh` puis `generer_pays.py` : régénère `static/pays.js` (Banque mondiale, HCR) |

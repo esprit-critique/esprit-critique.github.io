@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Plan du site pour les moteurs de recherche. Les fiches et ateliers sont des adresses en « # » de la page
+     d'accueil, que les moteurs ne traitent pas comme des pages distinctes : seule la page d'accueil est listée. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://esprit-critique.github.io/</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://esprit-critique.github.io/mentions-legales.html</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://esprit-critique.github.io/confidentialite.html</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://esprit-critique.github.io/cgu.html</loc><lastmod>2026-10-30</lastmod></url>
+</urlset>

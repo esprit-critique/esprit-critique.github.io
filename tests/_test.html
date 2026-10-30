@@ -369,6 +369,21 @@ f.onload = async () => {
     ok("import : clés valides reprises, valeurs d'une autre forme et clés inconnues ignorées",
       w.localStorage.getItem("acquis") === '["biais:ancrage"]' && w.localStorage.getItem("memoire") === null && w.localStorage.getItem("theme") === null && w.localStorage.getItem("inconnue") === null
       && !!f.contentDocument.querySelector("main > section:not([hidden])"));
+
+    // ---------- Sauvegardes automatiques ----------
+    const sauvegardes = JSON.parse(w.localStorage.getItem("sauvegardesAuto") || "[]");
+    ok("sauvegardes automatiques : copie du jour et copie avant import, quatre au plus", sauvegardes.length <= 4
+      && sauvegardes.some(s => s.motif === "quotidienne" && s.jour === w.eval("aujourdHui()")) && sauvegardes.some(s => s.motif === "avant import"));
+    const avantImport = sauvegardes.find(s => s.motif === "avant import");
+    const valeurDe = cle => avantImport.cles[cle] === undefined ? "absente" : JSON.stringify(avantImport.cles[cle]);
+    w.confirm = () => true;
+    const recharge2 = new Promise(res => { f.onload = res; });
+    // La liste affichée va de la plus récente à la plus ancienne
+    [...f.contentDocument.querySelectorAll("#sauvegardes-auto button")][sauvegardes.length - 1 - sauvegardes.indexOf(avantImport)].click();
+    await recharge2; await pause(300);
+    const apres = JSON.parse(w.localStorage.getItem("sauvegardesAuto") || "[]");
+    ok("sauvegardes automatiques : la copie d'avant l'import est restaurée, l'état remplacé est gardé",
+      ["acquis", "memoire", "modeQuiz"].every(c => (w.localStorage.getItem(c) ?? "absente") === valeurDe(c)) && apres.some(s => s.motif === "avant restauration") && apres.length <= 4);
   } catch (e) {
     lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
   }

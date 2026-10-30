@@ -7,7 +7,9 @@ import os, re, select, shutil, signal, subprocess, sys, tempfile, time
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 ADRESSES = ["accueil", "biais/ancrage", "sophismes/post-hoc", "quiz", "ateliers", "chiffres/monde", "chiffres/intervalles",
-            "tests/demonter", "tests/laterale", "bingo/12345", "portrait", "guide/methode", "adresse-inconnue", "biais/%E0"]
+            "tests/demonter", "tests/laterale", "bingo/12345", "portrait", "guide/methode", "adresse-inconnue", "biais/%E0",
+            # Pages fixes (adresses commençant par « / »)
+            "/mentions-legales.html", "/confidentialite.html", "/cgu.html", "/404.html"]
 SIGNES = re.compile(r"Content Security Policy|Refused to|Uncaught|TypeError|ReferenceError|SyntaxError|URIError")
 taille, theme, sortie = sys.argv[1:4]
 
@@ -16,7 +18,7 @@ for adresse in ADRESSES:
     profil = tempfile.mkdtemp(prefix="chrome-csp-")
     cmd = [CHROME, "--headless=new", "--disable-gpu", "--no-first-run", "--user-data-dir=" + profil, "--window-size=" + taille,
            f"--blink-settings=preferredColorScheme={1 if theme == 'clair' else 0}", "--enable-logging=stderr", "--v=0",
-           "http://localhost:8000/#" + adresse]
+           "http://localhost:8000" + adresse if adresse.startswith("/") else "http://localhost:8000/#" + adresse]
     p = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, start_new_session=True)
     tampon, fin = b"", time.time() + 6   # six secondes de vraie exécution par adresse
     while time.time() < fin:
@@ -30,7 +32,7 @@ for adresse in ADRESSES:
     shutil.rmtree(profil, ignore_errors=True)
     for ligne in tampon.decode("utf-8", "replace").splitlines():
         if "CONSOLE" in ligne and SIGNES.search(ligne):
-            problemes.append("#" + adresse + " : " + ligne.split("] ", 1)[-1][:300])
+            problemes.append(("" if adresse.startswith("/") else "#") + adresse + " : " + ligne.split("] ", 1)[-1][:300])
 
 lignes = ["RÉSUMÉ : " + ("aucun blocage ni erreur" if not problemes else str(len(problemes)) + " problème(s)") + " sur " + str(len(ADRESSES)) + " adresses"]
 lignes += ["ÉCHEC " + x for x in problemes]

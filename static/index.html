@@ -20,7 +20,12 @@
   <meta property="og:title" content="Esprit critique">
   <meta property="og:description" content="Biais cognitifs et sophismes : 90 fiches sourcées, un quiz à révision espacée et 45 ateliers.">
   <meta property="og:url" content="https://esprit-critique.github.io/">
-  <meta property="og:image" content="https://esprit-critique.github.io/icone-512.png?v=3">
+  <meta property="og:image" content="https://esprit-critique.github.io/apercu.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Esprit critique : biais cognitifs et sophismes. 90 fiches sourcées, un quiz, 45 ateliers.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://esprit-critique.github.io/">
   <!-- Icônes : l'emblème de l'en-tête. « ?v=3 » oblige le navigateur à oublier les anciennes. -->
   <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="icone-32.png?v=3" sizes="32x32" type="image/png">
@@ -291,13 +296,14 @@
 
         <article class="carte" id="g-donnees">
           <h2>Vos données</h2>
-          <p>Votre progression (fiches acquises, réponses au quiz, révisions, résultats des ateliers) est enregistrée uniquement dans votre navigateur. Elle n'est envoyée nulle part : le site n'a ni compte, ni base de données, ni mesure d'audience. Il est hébergé par GitHub Pages, qui, comme tout hébergeur, reçoit les demandes de pages, mais jamais vos réponses.</p>
+          <p>Votre progression (fiches acquises, réponses au quiz, révisions, résultats des ateliers) est enregistrée uniquement dans votre navigateur. Elle n'est envoyée nulle part : le site n'a ni compte, ni base de données, ni mesure d'audience. Une copie en est faite chaque jour, dans ce même navigateur (voir plus bas). Détail : <a href="confidentialite.html">politique de confidentialité</a>. Il est hébergé par GitHub Pages, qui, comme tout hébergeur, reçoit les demandes de pages, mais jamais vos réponses.</p>
           <p>Si vous effacez les données de navigation, votre progression disparaît. Pour la conserver, ou pour la retrouver sur un autre appareil (de l'ordinateur au téléphone, par exemple), enregistrez-la dans un fichier, puis ouvrez ce fichier depuis l'autre appareil.</p>
           <div class="actions actions-donnees">
             <button class="bouton secondaire" id="btn-exporter">Enregistrer dans un fichier</button>
             <label class="bouton secondaire" for="fichier-import">Restaurer depuis un fichier</label>
             <input type="file" id="fichier-import" accept="application/json,.json" hidden>
           </div>
+          <div id="sauvegardes-auto"></div>
           <button class="bouton secondaire bouton-danger" id="btn-effacer">Effacer ma progression</button>
         </article>
       </section>
@@ -306,6 +312,7 @@
     <footer class="pied">
       <p>Esprit critique · contenu sourcé · votre progression reste dans votre navigateur</p>
       <p><button class="lien" id="btn-partager">Partager le site</button> · <a href="https://github.com/esprit-critique/esprit-critique.github.io">Code source</a> · <a href="#guide/donnees">Vos données</a></p>
+      <p><a href="mentions-legales.html">Mentions légales</a> · <a href="confidentialite.html">Confidentialité</a> · <a href="cgu.html">Conditions d'utilisation</a></p>
       <p class="choix-theme" role="group" aria-label="Thème d'affichage">Thème :
         <button type="button" data-theme-choix="auto">Auto</button>
         <button type="button" data-theme-choix="light">Clair</button>

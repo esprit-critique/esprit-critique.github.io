@@ -16,6 +16,8 @@
 //   html-texte-deborde          un texte dépasse de sa boîte (ou y est tronqué)
 //   a11y-sans-nom               un bouton, un lien ou un champ sans nom pour les lecteurs d'écran
 //   id-double                   un identifiant HTML utilisé plusieurs fois
+//   image-sans-texte            une image ou un dessin SVG non décoratif sans texte alternatif
+//   contraste-faible            un texte trop peu contrasté avec son fond (WCAG AA : 4,5:1, 3:1 en grands caractères)
 
 (function () {
   const MARGE = 0.5; // tolérance, en pixels ou en unités du viewBox
@@ -161,6 +163,52 @@
           || (e.matches("input, textarea, select") ? "" : e.textContent) || "").trim();
         if (!nomAccessible) defauts.push({ type: "a11y-sans-nom", ou: nom, texte: e.outerHTML.slice(0, 80), detail: "aucun nom accessible" });
       }
+    });
+    // Contraste : chaque texte visible face à la couleur de fond réelle (premier ancêtre au fond non transparent)
+    // Couleur calculée → [r, g, b, alpha] sur 255 : « rgb(…) », ou « color(srgb r g b / a) » (valeurs de 0 à 1, issue de color-mix)
+    const rgba = c => {
+      const m = (c.match(/-?[\d.]+(e-?\d+)?/g) || []).map(Number);
+      if (m.length < 3) return null;
+      if (/^color\(srgb/.test(c)) return [m[0] * 255, m[1] * 255, m[2] * 255, m.length > 3 ? m[3] : 1];
+      if (/^rgba?\(/.test(c)) return [m[0], m[1], m[2], m.length > 3 ? m[3] : 1];
+      return null;   // autre espace de couleur (lab, oklch…) : non vérifié
+    };
+    const lum = ([r, g, b]) => [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+    const fondDe = e => {
+      const couches = [];
+      for (let p = e; p; p = p.parentElement) {
+        const c = rgba(getComputedStyle(p).backgroundColor);
+        if (c && c[3] > 0) { couches.push(c); if (c[3] >= 1) break; }
+      }
+      let fond = [255, 255, 255];
+      couches.reverse().forEach(c => { fond = fond.map((v, i) => v * (1 - c[3]) + c[i] * c[3]); });
+      return fond;
+    };
+    vue.querySelectorAll("*").forEach(e => {
+      if (e.closest("svg") || e.matches(":disabled, [aria-hidden=true] *")) return;
+      if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) return;
+      const cs = getComputedStyle(e);
+      if (cs.visibility === "hidden" || cs.display === "none" || e.getBoundingClientRect().width < 1) return;
+      let opacite = 1;
+      // Une animation d'entrée (opacité de 0 à 1) est jugée sur son état final : sans fenêtre, Chrome ne la fait pas
+      // toujours avancer. Seule une opacité voulue (texte estompé à dessein) dispense du contrôle.
+      for (let p = e; p; p = p.parentElement) { const s = getComputedStyle(p); if (s.animationName === "none") opacite *= +s.opacity; }
+      if (opacite < 0.99) return;
+      const c = rgba(cs.color); if (!c) return;
+      const fond = fondDe(e);
+      const texte = c.slice(0, 3).map((v, i) => v * c[3] + fond[i] * (1 - c[3]));
+      const [l1, l2] = [lum(texte), lum(fond)].sort((a, b) => b - a);
+      const ratio = (l1 + 0.05) / (l2 + 0.05);
+      const taille = parseFloat(cs.fontSize), gras = +cs.fontWeight >= 700;
+      const seuil = taille >= 24 || (gras && taille >= 18.66) ? 3 : 4.5;
+      if (ratio < seuil) defauts.push({ type: "contraste-faible", ou: e.tagName.toLowerCase() + (e.classList.length ? "." + [...e.classList].join(".") : ""), texte: (e.textContent || "").trim().slice(0, 60), detail: ratio.toFixed(2) + ":1 pour " + seuil + ":1 (" + cs.color + " sur rgb(" + fond.map(Math.round).join(", ") + "))" });
+    });
+    // Textes alternatifs : une image doit avoir un alt ; un dessin SVG est soit décoratif (aria-hidden), soit décrit
+    vue.querySelectorAll("img").forEach(i => { if (!i.hasAttribute("alt")) defauts.push({ type: "image-sans-texte", ou: "img", texte: i.src, detail: "pas d'attribut alt" }); });
+    vue.querySelectorAll("svg").forEach(s => {
+      if (s.parentElement.closest("svg") || s.closest("[aria-hidden=true]")) return;
+      const decrit = s.getAttribute("aria-label") || s.getAttribute("aria-labelledby") || s.querySelector(":scope > title");
+      if (!decrit) defauts.push({ type: "image-sans-texte", ou: nomDuDessin(s), texte: "", detail: "dessin SVG ni décoratif (aria-hidden) ni décrit (aria-label)" });
     });
     // Identifiants en double dans toute la page
     const vus = new Set();

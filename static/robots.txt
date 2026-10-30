@@ -1,0 +1,5 @@
+# Esprit critique : tout le site peut être indexé.
+User-agent: *
+Allow: /
+
+Sitemap: https://esprit-critique.github.io/sitemap.xml

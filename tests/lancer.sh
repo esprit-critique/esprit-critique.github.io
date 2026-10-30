@@ -31,6 +31,11 @@ for f in tests/_*.html tests/niveaux.html; do
   verdict=$(osascript -l JavaScript -e "ObjC.import('Foundation'); var t = \$.NSString.stringWithContentsOfFileEncodingError('/tmp/banc-syntaxe.js', \$.NSUTF8StringEncoding, null).js; try { new Function(t); 'ok' } catch (e) { e + ' (ligne ' + e.line + ')' }")
   [ "$verdict" != ok ] && { echo "!! $f : $verdict"; ERREUR_SYNTAXE=1; }
 done
+# Syntaxe des scripts du site : une erreur (variable déclarée deux fois…) bloquerait tout le site
+for f in static/*.js; do
+  verdict=$(osascript -l JavaScript -e "ObjC.import('Foundation'); var t = \$.NSString.stringWithContentsOfFileEncodingError('$f', \$.NSUTF8StringEncoding, null).js; try { new Function(t); 'ok' } catch (e) { e + ' (ligne ' + e.line + ')' }")
+  [ "$verdict" != ok ] && { echo "!! $f : $verdict"; ERREUR_SYNTAXE=1; }
+done
 [ -n "$ERREUR_SYNTAXE" ] && { echo "Bancs non lancés : corriger d'abord la syntaxe."; exit 1; }
 
 for f in $COPIES; do cp "tests/$f" static/; done

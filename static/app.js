@@ -690,6 +690,15 @@ function afficherAccueil() {
   zone.append(el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1)), el("h1", "page-titre", "Aujourd'hui"));
   zone.appendChild(el("p", "page-intro", BIAIS.length + " biais et " + SOPHISMES.length + " sophismes, un quiz qui revient sur vos erreurs, et " + tousLesAteliers().length + " ateliers : données réelles, perception, expériences classiques et philosophie."));
 
+  // Appel à l'action : réviser s'il y a des notions dues, sinon commencer le quiz ; les fiches en second choix
+  const nbAReviser = clesAReviser().length;
+  const appel = el("div", "appel-action");
+  appel.appendChild(nbAReviser
+    ? lienVers("#quiz/reviser", "Réviser les notions dues (" + nbAReviser + ")", "bouton")
+    : lienVers("#quiz", Object.keys(memoire).length ? "Continuer le quiz" : "Commencer le quiz : 10 situations", "bouton"));
+  appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), "Parcourir les " + (BIAIS.length + SOPHISMES.length) + " fiches", "bouton secondaire"));
+  zone.appendChild(appel);
+
   // Situation du jour : la même pour tout le monde, une par jour
   const q = situationDuJour();
   const memo = lire("jour", null);
@@ -1452,20 +1461,86 @@ $("btn-verif").addEventListener("click", () => {
   document.querySelectorAll("#verif input").forEach(c => { c.checked = false; });
 });
 
-$("btn-effacer").addEventListener("click", () => {
-  if (!confirm("Effacer toute votre progression (fiches acquises, quiz, révisions, ateliers) ? Cette action est définitive.")) return;
+// ===================== Sauvegardes automatiques =====================
+// Dans le navigateur, sans rien envoyer : une copie de la progression par jour (au premier passage de la journée),
+// et une copie juste avant une opération qui la remplace (import d'un fichier, restauration). Les quatre dernières
+// sont gardées dans la clé « sauvegardesAuto », hors de CLES_SAUVEGARDE : elles ne partent pas dans le fichier exporté.
+const MAX_SAUVEGARDES_AUTO = 4;
+
+// La progression actuelle : toutes les clés enregistrées
+function etatActuel() {
+  const cles = {};
+  CLES_SAUVEGARDE.forEach(cle => {
+    const v = lire(cle, undefined);
+    if (v !== undefined) cles[cle] = v;
+  });
+  return cles;
+}
+
+function sauvegardesAuto() {
+  const liste = lire("sauvegardesAuto", []);
+  return Array.isArray(liste) ? liste.filter(s => s && formeDe(s.cles) === "objet" && typeof s.jour === "number") : [];
+}
+
+function sauvegarderAuto(motif) {
+  const cles = etatActuel();
+  if (!Object.keys(cles).length) return;   // rien à sauvegarder (première visite)
+  const liste = sauvegardesAuto();
+  // Une seule copie quotidienne par jour ; les copies « avant … » s'ajoutent
+  if (motif === "quotidienne" && liste.some(s => s.jour === aujourdHui() && s.motif === "quotidienne")) return;
+  liste.push({ jour: aujourdHui(), motif, heure: new Date().toTimeString().slice(0, 5), cles });
+  ecrire("sauvegardesAuto", liste.slice(-MAX_SAUVEGARDES_AUTO));
+}
+
+// Remplace la progression par celle d'une copie, en ne gardant que les clés valides
+function remplacerProgression(cles) {
   CLES_SAUVEGARDE.forEach(effacer);
+  Object.entries(cles).forEach(([cle, valeur]) => { if (CLES_SAUVEGARDE.includes(cle) && formeValide(cle, valeur)) ecrire(cle, valeur); });
+}
+
+function afficherSauvegardesAuto() {
+  const zone = $("sauvegardes-auto");
+  if (!zone) return;
+  zone.innerHTML = "";
+  const liste = sauvegardesAuto();
+  zone.appendChild(el("p", "source", liste.length
+    ? "Sauvegardes automatiques, gardées dans ce navigateur :"
+    : "Sauvegardes automatiques : une copie de votre progression sera faite chaque jour, dans ce navigateur."));
+  if (!liste.length) return;
+  const ul = el("ul", "liste-simple");
+  liste.slice().reverse().forEach(s => {
+    const li = el("li");
+    const date = new Date(s.jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
+    li.appendChild(texteNoeud(date + (s.heure ? ", " + s.heure : "") + " (" + ({ quotidienne: "copie du jour", "avant import": "avant un import", "avant restauration": "avant une restauration" }[s.motif] || "copie") + ") "));
+    const b = el("button", "lien", "Restaurer");
+    b.setAttribute("aria-label", "Restaurer la sauvegarde du " + date);
+    b.addEventListener("click", () => {
+      if (!confirm("Remplacer votre progression actuelle par la sauvegarde du " + date + " ?")) return;
+      sauvegarderAuto("avant restauration");
+      remplacerProgression(s.cles);
+      location.hash = "accueil";
+      location.reload();
+    });
+    li.appendChild(b);
+    ul.appendChild(li);
+  });
+  zone.appendChild(ul);
+}
+
+sauvegarderAuto("quotidienne");
+afficherSauvegardesAuto();
+
+$("btn-effacer").addEventListener("click", () => {
+  if (!confirm("Effacer toute votre progression (fiches acquises, quiz, révisions, ateliers), sauvegardes automatiques comprises ? Cette action est définitive.")) return;
+  CLES_SAUVEGARDE.forEach(effacer);
+  effacer("sauvegardesAuto");
   location.hash = "accueil";
   location.reload();
 });
 
 // Sauvegarde dans un fichier, pour transférer sa progression d'un appareil à l'autre
 $("btn-exporter").addEventListener("click", () => {
-  const donnees = { application: "Esprit critique", version: 1, date: new Date().toISOString(), cles: {} };
-  CLES_SAUVEGARDE.forEach(cle => {
-    const v = lire(cle, undefined);
-    if (v !== undefined) donnees.cles[cle] = v;
-  });
+  const donnees = { application: "Esprit critique", version: 1, date: new Date().toISOString(), cles: etatActuel() };
   const lien = document.createElement("a");
   lien.href = URL.createObjectURL(new Blob([JSON.stringify(donnees)], { type: "application/json" }));
   lien.download = "esprit-critique-" + new Date().toISOString().slice(0, 10) + ".json";
@@ -1495,8 +1570,8 @@ $("fichier-import").addEventListener("change", e => {
     const date = new Date(donnees.date);
     if (!confirm("Remplacer votre progression actuelle par celle du fichier" + (isNaN(date) ? "" : " (" + date.toLocaleDateString("fr-FR") + ")") + " ?"
       + (ecartees ? " " + ecartees + " élément(s) illisible(s) seront ignorés." : ""))) return;
-    CLES_SAUVEGARDE.forEach(effacer);
-    valides.forEach(([cle, valeur]) => ecrire(cle, valeur));
+    sauvegarderAuto("avant import");
+    remplacerProgression(Object.fromEntries(valides));
     location.hash = "accueil";
     location.reload();
   };

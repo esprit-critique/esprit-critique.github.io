@@ -459,10 +459,11 @@ f.onload = async () => {
     // Le contrôle d'accessibilité détecte bien un bouton sans nom et un identifiant en double
     const piege = w.document.createElement("button"); piege.className = "bouton"; piege.style.width = "40px"; piege.style.height = "20px";
     const double = w.document.createElement("span"); double.id = "vue-tests"; double.textContent = "x";
-    vue().append(piege, double);
+    const pale = w.document.createElement("p"); pale.textContent = "Texte trop pâle"; pale.style.cssText = "color: #c8c8c8; background: #ffffff";
+    vue().append(piege, double, pale);
     const signales = w.controleAffichage().map(x => x.type);
-    piege.remove(); double.remove();
-    ok("contrôle d'affichage : bouton sans nom et identifiant en double détectés", signales.includes("a11y-sans-nom") && signales.includes("id-double"), signales.join(","));
+    piege.remove(); double.remove(); pale.remove();
+    ok("contrôle d'affichage : bouton sans nom, identifiant en double et texte pâle détectés", signales.includes("a11y-sans-nom") && signales.includes("id-double") && signales.includes("contraste-faible"), signales.join(","));
     // Comprenez-vous vraiment ? Notes 6, puis 3 après l'explication, puis 2 après la question
     await aller("accueil"); await aller("tests/comprendre");
     for (let k = 0; k < 5; k++) { visibles(".choix")[5].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }

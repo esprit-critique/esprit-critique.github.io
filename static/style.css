@@ -286,6 +286,8 @@ h3.titre-bloc {
   background: transparent;
 }
 .puce.active { background: var(--c, var(--texte)); border-color: var(--c, var(--texte)); color: var(--sur-c, var(--fond)); }
+/* Dans une carte, la couleur assombrie (clair) ou éclaircie (sombre), seule assez contrastée avec --sur-c */
+.carte .puce.active { background: var(--c-fort); border-color: var(--c-fort); }
 
 .pastille { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; vertical-align: 1px; }
 .puce.active .pastille { background: var(--sur-c); }
@@ -1188,3 +1190,15 @@ h3.titre-bloc {
 .onglet[data-onglet="quiz"] { --c: #2a8a5c; }
 .onglet[data-onglet="ateliers"] { --c: #c0601b; }
 .onglet[data-onglet="guide"] { --c: #44546a; }
+/* Pages fixes : mentions légales, confidentialité, conditions d'utilisation, page 404 */
+.page-fixe .entete { margin-bottom: 18px; }
+.texte-fixe { line-height: 1.6; }
+.texte-fixe h1 { font-family: var(--titre); font-size: 30px; line-height: 1.2; margin: 0 0 6px; }
+.texte-fixe h2 { font-family: var(--titre); font-size: 20px; margin: 22px 0 6px; }
+.texte-fixe p, .texte-fixe li { margin: 0 0 10px; }
+.texte-fixe ul { padding-left: 20px; margin: 0 0 10px; }
+.texte-fixe a, .liens-404 a { color: var(--accent); }
+.retour-site { text-align: center; margin: 18px 0 0; }
+.conteneur.page-fixe { padding-bottom: 40px; }
+/* Appel à l'action de l'accueil */
+.appel-action { display: flex; flex-wrap: wrap; gap: 8px; margin: -4px 0 18px; }
