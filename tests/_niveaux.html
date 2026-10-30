@@ -91,12 +91,14 @@ f.onload = async () => {
     const r2 = ev("resultatAtelier")("monde");
     ok("migration : les anciens résultats comptent au niveau 1", r2.niveaux[1].record === 8 && r2.niveaux[1].historique.length === 2 && r2.record === 8);
     ok("migration : sans clé « niveaux », niveau 1 en mode auto", ev("niveauAtelier")("monde").niveau === 1 && ev("niveauAtelier")("monde").mode === "auto");
-    w.location.hash = "ateliers"; await pause(150);
-    w.location.hash = "portrait"; await pause(150);
+    // Après le rechargement, la page peut mettre plus de 150 ms à répondre : on attend la vue demandée
+    const attendre = async cond => { for (let k = 0; k < 100 && !cond(); k++) await pause(50); };
+    w.location.hash = "ateliers"; await attendre(() => vue2() && vue2().id === "vue-ateliers");
+    w.location.hash = "portrait"; await attendre(() => vue2() && vue2().id === "vue-portrait");
     ok("migration : pages ateliers et portrait sans erreur", vue2().id === "vue-portrait" && erreursJS.length === 0, erreursJS.join(" | "));
 
     // ---------- Une partie complète, niveau choisi à la main ----------
-    w.location.hash = "chiffres/monde"; await pause(150);
+    w.location.hash = "chiffres/monde"; await attendre(() => vue2() && !!vue2().querySelector(".puces-niveau .puce"));
     ok("choix du niveau : puces Auto · 1 · 2 · 3, Auto actif", [...vue2().querySelectorAll(".puces-niveau .puce")].map(b => b.textContent).join(" ") === "Auto 1 2 3" && vue2().querySelector(".puces-niveau .puce.active").textContent === "Auto");
     ok("premier passage : question au niveau 1", /Question 1 \/ 10 · niveau 1/.test(vue2().textContent));
     vue2().querySelectorAll(".puces-niveau .puce")[2].click();
