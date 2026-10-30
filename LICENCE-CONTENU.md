@@ -16,3 +16,8 @@ vous pouvez les partager et les adapter, y compris à des fins commerciales, à 
   études scientifiques…), indiquées à côté de chaque chiffre.
 - Les citations reproduites dans l'atelier « Qui l'a vraiment dit ? » sont de courts extraits, utilisés pour
   l'analyse de leur attribution.
+
+## Police
+
+Les titres sont composés en **Newsreader** (Production Type, 2020), sous licence SIL Open Font License 1.1 :
+voir `static/polices/OFL.txt`. Fichiers tirés du paquet `@fontsource-variable/newsreader` 5.3.0 (sous-ensemble latin).

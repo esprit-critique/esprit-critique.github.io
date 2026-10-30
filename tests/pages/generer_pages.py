@@ -35,7 +35,8 @@ def page(fichier, titre, description, corps, racine="", indexer=True):
   <link rel="apple-touch-icon" href="{lien('icone.png?v=3')}">
   <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
-{THEME}  <link rel="stylesheet" href="{lien('style.css')}">
+{THEME}  <link rel="preload" href="{lien('polices/newsreader-latin-opsz-normal.woff2')}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{lien('style.css')}">
 </head>
 <body>
   <div class="conteneur page-fixe">
@@ -80,7 +81,8 @@ page("mentions-legales.html", "Mentions légales", "Éditeur, hébergeur et lice
         <p>Le code du site est sous licence MIT ; les textes (fiches, questions, explications, guide) sous licence
         Creative Commons Attribution 4.0 (CC BY 4.0) : vous pouvez les reprendre et les adapter en citant « Esprit critique,
         par GOATier ». Les données de la Banque mondiale sont sous licence CC BY 4.0 ; les autres chiffres proviennent des
-        sources publiques indiquées à côté de chacun. Détail : <a href="{DEPOT}/blob/main/LICENCE-CONTENU.md">licence des contenus</a>.</p>
+        sources publiques indiquées à côté de chacun. Détail : <a href="{DEPOT}/blob/main/LICENCE-CONTENU.md">licence des contenus</a>.
+        Les titres sont composés en Newsreader (Production Type), sous <a href="polices/OFL.txt">licence SIL Open Font License 1.1</a>.</p>
         <h2>Contenus fictifs</h2>
         <p>Les situations, dialogues, débats, sites et organismes des exercices sont fictifs ; toute ressemblance avec des
         personnes ou des organisations existantes serait fortuite. Les études et les chiffres réels sont signalés comme tels,

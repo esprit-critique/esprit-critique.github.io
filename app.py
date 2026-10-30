@@ -23,6 +23,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         **http.server.SimpleHTTPRequestHandler.extensions_map,
         ".webmanifest": "application/manifest+json",
         ".js": "text/javascript",
+        ".woff2": "font/woff2",
     }
 
     def __init__(self, *args, **kwargs):

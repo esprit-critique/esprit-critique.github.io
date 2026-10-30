@@ -27,6 +27,13 @@ f.onload = async () => {
   }
   const etapes = {
     "accueil": async () => { await aller("accueil"); },
+    // Quiz après une mauvaise réponse (sans demande de certitude)
+    "quiz-faux": async () => {
+      w.localStorage.setItem("certitudeQuiz", "false");
+      await aller("quiz/tout");
+      const q = w.eval("quiz").serie[w.eval("quiz").index];
+      vue().querySelectorAll(".choix")[q.options.findIndex(o => o !== q.fiche)].click();
+    },
     "ateliers": async () => { await aller("ateliers"); },
     "ateliers-joues": async () => { await aller("ateliers"); },
     "monde": async () => { await aller("chiffres/monde"); choix(0); },

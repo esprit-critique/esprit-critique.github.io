@@ -36,6 +36,7 @@
   <title>Esprit critique</title>
   <!-- Thème choisi à la main (clair ou sombre), appliqué avant l'affichage pour éviter un éclair de la mauvaise couleur -->
   <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <link rel="preload" href="polices/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -297,6 +298,7 @@
         <article class="carte" id="g-donnees">
           <h2>Vos données</h2>
           <p>Votre progression (fiches acquises, réponses au quiz, révisions, résultats des ateliers) est enregistrée uniquement dans votre navigateur. Elle n'est envoyée nulle part : le site n'a ni compte, ni base de données, ni mesure d'audience. Une copie en est faite chaque jour, dans ce même navigateur (voir plus bas). Détail : <a href="confidentialite.html">politique de confidentialité</a>. Il est hébergé par GitHub Pages, qui, comme tout hébergeur, reçoit les demandes de pages, mais jamais vos réponses.</p>
+          <p class="source">Titres composés en Newsreader (Production Type), sous licence SIL OFL.</p>
           <p>Si vous effacez les données de navigation, votre progression disparaît. Pour la conserver, ou pour la retrouver sur un autre appareil (de l'ordinateur au téléphone, par exemple), enregistrez-la dans un fichier, puis ouvrez ce fichier depuis l'autre appareil.</p>
           <div class="actions actions-donnees">
             <button class="bouton secondaire" id="btn-exporter">Enregistrer dans un fichier</button>
