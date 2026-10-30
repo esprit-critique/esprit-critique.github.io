@@ -26,7 +26,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Négligence de la régression vers la moyenne (`biais:regression-moyenne`)
 
-1. Après une saison exceptionnelle, un attaquant fait la couverture d'un magazine sportif ; la saison suivante, il marque moins, et les journalistes parlent de la « malédiction de la couverture ».
+1. Un élève obtient la meilleure note de la classe à un contrôle de mathématiques, bien au-dessus de ses notes habituelles. Au contrôle suivant, il retrouve son niveau ordinaire, et ses parents en concluent qu'il s'est reposé sur ses lauriers.
 2. Les élèves qui ont eu les pires notes au premier contrôle suivent un soutien ; au second contrôle, leurs notes remontent, et le professeur y voit la preuve de l'efficacité du soutien, sans groupe de comparaison.
 
 ## Biais du survivant (`biais:survivant`)
@@ -72,22 +72,22 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 ## Biais du statu quo (`biais:statu-quo`)
 
 1. Lors du renouvellement de son contrat d'assurance, Martine garde sans les lire les mêmes options qu'il y a dix ans, alors que sa situation a complètement changé.
-2. Dans un pays où le don d'organes est présumé sauf refus, presque tout le monde est donneur ; dans un pays voisin où il faut s'inscrire, une petite minorité l'est.
+2. Une cantine sert par défaut une salade en accompagnement, les frites étant disponibles sur demande : la plupart des élèves gardent la salade. Quand l'ordre est inversé, la plupart gardent les frites.
 
 ## Effet de dotation (`biais:dotation`)
 
-1. Des participants reçoivent une tasse au hasard ; ils en demandent ensuite environ deux fois plus pour la revendre que ce que les autres sont prêts à payer pour la même tasse.
+1. Après avoir gagné une bouteille de vin à une tombola, Julien refuse de la céder pour 30 €, alors qu'il n'aurait jamais dépensé plus de 10 € pour la même bouteille chez le caviste.
 2. Sophie refuse de vendre sa vieille voiture au prix du marché, qu'elle juge « ridicule », alors qu'elle n'en paierait jamais autant pour une voiture équivalente.
 
 ## Effet de leurre (`biais:leurre`)
 
-1. Un cinéma vend un petit pop-corn à 3 €, un moyen à 6,50 € et un grand à 7 €. Presque personne ne prend le moyen, mais les ventes du grand ont nettement augmenté depuis son ajout.
+1. Une salle de sport propose un abonnement de 3 mois à 90 €, un de 10 mois à 300 € et un de 12 mois à 300 €. Personne ne prend celui de 10 mois, mais depuis qu'il existe, l'abonnement annuel se vend beaucoup mieux.
 2. Un journal propose un abonnement numérique à 60 €, un abonnement papier à 120 € et un abonnement « papier + numérique » à 120 €. Presque tous les abonnés choisissent la formule combinée.
 
 ## Effet IKEA (`biais:ikea`)
 
 1. Après avoir monté seul une étagère bancale, Hugo refuse de la remplacer par une neuve, qu'il trouve « moins belle ».
-2. Des participants qui ont eux-mêmes cuisiné un plat à partir d'un kit le notent bien plus haut que d'autres qui ont reçu le même plat déjà préparé.
+2. Après avoir tricoté elle-même une écharpe irrégulière, Margot la trouve plus belle que celles du magasin, qu'une amie juge pourtant bien mieux faites.
 
 ## Biais du résultat (`biais:resultat`)
 
@@ -126,18 +126,18 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Règle du pic et de la fin (`biais:pic-fin`)
 
-1. Une coloscopie prolongée de quelques minutes moins douloureuses à la fin laisse un souvenir moins pénible aux patients qu'un examen plus court qui s'arrête au moment le plus douloureux.
-2. Des vacances de deux semaines globalement moyennes, terminées par une soirée inoubliable, laissent à Inès un souvenir bien meilleur que d'autres vacances agréables mais conclues par un retour pénible.
+1. Une randonnée de six heures, pénible au début mais terminée par une descente facile au coucher du soleil, laisse aux marcheurs un meilleur souvenir qu'une randonnée de quatre heures, agréable mais achevée sous un orage.
+2. Un repas de mariage long et ennuyeux se termine par un dessert spectaculaire et un discours émouvant. Plusieurs invités le décrivent ensuite comme « une soirée magnifique ».
 
 ## Illusion de fréquence (`biais:frequence`)
 
-1. Depuis qu'il a acheté une voiture jaune, Romain a l'impression de croiser des voitures jaunes partout.
+1. Depuis qu'un ami s'est cassé la jambe au ski, Anaïs a l'impression de croiser des gens en béquilles à chaque coin de rue.
 2. Après avoir appris le nom d'un petit oiseau, Chloé le repère à chaque promenade et pense qu'il est devenu bien plus commun dans la région.
 
 ## Cryptomnésie (`biais:cryptomnesie`)
 
 1. Un compositeur présente une mélodie comme sa création ; on lui fait remarquer qu'elle ressemble beaucoup à une chanson populaire de son adolescence, qu'il ne se rappelle pas avoir écoutée.
-2. Lors d'une réunion, Paul propose avec enthousiasme une idée « toute nouvelle » ; sa collègue lui rappelle qu'elle l'avait exposée devant lui le mois précédent.
+2. Une étudiante est fière d'une formule qu'elle croit avoir trouvée seule pour son mémoire ; son directeur lui montre qu'elle figure mot pour mot dans un article qu'elle avait annoté un an plus tôt.
 
 ## Biais de confirmation (`biais:confirmation`)
 
@@ -152,7 +152,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 ## Effet de vérité illusoire (`biais:verite-illusoire`)
 
 1. Une rumeur affirme que « le verre est un liquide qui coule très lentement ». Après l'avoir lue dans plusieurs forums, Élise la cite à ses amis comme une évidence.
-2. Dans une expérience, des affirmations lues une première fois sont jugées plus vraies que des affirmations nouvelles, même quand les participants auraient pu savoir, par leurs propres connaissances, qu'elles étaient fausses.
+2. Un collègue répète à chaque pause que « les pieds froids font attraper la grippe ». Au bout de quelques semaines, Hélène le cite elle-même comme un fait, sans savoir d'où il vient ni l'avoir jamais vérifié.
 
 ## Effet Barnum (`biais:barnum`)
 
@@ -161,7 +161,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Illusion de contrôle (`biais:illusion-controle`)
 
-1. Au jeu de dés, Thomas lance fort quand il veut un grand nombre et doucement quand il en veut un petit.
+1. À la fête foraine, Léo est persuadé de gagner plus souvent à la roue de la fortune quand c'est lui qui la lance plutôt que le forain.
 2. Au bureau, Sabrina insiste pour choisir elle-même son billet de tombola ; un collègue lui propose de l'échanger contre un autre, elle refuse, persuadée que le sien a plus de chances.
 
 ## Apophénie (`biais:apophenie`)
@@ -171,7 +171,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Raisonnement motivé (`biais:raisonnement-motive`)
 
-1. Fumeur, Patrick trouve « peu convaincantes » les études sur les dangers du tabac, mais cite volontiers l'exemple de son grand-père, fumeur et mort à 95 ans.
+1. Propriétaire d'un gros 4 × 4, Bruno trouve « exagérées » les études sur la pollution de ces véhicules, mais partage sans le vérifier un article affirmant que les petites voitures sont plus dangereuses.
 2. Quand un sondage est favorable à son candidat, Annie le partage ; quand il est défavorable, elle s'intéresse soudain à la taille de l'échantillon et à la méthode.
 
 ## Persévérance des croyances (`biais:perseverance`)
@@ -197,7 +197,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 ## Effet de faux consensus (`biais:faux-consensus`)
 
 1. Grand amateur de jazz, Olivier est surpris qu'une radio consacrée au jazz n'ait qu'une faible audience : « Tout le monde aime le jazz. »
-2. Des étudiants à qui l'on demande s'ils accepteraient de se promener sur le campus avec une pancarte publicitaire estiment que la plupart des autres feraient le même choix qu'eux, qu'ils aient accepté ou refusé.
+2. Végétarienne depuis l'adolescence, Camille est persuadée que la plupart des gens de son âge mangent peu de viande, et s'étonne de la carte du restaurant d'entreprise.
 
 ## Conformisme (`biais:conformisme`)
 
@@ -216,13 +216,13 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Effet de simple exposition (`biais:exposition`)
 
-1. Une chanson qu'Emma trouvait sans intérêt la première fois finit par lui plaire après l'avoir entendue chaque jour à la radio.
+1. Les habitants d'un quartier, d'abord hostiles à une sculpture moderne installée sur la place, finissent pour la plupart par l'apprécier après l'avoir croisée chaque jour pendant un an.
 2. Des participants voient défiler des caractères chinois dont ils ignorent le sens, certains plusieurs fois. Ils jugent ensuite plus agréables ceux qu'ils ont vus le plus souvent.
 
 ## Malédiction du savoir (`biais:malediction-savoir`)
 
 1. Une professeure de mathématiques expérimentée passe trente secondes sur une démonstration qu'elle juge « évidente » ; la moitié de la classe décroche.
-2. Dans une expérience, des participants tapotent le rythme d'une chanson connue et estiment que les auditeurs la reconnaîtront une fois sur deux ; les auditeurs ne la reconnaissent presque jamais.
+2. Un randonneur habitué au sentier écrit simplement à ses amis : « Tournez après le vieux chêne. » Ne sachant pas lequel des chênes est « le vieux », ils se perdent.
 
 ## Favoritisme envers son groupe (`biais:endogroupe`)
 
@@ -242,7 +242,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 ## Biais d'autocomplaisance (`biais:autocomplaisance`)
 
 1. Quand ses plantes poussent bien, Marie se félicite de son « coup de main » ; quand elles meurent, elle accuse la qualité du terreau.
-2. Une entreprise attribue ses bons résultats à sa stratégie, et ses mauvais résultats à la conjoncture économique.
+2. Quand ses élèves réussissent l'examen, un professeur y voit la qualité de son enseignement ; quand ils échouent, il met en cause leur manque de travail.
 
 ## Biais d'optimisme (`biais:optimisme`)
 
@@ -281,13 +281,13 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Appel à la popularité (`sophismes:popularite`)
 
-1. « Des millions de gens consultent leur horoscope chaque jour : il doit bien y avoir quelque chose de vrai. »
+1. « Cette vidéo sur un remède miracle a été vue dix millions de fois : elle ne peut pas raconter n'importe quoi. »
 2. « Cette application est la plus téléchargée du moment : elle protège forcément bien vos données. »
 
 ## Appel à la tradition (`sophismes:tradition`)
 
 1. « Dans ma famille, on a toujours fait comme ça : pas besoin de changer de méthode pour élever les enfants. »
-2. « Les études de médecine ont toujours duré aussi longtemps ; il n'y a aucune raison d'en revoir l'organisation. »
+2. « Le bizutage existe dans cette école depuis sa fondation : c'est une coutume, il n'y a pas lieu de l'interdire. »
 
 ## Appel à la nature (`sophismes:nature`)
 
@@ -326,7 +326,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Question piège (`sophismes:question-piege`)
 
-1. « Avez-vous arrêté de tricher aux examens ? Répondez par oui ou par non. »
+1. Un journaliste demande à un maire : « Pourquoi avez-vous laissé les loyers exploser dans votre ville ? », alors qu'aucun chiffre ne montre de hausse inhabituelle.
 2. Un sondage demande : « Quelle mesure devrait-on prendre en priorité contre l'explosion de la délinquance dans votre ville ? », alors que la délinquance y est stable.
 
 ## Déplacement des poteaux (`sophismes:poteaux`)
@@ -347,11 +347,11 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 ## Sophisme du juste milieu (`sophismes:juste-milieu`)
 
 1. Un élève dit que 7 × 8 font 56, un autre 64. Leur camarade tranche : « Coupons la poire en deux : 60. »
-2. « Les uns disent que la Terre a 4,5 milliards d'années, les autres 6 000 ans : la vérité se situe sans doute quelque part entre les deux. »
+2. Un fabricant affirme que son produit ne contient aucune substance toxique ; une analyse indépendante en trouve une dose dangereuse. Un chroniqueur conclut que le produit est sans doute « un peu toxique ».
 
 ## Fausse analogie (`sophismes:fausse-analogie`)
 
-1. « Un pays se gère comme un ménage : puisqu'une famille ne doit jamais s'endetter, l'État non plus. »
+1. « Une entreprise est comme une famille : on ne renvoie pas un membre de sa famille, donc une entreprise ne devrait jamais licencier. »
 2. « Le cerveau est comme un muscle : plus on fait de mots croisés, plus on devient intelligent dans tous les domaines. »
 
 ## Fausse équivalence (`sophismes:fausse-equivalence`)
@@ -366,7 +366,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Post hoc ergo propter hoc (`sophismes:post-hoc`)
 
-1. « J'ai porté mon pull porte-bonheur et l'équipe a gagné : je le remettrai pour la finale. »
+1. « J'ai changé de dentifrice en janvier, et je n'ai pas eu un seul rhume de l'hiver : ce dentifrice renforce les défenses. »
 2. « Le nouveau maire est arrivé en mars, et le chômage a baissé en avril : c'est grâce à lui. »
 
 ## Corrélation prise pour causalité (`sophismes:correlation`)
@@ -426,7 +426,7 @@ le font sans chiffre précis ; leurs chiffres, quand il y en a, sont fictifs. À
 
 ## Appel à l'ignorance (`sophismes:ignorance`)
 
-1. « Personne n'a jamais prouvé que les extraterrestres ne nous visitent pas : ils nous visitent donc. »
+1. « On n'a jamais prouvé que ce lac n'abrite pas un monstre : c'est donc qu'il y en a un. »
 2. « Les médecins n'ont pas expliqué toutes les guérisons survenues dans ce sanctuaire : elles sont donc miraculeuses. »
 
 ## Sophisme du sophisme (`sophismes:sophisme-sophisme`)
