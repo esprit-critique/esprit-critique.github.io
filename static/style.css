@@ -1231,3 +1231,22 @@ h3.titre-bloc {
   font-weight: 650;
   letter-spacing: 0.07em;
 }
+/* Séparateur de sections : le trait du haut de l'emblème de Müller-Lyer (ailettes ouvertes). Réservé aux
+   séparateurs entre sections (fiches, explications des bilans) : ni cartes ni listes. Décoratif. */
+.section { border-top: 0; padding-top: 0; }
+.section::before {
+  content: "";
+  display: block;
+  height: 10px;
+  margin: 0 0 10px;
+  background: var(--discret);
+  opacity: 0.55;
+  -webkit-mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M6 5 1 0.8M6 5 1 9.2M6 5H12' stroke='black' stroke-width='1.4' fill='none'/%3E%3C/svg%3E") left center / 12px 10px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M6 5 11 0.8M6 5 11 9.2M0 5H6' stroke='black' stroke-width='1.4' fill='none'/%3E%3C/svg%3E") right center / 12px 10px no-repeat,
+    linear-gradient(black, black) center / calc(100% - 22px) 1.2px no-repeat;
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M6 5 1 0.8M6 5 1 9.2M6 5H12' stroke='black' stroke-width='1.4' fill='none'/%3E%3C/svg%3E") left center / 12px 10px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M6 5 11 0.8M6 5 11 9.2M0 5H6' stroke='black' stroke-width='1.4' fill='none'/%3E%3C/svg%3E") right center / 12px 10px no-repeat,
+    linear-gradient(black, black) center / calc(100% - 22px) 1.2px no-repeat;
+}
