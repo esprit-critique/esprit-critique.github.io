@@ -18,6 +18,9 @@ except OSError:
     serveur = subprocess.Popen([sys.executable, os.path.join(ICI, "..", "app.py")], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1.5)
 shutil.copy(os.path.join(ICI, "_visu.html"), STATIC)
+# _visu.html charge _site.html : la page du site sans sa politique de sécurité, qui interdirait eval (voir lancer.sh)
+with open(os.path.join(STATIC, "index.html"), encoding="utf-8") as e, open(os.path.join(STATIC, "_site.html"), "w", encoding="utf-8") as s:
+    s.writelines(l for l in e if 'http-equiv="Content-Security-Policy"' not in l)
 try:
     for sc in scenarios:
         profil = tempfile.mkdtemp(prefix="chrome-capture-")
@@ -41,4 +44,5 @@ try:
         shutil.rmtree(profil, ignore_errors=True)
 finally:
     os.remove(os.path.join(STATIC, "_visu.html"))
+    os.remove(os.path.join(STATIC, "_site.html"))
     if serveur: serveur.terminate()

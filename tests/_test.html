@@ -2,7 +2,7 @@
 <meta charset="UTF-8">
 <body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
 <pre id="out">en cours…</pre>
-<iframe id="f" src="/#accueil" style="border: 0; display: block"></iframe>
+<iframe id="f" src="/_site.html#accueil" style="border: 0; display: block"></iframe>
 <script>
 // Banc d'essai général : fiches, quiz, révisions, navigation, clavier, sauvegarde. Taille : ?l=390&h=844
 const params = new URLSearchParams(location.search);
@@ -347,6 +347,28 @@ f.onload = async () => {
     const liensCasses = [...d.querySelectorAll('#vue-guide a[href^="#biais/"], #vue-guide a[href^="#sophismes/"]')]
       .filter(a => { const [t, id] = a.getAttribute("href").slice(1).split("/"); return !w.eval("INDEX").has(t + ":" + id); });
     ok("liens du guide vers les fiches : tous valides", liensCasses.length === 0);
+
+    // ---------- Import d'une sauvegarde : fichiers mal formés ou piégés ----------
+    const importer = contenu => {
+      w.confirm = () => true;
+      const champ = d.getElementById("fichier-import");
+      const dt = new w.DataTransfer();
+      dt.items.add(new w.File([contenu], "sauvegarde.json", { type: "application/json" }));
+      champ.files = dt.files;
+      champ.dispatchEvent(new w.Event("change"));
+    };
+    // La lecture du fichier se fait hors du temps virtuel de Chrome : on attend le message lui-même, pas un délai
+    const annonceImport = new Promise(res => new w.MutationObserver((m, o) => { if (/pas une sauvegarde/.test(d.getElementById("annonce").textContent)) { o.disconnect(); res(); } })
+      .observe(d.getElementById("annonce"), { childList: true, characterData: true, subtree: true }));
+    importer(JSON.stringify({ application: "Esprit critique", cles: null }));
+    await annonceImport;
+    ok("import : sauvegarde sans clés refusée, sans erreur", /pas une sauvegarde/.test(d.getElementById("annonce").textContent));
+    const recharge = new Promise(res => { f.onload = res; });
+    importer(JSON.stringify({ application: "Esprit critique", date: "illisible", cles: { acquis: ["biais:ancrage"], memoire: "piège", theme: 3, inconnue: 1 } }));
+    await recharge; await pause(300);
+    ok("import : clés valides reprises, valeurs d'une autre forme et clés inconnues ignorées",
+      w.localStorage.getItem("acquis") === '["biais:ancrage"]' && w.localStorage.getItem("memoire") === null && w.localStorage.getItem("theme") === null && w.localStorage.getItem("inconnue") === null
+      && !!f.contentDocument.querySelector("main > section:not([hidden])"));
   } catch (e) {
     lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
   }

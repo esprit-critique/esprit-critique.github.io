@@ -691,6 +691,7 @@ JEUX.push({
     form.appendChild(el("p", "consigne", "Nouvelle prévision"));
     const texte = el("textarea", "champ champ-texte");
     texte.rows = 2;
+    texte.maxLength = 300;   // le carnet est gardé dans le navigateur : textes courts
     texte.placeholder = "Ce qui arrivera, ou non";
     texte.setAttribute("aria-label", "Votre prévision");
     const modeles = el("div", "puces modeles");

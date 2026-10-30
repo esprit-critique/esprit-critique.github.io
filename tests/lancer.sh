@@ -3,22 +3,24 @@
 # en clair puis en sombre, et rassemble les rapports dans tests/rapports/.
 #
 #   tests/lancer.sh                       tous les bancs, dans les quatre configurations
-#   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux ou items)
+#   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux, items ou csp)
 #   CONFIGS="390 clair" tests/lancer.sh   une seule configuration
 #
 # Les bancs sont copiés dans static/ le temps du test, puis enlevés ; le serveur local est arrêté à la fin.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items"}
+BANCS=${*:-"affichage ateliers test niveaux items csp"}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair
 1280 sombre"}
 COPIES="_affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js"
+# Les bancs chargent _site.html : la page du site sans sa politique de sécurité (CSP), qui interdit eval,
+# dont les bancs se servent pour lire l'état du site. La vraie page est contrôlée par le banc « csp ».
 mkdir -p tests/rapports
 
 nettoyer() {
-  for f in $COPIES; do rm -f "static/$f"; done
+  for f in $COPIES _site.html; do rm -f "static/$f"; done
   [ -n "$SERVEUR" ] && kill "$SERVEUR" 2>/dev/null
 }
 trap nettoyer EXIT
@@ -32,6 +34,7 @@ done
 [ -n "$ERREUR_SYNTAXE" ] && { echo "Bancs non lancés : corriger d'abord la syntaxe."; exit 1; }
 
 for f in $COPIES; do cp "tests/$f" static/; done
+grep -v 'http-equiv="Content-Security-Policy"' static/index.html > static/_site.html
 if ! curl -s -o /dev/null http://localhost:8000/; then
   python3 app.py > /dev/null 2>&1 &
   SERVEUR=$!
@@ -44,7 +47,11 @@ echo "$CONFIGS" | while read -r largeur theme; do
   for banc in $BANCS; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
     page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
-    python3 tests/chrome.py "http://localhost:8000/$page?l=$largeur&h=$hauteur" "$largeur,$hauteur" "$theme" "$rapport"
+    if [ "$banc" = csp ]; then
+      python3 tests/csp.py "$largeur,$hauteur" "$theme" "$rapport"   # la vraie page, hors cadre, avec sa CSP
+    else
+      python3 tests/chrome.py "http://localhost:8000/$page?l=$largeur&h=$hauteur" "$largeur,$hauteur" "$theme" "$rapport"
+    fi
     echo "== $banc, $largeur px, $theme : $(grep -m1 '^RÉSUMÉ' "$rapport" || head -1 "$rapport")"
   done
 done

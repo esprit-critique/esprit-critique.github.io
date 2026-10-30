@@ -14,6 +14,8 @@
 //   element-hors-cadre          une forme ou un texte sort du viewBox
 //   html-hors-ecran             un élément dépasse du bord de l'écran
 //   html-texte-deborde          un texte dépasse de sa boîte (ou y est tronqué)
+//   a11y-sans-nom               un bouton, un lien ou un champ sans nom pour les lecteurs d'écran
+//   id-double                   un identifiant HTML utilisé plusieurs fois
 
 (function () {
   const MARGE = 0.5; // tolérance, en pixels ou en unités du viewBox
@@ -151,6 +153,20 @@
       if (e.children.length === 0 && texte && e.scrollWidth > e.clientWidth + 1 && !/(auto|scroll)/.test(cs.overflowX)) {
         defauts.push({ type: "html-texte-deborde", ou: nom, texte, detail: e.scrollWidth + " px de contenu pour " + e.clientWidth + " px" + (/(hidden|clip)/.test(cs.overflowX) ? " (tronqué)" : "") });
       }
+      // Accessibilité : un bouton, un lien ou un champ doit avoir un nom lisible par un lecteur d'écran
+      if (e.matches("button, a[href], input:not([type=hidden]), textarea, select")) {
+        const libelle = e.id && document.querySelector('label[for="' + e.id + '"]');
+        const nomAccessible = (e.getAttribute("aria-label") || e.getAttribute("title") || (e.closest("label") || libelle || {}).textContent
+          || (e.getAttribute("aria-labelledby") && document.getElementById(e.getAttribute("aria-labelledby")) || {}).textContent
+          || (e.matches("input, textarea, select") ? "" : e.textContent) || "").trim();
+        if (!nomAccessible) defauts.push({ type: "a11y-sans-nom", ou: nom, texte: e.outerHTML.slice(0, 80), detail: "aucun nom accessible" });
+      }
+    });
+    // Identifiants en double dans toute la page
+    const vus = new Set();
+    document.querySelectorAll("[id]").forEach(e => {
+      if (vus.has(e.id)) defauts.push({ type: "id-double", ou: location.hash, texte: e.id, detail: "identifiant présent plusieurs fois" });
+      vus.add(e.id);
     });
     return defauts;
   };

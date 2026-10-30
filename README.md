@@ -59,6 +59,9 @@ pour l'utiliser comme une application.
 - **Aucun compte, aucune donnée envoyée** : la progression est enregistrée uniquement dans le navigateur du
   visiteur, qui peut l'exporter dans un fichier.
 - **Aucune dépendance** : du HTML, du CSS et du JavaScript simples, sans bibliothèque ni étape de compilation.
+- **Sécurité** : politique de sécurité du contenu (CSP) stricte, le site ne charge que ses propres fichiers ; aucun
+  texte n'est inséré comme HTML ; une sauvegarde importée est vérifiée clé par clé ; le serveur local n'écoute que
+  l'ordinateur lui-même, sans liste des dossiers ; les actions de publication sont désignées par l'empreinte de leur commit.
 
 ## Utiliser le site sur son ordinateur
 
@@ -66,8 +69,8 @@ pour l'utiliser comme une application.
 python3 app.py
 ```
 
-puis ouvrir http://localhost:8000. Le script affiche aussi l'adresse à utiliser depuis un téléphone
-connecté au même réseau Wi-Fi.
+puis ouvrir http://localhost:8000. Le serveur n'accepte que les connexions de l'ordinateur lui-même ;
+`python3 app.py --wifi` l'ouvre aux appareils du même réseau (un téléphone, par exemple), à éviter sur un Wi-Fi public.
 
 ## Organisation des fichiers
 
@@ -96,7 +99,7 @@ Les bancs d'essai s'exécutent dans Chrome sans fenêtre (macOS, Chrome install�
 
 ```
 tests/lancer.sh                        # tous les bancs, à 390 et 1 280 px, en clair et en sombre
-tests/lancer.sh affichage              # un seul banc : affichage, ateliers ou test
+tests/lancer.sh affichage              # un seul banc : affichage, ateliers, test, niveaux, items ou csp
 CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 ```
 
@@ -107,7 +110,8 @@ CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 | `tests/_niveaux.html` | moteur de progression : joueurs simulés, records par niveau, migration |
 | `tests/niveaux.html` | nombre d'items par niveau, en rouge quand il en manque (`tests/lancer.sh items`) |
 | `tests/_affichage.html` | contrôle l'affichage de chaque page et de toutes les variantes des dessins générés |
-| `tests/controle-affichage.js` | détection des textes coupés ou superposés, des débordements, du défilement horizontal |
+| `tests/controle-affichage.js` | détection des textes coupés ou superposés, des débordements, du défilement horizontal, des boutons et champs sans nom accessible, des identifiants en double |
+| `tests/csp.py` | ouvre la vraie page, hors cadre, sur 14 adresses : aucun blocage de la CSP ni erreur JavaScript (les autres bancs utilisent une copie sans CSP, `_site.html`, car ils lisent l'état du site avec `eval`) |
 | `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |
 | `tests/pays/` | `telecharger.sh` puis `generer_pays.py` : régénère `static/pays.js` (Banque mondiale, HCR) |
 

@@ -2,7 +2,7 @@
 <meta charset="UTF-8">
 <body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
 <pre id="out">en cours…</pre>
-<iframe id="f" src="/#ateliers" style="border: 0; display: block"></iframe>
+<iframe id="f" src="/_site.html#ateliers" style="border: 0; display: block"></iframe>
 <script>
 // Banc d'essai des ateliers : joue chaque atelier jusqu'au bilan, en cherchant les erreurs
 // et, après chaque étape, les défauts d'affichage (controle-affichage.js).
@@ -456,6 +456,13 @@ f.onload = async () => {
     [...vue().querySelectorAll(".prevision button")].find(b => /Bonne décision/.test(b.textContent)).click(); await pause(5);
     ok("décision : bilan enregistré", JSON.parse(w.localStorage.getItem("decisions"))[0].jugement === "bonne" && /bilan fait/.test(vue().textContent));
 
+    // Le contrôle d'accessibilité détecte bien un bouton sans nom et un identifiant en double
+    const piege = w.document.createElement("button"); piege.className = "bouton"; piege.style.width = "40px"; piege.style.height = "20px";
+    const double = w.document.createElement("span"); double.id = "vue-tests"; double.textContent = "x";
+    vue().append(piege, double);
+    const signales = w.controleAffichage().map(x => x.type);
+    piege.remove(); double.remove();
+    ok("contrôle d'affichage : bouton sans nom et identifiant en double détectés", signales.includes("a11y-sans-nom") && signales.includes("id-double"), signales.join(","));
     // Comprenez-vous vraiment ? Notes 6, puis 3 après l'explication, puis 2 après la question
     await aller("accueil"); await aller("tests/comprendre");
     for (let k = 0; k < 5; k++) { visibles(".choix")[5].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }

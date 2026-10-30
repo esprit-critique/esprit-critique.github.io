@@ -161,6 +161,19 @@ const CLES_SAUVEGARDE = [
   "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes"
 ];
 
+// Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
+// (un texte à la place d'un tableau…) bloquerait le site au chargement suivant. Elle est donc ignorée.
+const FORMES_SAUVEGARDE = {
+  tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
+    "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions"],
+  objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes"],
+  texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
+  booleen: ["certitudeQuiz", "ceciteFaite"]
+};
+const formeDe = v => Array.isArray(v) ? "tableau" : v !== null && typeof v === "object" ? "objet" : typeof v === "string" ? "texte" : typeof v === "boolean" ? "booleen" : "autre";
+const formeValide = (cle, valeur) => (FORMES_SAUVEGARDE[formeDe(valeur)] || []).includes(cle);
+
 // Fiches marquées comme acquises par l'utilisateur
 const acquis = new Set(lire("acquis", []).filter(c => INDEX.has(c)));
 
@@ -1330,7 +1343,10 @@ const SECTION_DE = { accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vu
 let precedent = { vue: null, id: null };
 
 function afficherPage() {
-  let [vue, id] = decodeURIComponent(location.hash.slice(1)).split("/");
+  // Une adresse mal formée (« %E0 ») ne doit pas bloquer la page : on garde alors le texte brut
+  let adresse = location.hash.slice(1);
+  try { adresse = decodeURIComponent(adresse); } catch (erreur) { /* adresse laissée telle quelle */ }
+  let [vue, id] = adresse.split("/");
   if (!ONGLET_DE[vue]) vue = "accueil";
   // Sans identifiant, les jeux et les expériences renvoient à la liste des ateliers
   if ((vue === "chiffres" || vue === "tests") && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id)) vue = "ateliers";
@@ -1463,17 +1479,24 @@ $("btn-exporter").addEventListener("click", () => {
 $("fichier-import").addEventListener("change", e => {
   const fichier = e.target.files[0];
   if (!fichier) return;
+  // Une sauvegarde pèse quelques dizaines de kilo-octets : au-delà de 5 Mo, ce n'en est pas une
+  if (fichier.size > 5e6) { annoncer("Ce fichier est trop gros pour être une sauvegarde d'Esprit critique."); e.target.value = ""; return; }
   const lecteur = new FileReader();
   lecteur.onload = () => {
     let donnees;
     try { donnees = JSON.parse(lecteur.result); } catch (erreur) { donnees = null; }
-    if (!donnees || donnees.application !== "Esprit critique" || typeof donnees.cles !== "object") {
+    if (!donnees || donnees.application !== "Esprit critique" || formeDe(donnees.cles) !== "objet") {
       annoncer("Ce fichier n'est pas une sauvegarde d'Esprit critique.");
       return;
     }
-    if (!confirm("Remplacer votre progression actuelle par celle du fichier (" + new Date(donnees.date).toLocaleDateString("fr-FR") + ") ?")) return;
+    // Seules les clés connues, de la forme attendue, sont reprises
+    const valides = Object.entries(donnees.cles).filter(([cle, valeur]) => CLES_SAUVEGARDE.includes(cle) && formeValide(cle, valeur));
+    const ecartees = Object.keys(donnees.cles).length - valides.length;
+    const date = new Date(donnees.date);
+    if (!confirm("Remplacer votre progression actuelle par celle du fichier" + (isNaN(date) ? "" : " (" + date.toLocaleDateString("fr-FR") + ")") + " ?"
+      + (ecartees ? " " + ecartees + " élément(s) illisible(s) seront ignorés." : ""))) return;
     CLES_SAUVEGARDE.forEach(effacer);
-    Object.entries(donnees.cles).forEach(([cle, valeur]) => { if (CLES_SAUVEGARDE.includes(cle)) ecrire(cle, valeur); });
+    valides.forEach(([cle, valeur]) => ecrire(cle, valeur));
     location.hash = "accueil";
     location.reload();
   };

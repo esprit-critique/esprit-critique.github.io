@@ -656,7 +656,7 @@ EXPERIENCES.push(
         const bloc = el("div", "prevision a-resoudre");
         bloc.append(el("p", "consigne", "Bilan à faire"), el("p", "cas", d.texte), paragraphe("Ce que vous attendiez : « " + (d.reponses[7] || "non noté") + " »", "source"));
         const issue = el("textarea", "champ champ-texte");
-        issue.rows = 2; issue.placeholder = "Qu'est-il arrivé ?"; issue.setAttribute("aria-label", "Qu'est-il arrivé ?");
+        issue.rows = 2; issue.maxLength = 1000; issue.placeholder = "Qu'est-il arrivé ?"; issue.setAttribute("aria-label", "Qu'est-il arrivé ?");
         bloc.appendChild(issue);
         bloc.appendChild(el("p", "consigne", "Avec ce que vous saviez alors, la décision était-elle bonne, quel que soit le résultat ?"));
         const actions = el("div", "actions");
@@ -679,6 +679,7 @@ EXPERIENCES.push(
       zone.appendChild(el("p", "consigne", "Nouvelle décision"));
       const texte = el("textarea", "champ champ-texte");
       texte.rows = 2;
+      texte.maxLength = 300;   // les décisions sont gardées dans le navigateur : textes bornés
       texte.placeholder = "La décision à prendre";
       texte.setAttribute("aria-label", "La décision à prendre");
       const commencer = el("button", "bouton large", "Examiner cette décision");
@@ -693,6 +694,7 @@ EXPERIENCES.push(
           zone.appendChild(el("p", "cas", question));
           const champ = el("textarea", "champ champ-texte");
           champ.rows = 3;
+          champ.maxLength = 1000;
           champ.setAttribute("aria-label", question);
           const ok = el("button", "bouton", "Noter");
           ok.dataset.valider = "1";

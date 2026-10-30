@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <!-- Politique de sécurité : le site ne charge que ses propres fichiers. Le seul script en ligne (thème, plus bas)
+       est autorisé par son empreinte : si on le modifie, recalculer l'empreinte (tests/lancer.sh csp le signale). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <!-- Adapte la page à la largeur de l'écran du téléphone -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <!-- Réglages pour l'ajout à l'écran d'accueil de l'iPhone -->
@@ -9,7 +12,15 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Esprit critique">
-  <meta name="description" content="Biais cognitifs et sophismes : fiches, quiz, jeux d'estimation et expériences.">
+  <meta name="description" content="Biais cognitifs et sophismes : 90 fiches sourcées, un quiz à révision espacée et 45 ateliers fondés sur des données et des expériences classiques.">
+  <!-- Aperçu lors d'un partage (messageries, réseaux) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Esprit critique">
+  <meta property="og:title" content="Esprit critique">
+  <meta property="og:description" content="Biais cognitifs et sophismes : 90 fiches sourcées, un quiz à révision espacée et 45 ateliers.">
+  <meta property="og:url" content="https://esprit-critique.github.io/">
+  <meta property="og:image" content="https://esprit-critique.github.io/icone-512.png?v=3">
   <!-- Icônes : l'emblème de l'en-tête. « ?v=3 » oblige le navigateur à oublier les anciennes. -->
   <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="icone-32.png?v=3" sizes="32x32" type="image/png">
@@ -23,6 +34,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <noscript><p class="sans-script">Ce site a besoin de JavaScript pour fonctionner : activez-le dans les réglages de votre navigateur. Aucune donnée n'est envoyée nulle part.</p></noscript>
   <div class="conteneur">
     <header class="entete">
       <a class="marque" href="#accueil" title="Les deux traits ont la même longueur">
@@ -36,23 +48,23 @@
 
       <!-- Navigation : en bas de l'écran sur téléphone, en haut sur ordinateur -->
       <nav class="navigation" aria-label="Navigation principale">
-        <a class="onglet" href="#accueil" data-onglet="accueil" style="--c: #1d4f91">
+        <a class="onglet" href="#accueil" data-onglet="accueil">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>
           <span>Accueil</span>
         </a>
-        <a class="onglet" href="#biais" data-onglet="fiches" style="--c: #2f6db5">
+        <a class="onglet" href="#biais" data-onglet="fiches">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h10.5a2 2 0 0 1 2 2V20H7a2 2 0 0 1-2-2z"/><path d="M5 18a2 2 0 0 1 2-2h10.5"/><path d="M9 8.5h5M9 11.5h5"/></svg>
           <span>Fiches</span>
         </a>
-        <a class="onglet" href="#quiz" data-onglet="quiz" style="--c: #2a8a5c">
+        <a class="onglet" href="#quiz" data-onglet="quiz">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.7"/><path d="M12 17h.01"/></svg>
           <span>Quiz</span>
         </a>
-        <a class="onglet" href="#ateliers" data-onglet="ateliers" style="--c: #c0601b">
+        <a class="onglet" href="#ateliers" data-onglet="ateliers">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 3.5h5M10.5 3.5v5.2L5 18.2A1.5 1.5 0 0 0 6.3 20.5h11.4a1.5 1.5 0 0 0 1.3-2.3l-5.5-9.5V3.5"/><path d="M7.4 14.5h9.2"/></svg>
           <span>Ateliers</span>
         </a>
-        <a class="onglet" href="#guide" data-onglet="guide" style="--c: #44546a">
+        <a class="onglet" href="#guide" data-onglet="guide">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
           <span>Guide</span>
         </a>
