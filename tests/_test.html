@@ -225,6 +225,60 @@ f.onload = async () => {
     ok("réponse libre : erreur, retour en boîte 1", w.eval("memoire")[w.eval("cleFiche")(ql2.type, ql2.fiche)].b === 1);
     await aller("quiz/tout");
 
+    // ---------- Thème, hors ligne, repérages ----------
+    d.querySelector('[data-theme-choix="dark"]').click();
+    ok("thème : sombre choisi à la main", d.documentElement.dataset.theme === "dark" && JSON.parse(w.localStorage.getItem("theme")) === "dark" && d.querySelector('[data-theme-choix="dark"]').getAttribute("aria-pressed") === "true");
+    ok("thème : le fond suit le choix", w.getComputedStyle(d.body).backgroundColor === "rgb(22, 19, 15)");
+    d.querySelector('[data-theme-choix="light"]').click();
+    ok("thème : clair choisi à la main", w.getComputedStyle(d.body).backgroundColor === "rgb(246, 244, 239)");
+    d.querySelector('[data-theme-choix="auto"]').click();
+    ok("thème : retour à l'automatique", !d.documentElement.dataset.theme && w.localStorage.getItem("theme") === null);
+    // Hors ligne : sw.js garde en cache tous les scripts de la page, et chaque fichier listé existe
+    const sw = await (await fetch("sw.js", { cache: "no-store" })).text();
+    const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1]);
+    const scripts = [...d.querySelectorAll("script[src]")].map(s => s.getAttribute("src"));
+    const absents = [];
+    for (const f of fichiersSW) if (!(await fetch(f, { cache: "no-store" })).ok) absents.push(f);
+    ok("hors ligne : sw.js liste tous les scripts, et chaque fichier listé existe", scripts.every(s => fichiersSW.includes(s)) && absents.length === 0, scripts.filter(s => !fichiersSW.includes(s)).concat(absents).join(", "));
+    ok("hors ligne : enregistrement réservé à la page elle-même", /window\.top === window/.test(await (await fetch("app.js", { cache: "no-store" })).text()));
+    await aller("biais/ancrage");
+    vue().querySelector(".reperage input").value = "une publicité de soldes";
+    [...vue().querySelectorAll(".reperage button")].find(b => /repéré/.test(b.textContent)).click();
+    await pause(5);
+    ok("repérage : noté sur la fiche", /Repéré 1 fois/.test(vue().textContent) && JSON.parse(w.localStorage.getItem("reperages"))[0].note === "une publicité de soldes");
+    await aller("portrait");
+    ok("repérage : bloc du portrait", /Vos repérages/.test(vue().textContent) && /une publicité de soldes/.test(vue().textContent));
+
+
+    // ---------- Trouver l'indice, situations supplémentaires ----------
+    const toutes = [...w.eval("INDEX").values()];
+    ok("situations supplémentaires : deux par fiche, toutes différentes", toutes.every(r => Array.isArray(r.fiche.casSup) && r.fiche.casSup.length === 2 && new Set([r.fiche.cas, r.fiche.cas2, ...r.fiche.casSup]).size === 4));
+    const indices = w.eval("INDICES");
+    ok("indices : 180 passages, chacun présent mot pour mot dans sa situation", Object.keys(indices).length === 180 && toutes.every(r => [1, 2].every(k => { const t = r.fiche[k === 1 ? "cas" : "cas2"]; const i = indices[w.eval("cleFiche")(r.type, r.fiche) + "#" + k]; return i && t.split(i).length === 2; })));
+    w.eval('lancerQuiz("tout")');
+    await aller("quiz/tout");
+    const qI = w.eval("quiz").serie[w.eval("quiz").index];
+    vue().querySelectorAll(".choix")[0].click(); await pause(3);
+    const certI = vue().querySelectorAll(".certitude [data-niveau]");
+    if (certI.length) { certI[0].click(); await pause(3); }
+    const btnIndice = [...vue().querySelectorAll("button")].find(b => /Trouver l'indice/.test(b.textContent));
+    ok("indice : bouton après la correction", !!btnIndice);
+    btnIndice.click(); await pause(3);
+    const passages = [...vue().querySelectorAll("p.cas .passage")];
+    const espaces = t => t.replace(/[  ]/g, " ");
+    const numI = qI.cas === qI.fiche.cas ? 1 : 2;
+    const attendu = indices[w.eval("cleFiche")(qI.type, qI.fiche) + "#" + numI];
+    const debutI = espaces(passages.map(p => p.textContent).join("")).indexOf(attendu);
+    ok("indice : la situation se découpe en passages qui la recomposent", passages.length >= 2 && espaces(passages.map(p => p.textContent).join("")) === espaces(qI.cas) && debutI >= 0);
+    passages.find(p => Number(p.dataset.debut) <= debutI && Number(p.dataset.fin) > debutI).click(); await pause(3);
+    ok("indice : passage juste, indice surligné", /Bien vu/.test(vue().textContent) && espaces(vue().querySelector("p.cas mark.indice").textContent) === attendu);
+    // Révision : une situation supplémentaire, différente d'une révision à l'autre
+    w.eval('memoire["biais:ancrage"] = { b: 1, d: -100000, n: 3, j: 2 }; lancerQuiz("reviser")');
+    await aller("quiz");
+    const qR = w.eval("quiz").serie.find(q => q.fiche.id === "ancrage" && q.type === "biais");
+    ok("révision : situation supplémentaire en priorité", !!qR && qR.cas === qR.fiche.casSup[1], "mode " + w.eval("quiz").mode + ", série " + w.eval("quiz").serie.map(q => q.fiche.id).join(",") + ", cas " + (qR ? qR.cas.slice(0, 50) : "absent"));
+    await aller("quiz/tout");
+
     // ---------- Quiz chrono ----------
     await aller("quiz/chrono");
     ok("quiz chrono : chronomètre en texte, question à quatre propositions", /Reste : 60 s/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")) && vue().querySelectorAll(".choix").length === 4);
@@ -258,7 +312,7 @@ f.onload = async () => {
 
     // ---------- Ateliers ----------
     await aller("ateliers");
-    ok("ateliers : 33 cartes", vue().querySelectorAll(".atelier").length === 33);
+    ok("ateliers : 45 cartes", vue().querySelectorAll(".atelier").length === 45);
     ok("onglet Ateliers actif", d.querySelector(".onglet.actif").dataset.onglet === "ateliers");
     await aller("chiffres");
     ok("#chiffres renvoie à la liste", vue().id === "vue-ateliers");

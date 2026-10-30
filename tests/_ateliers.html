@@ -109,7 +109,7 @@ f.onload = async () => {
 
     const generiques = ["#chiffres/monde", "#chiffres/mortalite", "#chiffres/pays", "#chiffres/nord", "#chiffres/grandeurs", "#chiffres/chronologie",
       "#chiffres/vrai-faux", "#chiffres/illusion", "#chiffres/hasard", "#chiffres/correlation", "#chiffres/graphiques",
-      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations", "#tests/debat-truque", "#tests/reparer", "#tests/reformuler", "#tests/logique", "#tests/moniteur", "#tests/etudes"];
+      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations", "#tests/debat-truque", "#tests/reparer", "#tests/reformuler", "#tests/logique", "#tests/moniteur", "#tests/etudes", "#tests/wald", "#tests/qui-prouve", "#tests/pyramide", "#tests/foule", "#tests/demonter", "#tests/laterale"];
     for (const a of generiques) {
       const avant = erreursJS.length;
       for (let partie = 0; partie < 3; partie++) {
@@ -407,6 +407,118 @@ f.onload = async () => {
     await pause(61000);
     ok("débat chrono : fin et record", /Temps écoulé/.test(vue().textContent) && JSON.parse(w.localStorage.getItem("chrono") || "{}").debat !== undefined);
 
+    // ---------- Lot 5 : ateliers pratiques ----------
+    // Test t : valeurs de référence
+    ok("test t de Student : p = 0,0527 pour t = 2 et 38 degrés de liberté", Math.abs(w.eval("betaIncomplete")(38 / (38 + 4), 19, 0.5) - 0.0527) < 0.0005);
+    // Fabriquer un résultat
+    await aller("accueil"); await aller("tests/fabriquer");
+    ok("fabriquer : valeur p affichée et contrôles", /p = /.test(vue().textContent) && vue().querySelectorAll(".controles-tisane .puce").length === 8);
+    vue().querySelectorAll(".controles-tisane .puce")[1].click(); await pause(5);
+    vue().querySelectorAll(".controles-tisane .puce")[4].click(); await pause(5);
+    ok("fabriquer : chaque analyse est comptée", /3 analyses essayées/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")));
+    visibles("[data-valider]")[0].click(); await pause(10);
+    const partFab = Number((vue().querySelector(".grand-score").textContent.match(/\d+/) || [0])[0]);
+    ok("fabriquer : 1 000 études simulées, part de faux positifs plausible (" + partFab + " %)", partFab > 25 && partFab < 80 && /Simmons/.test(vue().textContent));
+    // Cécité au choix
+    w.localStorage.removeItem("ceciteFaite");
+    await aller("accueil"); await aller("tests/cecite");
+    for (let k = 0; k < 12; k++) { visibles(".choix")[1].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }
+    ok("cécité : quatre réponses à justifier", vue().querySelectorAll(".question-test").length === 4 && vue().querySelectorAll("textarea").length === 4);
+    const affichees = [...vue().querySelectorAll(".question-test")].map(b => Number((b.textContent.match(/Votre réponse\s?: (\d)/) || [])[1]));
+    ok("cécité : deux réponses inversées en secret (2 devient 8)", affichees.filter(n => n === 2).length === 2 && affichees.filter(n => n === 8).length === 2, affichees.join(","));
+    vue().querySelector(".question-test .lien-bouton").click();
+    visibles("[data-valider]")[0].click(); await pause(10);
+    ok("cécité : révélation et marque « déjà faite »", /Révélation/.test(vue().textContent) && /Hall/.test(vue().textContent) && w.localStorage.getItem("ceciteFaite") === "true");
+    await aller("accueil"); await aller("tests/cecite");
+    ok("cécité : à la seconde visite, le principe est rappelé", /déjà fait cette expérience/.test(vue().textContent));
+    // Bingo
+    await aller("accueil"); await aller("bingo/12345");
+    const grille1 = [...vue().querySelectorAll(".bingo-case")].map(b => b.textContent).join("|");
+    await aller("accueil"); await aller("bingo/12345");
+    ok("bingo : 16 cases, même grille pour la même graine", vue().querySelectorAll(".bingo-case").length === 16 && grille1 === [...vue().querySelectorAll(".bingo-case")].map(b => b.textContent).join("|"));
+    [0, 1, 2, 3].forEach(k => vue().querySelectorAll(".bingo-case")[k].click());
+    ok("bingo : une ligne complète", /Bingo !/.test(vue().textContent) && /12345/.test(vue().querySelector(".bingo-adresse").textContent));
+    controler();
+    // Décision guidée
+    w.localStorage.removeItem("decisions");
+    await aller("accueil"); await aller("tests/decision");
+    vue().querySelector("textarea").value = "Changer de logement";
+    visibles("[data-valider]")[0].click(); await pause(5);
+    for (let k = 0; k < 8; k++) { vue().querySelector("textarea:not(:disabled)").value = "réponse " + k; visibles("[data-valider]")[0].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }
+    ok("décision : huit questions, puis la date du bilan", /Date du bilan/.test(vue().textContent) && !!vue().querySelector('input[type="date"]'));
+    visibles("[data-valider]")[0].click(); await pause(5);
+    const dec = JSON.parse(w.localStorage.getItem("decisions"));
+    ok("décision : enregistrée avec ses huit réponses", dec.length === 1 && dec[0].reponses.length === 8 && /Bilan prévu/.test(vue().textContent));
+    dec[0].bilan = w.eval("aujourdHui()");
+    w.localStorage.setItem("decisions", JSON.stringify(dec));
+    await aller("accueil"); await aller("tests/decision");
+    ok("décision : le bilan attend à la date prévue", /Bilan à faire/.test(vue().textContent));
+    [...vue().querySelectorAll(".prevision button")].find(b => /Bonne décision/.test(b.textContent)).click(); await pause(5);
+    ok("décision : bilan enregistré", JSON.parse(w.localStorage.getItem("decisions"))[0].jugement === "bonne" && /bilan fait/.test(vue().textContent));
+
+    // Comprenez-vous vraiment ? Notes 6, puis 3 après l'explication, puis 2 après la question
+    await aller("accueil"); await aller("tests/comprendre");
+    for (let k = 0; k < 5; k++) { visibles(".choix")[5].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }
+    for (let k = 0; k < 3; k++) {
+      vue().querySelector("textarea").value = "Je ne sais pas trop.";
+      visibles("[data-valider]")[0].click(); await pause(3);
+      visibles(".choix")[2].click(); await pause(3);
+      visibles("[data-suivant]")[0].click(); await pause(3);
+      visibles(".choix")[0].click(); await pause(3);
+      visibles(".echelle-sept .choix")[1].click(); await pause(3);
+      visibles("[data-suivant]")[0].click(); await pause(3);
+    }
+    ok("comprendre : trois objets notés 6 → 3 → 2, trois questions, bilan sourcé", (vue().textContent.match(/6 → 3 → 2 sur 7/g) || []).length === 3 && /\/ 3 aux questions/.test(vue().textContent) && /Rozenblit/.test(vue().textContent) && /Crawford/.test(vue().textContent) && /baissé pour les trois objets/.test(vue().textContent));
+    controler();
+    // Démonter un argument : données cohérentes, puis une partie sans faute
+    const argsD = w.eval("ARGUMENTS_A_DEMONTER");
+    const arbreComplet = a => {
+      const vus = new Set();
+      const visiter = k => { if (vus.has(k)) return; vus.add(k); a.phrases.forEach((p, j) => { if (p.appui === k) visiter(j); }); };
+      visiter(a.phrases.findIndex(p => p.role === 0));
+      return a.phrases.every((p, j) => p.role === 4 ? !vus.has(j) : vus.has(j));
+    };
+    ok("démonter : une conclusion par texte, chaque phrase rattachée à l'arbre", argsD.every(a => a.phrases.filter(p => p.role === 0).length === 1 && a.phrases.every(p => (p.role === 0 || p.role === 4) === (p.appui === null)) && arbreComplet(a)));
+    await aller("accueil"); await aller("tests/demonter");
+    const titreD = [...vue().querySelectorAll(".consigne")].map(c => c.textContent).find(t => /texte fictif/.test(t));
+    const argD = argsD.find(a => titreD.includes(a.titre));
+    for (const p of argD.phrases) { visibles(".choix")[p.role].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }
+    ok("démonter : partie sans faute et arbre de l'argument", vue().querySelector(".grand-score").textContent.replace(/\s/g, "") === argD.phrases.length + "/" + argD.phrases.length && vue().querySelectorAll(".arbre-argument li").length === argD.phrases.filter(p => p.role !== 4).length);
+    controler();
+    // Lecture latérale : chercher ailleurs, puis juger
+    await aller("accueil"); await aller("tests/laterale");
+    for (let k = 0; k < 4; k++) {
+      const nom = [...vue().querySelectorAll(".consigne")].map(c => c.textContent).find(t => /Site fictif/.test(t));
+      const site = w.eval("SITES_FICTIFS").find(s => nom.includes(s.nom));
+      [...vue().querySelectorAll("button")].find(b => /Chercher ce que/.test(b.textContent)).click(); await pause(3);
+      if (k === 0) ok("latérale : les résultats de recherche apparaissent", /résultats fictifs/.test(vue().textContent) && vue().querySelectorAll(".encadre-lecture li").length === 3);
+      visibles(".choix")[site.verdict].click(); await pause(3);
+      visibles("[data-suivant]")[0].click(); await pause(3);
+    }
+    ok("latérale : quatre sites jugés, recherches comptées", vue().querySelector(".grand-score").textContent.replace(/\s/g, "") === "4/4" && /pour les 4 sites/.test(vue().textContent) && /Wineburg/.test(vue().textContent));
+    controler();
+    // Bilan avant et après : deux formes parallèles
+    w.localStorage.removeItem("bilanFormes");
+    const formes = w.eval("formesParalleles()");
+    ok("avant-après : deux formes de 20, mêmes notions et mêmes leurres, situations différentes",
+      formes.A.length === 20 && formes.B.length === 20 && new Set(formes.A.map(q => q.fiche)).size === 20 && formes.A.filter(q => q.type === "biais").length === 10
+      && formes.A.every(q => { const b = formes.B.find(x => x.fiche === q.fiche); return b && b.cas && q.cas && b.cas !== q.cas && b.options.length === 4 && b.options.every((o, i) => o === q.options[i]) && q.options.includes(q.fiche); }));
+    await aller("accueil"); await aller("tests/avant-apres");
+    ok("avant-après : présenté comme non validé", /pas été validées/.test(vue().textContent) && /Commencer la forme A/.test(vue().textContent));
+    visibles("[data-suivant]")[0].click(); await pause(5);
+    for (let k = 0; k < 20; k++) { visibles(".choix")[0].click(); await pause(2); visibles("[data-suivant]")[0].click(); await pause(2); }
+    const bf = JSON.parse(w.localStorage.getItem("bilanFormes"));
+    ok("avant-après : forme A enregistrée", !!bf.A && bf.A.score >= 0 && bf.A.score <= 20 && !bf.B && /Forme A/.test(vue().textContent));
+    bf.A.jour -= 30; w.localStorage.setItem("bilanFormes", JSON.stringify(bf));
+    await aller("accueil"); await aller("tests/avant-apres");
+    ok("avant-après : la forme B est proposée ensuite", /Commencer la forme B/.test(vue().textContent));
+    controler();
+    // Clavier : les touches 5 à 7 choisissent aussi (pyramide du désaccord, sept étages)
+    await aller("accueil"); await aller("tests/pyramide");
+    w.document.body.dispatchEvent(new w.KeyboardEvent("keydown", { key: "6", bubbles: true }));
+    await pause(5);
+    ok("clavier : la touche 6 choisit la sixième réponse", vue().querySelectorAll(".choix")[5].matches(".juste, .faux"));
+
     // ---------- Le calcul, en détail ----------
     // Tests positifs : le calcul suit chaque situation, avec ses propres chiffres
     await aller("accueil"); await aller("tests/depistage");
@@ -638,7 +750,7 @@ f.onload = async () => {
 
     // ---------- Portrait ----------
     await aller("portrait");
-    ok("portrait : page affichée", vue().id === "vue-portrait" && vue().querySelectorAll("article.carte").length === 13);
+    ok("portrait : page affichée", vue().id === "vue-portrait" && vue().querySelectorAll("article.carte").length === 14);
     ok("portrait : mesures disponibles", vue().querySelectorAll("article.carte:not(.a-mesurer)").length >= 7, vue().querySelectorAll("article.carte:not(.a-mesurer)").length + " mesures");
     ok("portrait : courbe d'étalonnage", !!vue().querySelector("svg.graphe"));
     ok("portrait : sans texte suspect", textesSuspects().length === 0, textesSuspects().join());

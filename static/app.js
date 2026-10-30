@@ -7,7 +7,7 @@
 (function verifierChargement() {
   const manquants = [
     [typeof BIAIS, "donnees.js"], [typeof NS_SVG, "schemas.js"], [typeof PAYS, "pays.js"], [typeof MONDE, "jeux-donnees.js"],
-    [typeof PICTOS, "ateliers.js"], [typeof NOMS_NIVEAUX, "niveaux.js"], [typeof EXPERIENCES, "experiences.js"], [typeof JEUX, "chiffres.js"], [typeof gauss, "perception.js"], [typeof DEBATS, "debattre.js"], [typeof SYLLOGISMES, "raisonner.js"]
+    [typeof PICTOS, "ateliers.js"], [typeof NOMS_NIVEAUX, "niveaux.js"], [typeof EXPERIENCES, "experiences.js"], [typeof JEUX, "chiffres.js"], [typeof gauss, "perception.js"], [typeof DEBATS, "debattre.js"], [typeof SYLLOGISMES, "raisonner.js"], [typeof testT, "pratiques.js"], [typeof INDICES, "indices.js"]
   ].filter(([type]) => type === "undefined").map(([, fichier]) => fichier);
   if (!manquants.length) return;
   const main = document.querySelector("main");
@@ -158,7 +158,7 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes"
 ];
 
 // Fiches marquées comme acquises par l'utilisateur
@@ -357,6 +357,8 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
       [[q.type, q.fiche], [q.voisine.type, q.voisine.fiche]].forEach(([t, f]) => liens.appendChild(lienVers("#" + t + "/" + f.id, f.nom)));
       retour.appendChild(liens);
     }
+    const indice = boutonIndice(carte, q);
+    if (indice) retour.appendChild(indice);
     const zoneActions = el("div", "actions");
     actions(zoneActions);
     retour.appendChild(zoneActions);
@@ -364,6 +366,97 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
   }
 
   if (reponseDejaDonnee) corriger(reponseDejaDonnee);
+}
+
+// ===================== Trouver l'indice =====================
+// Après la correction, la situation se découpe en passages (après chaque virgule ou ponctuation) : on touche
+// celui qui trahit la notion. INDICES (indices.js) donne le passage attendu, pour les champs cas et cas2.
+function boutonIndice(carte, q) {
+  const numero = q.cas === q.fiche.cas ? 1 : q.cas === q.fiche.cas2 ? 2 : 0;
+  const indice = numero && INDICES[cleFiche(q.type, q.fiche) + "#" + numero];
+  const p = carte.querySelector("p.cas");
+  if (!indice || !p) return null;
+  // typo() ne fait que remplacer des espaces par des espaces insécables : les positions restent les mêmes
+  const espaces = t => t.replace(/[\u00a0\u202f]/g, " ");
+  const texte = p.textContent;
+  const debut = espaces(texte).indexOf(espaces(indice));
+  if (debut < 0) return null;
+  const fin = debut + indice.length;
+  const b = el("button", "bouton secondaire", "Trouver l'indice");
+  b.addEventListener("click", () => {
+    const consigne = el("p", "consigne", "Touchez le passage qui trahit la notion.");
+    b.replaceWith(consigne);
+    // Coupure après une ponctuation suivie d'une espace, sauf si une autre ponctuation suit (« ! » ») ;
+    // « 4,7 » n'est pas coupé
+    const morceaux = [];
+    let courant = "";
+    for (let i = 0; i < texte.length; i++) {
+      courant += texte[i];
+      if (/\s/.test(texte[i]) && /[,;:.!?»]/.test(texte[i - 1] || "") && i + 1 < texte.length && !/[»!?;:]/.test(texte[i + 1])) {
+        morceaux.push(courant);
+        courant = "";
+      }
+    }
+    if (courant) morceaux.push(courant);
+    // Phrase sans ponctuation intérieure : un passage par mot
+    if (morceaux.length < 3) morceaux.splice(0, morceaux.length, ...texte.match(/\S+\s*/g));
+    p.innerHTML = "";
+    let pos = 0;
+    const passages = morceaux.map(m => {
+      const s = el("button", "passage");
+      s.textContent = m;
+      s.dataset.debut = pos;
+      s.dataset.fin = pos + m.length;
+      pos += m.length;
+      s.addEventListener("click", () => {
+        const touche = Number(s.dataset.debut) < fin && Number(s.dataset.fin) > debut;
+        // La situation, avec l'indice surligné
+        p.innerHTML = "";
+        p.append(document.createTextNode(texte.slice(0, debut)), el("mark", "indice"), document.createTextNode(texte.slice(fin)));
+        p.querySelector("mark").textContent = texte.slice(debut, fin);
+        consigne.replaceWith(el("p", "verdict " + (touche ? "juste" : "faux"), touche ? "Bien vu : l'indice est surligné." : "Ce passage-là ne trahit pas la notion ; l'indice est surligné."));
+        annoncer(touche ? "Bien vu." : "L'indice est surligné.");
+      });
+      p.appendChild(s);
+      return s;
+    });
+    passages[0].focus();
+  });
+  return b;
+}
+
+// ===================== Journal des repérages =====================
+// « Je l'ai repéré » : l'utilisateur note qu'il a rencontré la notion dans la vie courante, avec une note facultative.
+// reperages : [{ cle, j (jour), note }], les 300 derniers.
+function journalReperage(cle) {
+  const bloc = el("div", "reperage");
+  const dessiner = () => {
+    bloc.innerHTML = "";
+    const miens = lire("reperages", []).filter(r => r.cle === cle);
+    const bouton = el("button", "bouton secondaire", "Je l'ai repéré");
+    const note = el("input", "champ");
+    note.placeholder = "Où ? (facultatif)";
+    note.setAttribute("aria-label", "Où avez-vous repéré cette notion ? (facultatif)");
+    note.maxLength = 140;
+    bouton.addEventListener("click", () => {
+      const tous = lire("reperages", []);
+      tous.push({ cle, j: aujourdHui(), note: note.value.trim() });
+      ecrire("reperages", tous.slice(-300));
+      noterActivite();
+      annoncer("Repérage noté.");
+      dessiner();
+    });
+    const ligne = el("div", "ligne");
+    ligne.append(note, bouton);
+    bloc.append(el("p", "consigne", "Dans la vie courante"), ligne);
+    if (miens.length) {
+      const dernier = miens[miens.length - 1];
+      const date = new Date(dernier.j * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
+      bloc.appendChild(el("p", "source", "Repéré " + pluriel(miens.length, "fois", "fois") + ", la dernière fois le " + date + (dernier.note ? " : « " + dernier.note + " »" : "") + "."));
+    }
+  };
+  dessiner();
+  return bloc;
 }
 
 // ===================== Réponse libre =====================
@@ -942,6 +1035,7 @@ function afficherFiche(type, fiche) {
     pied.appendChild(info);
   }
   carte.appendChild(pied);
+  carte.appendChild(journalReperage(cle));
   zone.appendChild(carte);
 
   // Fiches précédente et suivante, dans l'ordre de la liste
@@ -1048,6 +1142,12 @@ function nouvelleSerie() {
     choisies = melanger(choisies);
   }
   quiz.serie = choisies.map(r => creerQuestion(r.type, r.fiche));
+  // Révision : une situation supplémentaire (casSup), pour ne pas reconnaître un texte déjà lu
+  if (quiz.mode === "reviser") quiz.serie.forEach(q => {
+    const sup = q.fiche.casSup;
+    const m = memoire[cleFiche(q.type, q.fiche)];
+    if (sup && sup.length) q.cas = sup[(m ? m.n : 0) % sup.length];
+  });
   // Réponse libre : la situation seule ; retrouver le nom de mémoire est plus exigeant que le reconnaître
   if (quiz.mode === "libre") quiz.serie.forEach(q => { q.libre = true; });
   quiz.index = 0;
@@ -1227,8 +1327,8 @@ function afficherBilan(zone) {
 // #ateliers, #chiffres/monde, #tests/crt, #guide, #guide/methode…
 // Le bouton « retour » du navigateur fonctionne, et chaque page a son propre lien.
 
-const ONGLET_DE = { accueil: "accueil", biais: "fiches", sophismes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide" };
-const SECTION_DE = { accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide" };
+const ONGLET_DE = { accueil: "accueil", biais: "fiches", sophismes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
+const SECTION_DE = { accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
 let precedent = { vue: null, id: null };
 
 function afficherPage() {
@@ -1302,6 +1402,12 @@ function afficherPage() {
   if (vue === "portrait") { titre = "Votre portrait"; afficherPortrait(); }
   if (vue === "chiffres") { afficherChiffres($("vue-chiffres"), id); titre = JEUX.find(j => j.id === id).titre; }
   if (vue === "tests") { afficherExperiences($("vue-tests"), id); titre = EXPERIENCES.find(e => e.id === id).titre; }
+  // #bingo/<graine> : la grille du bingo des sophismes correspondant à cette graine, à partager
+  if (vue === "bingo") {
+    grainePourBingo = id;
+    ouvrirAtelier($("vue-tests"), EXPERIENCES.find(e => e.id === "bingo"));
+    titre = "Bingo des sophismes";
+  }
 
   if (vue === "guide") {
     titre = "Guide";
@@ -1404,6 +1510,28 @@ $("btn-partager").addEventListener("click", async () => {
   }
 });
 
+// Thème : automatique (selon l'appareil), clair ou sombre. Le script de l'en-tête l'applique avant l'affichage.
+function appliquerTheme(choix) {
+  if (choix === "light" || choix === "dark") document.documentElement.dataset.theme = choix;
+  else delete document.documentElement.dataset.theme;
+  document.querySelectorAll("[data-theme-choix]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeChoix === (choix || "auto"))));
+  // Couleur de la barre du navigateur, sur téléphone
+  const sombre = choix === "dark" || (choix !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.content = sombre ? "#16130f" : "#f6f4ef"; });
+}
+document.querySelectorAll("[data-theme-choix]").forEach(b => b.addEventListener("click", () => {
+  const choix = b.dataset.themeChoix;
+  if (choix === "auto") effacer("theme"); else ecrire("theme", choix);
+  appliquerTheme(choix);
+}));
+appliquerTheme(lire("theme", "auto"));
+
+// Mode hors ligne : le service worker garde une copie du site (sw.js). Seulement en HTTPS ou en local.
+// Seulement pour la page elle-même, pas dans un cadre (les bancs d'essai chargent le site dans un cadre)
+if ("serviceWorker" in navigator && window.top === window && (location.protocol === "https:" || location.hostname === "localhost")) {
+  navigator.serviceWorker.register("sw.js").catch(() => { /* hors ligne indisponible : le site fonctionne normalement */ });
+}
+
 // L'emblème est une illusion de Müller-Lyer : un clic montre que les deux traits sont égaux
 document.querySelector(".marque").addEventListener("click", () => {
   const embleme = document.querySelector(".embleme");
@@ -1437,15 +1565,16 @@ document.addEventListener("keydown", e => {
   if (cible.matches && cible.matches("input, textarea, select")) return;
   const section = document.querySelector("main > section:not([hidden])");
   if (!section) return;
-  if (/^[1-4]$/.test(e.key)) {
+  // Certitude au quiz : 7 Sûr, 8 Plutôt sûr, 9 Au hasard (les touches 1 à 4 restent aux réponses)
+  const certitude = /^[789]$/.test(e.key) && section.querySelectorAll(".certitude [data-niveau]")[Number(e.key) - 7];
+  if (certitude) {
+    e.preventDefault();
+    certitude.click();
+  } else if (/^[1-9]$/.test(e.key)) {
     // Sur l'accueil, un défi en cours passe avant la situation du jour
     const portee = section.querySelector(".defi-jour .choix:not(:disabled)") ? section.querySelector(".defi-jour") : section;
     const choix = portee.querySelectorAll(".choix:not(:disabled)");
     if (choix[Number(e.key) - 1]) { e.preventDefault(); choix[Number(e.key) - 1].click(); }
-  } else if (/^[789]$/.test(e.key)) {
-    // Certitude au quiz : 7 Sûr, 8 Plutôt sûr, 9 Au hasard (les touches 1 à 4 restent aux réponses)
-    const bouton = section.querySelectorAll(".certitude [data-niveau]")[Number(e.key) - 7];
-    if (bouton) { e.preventDefault(); bouton.click(); }
   } else if (e.key === "Enter" || e.key === "ArrowRight") {
     const suite = section.querySelector("[data-suivant]");
     if (suite && !cible.matches("a, button")) { e.preventDefault(); suite.click(); }

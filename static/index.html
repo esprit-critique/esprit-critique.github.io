@@ -18,6 +18,8 @@
   <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
   <title>Esprit critique</title>
+  <!-- Thème choisi à la main (clair ou sombre), appliqué avant l'affichage pour éviter un éclair de la mauvaise couleur -->
+  <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -292,6 +294,11 @@
     <footer class="pied">
       <p>Esprit critique · contenu sourcé · votre progression reste dans votre navigateur</p>
       <p><button class="lien" id="btn-partager">Partager le site</button> · <a href="https://github.com/esprit-critique/esprit-critique.github.io">Code source</a> · <a href="#guide/donnees">Vos données</a></p>
+      <p class="choix-theme" role="group" aria-label="Thème d'affichage">Thème :
+        <button type="button" data-theme-choix="auto">Auto</button>
+        <button type="button" data-theme-choix="light">Clair</button>
+        <button type="button" data-theme-choix="dark">Sombre</button>
+      </p>
     </footer>
   </div>
 
@@ -306,6 +313,8 @@
   <script src="perception.js"></script>
   <script src="debattre.js"></script>
   <script src="raisonner.js"></script>
+  <script src="pratiques.js"></script>
+<script src="indices.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

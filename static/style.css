@@ -29,7 +29,7 @@
    Texte ivoire plutôt que blanc pur (contraste 12,9:1, confortable sans éblouir),
    surfaces de plus en plus claires pour marquer la profondeur, couleurs d'accent adoucies (≥ 7,5:1). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --fond: #16130f;
     --carte: #1f1b16;
     --texte: #e7dfd1;
@@ -47,6 +47,24 @@
     --orange: #e2a867;
   }
 }
+/* Mode sombre choisi à la main (bouton du pied de page) */
+:root[data-theme="dark"] {
+    --fond: #16130f;
+    --carte: #1f1b16;
+    --texte: #e7dfd1;
+    --discret: #aba191;
+    --trait: #3b342b;
+    --trait-doux: #2a251f;
+    --accent: #93b4e0;
+    --accent-doux: #222a35;
+    --sur-accent: #16130f;
+    --encadre: #28231d;
+    --vert: #8fc79a;
+    --vert-doux: #1f2b20;
+    --rouge: #ee9582;
+    --rouge-doux: #3a221c;
+    --orange: #e2a867;
+  }
 
 * { box-sizing: border-box; }
 
@@ -140,8 +158,10 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
 .onglet.actif { color: var(--texte); }
 .onglet.actif svg { stroke: var(--c, var(--texte)); stroke-width: 2.1; }
 @media (prefers-color-scheme: dark) {
-  .onglet.actif svg { stroke: color-mix(in srgb, var(--c, var(--texte)) 55%, white); }
+  :root:not([data-theme="light"]) .onglet.actif svg { stroke: color-mix(in srgb, var(--c, var(--texte)) 55%, white); }
 }
+/* Mode sombre choisi à la main (bouton du pied de page) */
+:root[data-theme="dark"] .onglet.actif svg { stroke: color-mix(in srgb, var(--c, var(--texte)) 55%, white); }
 
 /* Ordinateur : navigation en haut, à côté du titre */
 @media (min-width: 760px) {
@@ -336,13 +356,20 @@ h3.titre-bloc {
 }
 
 @media (prefers-color-scheme: dark) {
-  .carte {
+  :root:not([data-theme="light"]) .carte {
     --c-fort: color-mix(in srgb, var(--c, #1d4f91) 72%, white);
     --c-texte: color-mix(in srgb, var(--c, #1d4f91) 55%, white);
     --c-clair: color-mix(in srgb, var(--c, #1d4f91) 22%, var(--carte));
     --sur-c: #16130f;
   }
 }
+/* Mode sombre choisi à la main (bouton du pied de page) */
+:root[data-theme="dark"] .carte {
+    --c-fort: color-mix(in srgb, var(--c, #1d4f91) 72%, white);
+    --c-texte: color-mix(in srgb, var(--c, #1d4f91) 55%, white);
+    --c-clair: color-mix(in srgb, var(--c, #1d4f91) 22%, var(--carte));
+    --sur-c: #16130f;
+  }
 
 .carte h2 { font-family: var(--titre); font-size: 21px; line-height: 1.2; margin: 0 0 4px; }
 .carte p { margin: 0 0 12px; }
@@ -365,8 +392,10 @@ h3.titre-bloc {
 
 .groupe { margin-bottom: 22px; --c-texte: color-mix(in srgb, var(--c) 80%, black); }
 @media (prefers-color-scheme: dark) {
-  .groupe { --c-texte: color-mix(in srgb, var(--c) 55%, white); }
+  :root:not([data-theme="light"]) .groupe { --c-texte: color-mix(in srgb, var(--c) 55%, white); }
 }
+/* Mode sombre choisi à la main (bouton du pied de page) */
+:root[data-theme="dark"] .groupe { --c-texte: color-mix(in srgb, var(--c) 55%, white); }
 
 .groupe-entete { margin: 0 0 8px; }
 .groupe-nom {
@@ -483,7 +512,11 @@ h3.titre-bloc {
 .sch-discret { fill: var(--discret); }
 .sch-gris { fill: var(--trait); }
 /* En sombre, le gris des traits disparaît sur le fond : points et carrés neutres plus clairs (3,4:1 sur le fond) */
-@media (prefers-color-scheme: dark) { .sch-gris { fill: #73685a; } }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .sch-gris { fill: #73685a; }
+}
+/* Mode sombre choisi à la main (bouton du pied de page) */
+:root[data-theme="dark"] .sch-gris { fill: #73685a; }
 /* Liseré couleur de carte autour d'un texte posé sur un tracé */
 .sch-halo { paint-order: stroke; stroke: var(--carte); stroke-width: 3.5px; stroke-linejoin: round; }
 .sch-rouge { fill: var(--rouge); }
@@ -933,8 +966,10 @@ h3.titre-bloc {
 .atelier-lie:active { transform: scale(0.99); }
 @media (hover: hover) { .atelier-lie:hover { border-color: var(--c); } }
 @media (prefers-color-scheme: dark) {
-  .atelier-lie { --c-texte: color-mix(in srgb, var(--c) 55%, white); --c-fort: color-mix(in srgb, var(--c) 72%, white); --c-clair: color-mix(in srgb, var(--c) 22%, var(--carte)); }
+  :root:not([data-theme="light"]) .atelier-lie { --c-texte: color-mix(in srgb, var(--c) 55%, white); --c-fort: color-mix(in srgb, var(--c) 72%, white); --c-clair: color-mix(in srgb, var(--c) 22%, var(--carte)); }
 }
+/* Mode sombre choisi à la main (bouton du pied de page) */
+:root[data-theme="dark"] .atelier-lie { --c-texte: color-mix(in srgb, var(--c) 55%, white); --c-fort: color-mix(in srgb, var(--c) 72%, white); --c-clair: color-mix(in srgb, var(--c) 22%, var(--carte)); }
 .picto-cadre.petit { width: 38px; height: 38px; flex: none; }
 .picto-cadre.petit .picto { width: 28px; height: 28px; }
 
@@ -1102,3 +1137,47 @@ h3.titre-bloc {
 .carte-contrainte { border: 1px dashed var(--c-fort, var(--accent)); border-radius: var(--rayon); padding: 8px 12px; margin: 8px 0; font-weight: 600; }
 /* Bouton présenté comme un lien (mode chrono) */
 .lien-bouton { background: none; border: 0; padding: 4px 0; margin: 0 0 8px; color: var(--c-texte, var(--accent)); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* Choix du thème : clair, sombre ou automatique (pied de page). color-scheme règle aussi les contrôles natifs. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+.choix-theme { display: inline-flex; gap: 4px; align-items: center; }
+.choix-theme button { background: none; border: 1px solid var(--trait); border-radius: var(--rayon); padding: 2px 8px; font-size: 13px; color: var(--discret); cursor: pointer; }
+.choix-theme button[aria-pressed="true"] { color: var(--texte); border-color: var(--texte); font-weight: 600; }
+/* Journal des repérages, sous chaque fiche */
+.reperage { border-top: 1px solid var(--trait-doux); margin-top: 14px; padding-top: 10px; }
+.reperage .ligne { display: flex; gap: 8px; }
+.reperage .champ { flex: 1; min-width: 0; }
+
+/* Lot 5 : ateliers pratiques */
+.echelle-neuf .echelle-sept-boutons { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
+.controles-tisane .puces { flex-wrap: wrap; overflow: visible; margin: 0 0 6px; }
+.controles-tisane .bouton { margin: 6px 0 4px; }
+.p-valeur { font-variant-numeric: tabular-nums; }
+.p-valeur.significatif { color: var(--rouge); }
+.consigne-longue { color: var(--discret); }
+/* Bingo des sophismes */
+.bingo-grille { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 10px 0; }
+.bingo-case { min-height: 74px; padding: 6px; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); font: inherit; font-size: 13px; line-height: 1.25; color: var(--texte); cursor: pointer; overflow-wrap: anywhere; hyphens: auto; }
+.bingo-case.cochee { background: var(--c-clair, var(--accent-doux)); border-color: var(--c-fort, var(--accent)); font-weight: 700; }
+.bingo-adresse { overflow-wrap: anywhere; }
+@media print {
+  .entete, .navigation, .pied, .nav-atelier, .tete-atelier .picto-cadre, .actions, .calcul-detail, .annonce { display: none !important; }
+  body { background: #fff; color: #000; }
+  .carte { border: 0; box-shadow: none; }
+  .bingo-case { min-height: 90px; border: 1px solid #000; color: #000; background: #fff; }
+}
+/* Démonter un argument, lecture latérale, trouver l'indice */
+.texte-argument { line-height: 1.6; }
+.texte-argument mark, mark.indice { background: var(--accent-doux); color: inherit; padding: 1px 2px; border-radius: 2px; box-shadow: inset 0 -2px 0 var(--accent); }
+.arbre-argument ul { list-style: none; margin: 0; padding-left: 14px; border-left: 2px solid var(--trait); }
+.arbre-argument > ul { padding-left: 0; border-left: 0; }
+.arbre-argument li { margin: 10px 0 0; }
+.arbre-role { font-weight: 700; color: var(--discret); }
+.arbre-argument .role-0 > .arbre-role { color: var(--accent); }
+.arbre-argument .role-2 > .arbre-role { color: var(--rouge); }
+.encadre-lecture { margin: 10px 0; padding: 10px 12px; background: var(--encadre); border-radius: var(--rayon); }
+.encadre-lecture .consigne { margin-top: 0; }
+.passage { display: inline; margin: 0; padding: 0; border: 0; border-bottom: 1px dashed var(--discret); background: none; font: inherit; line-height: inherit; color: inherit; text-align: left; cursor: pointer; }
+.passage:hover, .passage:focus-visible { background: var(--accent-doux); }
+.actions-lecture { margin-bottom: 14px; }

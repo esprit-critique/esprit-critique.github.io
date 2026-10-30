@@ -715,6 +715,29 @@ function afficherPortrait() {
     ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", paragraphe("Sur " + pluriel(debats.length, "débat") + ", vous avez repéré " + tot("det") + " sophismes sur " + tot("s") + ", avec " + pluriel(tot("fa"), "fausse alerte", "fausses alertes") + " sur " + tot("r") + " répliques recevables. Sensibilité d′ cumulée : " + fr(Number(d.toFixed(2))) + " (0 : hasard ; 2 ou plus : très bonne distinction)."));
   } else ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", null, "Repérez-vous les sophismes d'un débat sans crier au sophisme à tort ?");
 
+  // 14. Repérages dans la vie courante (bouton « Je l'ai repéré » des fiches)
+  const reperages = lire("reperages", []).filter(r => INDEX.has(r.cle));
+  if (reperages.length) {
+    const compte = {};
+    reperages.forEach(r => { compte[r.cle] = (compte[r.cle] || 0) + 1; });
+    const liste = el("ul", "liste-simple");
+    Object.entries(compte).sort((a, b) => b[1] - a[1]).slice(0, 8).forEach(([cle, n]) => {
+      const { type, fiche } = INDEX.get(cle);
+      const li = el("li");
+      li.append(lienVers("#" + type + "/" + fiche.id, fiche.nom), texteNoeud(" : " + pluriel(n, "fois", "fois")));
+      liste.appendChild(li);
+    });
+    const recents = reperages.filter(r => r.note).slice(-3).reverse();
+    const bloc = el("div");
+    bloc.append(paragraphe(pluriel(reperages.length, "repérage") + " dans la vie courante, sur " + pluriel(Object.keys(compte).length, "notion") + "."), liste);
+    if (recents.length) {
+      const l2 = el("ul", "liste-simple");
+      recents.forEach(r => l2.appendChild(el("li", null, INDEX.get(r.cle).fiche.nom + " : « " + r.note + " »")));
+      bloc.append(el("p", "consigne", "Vos dernières notes"), l2);
+    }
+    ajouter("Vos repérages", "#2a8a5c", "#biais", bloc);
+  } else ajouter("Vos repérages", "#2a8a5c", "#biais", null, "Repérez-vous ces biais et ces sophismes autour de vous ? Notez-le depuis les fiches.");
+
   // 13. Niveaux des ateliers : niveau atteint, réussite moyenne par niveau, maîtrise
   const aNiveaux = tousLesAteliers().filter(({ atelier }) => { const r = resultatAtelier(atelier.id); return r && r.niveaux; });
   if (aNiveaux.length) {
