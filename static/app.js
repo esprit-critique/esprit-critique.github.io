@@ -879,6 +879,24 @@ const etat = {
 };
 if (!TYPES[etat.type]) etat.type = "biais";
 
+// Numéro de catalogue : « B 10 » à l'écran, « Biais numéro 10 » pour les lecteurs d'écran
+function numeroFiche(type, f, classe) {
+  const n = el("span", classe);
+  n.append(el("span", null, (type === "biais" ? "B" : "S") + "\u00a0" + f.num), el("span", "invisible", (type === "biais" ? "Biais" : "Sophisme") + " numéro " + f.num + ", "));
+  n.firstChild.setAttribute("aria-hidden", "true");
+  return n;
+}
+
+// Recherche par numéro : « B 10 », « b10 », « S7 »
+function rechercheNumero(q) {
+  const m = q.match(/^([bs])\s*(\d+)$/);
+  return m ? { type: m[1] === "b" ? "biais" : "sophismes", num: Number(m[2]) } : null;
+}
+function correspondRecherche(type, f, q) {
+  const n = rechercheNumero(q);
+  return n ? n.type === type && f.num === n.num : texteRecherche(f).includes(q);
+}
+
 function texteRecherche(f) {
   return normaliser([f.nom, f.autresNoms || "", f.definition, f.categorie, f.source, f.celebre || ""].join(" "));
 }
@@ -889,7 +907,7 @@ function fichesFiltrees(type) {
   return TYPES[type].fiches.filter(f => {
     if (cat === "À revoir" && acquis.has(cleFiche(type, f))) return false;
     if (cat !== "Toutes" && cat !== "À revoir" && f.categorie !== cat) return false;
-    return !q || texteRecherche(f).includes(q);
+    return !q || correspondRecherche(type, f, q);
   });
 }
 
@@ -932,7 +950,7 @@ function afficherListe(type) {
   if (fiches.length === 0) {
     const autre = type === "biais" ? "sophismes" : "biais";
     const q = normaliser(etat.recherche.trim());
-    const ailleurs = q ? TYPES[autre].fiches.filter(f => texteRecherche(f).includes(q)).length : 0;
+    const ailleurs = q ? TYPES[autre].fiches.filter(f => correspondRecherche(autre, f, q)).length : 0;
     zone.appendChild(el("p", "vide", etat.categorie[type] === "À revoir" && !q
       ? "Toutes les fiches de cette section sont acquises."
       : "Aucune fiche ne correspond."));
@@ -959,7 +977,9 @@ function afficherListe(type) {
     groupe.forEach(f => {
       const ligne = lienVers("#" + type + "/" + f.id, undefined, "ligne-fiche");
       const corps = el("span", "lf-corps");
-      corps.append(el("span", "lf-nom", f.nom), el("span", "lf-def", f.definition));
+      const nom = el("span", "lf-nom");
+      nom.append(numeroFiche(type, f, "lf-num"), texteNoeud(f.nom));
+      corps.append(nom, el("span", "lf-def", f.definition));
       const etatFiche = el("span", "lf-etat", acquis.has(cleFiche(type, f)) ? "✓" : "");
       if (acquis.has(cleFiche(type, f))) etatFiche.setAttribute("aria-label", "acquise");
       ligne.append(corps, etatFiche);
@@ -1004,7 +1024,9 @@ function afficherFiche(type, fiche) {
 
   const entete = el("div", "entete-carte");
   const badge = el("span", "badge", "✓ Acquise");
-  entete.append(el("span", "etiquette", conf.singulier + " · " + fiche.categorie), badge);
+  const etiquette = el("span", "etiquette-numero");
+  etiquette.append(el("span", "etiquette", conf.singulier + " · " + fiche.categorie), numeroFiche(type, fiche, "numero-fiche"));
+  entete.append(etiquette, badge);
   carte.append(entete, el("h1", "fiche-titre", fiche.nom));
   if (fiche.autresNoms) carte.appendChild(el("p", "autres-noms", fiche.autresNoms));
   carte.appendChild(el("p", "fiche-definition", fiche.definition));

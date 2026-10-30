@@ -250,6 +250,22 @@ f.onload = async () => {
     ok("repérage : bloc du portrait", /Vos repérages/.test(vue().textContent) && /une publicité de soldes/.test(vue().textContent));
 
 
+    // ---------- Numéros de catalogue ----------
+    const numerosOk = ["biais", "sophismes"].every(t => { const n = w.eval("TYPES")[t].fiches.map(f => f.num).sort((a, b) => a - b); return n.every((v, i) => v === i + 1); });
+    ok("numéros : uniques et sans trou, par type", numerosOk);
+    await aller("biais/ancrage");
+    ok("numéros : affiché sur la fiche, lu « Biais numéro » par les lecteurs d'écran", /^B\s\d+$/.test(vue().querySelector(".numero-fiche [aria-hidden]").textContent) && /Biais numéro \d+/.test(vue().querySelector(".numero-fiche .invisible").textContent));
+    await aller("biais");
+    const champR = d.getElementById("recherche");
+    const ancrage = w.eval("trouverFiche")("biais", "ancrage");
+    for (const saisie of ["B " + ancrage.num, "b" + ancrage.num]) {
+      champR.value = saisie; champR.dispatchEvent(new w.Event("input")); await pause(20);
+      ok("numéros : la recherche « " + saisie + " » trouve l'effet d'ancrage seul", vue().querySelectorAll(".ligne-fiche").length === 1 && /ancrage/.test(vue().querySelector(".ligne-fiche").textContent));
+    }
+    champR.value = "S7"; champR.dispatchEvent(new w.Event("input")); await pause(20);
+    ok("numéros : « S7 » depuis les biais renvoie vers les sophismes", /1 résultat parmi les sophismes/.test(vue().textContent.replace(/[\u00a0\u202f]/g, " ")));
+    champR.value = ""; champR.dispatchEvent(new w.Event("input")); await pause(20);
+
     // ---------- Trouver l'indice, situations supplémentaires ----------
     const toutes = [...w.eval("INDEX").values()];
     ok("situations supplémentaires : deux par fiche, toutes différentes", toutes.every(r => Array.isArray(r.fiche.casSup) && r.fiche.casSup.length === 2 && new Set([r.fiche.cas, r.fiche.cas2, ...r.fiche.casSup]).size === 4));

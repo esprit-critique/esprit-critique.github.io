@@ -2,6 +2,9 @@
 //
 // Chaque fiche a les champs suivants :
 //   id          identifiant unique, sans espace ni accent (sert à mémoriser la progression)
+//   num         numéro de catalogue, affiché « B 10 » (biais) ou « S 7 » (sophisme). Stable : une nouvelle fiche
+//               prend le numéro suivant libre de son type, et un numéro n'est jamais réattribué, même si une
+//               fiche est supprimée ou déplacée. Les numéros initiaux suivent l'ordre d'affichage d'octobre 2026.
 //   nom         nom usuel en français
 //   autresNoms  autres appellations (latin, anglais), facultatif
 //   categorie   doit correspondre au nom d'une catégorie de CATEGORIES_BIAIS ou CATEGORIES_SOPHISMES
@@ -11,6 +14,7 @@
 //   exemple     illustration concrète
 //   cas, cas2   deux situations utilisées par le quiz ; elles ne doivent pas nommer la notion,
 //               et ne doivent pas pouvoir s'appliquer aussi bien à une autre fiche
+//   casSup      deux situations supplémentaires, utilisées en priorité pendant les révisions
 //   parade      biais : comment s'en prémunir ; sophisme : comment répondre
 //   source      origine du concept ou étude de référence
 //   celebre     (facultatif) cas réel célèbre, avec dates et noms
@@ -46,6 +50,7 @@ const BIAIS = [
   // ---------- Probabilités ----------
   {
     id: "disponibilite",
+    num: 1,
     nom: "Heuristique de disponibilité",
     autresNoms: "Availability heuristic",
     categorie: "Probabilités",
@@ -64,6 +69,7 @@ const BIAIS = [
   },
   {
     id: "taux-de-base",
+    num: 2,
     nom: "Négligence du taux de base",
     autresNoms: "Base rate neglect",
     categorie: "Probabilités",
@@ -82,6 +88,7 @@ const BIAIS = [
   },
   {
     id: "conjonction",
+    num: 3,
     nom: "Erreur de conjonction",
     autresNoms: "Conjunction fallacy, problème de Linda",
     categorie: "Probabilités",
@@ -100,6 +107,7 @@ const BIAIS = [
   },
   {
     id: "erreur-du-joueur",
+    num: 4,
     nom: "Erreur du joueur",
     autresNoms: "Gambler's fallacy, sophisme de Monte-Carlo",
     categorie: "Probabilités",
@@ -118,6 +126,7 @@ const BIAIS = [
   },
   {
     id: "regression-moyenne",
+    num: 5,
     nom: "Négligence de la régression vers la moyenne",
     autresNoms: "Regression fallacy",
     categorie: "Probabilités",
@@ -136,6 +145,7 @@ const BIAIS = [
   },
   {
     id: "survivant",
+    num: 6,
     nom: "Biais du survivant",
     autresNoms: "Survivorship bias",
     categorie: "Probabilités",
@@ -154,6 +164,7 @@ const BIAIS = [
   },
   {
     id: "procureur",
+    num: 7,
     nom: "Sophisme du procureur",
     autresNoms: "Prosecutor's fallacy, inversion des probabilités conditionnelles",
     categorie: "Probabilités",
@@ -172,6 +183,7 @@ const BIAIS = [
   },
   {
     id: "simpson",
+    num: 8,
     nom: "Paradoxe de Simpson",
     autresNoms: "Simpson's paradox, effet Yule-Simpson",
     categorie: "Probabilités",
@@ -190,6 +202,7 @@ const BIAIS = [
   },
   {
     id: "taille-echantillon",
+    num: 9,
     nom: "Négligence de la taille de l'échantillon",
     autresNoms: "Insensitivity to sample size, loi des petits nombres",
     categorie: "Probabilités",
@@ -210,6 +223,7 @@ const BIAIS = [
   // ---------- Décision ----------
   {
     id: "ancrage",
+    num: 10,
     nom: "Effet d'ancrage",
     autresNoms: "Anchoring",
     categorie: "Décision",
@@ -228,6 +242,7 @@ const BIAIS = [
   },
   {
     id: "cadrage",
+    num: 11,
     nom: "Effet de cadrage",
     autresNoms: "Framing effect",
     categorie: "Décision",
@@ -246,6 +261,7 @@ const BIAIS = [
   },
   {
     id: "aversion-perte",
+    num: 12,
     nom: "Aversion à la perte",
     autresNoms: "Loss aversion",
     categorie: "Décision",
@@ -264,6 +280,7 @@ const BIAIS = [
   },
   {
     id: "couts-irrecuperables",
+    num: 13,
     nom: "Biais des coûts irrécupérables",
     autresNoms: "Sunk cost fallacy, effet Concorde",
     categorie: "Décision",
@@ -281,6 +298,7 @@ const BIAIS = [
   },
   {
     id: "statu-quo",
+    num: 14,
     nom: "Biais du statu quo",
     autresNoms: "Status quo bias, effet de l'option par défaut",
     categorie: "Décision",
@@ -299,6 +317,7 @@ const BIAIS = [
   },
   {
     id: "dotation",
+    num: 15,
     nom: "Effet de dotation",
     autresNoms: "Endowment effect",
     categorie: "Décision",
@@ -317,6 +336,7 @@ const BIAIS = [
   },
   {
     id: "leurre",
+    num: 16,
     nom: "Effet de leurre",
     autresNoms: "Decoy effect, effet de dominance asymétrique",
     categorie: "Décision",
@@ -335,6 +355,7 @@ const BIAIS = [
   },
   {
     id: "ikea",
+    num: 17,
     nom: "Effet IKEA",
     autresNoms: "IKEA effect",
     categorie: "Décision",
@@ -353,6 +374,7 @@ const BIAIS = [
   },
   {
     id: "resultat",
+    num: 18,
     nom: "Biais du résultat",
     autresNoms: "Outcome bias",
     categorie: "Décision",
@@ -371,6 +393,7 @@ const BIAIS = [
   },
   {
     id: "omission",
+    num: 19,
     nom: "Biais d'omission",
     autresNoms: "Omission bias",
     categorie: "Décision",
@@ -388,6 +411,7 @@ const BIAIS = [
   },
   {
     id: "prevision-affective",
+    num: 20,
     nom: "Biais d'impact",
     autresNoms: "Erreur de prévision affective, impact bias",
     categorie: "Décision",
@@ -407,6 +431,7 @@ const BIAIS = [
   // ---------- Mémoire et attention ----------
   {
     id: "retrospectif",
+    num: 21,
     nom: "Biais rétrospectif",
     autresNoms: "Hindsight bias, « je le savais »",
     categorie: "Mémoire et attention",
@@ -424,6 +449,7 @@ const BIAIS = [
   },
   {
     id: "faux-souvenirs",
+    num: 22,
     nom: "Effet de désinformation",
     autresNoms: "Misinformation effect, faux souvenirs",
     categorie: "Mémoire et attention",
@@ -442,6 +468,7 @@ const BIAIS = [
   },
   {
     id: "primaute",
+    num: 23,
     nom: "Effet de primauté",
     autresNoms: "Primacy effect",
     categorie: "Mémoire et attention",
@@ -459,6 +486,7 @@ const BIAIS = [
   },
   {
     id: "negativite",
+    num: 24,
     nom: "Biais de négativité",
     autresNoms: "Negativity bias",
     categorie: "Mémoire et attention",
@@ -477,6 +505,7 @@ const BIAIS = [
   },
   {
     id: "pic-fin",
+    num: 25,
     nom: "Règle du pic et de la fin",
     autresNoms: "Peak-end rule, négligence de la durée",
     categorie: "Mémoire et attention",
@@ -495,6 +524,7 @@ const BIAIS = [
   },
   {
     id: "frequence",
+    num: 26,
     nom: "Illusion de fréquence",
     autresNoms: "Phénomène Baader-Meinhof, frequency illusion",
     categorie: "Mémoire et attention",
@@ -512,6 +542,7 @@ const BIAIS = [
   },
   {
     id: "cryptomnesie",
+    num: 27,
     nom: "Cryptomnésie",
     autresNoms: "Plagiat involontaire, oubli de la source",
     categorie: "Mémoire et attention",
@@ -532,6 +563,7 @@ const BIAIS = [
   // ---------- Croyances ----------
   {
     id: "confirmation",
+    num: 28,
     nom: "Biais de confirmation",
     autresNoms: "Confirmation bias",
     categorie: "Croyances",
@@ -550,6 +582,7 @@ const BIAIS = [
   },
   {
     id: "croyance-logique",
+    num: 29,
     nom: "Biais de croyance",
     autresNoms: "Belief bias",
     categorie: "Croyances",
@@ -567,6 +600,7 @@ const BIAIS = [
   },
   {
     id: "verite-illusoire",
+    num: 30,
     nom: "Effet de vérité illusoire",
     autresNoms: "Illusory truth effect",
     categorie: "Croyances",
@@ -585,6 +619,7 @@ const BIAIS = [
   },
   {
     id: "barnum",
+    num: 31,
     nom: "Effet Barnum",
     autresNoms: "Effet Forer, validation subjective",
     categorie: "Croyances",
@@ -603,6 +638,7 @@ const BIAIS = [
   },
   {
     id: "illusion-controle",
+    num: 32,
     nom: "Illusion de contrôle",
     autresNoms: "Illusion of control",
     categorie: "Croyances",
@@ -621,6 +657,7 @@ const BIAIS = [
   },
   {
     id: "apophenie",
+    num: 33,
     nom: "Apophénie",
     autresNoms: "Paréidolie (pour les images et les sons)",
     categorie: "Croyances",
@@ -639,6 +676,7 @@ const BIAIS = [
   },
   {
     id: "raisonnement-motive",
+    num: 34,
     nom: "Raisonnement motivé",
     autresNoms: "Motivated reasoning, cognition protectrice de l'identité",
     categorie: "Croyances",
@@ -657,6 +695,7 @@ const BIAIS = [
   },
   {
     id: "perseverance",
+    num: 35,
     nom: "Persévérance des croyances",
     autresNoms: "Belief perseverance",
     categorie: "Croyances",
@@ -674,6 +713,7 @@ const BIAIS = [
   },
   {
     id: "monde-juste",
+    num: 36,
     nom: "Croyance en un monde juste",
     autresNoms: "Just-world hypothesis",
     categorie: "Croyances",
@@ -693,6 +733,7 @@ const BIAIS = [
   // ---------- Social ----------
   {
     id: "attribution",
+    num: 37,
     nom: "Erreur fondamentale d'attribution",
     autresNoms: "Fundamental attribution error, biais de correspondance",
     categorie: "Social",
@@ -711,6 +752,7 @@ const BIAIS = [
   },
   {
     id: "halo",
+    num: 38,
     nom: "Effet de halo",
     autresNoms: "Halo effect",
     categorie: "Social",
@@ -729,6 +771,7 @@ const BIAIS = [
   },
   {
     id: "faux-consensus",
+    num: 39,
     nom: "Effet de faux consensus",
     autresNoms: "False consensus effect, biais de projection",
     categorie: "Social",
@@ -747,6 +790,7 @@ const BIAIS = [
   },
   {
     id: "conformisme",
+    num: 40,
     nom: "Conformisme",
     autresNoms: "Conformity, effet Asch",
     categorie: "Social",
@@ -765,6 +809,7 @@ const BIAIS = [
   },
   {
     id: "pensee-groupe",
+    num: 41,
     nom: "Pensée de groupe",
     autresNoms: "Groupthink",
     categorie: "Social",
@@ -783,6 +828,7 @@ const BIAIS = [
   },
   {
     id: "autorite",
+    num: 42,
     nom: "Soumission à l'autorité",
     autresNoms: "Obedience to authority",
     categorie: "Social",
@@ -801,6 +847,7 @@ const BIAIS = [
   },
   {
     id: "exposition",
+    num: 43,
     nom: "Effet de simple exposition",
     autresNoms: "Mere exposure effect",
     categorie: "Social",
@@ -819,6 +866,7 @@ const BIAIS = [
   },
   {
     id: "malediction-savoir",
+    num: 44,
     nom: "Malédiction du savoir",
     autresNoms: "Curse of knowledge",
     categorie: "Social",
@@ -837,6 +885,7 @@ const BIAIS = [
   },
   {
     id: "endogroupe",
+    num: 45,
     nom: "Favoritisme envers son groupe",
     autresNoms: "Biais pro-endogroupe, ingroup bias",
     categorie: "Social",
@@ -857,6 +906,7 @@ const BIAIS = [
   // ---------- Image de soi ----------
   {
     id: "dunning-kruger",
+    num: 46,
     nom: "Effet Dunning-Kruger",
     autresNoms: "Dunning-Kruger effect",
     categorie: "Image de soi",
@@ -875,6 +925,7 @@ const BIAIS = [
   },
   {
     id: "planification",
+    num: 47,
     nom: "Erreur de planification",
     autresNoms: "Planning fallacy",
     categorie: "Image de soi",
@@ -893,6 +944,7 @@ const BIAIS = [
   },
   {
     id: "autocomplaisance",
+    num: 48,
     nom: "Biais d'autocomplaisance",
     autresNoms: "Self-serving bias",
     categorie: "Image de soi",
@@ -911,6 +963,7 @@ const BIAIS = [
   },
   {
     id: "optimisme",
+    num: 49,
     nom: "Biais d'optimisme",
     autresNoms: "Optimism bias, optimisme irréaliste",
     categorie: "Image de soi",
@@ -929,6 +982,7 @@ const BIAIS = [
   },
   {
     id: "angle-mort",
+    num: 50,
     nom: "Angle mort des biais",
     autresNoms: "Bias blind spot",
     categorie: "Image de soi",
@@ -946,6 +1000,7 @@ const BIAIS = [
   },
   {
     id: "surprecision",
+    num: 51,
     nom: "Excès de précision",
     autresNoms: "Overprecision, surconfiance dans ses estimations",
     categorie: "Image de soi",
@@ -968,6 +1023,7 @@ const SOPHISMES = [
   // ---------- Attaque personnelle ----------
   {
     id: "ad-hominem",
+    num: 1,
     nom: "Attaque personnelle",
     autresNoms: "Argumentum ad hominem",
     categorie: "Attaque personnelle",
@@ -986,6 +1042,7 @@ const SOPHISMES = [
   },
   {
     id: "tu-quoque",
+    num: 2,
     nom: "Toi aussi",
     autresNoms: "Tu quoque, appel à l'hypocrisie",
     categorie: "Attaque personnelle",
@@ -1004,6 +1061,7 @@ const SOPHISMES = [
   },
   {
     id: "association",
+    num: 3,
     nom: "Déshonneur par association",
     autresNoms: "Reductio ad Hitlerum, culpabilité par association",
     categorie: "Attaque personnelle",
@@ -1024,6 +1082,7 @@ const SOPHISMES = [
   // ---------- Appel illégitime ----------
   {
     id: "autorite",
+    num: 4,
     nom: "Argument d'autorité",
     autresNoms: "Argumentum ad verecundiam",
     categorie: "Appel illégitime",
@@ -1043,6 +1102,7 @@ const SOPHISMES = [
   },
   {
     id: "popularite",
+    num: 5,
     nom: "Appel à la popularité",
     autresNoms: "Argumentum ad populum",
     categorie: "Appel illégitime",
@@ -1061,6 +1121,7 @@ const SOPHISMES = [
   },
   {
     id: "tradition",
+    num: 6,
     nom: "Appel à la tradition",
     autresNoms: "Argumentum ad antiquitatem",
     categorie: "Appel illégitime",
@@ -1080,6 +1141,7 @@ const SOPHISMES = [
   },
   {
     id: "nature",
+    num: 7,
     nom: "Appel à la nature",
     autresNoms: "Argumentum ad naturam",
     categorie: "Appel illégitime",
@@ -1098,6 +1160,7 @@ const SOPHISMES = [
   },
   {
     id: "emotion",
+    num: 8,
     nom: "Appel à l'émotion",
     autresNoms: "Argumentum ad passiones, appel à la peur, à la pitié",
     categorie: "Appel illégitime",
@@ -1117,6 +1180,7 @@ const SOPHISMES = [
   },
   {
     id: "consequences",
+    num: 9,
     nom: "Appel aux conséquences",
     autresNoms: "Argumentum ad consequentiam",
     categorie: "Appel illégitime",
@@ -1135,6 +1199,7 @@ const SOPHISMES = [
   },
   {
     id: "genetique",
+    num: 10,
     nom: "Sophisme génétique",
     autresNoms: "Genetic fallacy",
     categorie: "Appel illégitime",
@@ -1154,6 +1219,7 @@ const SOPHISMES = [
   },
   {
     id: "ad-baculum",
+    num: 11,
     nom: "Appel à la force",
     autresNoms: "Argumentum ad baculum, argument du bâton",
     categorie: "Appel illégitime",
@@ -1174,6 +1240,7 @@ const SOPHISMES = [
   // ---------- Esquive ----------
   {
     id: "homme-de-paille",
+    num: 12,
     nom: "Homme de paille",
     autresNoms: "Straw man, épouvantail",
     categorie: "Esquive",
@@ -1192,6 +1259,7 @@ const SOPHISMES = [
   },
   {
     id: "hareng-rouge",
+    num: 13,
     nom: "Diversion",
     autresNoms: "Hareng rouge, red herring",
     categorie: "Esquive",
@@ -1211,6 +1279,7 @@ const SOPHISMES = [
   },
   {
     id: "question-piege",
+    num: 14,
     nom: "Question piège",
     autresNoms: "Plurium interrogationum, question complexe",
     categorie: "Esquive",
@@ -1229,6 +1298,7 @@ const SOPHISMES = [
   },
   {
     id: "poteaux",
+    num: 15,
     nom: "Déplacement des poteaux",
     autresNoms: "Moving the goalposts",
     categorie: "Esquive",
@@ -1247,6 +1317,7 @@ const SOPHISMES = [
   },
   {
     id: "brandolini",
+    num: 16,
     nom: "Mitraillage d'arguments",
     autresNoms: "Gish gallop, loi de Brandolini",
     categorie: "Esquive",
@@ -1267,6 +1338,7 @@ const SOPHISMES = [
   // ---------- Fausse comparaison ----------
   {
     id: "faux-dilemme",
+    num: 17,
     nom: "Faux dilemme",
     autresNoms: "Fausse alternative, bifurcation",
     categorie: "Fausse comparaison",
@@ -1286,6 +1358,7 @@ const SOPHISMES = [
   },
   {
     id: "juste-milieu",
+    num: 18,
     nom: "Sophisme du juste milieu",
     autresNoms: "Argumentum ad temperantiam",
     categorie: "Fausse comparaison",
@@ -1304,6 +1377,7 @@ const SOPHISMES = [
   },
   {
     id: "fausse-analogie",
+    num: 19,
     nom: "Fausse analogie",
     autresNoms: "Analogie boiteuse",
     categorie: "Fausse comparaison",
@@ -1322,6 +1396,7 @@ const SOPHISMES = [
   },
   {
     id: "fausse-equivalence",
+    num: 20,
     nom: "Fausse équivalence",
     autresNoms: "False balance, mise sur le même plan",
     categorie: "Fausse comparaison",
@@ -1341,6 +1416,7 @@ const SOPHISMES = [
   },
   {
     id: "nirvana",
+    num: 21,
     nom: "Sophisme du nirvana",
     autresNoms: "Sophisme de la solution parfaite",
     categorie: "Fausse comparaison",
@@ -1361,6 +1437,7 @@ const SOPHISMES = [
   // ---------- Causalité ----------
   {
     id: "post-hoc",
+    num: 22,
     nom: "Post hoc ergo propter hoc",
     autresNoms: "« À la suite de cela, donc à cause de cela »",
     categorie: "Causalité",
@@ -1380,6 +1457,7 @@ const SOPHISMES = [
   },
   {
     id: "correlation",
+    num: 23,
     nom: "Corrélation prise pour causalité",
     autresNoms: "Cum hoc ergo propter hoc",
     categorie: "Causalité",
@@ -1399,6 +1477,7 @@ const SOPHISMES = [
   },
   {
     id: "pente-glissante",
+    num: 24,
     nom: "Pente glissante",
     autresNoms: "Slippery slope",
     categorie: "Causalité",
@@ -1418,6 +1497,7 @@ const SOPHISMES = [
   },
   {
     id: "tireur-elite",
+    num: 25,
     nom: "Sophisme du tireur d'élite",
     autresNoms: "Texas sharpshooter fallacy",
     categorie: "Causalité",
@@ -1436,6 +1516,7 @@ const SOPHISMES = [
   },
   {
     id: "cause-unique",
+    num: 26,
     nom: "Cause unique",
     autresNoms: "Simplification causale",
     categorie: "Causalité",
@@ -1456,6 +1537,7 @@ const SOPHISMES = [
   // ---------- Généralisation ----------
   {
     id: "generalisation-hative",
+    num: 27,
     nom: "Généralisation hâtive",
     autresNoms: "Secundum quid",
     categorie: "Généralisation",
@@ -1474,6 +1556,7 @@ const SOPHISMES = [
   },
   {
     id: "vrai-ecossais",
+    num: 28,
     nom: "Aucun vrai Écossais",
     autresNoms: "No true Scotsman",
     categorie: "Généralisation",
@@ -1492,6 +1575,7 @@ const SOPHISMES = [
   },
   {
     id: "composition",
+    num: 29,
     nom: "Composition et division",
     autresNoms: "Fallacy of composition / division",
     categorie: "Généralisation",
@@ -1510,6 +1594,7 @@ const SOPHISMES = [
   },
   {
     id: "cherry-picking",
+    num: 30,
     nom: "Cueillette de cerises",
     autresNoms: "Cherry picking, preuve incomplète",
     categorie: "Généralisation",
@@ -1531,6 +1616,7 @@ const SOPHISMES = [
   // ---------- Logique et preuve ----------
   {
     id: "affirmation-consequent",
+    num: 31,
     nom: "Affirmation du conséquent",
     autresNoms: "Affirming the consequent",
     categorie: "Logique et preuve",
@@ -1549,6 +1635,7 @@ const SOPHISMES = [
   },
   {
     id: "negation-antecedent",
+    num: 32,
     nom: "Négation de l'antécédent",
     autresNoms: "Denying the antecedent",
     categorie: "Logique et preuve",
@@ -1567,6 +1654,7 @@ const SOPHISMES = [
   },
   {
     id: "petition-principe",
+    num: 33,
     nom: "Pétition de principe",
     autresNoms: "Raisonnement circulaire, petitio principii",
     categorie: "Logique et preuve",
@@ -1585,6 +1673,7 @@ const SOPHISMES = [
   },
   {
     id: "ignorance",
+    num: 34,
     nom: "Appel à l'ignorance",
     autresNoms: "Argumentum ad ignorantiam, renversement de la charge de la preuve",
     categorie: "Logique et preuve",
@@ -1604,6 +1693,7 @@ const SOPHISMES = [
   },
   {
     id: "sophisme-sophisme",
+    num: 35,
     nom: "Sophisme du sophisme",
     autresNoms: "Argumentum ad logicam",
     categorie: "Logique et preuve",
@@ -1624,6 +1714,7 @@ const SOPHISMES = [
   // ---------- Langage ----------
   {
     id: "equivoque",
+    num: 36,
     nom: "Équivoque",
     autresNoms: "Équivocation, amphibologie",
     categorie: "Langage",
@@ -1642,6 +1733,7 @@ const SOPHISMES = [
   },
   {
     id: "hors-contexte",
+    num: 37,
     nom: "Citation hors contexte",
     autresNoms: "Quote mining, citation tronquée",
     categorie: "Langage",
@@ -1661,6 +1753,7 @@ const SOPHISMES = [
   },
   {
     id: "continuum",
+    num: 38,
     nom: "Sophisme du continuum",
     autresNoms: "Sophisme de la barbe, paradoxe du tas",
     categorie: "Langage",
@@ -1679,6 +1772,7 @@ const SOPHISMES = [
   },
   {
     id: "definition-persuasive",
+    num: 39,
     nom: "Définition persuasive",
     autresNoms: "Redéfinition partisane",
     categorie: "Langage",

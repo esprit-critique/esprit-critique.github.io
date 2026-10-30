@@ -1259,3 +1259,7 @@ h3.titre-bloc {
 }
 .verdict { font-family: var(--titre); font-style: italic; font-size: 19px; font-weight: 500; line-height: 1.35; }
 .verdict.verdict-long { font-size: 17px; }
+/* Numéro de catalogue des fiches (B 10, S 7) */
+.etiquette-numero { display: inline-flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.numero-fiche { font-family: var(--titre); font-variant-numeric: oldstyle-nums; font-size: 15px; color: var(--discret); }
+.lf-num { font-family: var(--titre); font-variant-numeric: oldstyle-nums; color: var(--discret); font-weight: 400; margin-right: 6px; }
