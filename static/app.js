@@ -2,6 +2,24 @@
 // Contenu : donnees.js. Illustrations : schemas.js. Ateliers : ateliers.js, chiffres.js, perception.js,
 // experiences.js, avec leurs contenus dans jeux-donnees.js et pays.js.
 
+// ===================== Protection contre l'encadrement =====================
+// Un autre site ne doit pas pouvoir afficher celui-ci dans un cadre pour faire cliquer à l'insu du visiteur
+// (« clickjacking ») ; GitHub Pages ne permet pas l'en-tête qui l'interdirait. Un cadre du même site (les bancs
+// d'essai) reste permis : seul un parent d'une autre origine rend la lecture de top.location impossible.
+(function refuserEncadrement() {
+  try { void window.top.location.href; } catch (e) {
+    document.body.textContent = "";
+    const p = document.createElement("p");
+    p.className = "sans-script";
+    const a = document.createElement("a");
+    a.href = location.href; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "Ouvrir Esprit critique dans un nouvel onglet";
+    p.append("Ce site ne s'affiche pas dans la page d'un autre site. ", a);
+    document.body.appendChild(p);
+    throw new Error("Esprit critique : affichage dans le cadre d'un autre site refusé");
+  }
+})();
+
 // ===================== Vérification du chargement =====================
 // Sur une connexion instable, un fichier peut ne pas arriver : on le dit clairement plutôt que d'afficher une page cassée.
 (function verifierChargement() {

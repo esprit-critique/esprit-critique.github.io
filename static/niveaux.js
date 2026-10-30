@@ -228,12 +228,19 @@ function partieChrono(zone, options) {
       el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", ancien === undefined ? "Premier record enregistré." : nouveau ? "Nouveau record ! L'ancien était de " + signe(ancien) + " points." : "Votre record : " + signe(ancien) + " points."));
     boutonRejouer(zone, options.relancer, "Revenir à l'atelier");
   };
-  const minuteur = setInterval(() => {
-    if (!zone.isConnected || !zoneQ.isConnected) { clearInterval(minuteur); return; }
-    reste--;
+  // Le temps restant se lit sur l'horloge : un navigateur ralentit les minuteurs d'un onglet en arrière-plan
+  // (Safari, iPhone), et compter les déclenchements allongerait la partie au-delà de 60 secondes
+  const finPartie = Date.now() + 60000;
+  const tic = () => {
+    if (termine) return;
+    if (!zone.isConnected || !zoneQ.isConnected) { clearInterval(minuteur); document.removeEventListener("visibilitychange", tic); return; }
+    reste = Math.max(0, Math.ceil((finPartie - Date.now()) / 1000));
     maj();
-    if (reste <= 0) fin();
-  }, 1000);
+    if (reste <= 0) { document.removeEventListener("visibilitychange", tic); fin(); }
+  };
+  const minuteur = setInterval(tic, 250);
+  // Au retour sur l'onglet, la fin de partie est constatée tout de suite, sans attendre le prochain déclenchement
+  document.addEventListener("visibilitychange", tic);
   maj();
   question();
 }

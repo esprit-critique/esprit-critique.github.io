@@ -287,6 +287,8 @@ f.onload = async () => {
     vue().querySelectorAll(".choix")[1].click(); await pause(5);
     ok("quiz chrono : chaque réponse enchaîne une nouvelle question", vue().querySelectorAll(".choix").length === 4 && /points/.test(vue().querySelector(".chrono-points").textContent));
     await pause(61000);
+    // La fin est constatée au déclenchement suivant du minuteur (que Safari espace parfois) : jusqu'à 5 s de plus
+    for (let k = 0; k < 50 && !/Temps écoulé/.test(vue().textContent); k++) await pause(100);
     const recChrono = JSON.parse(w.localStorage.getItem("chrono") || "{}");
     ok("quiz chrono : fin après 60 s, record enregistré", /Temps écoulé/.test(vue().textContent) && recChrono.quiz !== undefined);
     await aller("quiz/tout");

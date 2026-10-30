@@ -117,6 +117,7 @@ CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 | `tests/niveaux.html` | nombre d'items par niveau, en rouge quand il en manque (`tests/lancer.sh items`) |
 | `tests/_affichage.html` | contrôle l'affichage de chaque page et de toutes les variantes des dessins générés |
 | `tests/controle-affichage.js` | détection des textes coupés ou superposés, des débordements, du défilement horizontal, des boutons et champs sans nom accessible, des identifiants en double |
+| `tests/safari.sh` | les mêmes bancs dans Safari, en temps réel (lecture du rapport par AppleScript) : `tests/safari.sh test` |
 | `tests/pages/optimiser_png.py` | recompression des PNG en Python pur, sans perte (option `--palette` : 256 couleurs) |
 | `tests/csp.py` | ouvre la vraie page, hors cadre, sur 14 adresses : aucun blocage de la CSP ni erreur JavaScript (les autres bancs utilisent une copie sans CSP, `_site.html`, car ils lisent l'état du site avec `eval`) |
 | `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |

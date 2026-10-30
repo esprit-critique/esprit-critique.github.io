@@ -405,6 +405,8 @@ f.onload = async () => {
     visibles(".choix")[0].click(); await pause(5);
     ok("débat chrono : 60 secondes, Recevable ou Sophisme", /Reste : 60 s/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")) && visibles(".choix").length === 2);
     await pause(61000);
+    // La fin est constatée au déclenchement suivant du minuteur (que Safari espace parfois) : jusqu'à 5 s de plus
+    for (let k = 0; k < 50 && !/Temps écoulé/.test(vue().textContent); k++) await pause(100);
     ok("débat chrono : fin et record", /Temps écoulé/.test(vue().textContent) && JSON.parse(w.localStorage.getItem("chrono") || "{}").debat !== undefined);
 
     // ---------- Lot 5 : ateliers pratiques ----------
