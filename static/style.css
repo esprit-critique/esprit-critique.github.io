@@ -1221,3 +1221,13 @@ h3.titre-bloc {
 /* Newsreader : taille optique automatique pour les titres, chiffres elzéviriens pour les scores */
 .page-titre, .fiche-titre, .carte h2, .lf-nom, .marque span { font-optical-sizing: auto; }
 .grand-score, .tuile-nombre { font-variant-numeric: oldstyle-nums proportional-nums; }
+/* Étiquettes en petites capitales du caractère de titre. Newsreader (sous-ensemble latin) n'a pas de glyphes de
+   petites capitales : all-small-caps serait fabriqué par chaque navigateur à sa façon. On compose donc des
+   capitales réduites, d'une graisse un peu plus forte pour compenser, identiques partout. */
+.surtitre, .etiquette, .groupe-nom, .section h3, .consigne, .tirage-libelle {
+  font-family: var(--titre);
+  text-transform: uppercase;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+}
