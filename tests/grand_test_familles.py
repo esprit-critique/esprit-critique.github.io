@@ -44,12 +44,13 @@ R.simulations = [];
     const debut = new Date(Date.UTC(2026, 0, 1 + 2 * t, 10)).toISOString(), fin = new Date(Date.UTC(2026, 0, 1 + 2 * t, 11)).toISOString();
     const c = commencerPassation(etat, mode, graine, p.instances, debut);
     etat = terminerPassation(c.etat, fin).etat;
-    tests.push({ instances: p.instances, issues: p.issues, positions: p.instances.filter(x => familleGT(x.famille).type === "qcm").map(x => instanceGT(familleGT(x.famille), x.valeurs.i, graine).justeAffiche) });
+    tests.push({ instances: p.instances, issues: p.issues, positions: p.instances.filter(x => familleGT(x.famille) && familleGT(x.famille).type === "qcm").map(x => instanceGT(familleGT(x.famille), x.valeurs.i, graine).justeAffiche) });
   }
   R.simulations.push({ graine: g0, mode, tests, valide: grandTestValide(etat) });
 });
 const a = tirerPassation(etatGrandTestVide(), "complet", 5), b = tirerPassation(etatGrandTestVide(), "complet", 5), c = tirerPassation(etatGrandTestVide(), "complet", 6);
 R.reproductible = JSON.stringify(a) === JSON.stringify(b);
+R.vraiDe = Object.fromEntries(VF_GT.map(x => [x.id, x.vrai]).concat(EXPOSITIONS_GT.map(x => [x[0], x[2]])));
 R.variable = JSON.stringify(a.instances) !== JSON.stringify(c.instances);
 R.memeGraineMemeTexte = JSON.stringify(instanceGT(familleGT("b-esperance"), 3, 8)) === JSON.stringify(instanceGT(familleGT("b-esperance"), 3, 8));
 // Version publiée (GRAND_TEST_ESSAI à false) : aucun contenu à relire n'est tiré
@@ -58,9 +59,9 @@ JSON.stringify(R);
 """
 
 try:
-    R = executer(pilote, ("grand-test-donnees.js", "grand-test.js"))
+    R = executer(pilote, ("pays.js", "grand-test-donnees.js", "grand-test.js"))
     R_publie = executer("JSON.stringify({ n: tirerPassation(etatGrandTestVide(), 'complet', 3).instances.length, issues: tirerPassation(etatGrandTestVide(), 'complet', 3).issues.length });",
-                        ("grand-test-donnees.js", "grand-test.js"), essai=False)
+                        ("pays.js", "grand-test-donnees.js", "grand-test.js"), essai=False)
 except Exception as e:
     rapport.lignes.append("EXCEPTION " + str(e))
     R = None
@@ -300,35 +301,56 @@ if R:
         fautes_rep, fautes_fam, fautes_quota, fautes_vu, fautes_equilibre, fautes_entrelacs, reutil = [], [], [], [], [], [], 0
         vus = {}                         # instanceId → liste des rangs de tests où elle a été vue
         difficultes, positions = [], []
+        fautes_banques = []
         for t, test in enumerate(sim["tests"]):
-            ids = [x["instanceId"] for x in test["instances"]]
-            fams = [x["famille"] for x in test["instances"]]
+            # Une famille au plus par test, comptée sur les instances distinctes (une affirmation lue puis notée est une instance)
+            distinctes = {x["instanceId"]: x["famille"] for x in test["instances"]}
+            fams = list(distinctes.values())
             if len(set(fams)) != len(fams): fautes_fam.append(t)
+            generes = [x for x in test["instances"] if x["famille"] in par_id]
             compte = {}
-            for x in test["instances"]: compte[strate(par_id[x["famille"]])] = compte.get(strate(par_id[x["famille"]]), 0) + 1
+            for x in generes: compte[strate(par_id[x["famille"]])] = compte.get(strate(par_id[x["famille"]]), 0) + 1
             if compte != QUOTAS[sim["mode"]]: fautes_quota.append((t, compte))
-            syl = [par_id[x["famille"]] for x in test["instances"] if strate(par_id[x["famille"]]) == "A-raisonnement"]
+            syl = [par_id[x["famille"]] for x in generes if strate(par_id[x["famille"]]) == "A-raisonnement"]
+            # Banques : effectifs et équilibre vrai / faux attendus pour le mode
+            def items(banque, role=None): return [x for x in test["instances"] if x["valeurs"].get("banque") == banque and (role is None or x["valeurs"].get("role") == role)]
+            vfs = items("vf")
+            attendu_vf = 24 if sim["mode"] == "complet" else 8
+            if len(vfs) != attendu_vf or sum(1 for x in vfs if R["vraiDe"][x["instanceId"]]) * 2 != attendu_vf: fautes_banques.append((t, "vf"))
+            if sim["mode"] == "complet":
+                lus, notes_vues, nouvelles = items("exposition", "lecture"), items("exposition", "vue"), items("exposition", "nouvelle")
+                if not (len(lus) == len(notes_vues) == len(nouvelles) == 8 and {x["instanceId"] for x in lus} == {x["instanceId"] for x in notes_vues}
+                        and not {x["instanceId"] for x in lus} & {x["instanceId"] for x in nouvelles}
+                        and sum(R["vraiDe"][x["instanceId"]] for x in lus) == 4 and sum(R["vraiDe"][x["instanceId"]] for x in nouvelles) == 4): fautes_banques.append((t, "expositions"))
+                gr = [x for x in items("grandeur") if x["valeurs"].get("role") != "rappel"]
+                rappels = items("grandeur", "rappel")
+                if len(gr) != 6 or len(rappels) != 6 or sum(1 for x in gr if x["valeurs"]["correction"] == "differee") != 3: fautes_banques.append((t, "grandeurs"))
+                if len(items("angleMort")) != 4 or len(items("societe")) != 2 or len(items("drm")) != 1 or len(items("recit")) != 1 or len(items("source")) != 1: fautes_banques.append((t, "autres"))
+                if [x["valeurs"]["etape"] for x in test["instances"]] != sorted(x["valeurs"]["etape"] for x in test["instances"]): fautes_banques.append((t, "ordre des étapes"))
+            else:
+                if len(items("grandeur")) != 3 or len(items("drm")) != 1 or items("exposition") or items("angleMort"): fautes_banques.append((t, "express"))
             if sum(1 for f in syl if f["valide"]) * 2 != len(syl): fautes_equilibre.append(t)
             reutilisees = {m.split(" : ")[-1] for m in test["issues"] if "réutilisée" in m}
             reutil += len(reutilisees)
-            for x in test["instances"]:
+            for x in {x["instanceId"]: x for x in test["instances"]}.values():
                 anciens = vus.get(x["instanceId"], [])
                 if any(t - r <= 3 for r in anciens) and x["instanceId"] not in reutilisees: fautes_rep.append((t, x["instanceId"]))
                 if x["dejaVu"] != bool(anciens) or x["compteurTestsAvant"] != len(anciens): fautes_vu.append((t, x["instanceId"]))
             # Entrelacement : pas deux items de même strate à la suite quand l'étape en compte d'autres
             etapes = {}
-            for x in test["instances"]: etapes.setdefault(x["valeurs"]["etape"], []).append(strate(par_id[x["famille"]]))
+            for x in generes: etapes.setdefault(x["valeurs"]["etape"], []).append(strate(par_id[x["famille"]]))
             for e, s in etapes.items():
                 if len(set(s)) > 1:
                     majoritaire = max(s.count(k) for k in set(s))
                     suites = sum(1 for u, v in zip(s, s[1:]) if u == v)
                     if suites > max(0, 2 * majoritaire - len(s) - 1): fautes_entrelacs.append((t, e))
-            for x in test["instances"]: vus.setdefault(x["instanceId"], []).append(t)
-            difficultes.append(sum(par_id[f]["difficulte"] for f in fams) / len(fams))
+            for i in distinctes: vus.setdefault(i, []).append(t)
+            difficultes.append(sum(par_id[x["famille"]]["difficulte"] for x in generes) / len(generes))
             positions += test["positions"]
         ok(nom + " : aucune instance répétée avant trois tests terminés (" + str(reutil) + " réutilisation(s) déclarée(s))", not fautes_rep, fautes_rep[:5])
         ok(nom + " : une seule instance par famille et par test", not fautes_fam, fautes_fam)
         ok(nom + " : quotas par strate respectés à chaque test", not fautes_quota, fautes_quota[:3])
+        ok(nom + " : banques tirées comme prévu (effectifs, vrai / faux, lues puis notées, fourchettes corrigées ou différées)", not fautes_banques, fautes_banques[:5])
         ok(nom + " : autant de raisonnements valides que non valides", not fautes_equilibre, fautes_equilibre)
         ok(nom + " : déjà-vu et compteur de tests exacts, recalculés depuis l'historique", not fautes_vu, fautes_vu[:5])
         ok(nom + " : items entrelacés (pas de suite évitable de même strate)", not fautes_entrelacs, fautes_entrelacs[:5])

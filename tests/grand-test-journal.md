@@ -282,3 +282,64 @@ Lot 3 — générateurs de familles : instances isomorphes, tirage stratifié, a
 ### Lot suivant
 
 Lot 4 — réservoirs de faits : vrai-faux, expositions, grandeurs, angle mort, questions de société.
+
+---
+
+## Lot 4 — réservoirs de faits (31 octobre 2026)
+
+### Livrables
+
+- `static/grand-test-donnees.js` : 140 vrai-faux (70 vrais, 70 faux, 10 domaines, groupes d'affirmations qui se
+  dévoileraient l'une l'autre), 100 affirmations d'exposition anodines (50/50 : mots, lieux, animaux), 80 grandeurs
+  construites depuis `pays.js` (Banque mondiale, aucun chiffre recopié), 13 descriptions d'angle mort (vérité
+  illusoire exclue), 10 questions de société à quatre arguments (faibles rattachés à une fiche de sophisme).
+- `static/grand-test.js` : tirage des banques (équilibre vrai/faux, domaines répartis, items dérivés de l'étape 5 :
+  note des affirmations lues et rappel des estimations ; moitié des fourchettes du complet corrigée seulement après
+  le rappel, pour la démonstration du biais rétrospectif), `grandeurGT`.
+- Bancs : `tests/grand_test_banques.py` (« banques », 33 vérifications) ; le banc « familles » vérifie aussi les
+  banques dans les simulations de 20 tests (93 vérifications). `tests/grand_test_relire.py` recopie les 305 lignes
+  à relire dans `grand-test-a-relire.md`.
+
+### Sources réellement ouvertes le 31 octobre 2026
+
+- Simons et Chabris (2011), PLOS ONE : 1 838 adultes des États-Unis pondérés à 1 500, juin 2009 ; amnésie 82,7 %,
+  témoin sûr 37,1 %, caméra 63,0 %, mémoire permanente 47,6 %, hypnose 55,4 %, inattendu 77,5 %. **REF-09 confirmée.**
+- Dekker et al. (2012) : 137 + 105 enseignants, 49 % de neuromythes en moyenne ; styles 93/96 %. **REF-08 confirmée.**
+- Macdonald et al. (2017) : n = 3 045 / 598 / 234 ; les 18 pourcentages du mandat confirmés. **REF-07 confirmée.**
+- Gapminder 2017 : 14 pays, 1 221 + 1 000 + 10 024 répondants, 2,2 / 12, hasard 4, 10 %, 15 %. **REF-11 confirmée**
+  (les réponses par question ne sont pas sur la page : à vérifier dans *Factfulness*).
+- Ipsos 2017 (PDF lu localement) : 29 133 entretiens, 38 pays, 28 septembre – 19 octobre 2017, ≈ 1 000 en France ;
+  naissances adolescentes « moins de 1 % au Canada et en France, une sur cinq en moyenne estimée ». Valeurs exactes
+  pour la France illisibles dans l'extraction : **REF-10 partiellement confirmée.**
+- Eurobaromètre résistance antimicrobienne : seulement des citations de seconde main contradictoires (43 % / 50 % ;
+  35 % en France). **REF-12 reste à vérifier** sur le rapport spécial 478.
+
+### Commandes et résultats
+
+    python3 tests/grand_test_banques.py → 33 / 33   (premier passage 32 / 33 : deux affirmations trop proches de
+                                                     l'atelier « Vrai ou faux ? », reformulées)
+    python3 tests/grand_test_familles.py → 93 / 93
+    python3 tests/grand_test_calculs.py → 44 / 44
+    CONFIGS="390 sombre" tests/lancer.sh grand csp hors-ligne test → 48 / 48, aucun blocage, 7 / 7, 131 / 131
+
+La suite complète des quatre configurations n'a pas été relancée pour ce lot (quota de l'abonnement presque
+épuisé) : le lot ne change que des données et des fonctions pures non appelées par le site publié.
+
+---
+
+## ARRÊT TEMPORAIRE — point de reprise (31 octobre 2026, soir)
+
+Le propriétaire a signalé qu'il restait 6 % du quota d'abonnement. Travail interrompu proprement après le lot 4.
+Drapeaux toujours à false. Site publié intact (bancs ci-dessus).
+
+**Brouillons prêts, non intégrés**, dans `tests/grand-test-brouillons/` (à vérifier avant usage) :
+- `memoire.js` (lot 5) : générateurs des trois démonstrations de mémoire, bilans, indice de sur-correction ;
+- `scores.js` (lot 6) : `resoudreItem`, `reponseJuste`, `lignesPassation`, `calculerScores` (axes A à F) ;
+- `interface-parcours.js` (lot 6) : plan d'écrans, reprise au premier écran inachevé, items, corrections
+  (différées pour vrai-faux et raisonnements du complet), démonstrations, consentement ;
+- `profil.js` (lot 6, version texte) : page de résultats par axe.
+
+**Reprise** : intégrer `memoire.js` et `scores.js` à la fin de `static/grand-test.js`, `interface-parcours.js` et
+`profil.js` dans `static/grand-test-interface.js` (en remplaçant la page minimale du lot 1 : garder chargement,
+enregistrement, export brut et effacement), ajouter des styles `.gt-*` dans `style.css` sans nouveau jeton,
+étendre `tests/_grand-test.html` (parcours express et complet simulés, reprise à chaque frontière), puis lots 5 à 12.

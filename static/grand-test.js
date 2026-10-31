@@ -942,7 +942,7 @@ const familleGT = id => FAMILLES_GT.find(f => f.id === id);
 // ===================== Tirage =====================
 // Tirage stratifié et reproductible des items d'une passation. Règles (tests/grand-test-plan.md §6 et §7) :
 // une famille au plus une fois par test ; une instance vue dans l'un des trois derniers tests terminés ne revient
-// pas ; si une famille n'a plus d'instance libre, la plus anciennement vue revient, marquée réutilisée et notée dans
+// pas ; si une strate n'a plus d'instance libre, la plus anciennement vue revient, marquée réutilisée et notée dans
 // « issues ». Une instance déjà vue (même il y a longtemps) est marquée dejaVu : elle n'est jamais présentée comme
 // nouvelle. Les items alternent les strates (exemples entrelacés) au lieu d'enchaîner ceux d'une même forme.
 
@@ -956,20 +956,44 @@ const STRATES_GT = {
   "C": f => f.axe === "C"
 };
 
-// Composition par mode : nombre de familles tirées par strate, et étape du parcours. « equilibre » : pour les
-// raisonnements, autant de formes valides que non valides.
+// Banques d'items rédigés (non générés) : chaque élément a un identifiant, une famille (au plus une par test : les
+// affirmations qui se dévoileraient l'une l'autre partagent la leur), une strate d'équilibre et un domaine.
+// Toutes sont écrites par IA : aRelire, donc tirées seulement dans la copie d'essai tant qu'aucune personne ne les
+// a relues. Les démonstrations de mémoire ont 20 instances par famille, comme les familles générées.
+const COMBINAISONS_SOURCE_GT = [0b000111, 0b101010, 0b110001, 0b011100];
+const BANQUES_GT = {
+  vf: () => VF_GT.map(x => ({ id: x.id, famille: "vf:" + (x.groupe || x.id), strate: x.vrai ? "vrai" : "faux", domaine: x.domaine, aRelire: x.aRelire !== false })),
+  exposition: () => EXPOSITIONS_GT.map(([id, domaine, vrai]) => ({ id, famille: "ex:" + id, strate: vrai ? "vrai" : "faux", domaine, aRelire: true })),
+  grandeur: () => GRANDEURS_PAYS_GT.map(([pays, k]) => ({ id: "gr-" + pays + "-" + k, famille: "gr:" + pays, strate: "gr", domaine: k, aRelire: true })),
+  angleMort: () => ANGLE_MORT_GT.map(([id]) => ({ id, famille: "am:" + id, strate: "am", domaine: "am", aRelire: true })),
+  societe: () => SOCIETE_GT.map(([id]) => ({ id, famille: "so:" + id, strate: "so", domaine: "so", aRelire: true })),
+  drm: () => LISTES_DRM_GT.map((x, i) => ({ id: "drm@" + i, famille: "m-drm", strate: "m", domaine: "m", aRelire: true })),
+  recit: () => RECITS_GT.map((x, i) => ({ id: "recit@" + i, famille: "m-desinformation", strate: "m", domaine: "m", aRelire: true })),
+  source: () => Array.from({ length: SOURCES_GT.length * COMBINAISONS_SOURCE_GT.length }, (_, i) => ({ id: "source@" + i, famille: "m-source", strate: "m", domaine: "m", aRelire: true }))
+};
+
+// Composition par mode. Familles générées : « strate » et nombre de familles ; banques : « banque » et nombre
+// d'items ; « equilibre » : autant de chaque valeur (formes valides et non valides ; vrai et faux).
 const COMPOSITION_GT = {
   complet: [
+    { etape: 0, banque: "angleMort", n: 4 }, { etape: 0, banque: "exposition", n: 8, equilibre: true, role: "lecture" },
+    { etape: 1, banque: "vf", n: 24, equilibre: true },
     { etape: 2, strate: "A-calcul", n: 4 }, { etape: 2, strate: "A-lecture", n: 4 }, { etape: 2, strate: "A-raisonnement", n: 8, equilibre: "valide" },
-    { etape: 3, strate: "B", n: 10 }, { etape: 4, strate: "C", n: 10 }
+    { etape: 3, strate: "B", n: 10 }, { etape: 3, banque: "grandeur", n: 6 },
+    { etape: 4, strate: "C", n: 10 }, { etape: 4, banque: "societe", n: 2 },
+    { etape: 5, banque: "exposition", n: 8, equilibre: true, role: "nouvelle" },
+    { etape: 5, banque: "drm", n: 1 }, { etape: 5, banque: "recit", n: 1 }, { etape: 5, banque: "source", n: 1 }
   ],
   express: [
+    { etape: 1, banque: "vf", n: 8, equilibre: true },
     { etape: 2, strate: "A-calcul", n: 1 }, { etape: 2, strate: "A-lecture", n: 1 }, { etape: 2, strate: "A-raisonnement", n: 2, equilibre: "valide" },
-    { etape: 3, strate: "B", n: 4 }, { etape: 4, strate: "C", n: 4 }
+    { etape: 3, strate: "B", n: 4 }, { etape: 3, banque: "grandeur", n: 3 },
+    { etape: 4, strate: "C", n: 4 },
+    { etape: 5, banque: "drm", n: 1 }
   ]
 };
 
-// Ce que l'historique dit de chaque instance : rang du dernier test terminé où elle a été vue, nombre de tests
+// Ce que l'historique dit de chaque instance : rang du dernier test terminé où elle a été vue, tests où elle l'a été
 function memoireDesVues(etat) {
   const derniere = {}, tests = {};
   etat.historiqueItemsVus.forEach(v => {
@@ -979,26 +1003,24 @@ function memoireDesVues(etat) {
   return { derniere, tests, termines: passationsTerminees(etat).length };
 }
 
-// Choisit une instance d'une famille : jamais vue d'abord, sinon libre (hors des trois derniers tests), sinon la plus
-// anciennement vue (réutilisation signalée)
+// Classe des candidats : 0 jamais vu, 1 libre (vu avant les trois derniers tests), 2 bloqué (réutilisation)
+const classeVue = (memoire, id) => memoire.derniere[id] === undefined ? 0 : memoire.derniere[id] <= memoire.termines - ATTENTE_REPETITION ? 1 : 2;
+
+// Le meilleur candidat : classe la plus basse, puis vu le plus anciennement ; à égalité, l'ordre tiré au hasard
+function meilleurCandidat(ids, memoire) {
+  return ids.slice().sort((a, b) => classeVue(memoire, a) - classeVue(memoire, b) || (memoire.derniere[a] || 0) - (memoire.derniere[b] || 0))[0];
+}
+
+function descriptionVue(memoire, id) {
+  const vuDans = memoire.tests[id];
+  return { dejaVu: !!vuDans, compteurTestsAvant: vuDans ? vuDans.size : 0 };
+}
+
+// Choisit une instance d'une famille générée
 function choisirInstance(f, memoire, alea) {
-  const ids = Array.from({ length: tailleFamille(f) }, (_, i) => i);
-  const id = i => f.id + "@" + i;
-  const jamais = ids.filter(i => memoire.derniere[id(i)] === undefined);
-  const libres = ids.filter(i => memoire.derniere[id(i)] !== undefined && memoire.derniere[id(i)] <= memoire.termines - ATTENTE_REPETITION);
-  let i, reutilisee = false;
-  if (jamais.length) i = jamais[Math.floor(alea() * jamais.length)];
-  else if (libres.length) {
-    const plusAncienne = Math.min(...libres.map(k => memoire.derniere[id(k)]));
-    const candidats = libres.filter(k => memoire.derniere[id(k)] === plusAncienne);
-    i = candidats[Math.floor(alea() * candidats.length)];
-  } else {
-    const plusAncienne = Math.min(...ids.map(k => memoire.derniere[id(k)]));
-    i = ids.find(k => memoire.derniere[id(k)] === plusAncienne);
-    reutilisee = true;
-  }
-  const vuDans = memoire.tests[id(i)];
-  return { i, reutilisee, dejaVu: !!vuDans, compteurTestsAvant: vuDans ? vuDans.size : 0 };
+  const ids = melanger(Array.from({ length: tailleFamille(f) }, (_, i) => i), alea);
+  const choisi = meilleurCandidat(ids.map(i => f.id + "@" + i), memoire);
+  return Object.assign({ i: Number(choisi.split("@").pop()), reutilisee: classeVue(memoire, choisi) === 2 }, descriptionVue(memoire, choisi));
 }
 
 // Choisit n familles d'une strate ; avec « equilibre », alterne les valeurs du champ (ex. valide / non valide)
@@ -1014,8 +1036,32 @@ function choisirFamilles(familles, n, equilibre, alea) {
   return choisies;
 }
 
+// Choisit n éléments d'une banque : familles inédites dans ce test, strates équilibrées si demandé, domaines
+// répartis (à chaque pas, le domaine le moins représenté jusque-là), jamais vus d'abord.
+function choisirDansBanque(elements, n, equilibre, memoire, familles, alea) {
+  const restants = melanger(elements, alea).filter(x => !familles.has(x.famille));
+  const strates = [...new Set(elements.map(x => x.strate))].sort();
+  const choisis = [], domaines = {};
+  for (let k = 0; k < n; k++) {
+    const voulue = equilibre ? strates[k % strates.length] : null;
+    let pool = restants.filter(x => !familles.has(x.famille) && (!voulue || x.strate === voulue));
+    if (!pool.length) pool = restants.filter(x => !familles.has(x.famille));
+    if (!pool.length) break;
+    const meilleure = Math.min(...pool.map(x => classeVue(memoire, x.id)));
+    pool = pool.filter(x => classeVue(memoire, x.id) === meilleure);
+    const moinsUtilise = Math.min(...pool.map(x => domaines[x.domaine] || 0));
+    const x = meilleurCandidat(pool.filter(y => (domaines[y.domaine] || 0) === moinsUtilise).map(y => y.id), memoire);
+    const elt = pool.find(y => y.id === x);
+    choisis.push(Object.assign({ reutilisee: meilleure === 2 }, elt));
+    familles.add(elt.famille);
+    domaines[elt.domaine] = (domaines[elt.domaine] || 0) + 1;
+    restants.splice(restants.indexOf(elt), 1);
+  }
+  return choisis;
+}
+
 // Ordonne les items d'une étape en évitant deux items de même strate à la suite quand c'est possible : à chaque pas,
-// un item de la strate qui en compte le plus parmi celles qui diffèrent de la précédente (ex aequo : au hasard)
+// un item de la strate qui en compte le plus parmi celles qui diffèrent de la précédente (ex aequo : la première)
 function entrelacer(items, alea) {
   const restants = melanger(items, alea), ordre = [];
   while (restants.length) {
@@ -1031,28 +1077,67 @@ function entrelacer(items, alea) {
   return ordre;
 }
 
-// Tire les items générés d'une passation. Renvoie { instances, issues } ; chaque instance porte son étape et son
-// rang i dans ses valeurs, de quoi la reconstruire à l'identique (instanceGT) au moment de l'afficher.
+// Tire les items d'une passation. Renvoie { instances, issues }. Chaque instance porte son étape et, pour une famille
+// générée, son rang i : de quoi la reconstruire à l'identique au moment de l'afficher. Items dérivés (étape 5) :
+// la note des affirmations lues à l'étape 0, et le rappel des estimations des fourchettes (complet seulement).
 function tirerPassation(etat, mode, graine, familles) {
   const alea = generateur(graine);
   const memoire = memoireDesVues(etat);
-  const issues = [], parEtape = {};
-  const disponibles = (familles || FAMILLES_GT).filter(f => GRAND_TEST_ESSAI || f.aRelire === false);
-  COMPOSITION_GT[mode].forEach(({ etape, strate, n, equilibre }) => {
-    const candidates = disponibles.filter(STRATES_GT[strate]);
-    if (candidates.length < n) issues.push("strate " + strate + " : " + candidates.length + " famille(s) publiables sur " + n + " demandées");
-    choisirFamilles(candidates, n, equilibre, alea).forEach(f => {
-      const c = choisirInstance(f, memoire, alea);
-      if (c.reutilisee) issues.push("instance réutilisée faute de réserve : " + f.id + "@" + c.i);
-      (parEtape[etape] = parEtape[etape] || []).push({ instanceId: f.id + "@" + c.i, itemId: f.id + "@" + c.i, famille: f.id, strate,
-        valeurs: { i: c.i, etape }, dejaVu: c.dejaVu, compteurTestsAvant: c.compteurTestsAvant });
+  const issues = [], parEtape = {}, famillesPrises = new Set();
+  const publiable = x => GRAND_TEST_ESSAI || x.aRelire === false;
+  const ajouter = (etape, x) => (parEtape[etape] = parEtape[etape] || []).push(x);
+  COMPOSITION_GT[mode].forEach(({ etape, strate, banque, n, equilibre, role }) => {
+    if (strate) {
+      const candidates = (familles || FAMILLES_GT).filter(publiable).filter(STRATES_GT[strate]);
+      if (candidates.length < n) issues.push("strate " + strate + " : " + candidates.length + " famille(s) publiables sur " + n + " demandées");
+      choisirFamilles(candidates, n, equilibre, alea).forEach(f => {
+        const c = choisirInstance(f, memoire, alea);
+        if (c.reutilisee) issues.push("instance réutilisée faute de réserve : " + f.id + "@" + c.i);
+        famillesPrises.add(f.id);
+        ajouter(etape, { instanceId: f.id + "@" + c.i, itemId: f.id + "@" + c.i, famille: f.id, strate, valeurs: { i: c.i, etape }, dejaVu: c.dejaVu, compteurTestsAvant: c.compteurTestsAvant });
+      });
+      return;
+    }
+    const elements = BANQUES_GT[banque]().filter(publiable);
+    const choisis = choisirDansBanque(elements, n, equilibre, memoire, famillesPrises, alea);
+    if (choisis.length < n) issues.push("banque " + banque + " : " + choisis.length + " élément(s) publiables sur " + n + " demandés");
+    choisis.forEach((x, k) => {
+      if (x.reutilisee) issues.push("instance réutilisée faute de réserve : " + x.id);
+      const valeurs = { etape, banque };
+      if (role) valeurs.role = role;
+      // Fourchettes du complet : la moitié corrigée aussitôt, l'autre seulement après le rappel (démonstration du
+      // biais rétrospectif : le rapprochement du souvenir se compare entre valeurs vues et non vues)
+      if (banque === "grandeur") valeurs.correction = mode === "complet" && k % 2 ? "differee" : "immediate";
+      const v = descriptionVue(memoire, x.id);
+      const suffixe = banque === "exposition" ? (role === "lecture" ? "@lecture" : "@note") : "";
+      ajouter(etape, { instanceId: x.id, itemId: x.id + suffixe, famille: x.famille, strate: banque + ":" + x.strate, valeurs, dejaVu: v.dejaVu, compteurTestsAvant: v.compteurTestsAvant });
+      if (banque === "exposition" && role === "lecture")
+        ajouter(5, { instanceId: x.id, itemId: x.id + "@note", famille: x.famille, strate: "exposition:" + x.strate, valeurs: { etape: 5, banque, role: "vue" }, dejaVu: v.dejaVu, compteurTestsAvant: v.compteurTestsAvant });
+      if (banque === "grandeur" && mode === "complet")
+        ajouter(5, { instanceId: x.id, itemId: x.id + "@rappel", famille: x.famille, strate: "rappel", valeurs: { etape: 5, banque, role: "rappel", correction: valeurs.correction }, dejaVu: v.dejaVu, compteurTestsAvant: v.compteurTestsAvant });
     });
   });
   const instances = [];
-  Object.keys(parEtape).map(Number).sort((a, b) => a - b).forEach(e => entrelacer(parEtape[e], alea).forEach(x => {
-    const copie = Object.assign({}, x);
-    delete copie.strate;
-    instances.push(copie);
-  }));
+  Object.keys(parEtape).map(Number).sort((a, b) => a - b).forEach(e => {
+    // Étape 5 : les démonstrations de mémoire et les rappels gardent un ordre fixe ; les affirmations à noter sont mêlées
+    const items = e === 5 ? [].concat(entrelacer(parEtape[e].filter(x => x.strate.startsWith("exposition")), alea), parEtape[e].filter(x => !x.strate.startsWith("exposition")))
+      : entrelacer(parEtape[e], alea);
+    items.forEach(x => {
+      const copie = Object.assign({}, x);
+      delete copie.strate;
+      instances.push(copie);
+    });
+  });
   return { instances, issues };
+}
+
+// Une grandeur de fourchette, construite à partir des données de pays de la Banque mondiale (pays.js)
+function grandeurGT(id) {
+  const [, pays, k] = id.split("-");
+  const p = PAYS.find(x => x.id === pays), ind = INDICATEURS_GRANDEURS_GT[k];
+  if (!p || p[k] === undefined) return null;
+  const annee = (p.annees && p.annees[k]) || ANNEES_PAYS[k];
+  const v = Math.round(p[k] * ind.facteur * 10 ** ind.decimales) / 10 ** ind.decimales;
+  return { id, q: p.nom + " : " + ind.libelle + " en " + annee, v, unite: ind.unite, annee,
+    source: "Banque mondiale, World Development Indicators (" + annee + "), données du site (pays.js)" };
 }

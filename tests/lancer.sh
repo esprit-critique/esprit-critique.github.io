@@ -3,13 +3,13 @@
 # en clair puis en sombre, et rassemble les rapports dans tests/rapports/.
 #
 #   tests/lancer.sh                       tous les bancs, dans les quatre configurations
-#   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux, items, csp, grand, hors-ligne, calculs ou familles)
+#   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux, items, csp, grand, hors-ligne, calculs, familles ou banques)
 #   CONFIGS="390 clair" tests/lancer.sh   une seule configuration
 #
 # Les bancs sont copiés dans static/ le temps du test, puis enlevés ; le serveur local est arrêté à la fin.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques"}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair
@@ -60,7 +60,7 @@ echo "$CONFIGS" | while read -r largeur theme; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
     page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
     [ "$banc" = grand ] && page="_grand-test.html"
-    if [ "$banc" = calculs ] || [ "$banc" = familles ]; then
+    if [ "$banc" = calculs ] || [ "$banc" = familles ] || [ "$banc" = banques ]; then
       python3 "tests/grand_test_$banc.py" "$rapport" > /dev/null   # hors navigateur (moteur JavaScript de macOS)
     elif [ "$banc" = hors-ligne ]; then
       python3 tests/hors_ligne.py "$largeur,$hauteur" "$theme" "$rapport"   # service worker, serveur coupé en cours de banc
