@@ -147,3 +147,62 @@ les champs, et le banc des ateliers contrôle cet écran. Commit séparé `327ba
 ### Lot suivant
 
 Lot 2 — calculs purs : Wilson, rééchantillonnage, d′ et c, Brier et Murphy, fourchettes, comparaisons.
+
+---
+
+## Lot 2 — moteur de score et plages (31 octobre 2026)
+
+### Livrables
+
+Section « Calculs » de `static/grand-test.js`, fonctions pures sans DOM :
+`wilsonCorrige`, `interpreterProportion`, `precisionDe`, `hasardConventionnel`, `partLeurre`, `graineDe`,
+`percentileTrie`, `reechantillonner`, `reechantillonnerStrates`, `detectionSignal`, `discernement`, `brier`,
+`murphy`, `surconfiancePlage`, `bilanFourchettes` (réutilise `scoreFourchette()` du site, α = 0,1),
+`rapprochement`, `veriteIllusoire`, `angleMort`, `surestimation`, `indiceCamp`, `sensibiliteQualite`,
+`biaisCroyance`, `surCorrection`, `comparerPassations`, `pente`, `tendance`, `entiteAffaiblie`.
+
+Banc « calculs » : `tests/grand_test_calculs.py`, avec `tests/grand_test_commun.py`. Il exécute le moteur dans le
+moteur JavaScript de macOS (`osascript -l JavaScript`, sans Node.js) et compare chaque résultat à un **oracle écrit
+séparément en Python** (formule de Newcombe réécrite, loi normale de `statistics.NormalDist`, couverture binomiale
+exacte, décomposition de Murphy, score d'intervalle, rapprochement). Les outils d'autres fichiers (`generateur`,
+`melanger`, `phiInverse`, `scoreFourchette`…) sont recopiés depuis leur fichier, pas réécrits.
+
+### Commandes et résultats réels
+
+    python3 tests/grand_test_calculs.py           → 44 / 44, 2,1 s
+    tests/lancer.sh calculs grand csp test        → quatre configurations : calculs 44 / 44, grand 48 / 48,
+                                                    csp aucun blocage (18 adresses), test 131 / 131
+
+### Vérifications marquantes
+
+- Wilson corrigé : 860 cas (n de 1 à 40) identiques à l'oracle à 10⁻¹² ; valeurs de contrôle du mandat
+  confirmées : 8/16 → [0,3194 ; 0,6806], 16/16 → [0,8564 ; 1], 9/10 → [0,6577 ; 0,9901].
+- **Couverture exacte recalculée, pas recopiée** : 0,924 (p = 0,3, n = 10), 0,900 (0,3 ; 16), 0,899 (0,6 ; 10),
+  0,877 (0,6 ; 16), 0,950 (0,85 ; 10), 0,847 (0,85 ; 16). Toutes entre 0,80 et 0,97 : l'attente du mandat tient.
+- d′ et c : 169 cas comparés à la loi normale de Python à 10⁻⁶ ; parfait 3,54, toujours « vrai » d′ = 0 et
+  c = −1,77, toujours « faux » c = +1,77.
+- Brier : certitude 99 % et 60 % de justesse → surconfiance 0,39, Brier = 0,4 × 0,99² + 0,6 × 0,01². Murphy :
+  identité vérifiée à 10⁻⁹ sur 200 cas aléatoires.
+- Répondants au hasard (500 simulations) : QCM moyenne à ±0,03 de 0,25 ; vrai-faux d′ moyen à ±0,1 de 0. Vérité
+  illusoire sans effet injecté (1 000 simulations) : moyenne compatible avec zéro.
+- Comparaisons, tendances et entités affaiblies : verdicts conformes à la règle préenregistrée (plage à 80 %
+  excluant zéro ; rien avant trois tests ; au moins trois items par test, aucun item répété).
+
+### Décisions
+
+1. **Classes de Murphy** : une classe par niveau de certitude annoncé (25, 50, 70, 90, 99 %), sans regroupement.
+   L'identité est alors exacte.
+2. **Hasard conventionnel de l'axe A** : moyenne des chances de chaque item (0 pour un calcul, 0,25 pour un QCM,
+   0,5 pour un jugement de validité). Avec la composition complète, 0,3125. C'est une convention, généralisant
+   celle du mandat (qui ne prévoyait pas de QCM dans l'axe A), pas une performance mesurée.
+3. **Libellés** : « trop peu d'items pour estimer » en dessous de 3 items (aucune plage) ; « précision faible »
+   en dessous de 8 ; « presque sans faute » seulement si la borne basse dépasse 0,75 avec au moins 8 items ; ajout
+   de « en dessous du hasard » (cas où le leurre attire), que le mandat ne nommait pas.
+4. **Fourchettes** : `scoreFourchette()` mesure les années en siècles (x / 100), linéaire : conforme à « valeurs
+   brutes pour les années » à un facteur constant près, ce qui ne change aucune comparaison.
+5. **Percentiles** : interpolation linéaire entre rangs (type 7 de Hyndman et Fan) ; les tirages qui donnent une
+   valeur non définie sont écartés et comptés (`indefinis`).
+
+### Lot suivant
+
+Lot 3 — générateurs de familles : instances isomorphes, tirage stratifié, anti-répétition.
