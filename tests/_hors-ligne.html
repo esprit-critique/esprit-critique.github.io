@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<pre id="out">en cours…</pre>
+<script>
+// Banc « hors-ligne » (tests/hors_ligne.py) : la page, ouverte seule (pas dans un cadre), installe le service
+// worker du site et attend qu'il la contrôle. Elle écrit « PRET » dans la console : le script Python coupe alors le
+// serveur. Chaque fichier mis en cache doit encore se charger, et aucune donnée de l'utilisateur ne doit être
+// dans le cache.
+const lignes = [];
+const ok = (nom, cond, detail) => { lignes.push((cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail)); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const MARQUEUR = "marqueur-prive-7f3a";
+(async () => {
+  try {
+    localStorage.setItem("grandTest", JSON.stringify({ note: MARQUEUR }));
+    localStorage.setItem("acquis", JSON.stringify([MARQUEUR]));
+    const source = await (await fetch("sw.js", { cache: "no-store" })).text();
+    const CACHE = source.match(/const CACHE = "([^"]+)"/)[1];
+    const FICHIERS = JSON.parse(source.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1]);
+    await navigator.serviceWorker.register("sw.js");
+    await navigator.serviceWorker.ready;
+    if (!navigator.serviceWorker.controller) await new Promise(r => navigator.serviceWorker.addEventListener("controllerchange", r, { once: true }));
+    ok("service worker installé, la page est contrôlée", !!navigator.serviceWorker.controller);
+    const cache = await caches.open(CACHE);
+    const presents = await Promise.all(FICHIERS.map(async f => !!(await cache.match(f))));
+    ok("cache " + CACHE + " : les " + FICHIERS.length + " fichiers sont préchargés", presents.every(Boolean), FICHIERS.filter((f, k) => !presents[k]).join(", "));
+    ok("un seul cache, celui de la version courante", (await caches.keys()).join() === CACHE, (await caches.keys()).join());
+    console.log("PRET");
+    // Attend que le serveur soit coupé : la sonde, inconnue du cache, échoue alors
+    let coupe = false;
+    for (let k = 0; k < 60 && !coupe; k++) {
+      try { await fetch("sw.js?sonde=" + Date.now() + k, { cache: "no-store" }); await pause(250); } catch (e) { coupe = true; }
+    }
+    ok("serveur coupé (la sonde échoue)", coupe);
+    const resultats = await Promise.all(FICHIERS.map(async f => {
+      try { const r = await fetch(f); return r.ok && (await r.clone().arrayBuffer()).byteLength > 0 ? null : f + " (" + r.status + ")"; } catch (e) { return f + " (" + e.message + ")"; }
+    }));
+    ok("hors ligne : les " + FICHIERS.length + " fichiers se chargent depuis le cache", resultats.every(x => x === null), resultats.filter(Boolean).join(", "));
+    const page = await (await fetch("index.html")).text();
+    ok("hors ligne : la page charge les scripts du Grand test", /grand-test\.js/.test(page) && /grand-test-interface\.js/.test(page));
+    // Aucune donnée de l'utilisateur dans le cache : ni le marqueur, ni une adresse étrangère ou de banc
+    const requetes = await cache.keys();
+    const fuites = [];
+    for (const r of requetes) {
+      const u = new URL(r.url);
+      if (u.origin !== location.origin || u.pathname.split("/").pop().startsWith("_")) fuites.push(r.url);
+      const texte = await (await cache.match(r)).text();
+      if (texte.includes(MARQUEUR)) fuites.push(r.url + " contient une donnée de l'utilisateur");
+    }
+    ok("aucune donnée de l'utilisateur ni page de banc dans le cache", fuites.length === 0, fuites.join(", "));
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message);
+  }
+  const echecs = lignes.filter(l => !l.startsWith("OK")).length;
+  lignes.unshift("RÉSUMÉ : " + (lignes.length - echecs) + " / " + lignes.length + " vérifications réussies");
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => console.log("RAPPORT: " + l));
+  console.log("RAPPORT-FIN");
+})();
+</script>

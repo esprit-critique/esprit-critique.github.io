@@ -76,3 +76,74 @@ Voir `grand-test-a-relire.md` : à ce stade, les 30 références du mandat et le
 
 Lot 1 — moteur de stockage et fondations : route interne cachée, constantes à `false`, schéma versionné,
 reprise, validation, import/export, migration, mise à jour de `sw.js`.
+
+---
+
+## Lot 1 — moteur de stockage et fondations (31 octobre 2026)
+
+### Livrables
+
+- `static/grand-test.js` : drapeaux `GRAND_TEST_VISIBLE = false`, `PERSONNAGES_VISIBLES = false` et
+  `GRAND_TEST_ESSAI = false` en tête ; forme des données (`erreursGrandTest`, `grandTestValide`) ; migration
+  pure version 1 → 2 (`migrerGrandTest`) ; opérations pures sur les passations (commencer, enregistrer une réponse
+  non modifiable, terminer, abandonner).
+- `static/grand-test-interface.js` : lecture et écriture de la clé `grandTest`, lecture seule et export du contenu
+  brut si la clé est illisible, effacement isolé, page minimale. **L'expérience n'est inscrite dans `EXPERIENCES`
+  que si `GRAND_TEST_VISIBLE` vaut true** : dans la version publiée, la route `#tests/grand-test` renvoie à la
+  liste des ateliers.
+- `static/app.js` : `grandTest` ajouté à `CLES_SAUVEGARDE` et à `FORMES_SAUVEGARDE.objet` ; `formeValide` vérifie
+  en plus `grandTest` en profondeur (`grandTestImportable`), sans changer le contrat des autres clés.
+- `static/index.html` : deux scripts ajoutés après `indices.js`, avant `app.js`. `static/sw.js` : les deux
+  fichiers en cache, version `esprit-critique-v9`.
+- Bancs : `tests/_grand-test.html` (banc « grand »), `tests/_hors-ligne.html` et `tests/hors_ligne.py` (banc
+  « hors-ligne »), `tests/noms_globaux.py` (noms globaux en double, lancé avant tous les bancs). `tests/lancer.sh`
+  fabrique la copie d'essai `_grand-test-essai.js` (drapeaux à true) et `_site-grand.html`, puis les supprime.
+
+### Commandes et résultats réels
+
+    tests/lancer.sh   (quatre configurations, 8 bancs)   → 32 / 32 rapports au vert, 12 min 24 s
+      affichage 0 défaut sur 108 pages · ateliers 237 / 237 · test 131 / 131 · niveaux 24 / 24 · items 0 manque
+      csp aucun blocage sur 18 adresses · grand 48 / 48 · hors-ligne 7 / 7
+
+Premier passage (avant correction) : 31 / 32. Le banc « grand », à 1 280 px en clair, s'est bloqué au troisième
+import de fichier consécutif (attente d'un rechargement qui n'est pas venu dans le temps virtuel de Chrome).
+Correction : ce troisième aller-retour est remplacé par un contrôle direct de la règle d'import
+(`formeValide("grandTest", …)`), l'import par fichier restant vérifié deux fois juste avant.
+
+### Ce que vérifient les nouveaux bancs
+
+- **grand** (48) : drapeaux à false dans le fichier publié et à l'exécution ; aucune expérience « grand-test »,
+  toujours 45 ateliers ; route renvoyée vers les ateliers ; ni lien ni mention du test sur 7 pages ; clé déclarée ;
+  tous les scripts de la page dans `FICHIERS` ; ordre de chargement. Dans la copie d'essai : passation, réponse non
+  modifiable, 22 formes invalides rejetées, migration (graine, dates, réponses conservées ; fonction pure), version
+  future et forme inconnue refusées, JSON invalide en lecture seule avec export brut, effacement isolé, espace plein
+  sans perte, reprise après rechargement, aller-retour export → import identique, `grandTest` mal formé écarté sans
+  rejeter les autres clés, effacement général, **aucune requête réseau** (fetch, XHR, beacon, WebSocket espionnés)
+  ni ressource externe.
+- **hors-ligne** (7) : un serveur à part (port 8011) sert le site ; la page installe le service worker ; le banc
+  coupe le serveur ; les 27 fichiers se chargent depuis le cache ; aucune donnée de l'utilisateur ni page de banc
+  dans le cache.
+
+### Correctif hors mandat, demandé par le propriétaire
+
+« La cécité au choix » en thème sombre : le texte saisi dans les zones de texte était noir sur fond sombre. La
+règle `button, input { color: inherit }` oubliait `textarea` et `select` (même défaut dans le carnet de
+prévisions). Corrigé dans `style.css` ; le contrôle `contraste-faible` vérifie désormais aussi le texte saisi dans
+les champs, et le banc des ateliers contrôle cet écran. Commit séparé `327bad5`.
+
+### Décisions
+
+1. **Révision de DEC-02** : plutôt qu'inscrire l'expérience et la cacher de `tousLesAteliers()`, on ne l'inscrit
+   pas du tout tant que le drapeau est à false. Le comportement du site publié est ainsi strictement inchangé ; le
+   banc teste l'état « visible » par une copie d'essai, sans jamais modifier le fichier publié.
+2. **Troisième drapeau `GRAND_TEST_ESSAI`** (false) : il admet les contenus `aRelire: true`, pour les seuls bancs.
+   Sans lui, la version publiée ne tire aucun item tant qu'aucune relecture humaine n'a eu lieu.
+3. **Forme de la version 1** : la forme de départ du cahier des charges (§10.1 : `parcours`, `historiqueVus`) est
+   traitée comme la version 1 du schéma, migrée vers la version 2 (§10.3).
+4. **Trois fichiers au lieu de deux** : `grand-test-donnees.js` (données), `grand-test.js` (fonctions pures,
+   testables hors navigateur), `grand-test-interface.js` (DOM). La séparation rend le moteur testable par le
+   moteur JavaScript de macOS, sans Node.js.
+
+### Lot suivant
+
+Lot 2 — calculs purs : Wilson, rééchantillonnage, d′ et c, Brier et Murphy, fourchettes, comparaisons.

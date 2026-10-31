@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/_site.html#accueil" style="border: 0; display: block"></iframe>
+<script>
+// Banc du Grand test. Deux temps :
+//  1. le site tel qu'il est publié (_site.html, drapeaux à false) : rien ne doit exposer le test ;
+//  2. la copie d'essai (_site-grand.html, qui charge _grand-test-essai.js, drapeaux à true) : stockage, validation,
+//     migration, reprise, import et export, effacement isolé, absence de requête réseau.
+// Les deux copies sont fabriquées par tests/lancer.sh. Taille : ?l=390&h=844
+const params = new URLSearchParams(location.search);
+const f = document.getElementById("f");
+f.style.width = (params.get("l") || 390) + "px";
+f.style.height = (params.get("h") || 844) + "px";
+const lignes = [];
+const ok = (nom, cond, detail) => { const l = (cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail); lignes.push(l); console.log("BANC: " + l); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const erreursJS = [];
+let w, d;
+// Toute requête réseau lancée par le site serait comptée ici (fetch, XHR, beacon, WebSocket), à chaque chargement
+const requetes = [];
+function espionner() {
+  ["fetch", "sendBeacon"].forEach(nom => {
+    const cible = nom === "fetch" ? w : w.navigator, original = cible[nom];
+    cible[nom] = function (...a) { requetes.push(nom + " " + String(a[0]).slice(0, 80)); return original.apply(this, a); };
+  });
+  const ouvrirXHR = w.XMLHttpRequest.prototype.open;
+  w.XMLHttpRequest.prototype.open = function (...a) { requetes.push("XHR " + a[1]); return ouvrirXHR.apply(this, a); };
+  w.WebSocket = function (u) { requetes.push("WebSocket " + u); throw new Error("interdit"); };
+}
+const brancher = () => { w = f.contentWindow; d = f.contentDocument; w.addEventListener("error", e => erreursJS.push(e.message)); espionner(); };
+const charger = async adresse => { const fin = new Promise(res => { f.onload = res; }); f.src = adresse; await fin; await pause(200); brancher(); };
+const recharger = async () => { const fin = new Promise(res => { f.onload = res; }); w.location.reload(); await fin; await pause(200); brancher(); };
+const aller = async h => { w.location.hash = h; await pause(150); };
+const vue = () => d.querySelector("main > section:not([hidden])");
+const egal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const iso = (jour, h) => new Date(Date.UTC(2026, 9, jour, h || 10)).toISOString();
+
+f.onload = async () => {
+  f.onload = null;
+  try {
+    // =============== 1. Le site publié ===============
+    brancher();
+    w.localStorage.clear();
+    await recharger();
+    ok("publié : les trois drapeaux valent false", w.eval("GRAND_TEST_VISIBLE === false && PERSONNAGES_VISIBLES === false && GRAND_TEST_ESSAI === false"));
+    const source = await (await fetch("/grand-test.js", { cache: "no-store" })).text();
+    ok("publié : grand-test.js déclare les drapeaux à false",
+      /^const GRAND_TEST_VISIBLE = false;$/m.test(source) && /^const PERSONNAGES_VISIBLES = false;$/m.test(source) && /^const GRAND_TEST_ESSAI = false;$/m.test(source));
+    ok("publié : aucune expérience « grand-test »", !w.eval("EXPERIENCES.some(e => e.id === 'grand-test')"));
+    ok("publié : toujours 45 ateliers", w.eval("tousLesAteliers().length") === 45);
+    await aller("tests/grand-test");
+    ok("publié : la route #tests/grand-test renvoie à la liste des ateliers", vue().id === "vue-ateliers");
+    let exposition = [];
+    for (const page of ["accueil", "ateliers", "portrait", "guide", "biais/ancrage", "sophismes/post-hoc", "quiz"]) {
+      await aller(page);
+      if (d.querySelector('a[href*="grand-test"]')) exposition.push(page + " (lien)");
+      if (/grand test/i.test(d.querySelector("main").textContent)) exposition.push(page + " (texte)");
+    }
+    ok("publié : ni lien ni mention du Grand test sur 7 pages", exposition.length === 0, exposition.join(", "));
+    ok("publié : « grandTest » dans CLES_SAUVEGARDE et FORMES_SAUVEGARDE.objet",
+      w.eval("CLES_SAUVEGARDE.includes('grandTest') && FORMES_SAUVEGARDE.objet.includes('grandTest') && !FORMES_SAUVEGARDE.tableau.includes('grandTest')"));
+    // Service worker : chaque script chargé par la page est mis en cache, et le cache a changé de version
+    const sw = await (await fetch("/sw.js", { cache: "no-store" })).text();
+    const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1]);
+    const scripts = [...(await (await fetch("/index.html", { cache: "no-store" })).text()).matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
+    ok("service worker : les " + scripts.length + " scripts de la page sont dans FICHIERS", scripts.every(s => fichiersSW.includes(s)), scripts.filter(s => !fichiersSW.includes(s)).join(", "));
+    ok("service worker : grand-test.js et grand-test-interface.js en cache, version v9 ou plus",
+      fichiersSW.includes("grand-test.js") && fichiersSW.includes("grand-test-interface.js") && Number((sw.match(/esprit-critique-v(\d+)/) || [])[1]) >= 9);
+    ok("index.html : les scripts du Grand test avant app.js",
+      scripts.indexOf("grand-test.js") > -1 && scripts.indexOf("grand-test.js") < scripts.indexOf("grand-test-interface.js") && scripts.indexOf("grand-test-interface.js") < scripts.indexOf("app.js"));
+
+    // =============== 2. La copie d'essai ===============
+    await charger("/_site-grand.html#accueil");
+    w.localStorage.clear();
+    await recharger();
+    const nbRessources = w.performance.getEntriesByType("resource").length;
+
+    ok("essai : GRAND_TEST_VISIBLE vaut true dans la copie", w.eval("GRAND_TEST_VISIBLE === true && GRAND_TEST_ESSAI === true"));
+    await aller("tests/grand-test");
+    ok("essai : la route ouvre « Le Grand test »", vue().id === "vue-tests" && /Le Grand test/.test(vue().querySelector("h1").textContent));
+    ok("essai : sans données, « aucun test passé »", /Aucun test passé/.test(vue().textContent));
+    ok("essai : la consigne dit que rien n'est envoyé", /ne sont pas envoyées/.test(vue().textContent));
+
+    // --- État vide, passation, réponses ---
+    const E = s => w.eval(s);
+    ok("état vide valide", E("grandTestValide(etatGrandTestVide())"));
+    E(`window.__inst = [1, 2, 3].map(k => ({ instanceId: "vf-0" + k + "@77", itemId: "vf-0" + k, famille: "fam-" + k, valeurs: { k }, dejaVu: false, compteurTestsAvant: 0 }))`);
+    let r = E(`commencerPassation(etatGrandTestVide(), "express", 77, __inst, "${iso(1)}")`);
+    ok("passation commencée et valide", !r.erreur && E("grandTestValide")(r.etat), JSON.stringify(E("erreursGrandTest")(r.etat)));
+    let etat = r.etat;
+    ok("une seule passation en cours à la fois", !!E("commencerPassation")(etat, "complet", 5, [], iso(1)).erreur);
+    r = E("enregistrerReponseGT")(etat, { itemId: "vf-01", valeur: true, certitude: 70, debut: iso(1), valideeLe: iso(1), dureeMs: 4000 });
+    ok("réponse enregistrée", !r.erreur && r.etat.historiqueTests[0].reponses.length === 1 && r.etat.historiqueTests[0].progression.item === 1);
+    etat = r.etat;
+    ok("réponse déjà validée : non modifiable", E("enregistrerReponseGT")(etat, { itemId: "vf-01", valeur: false, certitude: 99, valideeLe: iso(1) }).erreur === "réponse déjà validée");
+    ok("item hors de la passation : refusé", !!E("enregistrerReponseGT")(etat, { itemId: "vf-99", valeur: true, certitude: 50, valideeLe: iso(1) }).erreur);
+    ok("certitude hors des niveaux prévus : refusée", !!E("enregistrerReponseGT")(etat, { itemId: "vf-02", valeur: true, certitude: 42, valideeLe: iso(1) }).erreur);
+    ok("non-réponse (valeur null) acceptée", !E("enregistrerReponseGT")(etat, { itemId: "vf-02", valeur: null, certitude: null, valideeLe: iso(1) }).erreur);
+    r = E("terminerPassation")(etat, iso(2));
+    ok("passation terminée : items inscrits au journal des vues", !r.erreur && r.etat.historiqueItemsVus.length === 3 && r.etat.historiqueItemsVus[0].compteurTests === 1 && E("grandTestValide")(r.etat));
+    const etatTermine = r.etat;
+
+    // --- Formes invalides, chacune rejetée ---
+    const muter = (nom, f) => { const e = JSON.parse(JSON.stringify(etatTermine)); f(e); return [nom, e]; };
+    const mauvaises = [
+      muter("mode inconnu", e => { e.historiqueTests[0].mode = "rapide"; }),
+      muter("graine négative", e => { e.historiqueTests[0].graine = -1; }),
+      muter("date illisible", e => { e.historiqueTests[0].dateDebut = "hier"; }),
+      muter("fin avant le début", e => { e.historiqueTests[0].dateFin = iso(0); }),
+      muter("certitude 42", e => { e.historiqueTests[0].reponses[0].certitude = 42; }),
+      muter("réponse à un item absent", e => { e.historiqueTests[0].reponses[0].itemId = "inconnu"; }),
+      muter("réponse en double", e => { e.historiqueTests[0].reponses.push(e.historiqueTests[0].reponses[0]); }),
+      muter("valeur objet", e => { e.historiqueTests[0].reponses[0].valeur = { a: 1 }; }),
+      muter("identifiant avec balise", e => { e.historiqueTests[0].id = "<img src=x>"; }),
+      muter("passations au même identifiant", e => { e.historiqueTests.push(JSON.parse(JSON.stringify(e.historiqueTests[0]))); }),
+      muter("deux passations en cours", e => { const t = JSON.parse(JSON.stringify(e.historiqueTests[0])); t.id = "run-2"; t.dateFin = null; e.historiqueTests[0].dateFin = null; e.historiqueTests.push(t); }),
+      muter("plage à 90 %", e => { e.historiqueTests[0].scores.A = { valeur: 0.5, plage: { bas: 0.3, haut: 0.7, niveau: 0.9, methode: "wilson" }, n: 10 }; }),
+      muter("plage inversée", e => { e.historiqueTests[0].scores.B = { valeur: 0.5, plage: { bas: 0.7, haut: 0.3, niveau: 0.8, methode: "wilson" }, n: 10 }; }),
+      muter("axe manquant", e => { delete e.historiqueTests[0].scores.F; }),
+      muter("niveau 6", e => { e.historiqueTests[0].niveau.id = 6; }),
+      muter("version de schéma 3", e => { e.versionSchema = 3; }),
+      muter("journal des vues sans date", e => { delete e.historiqueItemsVus[0].date; }),
+      muter("préférences absentes", e => { delete e.preferences; }),
+      muter("taille excessive", e => { const t = e.historiqueTests[0]; t.instances = Array.from({ length: 300 }, (_, k) => ({ instanceId: "i" + k, itemId: "i" + k, famille: "f", dejaVu: false, compteurTestsAvant: 0, valeurs: Object.fromEntries(Array.from({ length: 40 }, (_, j) => ["v" + j, "x".repeat(300)])) })); t.reponses = []; }),
+      ["un tableau", []], ["un texte", "grandTest"], ["null", null]
+    ];
+    const acceptees = mauvaises.filter(([, v]) => E("grandTestValide")(v)).map(([nom]) => nom);
+    ok(mauvaises.length + " formes invalides rejetées", acceptees.length === 0, "acceptées : " + acceptees.join(", "));
+    ok("taille excessive : rejetée pour sa taille", /taille excessive/.test(E("erreursGrandTest")(mauvaises.find(([nom]) => nom === "taille excessive")[1])[0]));
+
+    // --- Migration de la version 1 (forme du §10.1) ---
+    const v1 = { version: 2, banqueVersion: "grand-test-2026-01", parcours: [
+      { id: "run-ancien", mode: "complet", graine: 823741, creeLe: iso(3), termineLe: iso(4), etape: 5, itemCourant: 2,
+        instances: [{ id: "vf-a", famille: "f-a", valeurs: {}, dejaVu: false }, { id: "vf-b", famille: "f-b", valeurs: { x: 2 }, dejaVu: true }],
+        reponses: [{ itemId: "vf-a", valeur: true, certitude: 70, debut: 0, valideeLe: iso(3), dureeMs: 4120 }, { itemId: "vf-b", valeur: false, certitude: 99, debut: 0, valideeLe: iso(3), dureeMs: 1500 }],
+        estimationsEtape: { "1": 60 }, rappels: { j7: null, j30: null }, issues: [] }],
+      historiqueVus: [{ instanceId: "vf-a@823741", famille: "f-a", runId: "run-ancien", date: iso(4) }], rappelsEnAttente: [], preferences: { cartesSensibilisation: false } };
+    const m = E("migrerGrandTest")(v1);
+    const t1 = m.etat && m.etat.historiqueTests[0];
+    ok("migration 1 → 2 : résultat valide", !m.erreur, m.erreur + " " + JSON.stringify(m.details));
+    ok("migration : graine, mode, dates, réponses et préférences conservées", !!t1 && t1.graine === 823741 && t1.mode === "complet" && t1.dateDebut === iso(3) && t1.dateFin === iso(4)
+      && t1.reponses.length === 2 && t1.reponses[1].certitude === 99 && t1.reponses[0].dureeMs === 4120 && m.etat.preferences.cartesSensibilisation === false);
+    ok("migration : début reconstruit à partir de la durée", !!t1 && t1.reponses[0].debut === new Date(Date.parse(iso(3)) - 4120).toISOString());
+    ok("migration : journal des vues converti", !!m.etat && m.etat.historiqueItemsVus[0].itemId === "vf-a" && m.etat.historiqueItemsVus[0].compteurTests === 1);
+    ok("migration : fonction pure (l'original n'est pas modifié)", v1.parcours[0].instances[0].id === "vf-a" && !("historiqueTests" in v1));
+    ok("version future refusée", /plus récente/.test(E("migrerGrandTest")({ versionSchema: 9 }).erreur || ""));
+    ok("forme inconnue refusée", E("migrerGrandTest")({ autre: 1 }).erreur === "forme inconnue");
+
+    // --- Chargement : clé absente, version 1, JSON invalide ---
+    w.localStorage.setItem("grandTest", JSON.stringify(v1));
+    let c = E("chargerGrandTest()");
+    ok("chargement d'une version 1 : migrée en mémoire, la clé n'est pas réécrite", !c.probleme && c.migre === true && c.etat.versionSchema === 2 && JSON.parse(w.localStorage.getItem("grandTest")).parcours);
+    w.localStorage.setItem("grandTest", "{pas du json");
+    w.localStorage.setItem("acquis", JSON.stringify(["biais:ancrage"]));
+    await aller("accueil"); await aller("tests/grand-test");
+    ok("JSON invalide : message, lecture seule, contenu conservé", !!vue().querySelector(".gt-probleme") && w.localStorage.getItem("grandTest") === "{pas du json");
+    ok("JSON invalide : export du contenu brut proposé", [...vue().querySelectorAll("button")].some(b => /contenu brut/.test(b.textContent)));
+    w.confirm = () => true;
+    [...vue().querySelectorAll("button")].find(b => /Effacer seulement/.test(b.textContent)).click();
+    await pause(100);
+    ok("effacement isolé : seule la clé grandTest disparaît", w.localStorage.getItem("grandTest") === null && w.localStorage.getItem("acquis") === '["biais:ancrage"]');
+    ok("après effacement : la page redevient utilisable", !vue().querySelector(".gt-probleme") && /Aucun test passé/.test(vue().textContent));
+
+    // --- Espace plein : l'ancien contenu reste ---
+    w.localStorage.setItem("grandTest", JSON.stringify(etatTermine));
+    const setItem = w.Storage.prototype.setItem;
+    w.Storage.prototype.setItem = function () { throw new w.DOMException("plein", "QuotaExceededError"); };
+    const rq = E("enregistrerGrandTest")(etat);
+    w.Storage.prototype.setItem = setItem;
+    ok("espace plein : erreur signalée, ancien contenu intact", rq.erreur === "espace de stockage plein" && w.localStorage.getItem("grandTest") === JSON.stringify(etatTermine));
+    ok("état invalide : jamais écrit", !!E("enregistrerGrandTest")({ versionSchema: 2 }).erreur && w.localStorage.getItem("grandTest") === JSON.stringify(etatTermine));
+
+    // --- Reprise après rechargement ---
+    w.localStorage.setItem("grandTest", JSON.stringify(etat));
+    await recharger();
+    await aller("tests/grand-test");
+    ok("reprise : la passation en cours est retrouvée après rechargement", /test express est en cours\s*:\s*1 réponse validée sur 3/.test(vue().textContent));
+
+    // --- Export et import ---
+    w.localStorage.setItem("grandTest", JSON.stringify(etatTermine));
+    ok("export : grandTest dans la progression exportée", egal(E("etatActuel()").grandTest, etatTermine));
+    const importer = contenu => {
+      w.confirm = () => true;
+      const champ = d.getElementById("fichier-import");
+      const dt = new w.DataTransfer();
+      dt.items.add(new w.File([contenu], "sauvegarde.json", { type: "application/json" }));
+      champ.files = dt.files;
+      champ.dispatchEvent(new w.Event("change"));
+    };
+    const exporte = JSON.stringify({ application: "Esprit critique", version: 1, date: iso(5), cles: E("etatActuel()") });
+    w.localStorage.clear();
+    let recharge = new Promise(res => { f.onload = res; });
+    importer(exporte);
+    await recharge; await pause(250); brancher();
+    ok("aller-retour export → import : grandTest identique", w.localStorage.getItem("grandTest") === JSON.stringify(etatTermine));
+    const mauvais = JSON.parse(JSON.stringify(etatTermine)); mauvais.historiqueTests[0].mode = "rapide";
+    recharge = new Promise(res => { f.onload = res; });
+    importer(JSON.stringify({ application: "Esprit critique", version: 1, date: iso(5), cles: { acquis: ["biais:halo"], grandTest: mauvais } }));
+    await recharge; await pause(250); brancher();
+    ok("import : grandTest mal formé écarté, les autres clés reprises", w.localStorage.getItem("grandTest") === null && w.localStorage.getItem("acquis") === '["biais:halo"]');
+    // Règle d'import (formeValide, app.js) : une version 1 migrable est acceptée, une forme inconnue refusée
+    ok("import : une version 1 est acceptée (migrable), une forme inconnue refusée", E("formeValide")("grandTest", v1) === true && E("formeValide")("grandTest", { autre: 1 }) === false);
+    // Effacement de toute la progression : grandTest compris
+    w.confirm = () => true;
+    recharge = new Promise(res => { f.onload = res; });
+    d.getElementById("btn-effacer").click();
+    await recharge; await pause(250); brancher();
+    ok("« Effacer toute la progression » efface aussi grandTest", w.localStorage.getItem("grandTest") === null);
+
+    // --- Aucune requête réseau ---
+    ok("aucune requête réseau pendant le test (fetch, XHR, beacon, WebSocket)", requetes.length === 0, requetes.join(" | "));
+    const externes = w.performance.getEntriesByType("resource").filter(x => new URL(x.name).origin !== w.location.origin);
+    ok("aucune ressource externe chargée", externes.length === 0 && nbRessources >= 0, externes.map(x => x.name).join(", "));
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
+  }
+  ok("aucune erreur JavaScript" + (erreursJS.length ? " : " + erreursJS.join(" | ") : ""), erreursJS.length === 0);
+  const echecs = lignes.filter(l => !l.startsWith("OK")).length;
+  lignes.unshift("RÉSUMÉ : " + (lignes.length - echecs) + " / " + lignes.length + " vérifications réussies");
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+  console.log("RAPPORT-FIN");
+  f.remove();
+};
+</script>

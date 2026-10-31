@@ -176,7 +176,7 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest"
 ];
 
 // Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
@@ -185,12 +185,13 @@ const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
     "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
-    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes"],
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
   booleen: ["certitudeQuiz", "ceciteFaite"]
 };
 const formeDe = v => Array.isArray(v) ? "tableau" : v !== null && typeof v === "object" ? "objet" : typeof v === "string" ? "texte" : typeof v === "boolean" ? "booleen" : "autre";
-const formeValide = (cle, valeur) => (FORMES_SAUVEGARDE[formeDe(valeur)] || []).includes(cle);
+// « grandTest » est en plus vérifié en profondeur (grand-test.js) : une version ancienne est acceptée si elle se migre
+const formeValide = (cle, valeur) => (FORMES_SAUVEGARDE[formeDe(valeur)] || []).includes(cle) && (cle !== "grandTest" || grandTestImportable(valeur));
 
 // Fiches marquées comme acquises par l'utilisateur
 const acquis = new Set(lire("acquis", []).filter(c => INDEX.has(c)));
