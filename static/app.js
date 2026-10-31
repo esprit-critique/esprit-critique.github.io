@@ -1023,12 +1023,25 @@ function majProgression(type) {
   $("jauge").style.width = (100 * n / fiches.length) + "%";
 }
 
-function ajouterSection(parent, titre, contenu, classe) {
-  if (!contenu) return;
+// Une section de fiche : un intertitre h3 (facultatif) et son contenu ; rien si le contenu est vide
+function creerSection(titre, contenu, classe) {
+  if (!contenu) return null;
   const s = el("div", "section");
-  s.appendChild(el("h3", null, titre));
+  if (titre) s.appendChild(el("h3", null, titre));
   s.appendChild(typeof contenu === "string" ? el("p", classe, contenu) : contenu);
-  parent.appendChild(s);
+  return s;
+}
+
+// Un groupe de sections, sous un intertitre h2 (sans intertitre : le groupe de tête, qui suit le chapô).
+// Un groupe sans aucune section ne s'affiche pas.
+function ajouterGroupe(parent, titre, sections) {
+  const presentes = sections.filter(Boolean);
+  if (!presentes.length) return null;
+  const groupe = el(titre ? "section" : "div", titre ? "groupe-fiche" : "tete-fiche");
+  if (titre) groupe.appendChild(el("h2", null, titre));
+  groupe.append(...presentes);
+  parent.appendChild(groupe);
+  return groupe;
 }
 
 function niveauMemoire(b) {
@@ -1045,7 +1058,7 @@ function afficherFiche(type, fiche) {
   zone.innerHTML = "";
   zone.appendChild(lienVers("#" + type, "← " + conf.pluriel, "lien retour"));
 
-  const carte = el("article", "carte");
+  const carte = el("article", "carte carte-fiche");
   carte.style.setProperty("--c", COULEURS[fiche.categorie]);
 
   const entete = el("div", "entete-carte");
@@ -1060,27 +1073,28 @@ function afficherFiche(type, fiche) {
   enteteFiche.appendChild(el("p", "fiche-definition", fiche.definition));
   carte.appendChild(enteteFiche);
 
-  ajouterSection(carte, "Schéma de l'argument", fiche.forme, "forme");
+  // Le contenu en quatre temps, après le groupe de tête (schéma, illustration, mécanisme) qui suit le chapô
+  let illustration = null;
   if (typeof SCHEMAS !== "undefined" && SCHEMAS[cle]) {
     const { svg, legende } = SCHEMAS[cle]();
     const figure = el("figure", "schema");
     figure.append(svg, el("figcaption", null, legende));
-    ajouterSection(carte, "Illustration", figure);
+    illustration = creerSection("Illustration", figure);
   }
-  ajouterSection(carte, conf.titreMecanisme, fiche.mecanisme);
-  ajouterSection(carte, "Exemple", fiche.exemple, "encadre");
-  ajouterSection(carte, "Cas célèbre", fiche.celebre, "celebre");
+  ajouterGroupe(carte, null, [creerSection("Schéma de l'argument", fiche.forme, "forme"), illustration, creerSection(conf.titreMecanisme, fiche.mecanisme)]);
+  ajouterGroupe(carte, "En pratique", [creerSection("Exemple", fiche.exemple, "encadre"), creerSection("Cas célèbre", fiche.celebre, "celebre")]);
+  let distinction = null;
   if (fiche.distinction) {
     const [cible, texte] = fiche.distinction;
     const r = INDEX.get(cible);
     if (r) {
       const p = el("p", "distinction");
       p.append(texteNoeud("Avec "), lienVers("#" + r.type + "/" + r.fiche.id, r.fiche.nom + (r.type !== type ? " (" + TYPES[r.type].singulier + ")" : "")), texteNoeud(" : " + texte));
-      ajouterSection(carte, "Ne pas confondre", p);
+      distinction = creerSection("Ne pas confondre", p);
     }
   }
-  ajouterSection(carte, conf.titreParade, fiche.parade);
-  ajouterSection(carte, "S'entraîner", entrainementFiche(type, fiche));
+  ajouterGroupe(carte, "Se défendre", [creerSection(conf.titreParade, fiche.parade), distinction]);
+  let eprouver = null;
   const ateliers = ateliersDeLaFiche(cle);
   if (ateliers.length) {
     const liste = el("div", "ateliers-fiche");
@@ -1092,17 +1106,20 @@ function afficherFiche(type, fiche) {
       lien.append(cadre, el("span", null, atelier.titre));
       liste.appendChild(lien);
     });
-    ajouterSection(carte, "À éprouver soi-même", liste);
+    eprouver = creerSection("À éprouver soi-même", liste);
   }
-  ajouterSection(carte, "Source", fiche.source, "source");
+  // Les exercices ont leurs propres consignes : pas d'intertitre en plus
+  ajouterGroupe(carte, "S'entraîner", [creerSection(null, entrainementFiche(type, fiche)), eprouver]);
+  let voirAussi = null;
   if (fiche.lies && fiche.lies.length) {
     const voir = el("div", "voir-aussi");
     fiche.lies.forEach(l => {
       const r = INDEX.get(l);
       if (r) voir.appendChild(lienVers("#" + r.type + "/" + r.fiche.id, r.fiche.nom + (r.type !== type ? " (" + TYPES[r.type].singulier + ")" : "")));
     });
-    ajouterSection(carte, "Voir aussi", voir);
+    voirAussi = creerSection("Voir aussi", voir);
   }
+  ajouterGroupe(carte, "Aller plus loin", [creerSection("Source", fiche.source, "source"), voirAussi]);
 
   // Pied : acquis et mémorisation
   const pied = el("div", "pied-fiche");

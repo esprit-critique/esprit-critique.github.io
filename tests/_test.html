@@ -253,7 +253,7 @@ f.onload = async () => {
     // ---------- Fiches : aucun contenu perdu (les 90 fiches) ----------
     // Comparaison sans les espaces : la typographie (espaces insécables) et le découpage en lignes n'y changent rien
     const sansEspaces = t => String(t).replace(/\s+/g, "");
-    const manques = [];
+    const manques = [], hierarchie = [];
     for (const r of w.eval("INDEX").values()) {
       const { type, fiche } = r;
       const cle = type + ":" + fiche.id;
@@ -268,7 +268,17 @@ f.onload = async () => {
       const ateliersF = w.eval("ateliersDeLaFiche")(cle);
       if (ateliersF.length && carte.querySelectorAll(".ateliers-fiche a").length !== ateliersF.length) manques.push(cle + " : ateliers");
       (fiche.lies || []).forEach(l => { const v = w.eval("INDEX").get(l); if (v && !carte.querySelector('.voir-aussi a[href="#' + v.type + "/" + v.fiche.id + '"]')) manques.push(cle + " : voir aussi " + l); });
+      // Hiérarchie des titres : un seul h1, en premier ; un h3 seulement sous un h2 ou dans le groupe de tête
+      const titres = [...carte.querySelectorAll("h1, h2, h3, h4")];
+      let dernier = 0;
+      titres.forEach((h, k) => {
+        const n = Number(h.tagName[1]);
+        if ((n === 1) !== (k === 0) || n === 4) hierarchie.push(cle + " : " + h.tagName + " « " + h.textContent + " »");
+        else if (n === 3 && dernier < 2 && !h.closest(".tete-fiche")) hierarchie.push(cle + " : h3 sans h2 « " + h.textContent + " »");
+        dernier = Math.max(dernier, n === 3 && h.closest(".tete-fiche") ? 1 : n);
+      });
     }
+    ok("fiches : hiérarchie des titres juste sur les 90 (h1, h2, h3 sans saut)", hierarchie.length === 0, hierarchie.slice(0, 6).join(" | "));
     ok("fiches : sur les 90, chaque champ rempli apparaît sur la page", manques.length === 0, manques.slice(0, 8).join(" | "));
 
     // ---------- Ouverture de l'accueil ----------

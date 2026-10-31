@@ -468,9 +468,6 @@ h3.titre-bloc {
 @media (min-width: 760px) { .fiche-definition { font-size: 23px; } }
 /* L'en-tête de la fiche (étiquette, numéro, titre, autres noms, définition) se ferme par le trait */
 .entete-fiche::after { margin: 16px 0 0; }
-/* La section qui suit l'en-tête n'a pas de second trait */
-.entete-fiche + .section::before { display: none; }
-.entete-fiche + .section { margin-top: 14px; }
 
 .section { border-top: 1px solid var(--trait); margin-top: 16px; padding-top: 12px; }
 .section h3 {
@@ -1246,7 +1243,7 @@ h3.titre-bloc {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M6 5 11 0.8M6 5 11 9.2M0 5H6' stroke='black' stroke-width='1.4' fill='none'/%3E%3C/svg%3E") right center / 12px 10px no-repeat,
     linear-gradient(black, black) center / calc(100% - 22px) 1.2px no-repeat;
 }
-.section::before, .entete-fiche::after {
+.section::before, .entete-fiche::after, .groupe-fiche::before {
   content: "";
   display: block;
   height: 10px;
@@ -1277,3 +1274,16 @@ h3.titre-bloc {
 .ouverture .embleme { width: 76px; height: 54px; display: block; }
 .ouverture p { margin: 0; font-family: var(--titre); font-size: 18px; line-height: 1.35; }
 .ouverture small { display: block; font-family: var(--police); font-size: 13.5px; color: var(--discret); margin-top: 4px; }
+/* Page d'une fiche, en quatre temps : le trait sépare l'en-tête et les groupes, pas les sections d'un groupe */
+.groupe-fiche { margin-top: 26px; }
+.groupe-fiche::before { margin: 0 0 12px; }
+.groupe-fiche > h2 { font-family: var(--titre); font-size: 19px; font-weight: 600; line-height: 1.2; margin: 0 0 2px; }
+.groupe-fiche .section::before, .tete-fiche .section::before { display: none; }
+.groupe-fiche .section, .tete-fiche .section { margin-top: 18px; }
+.tete-fiche .section:first-child { margin-top: 14px; }
+.carte-fiche .section p { font-size: 16px; line-height: 1.55; }
+/* .section p (0,1,1) l'emportait sur .consigne et .source (0,1,0) : consignes et source retrouvent leur taille */
+.carte-fiche .section p.consigne { font-size: 12.5px; margin: 0 0 8px; }
+.carte-fiche .section p.source { font-size: 14px; }
+/* Le pied de fiche (acquise, mémorisation, repérages) est du suivi personnel : un simple filet, sans trait */
+.carte-fiche .pied-fiche { border-top: 1px solid var(--trait); margin-top: 26px; padding-top: 16px; }
