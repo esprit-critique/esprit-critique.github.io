@@ -261,6 +261,53 @@ f.onload = async () => {
     await recharge; await pause(250); brancher();
     ok("« Effacer toute la progression » efface aussi grandTest", w.localStorage.getItem("grandTest") === null);
 
+    // --- Graphiques : historiques de 0, 1, 3 et 20 tests (lot 7) ---
+    // Historique construit par le moteur : réponses plausibles à chaque item, passations terminées, scores calculés
+    const historique = n => w.eval(`(() => {
+      let e = etatGrandTestVide();
+      for (let k = 0; k < ${n}; k++) {
+        const mode = k % 4 === 3 ? "express" : "complet", graine = 1000 + k, al = generateur(graine);
+        const p = tirerPassation(e, mode, graine);
+        const jour = d => new Date(Date.UTC(2026, 0, 1 + 3 * k, 10, d)).toISOString();
+        e = commencerPassation(e, mode, graine, p.instances, jour(0)).etat;
+        p.instances.forEach(x => {
+          const it = resoudreItem(x, graine), bon = al() < 0.35 + 0.02 * k;
+          const v = { qcm: () => bon ? it.justeAffiche : (it.justeAffiche + 1) % 4, calcul: () => bon ? it.juste : it.leurre, binaire: () => bon ? it.juste : !it.juste, vf: () => bon ? it.juste : !it.juste,
+            fourchette: () => [it.q.v / 3, it.q.v, it.q.v * (bon ? 3 : 0.5)].sort((a, b) => a - b), rappel: () => it.q.v * 1.5, "angle-mort": () => [4, 6],
+            "exposition-lecture": () => "mots", "exposition-note": () => 1 + Math.floor(al() * 6), societe: () => [1, 5, 3, 4, 2], drm: () => it.test.map(() => al() < 0.5),
+            recit: () => [1, 0], source: () => it.test.map(t => t.source) }[it.type]();
+          const certitude = ["qcm", "calcul", "binaire", "vf"].includes(it.type) ? [50, 70, 90, 99][Math.floor(al() * 4)] : null;
+          e = enregistrerReponseGT(e, { itemId: x.itemId, valeur: v, certitude, debut: jour(1), valideeLe: jour(2), dureeMs: 4000 }).etat;
+        });
+        e = terminerPassation(e, jour(50)).etat;
+        const t = e.historiqueTests[e.historiqueTests.length - 1];
+        t.scores = calculerScores(t); t.ideesFaussesCorrigees = ideesFaussesCorrigees(t);
+      }
+      return JSON.stringify(e);
+    })()`);
+    await new Promise((res, rej) => { const sc = d.createElement("script"); sc.src = "/controle-affichage.js"; sc.onload = res; sc.onerror = rej; d.head.appendChild(sc); });
+    for (const n of [0, 1, 3, 20]) {
+      const etatN = historique(n);
+      w.localStorage.setItem("grandTest", etatN);
+      ok(n + " test(s) : historique valide", w.eval("grandTestValide")(JSON.parse(etatN)));
+      await aller("accueil"); await aller("tests/grand-test");
+      const voir = [...vue().querySelectorAll("button")].find(b => /Voir vos résultats/.test(b.textContent));
+      if (!n) { ok("0 test : accueil sans résultats ni erreur", !voir && /Commencer le test complet/.test(vue().textContent)); continue; }
+      voir.click(); await pause(60);
+      const zoneG = vue().querySelector(".zone-jeu");
+      const svgs = [...zoneG.querySelectorAll("svg.graphe")];
+      const sansNom = svgs.filter(g => !(g.getAttribute("aria-label") || g.getAttribute("aria-labelledby")));
+      ok(n + " test(s) : graphiques présents, chacun avec un nom accessible (" + svgs.length + ")", svgs.length >= 2 && !sansNom.length);
+      ok(n + " test(s) : tableaux équivalents (axes, étalonnage, tests terminés : " + n + " lignes)", zoneG.querySelectorAll("table.gt-tableau").length >= 2
+        && [...zoneG.querySelectorAll("table.gt-tableau")].some(t => t.querySelectorAll("tbody tr").length === n));
+      ok(n + " test(s) : aucun débordement horizontal de la page", d.documentElement.scrollWidth <= w.innerWidth + 1, d.documentElement.scrollWidth + " > " + w.innerWidth);
+      ok(n + " test(s) : aucune valeur indéfinie ni coordonnée invalide", !/undefined|NaN|Infinity/.test(zoneG.textContent) && ![...zoneG.querySelectorAll("svg *")].some(x => [...x.attributes].some(a => /NaN|Infinity|undefined/.test(a.value))));
+      ok(n + " test(s) : tendance annoncée seulement à partir de trois tests complets", n >= 3 ? /tendance (à la hausse|à la baisse|non mesurable)/.test(zoneG.textContent) : /pas assez de tests comparables/.test(zoneG.textContent));
+      ok(n + " test(s) : avertissement sur l'apprentissage du format", /apprentissage du format/.test(zoneG.textContent));
+      const defauts = w.controleAffichage().filter(x => !/^tests\/grand-test/.test(x.ou));
+      ok(n + " test(s) : contrôle d'affichage du site sans défaut (noms, contraste, doublons d'identifiants)", !defauts.length, defauts.slice(0, 3).map(x => x.type + " " + x.ou + " " + x.detail).join(" | "));
+    }
+
     // --- Aucune requête réseau ---
     ok("aucune requête réseau pendant le test (fetch, XHR, beacon, WebSocket)", requetes.length === 0, requetes.join(" | "));
     const externes = w.performance.getEntriesByType("resource").filter(x => new URL(x.name).origin !== w.location.origin);

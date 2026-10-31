@@ -1319,3 +1319,7 @@ h3.titre-bloc {
 .gt-limites ul { margin-top: 6px; }
 .gt-item .cas { overflow-wrap: anywhere; }
 .gt-item .ligne label { min-width: 6em; }
+.gt-tableau-cadre { overflow-x: auto; margin: 10px 0; }
+.gt-tableau { border-collapse: collapse; font-size: 13px; width: 100%; }
+.gt-tableau caption { text-align: left; font-weight: 600; margin-bottom: 4px; }
+.gt-tableau th, .gt-tableau td { border-bottom: 1px solid var(--trait); padding: 4px 6px; text-align: left; }

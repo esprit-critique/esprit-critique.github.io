@@ -402,3 +402,25 @@ conservées : « 12 à 15 minutes » (estimation centrale 14 min, explications l
 45 à 60 minutes, en une ou plusieurs fois ». À confirmer par de vrais essais chronométrés (fichier à relire).
 
 Lot suivant : lot 7 — graphiques et progression.
+
+---
+
+## Lot 7 — graphiques et progression (31 octobre 2026, reprise automatique)
+
+- `static/grand-test-interface.js` : `grapheAxes` (axes A à C, point, plage à 80 %, trait du hasard, échelle 0–100 %
+  non tronquée), `blocEtalonnage` (**`courbeEtalonnage()` réutilisée sans modification** ; le niveau 25 % figure dans
+  le tableau, « hors du graphique »), fourchettes dessinées par `ligneIntervalle()` du site, `grapheProgression` (un
+  point par test, plage verticale, complet plein et express creux, **jamais reliés entre modes**), `blocProgression`
+  (tendance des tests complets par `tendance()` — plage de pente à 80 % —, rien avant trois tests comparables,
+  avertissement fixe sur l'apprentissage du format), `ideesFaussesCorrigees` enregistrées à la fin de chaque test.
+  Chaque SVG : `role="img"`, `<title>` et `<desc>` reliés ; chaque graphique a un tableau équivalent.
+- `static/style.css` : tableaux `.gt-tableau`, jetons existants seulement.
+- Banc « grand » : 86 vérifications ; historiques de **0, 1, 3 et 20 tests** construits par le moteur, dans les
+  **quatre configurations** : graphiques nommés, tableaux (une ligne par test), aucun débordement horizontal, aucune
+  coordonnée invalide, tendance seulement à partir de trois tests complets, contrôle d'affichage du site
+  (`controleAffichage` : noms accessibles, contraste, identifiants) sans défaut.
+
+Commandes : `tests/lancer.sh grand csp` → grand 86 / 86 et csp sans blocage, dans les quatre configurations.
+Correction en cours de lot : l'attente du banc sur la tendance était fausse (avec 3 tests, les trois sont complets).
+
+Lot suivant : lot 8 — ateliers et navigation pédagogique.

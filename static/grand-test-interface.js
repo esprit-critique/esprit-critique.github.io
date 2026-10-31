@@ -812,6 +812,7 @@ function terminerEtAfficher(t) {
   if (r.erreur) { annoncer(r.erreur); return; }
   const fini = r.etat.historiqueTests.find(x => x.id === t.id);
   fini.scores = calculerScores(fini);
+  fini.ideesFaussesCorrigees = ideesFaussesCorrigees(fini).slice(0, 300);
   sauver(r.etat);
   GT.zone.innerHTML = "";
   afficherProfil(GT.zone, t.id);
@@ -903,6 +904,16 @@ function afficherProfil(zone, runId) {
   else f.appendChild(paragraphe("En moyenne, vous avez noté les arguments de votre camp " + (Math.abs(scores.F.valeur) < 0.05 ? "comme ceux du camp opposé" : nombreGT(Math.round(Math.abs(scores.F.valeur) * 10) / 10) + " point " + (scores.F.valeur > 0 ? "plus" : "moins") + " solides que ceux du camp opposé") + ", sur une échelle de 1 à 7. Indicateur exploratoire, fondé sur " + scores.F.n + " notes : ce n'est pas un score stable."));
   axes.appendChild(f);
   zone.appendChild(axes);
+  const hasards = { A: hasardConventionnel(lignes.filter(l => l.item.axe === "A" && l.juste !== null).map(l => l.item.chance)), B: 0.25, C: 0.25 };
+  const graphe = grapheAxes(scores, hasards);
+  if (graphe) {
+    axes.insertBefore(graphe, axes.firstChild);
+    axes.insertBefore(paragraphe("Point : part de réponses justes ; barre : plage plausible ; trait fin : niveau du hasard.", "source"), graphe.nextSibling);
+  }
+  const etal = blocEtalonnage(lignes);
+  if (etal) e.appendChild(etal);
+  fourchettes.forEach((x, k) => { const l = lignes.filter(l => l.item.type === "fourchette" && Array.isArray(l.reponse.valeur))[k]; e.appendChild(ligneIntervalle({ q: l.item.q.q, v: x.q.v, unite: x.q.unite }, x.bas, x.haut, x.bas <= x.q.v && x.q.v <= x.haut)); });
+  zone.appendChild(blocProgression(GT.etat));
 
   // Sur-correction, répétitions, réponses très rapides
   const sur = indiceSurCorrection(lignes.filter(l => l.juste !== null).map(l => Object.assign({ reponse: l.reponse.valeur }, l.item)));
@@ -924,6 +935,133 @@ function blocAxe(a) {
   bloc.appendChild(el("p", "source", AXES_GT[a].mesure));
   return bloc;
 }
+
+
+// ===================== Graphiques et progression (lot 7) =====================
+// SVG générés par le code, avec les classes existantes du site (aucune couleur nouvelle) ; chaque graphique a un titre,
+// une description et un tableau équivalent : il n'est jamais la seule restitution. Échelles de 0 à 100 % non tronquées.
+
+const AVERTISSEMENT_PROGRESSION = "Une progression peut refléter un apprentissage du format ; les scores fluctuent et tendent parfois à revenir vers la moyenne.";
+
+// SVG accessible : role img, titre et description reliés
+function svgAccessible(viewBox, titre, description) {
+  const id = "gt-g-" + Math.random().toString(36).slice(2, 8);
+  const s = svg("svg", { viewBox, class: "graphe", role: "img", "aria-labelledby": id + "-t " + id + "-d" });
+  const t = svg("title", { id: id + "-t" }); t.textContent = typo(titre);
+  const d = svg("desc", { id: id + "-d" }); d.textContent = typo(description);
+  s.append(t, d);
+  return s;
+}
+
+// Tableau équivalent : légende, en-têtes, lignes
+function tableauEquivalent(legende, entetes, lignes) {
+  const table = el("table", "gt-tableau");
+  table.appendChild(el("caption", null, legende));
+  const tr = el("tr");
+  entetes.forEach(h => { const th = el("th", null, h); th.scope = "col"; tr.appendChild(th); });
+  const thead = el("thead"); thead.appendChild(tr); table.appendChild(thead);
+  const tbody = el("tbody");
+  lignes.forEach(l => { const r = el("tr"); l.forEach(c => r.appendChild(el("td", null, c))); tbody.appendChild(r); });
+  table.appendChild(tbody);
+  const cadre = el("div", "gt-tableau-cadre");
+  cadre.appendChild(table);
+  return cadre;
+}
+
+// Axes A à C : point = proportion de réponses justes, segment = plage plausible à 80 %, trait vertical = hasard
+function grapheAxes(scores, hasards) {
+  const axes = ["A", "B", "C"].filter(a => scores[a].n >= ITEMS_MIN_PLAGE);
+  if (!axes.length) return null;
+  const x = v => 34 + 270 * v, h = 30 + 40 * axes.length;
+  const s = svgAccessible("0 0 320 " + h, "Réussite par axe, avec plage plausible",
+    axes.map(a => a + " : " + pourcentArrondi(scores[a].valeur) + ", plage de " + pourcentArrondi(scores[a].plage.bas) + " à " + pourcentArrondi(scores[a].plage.haut) + ", hasard " + pourcentArrondi(hasards[a])).join(" ; ") + ".");
+  s.appendChild(svg("rect", { x: 34, y: 8, width: 270, height: h - 34, class: "graphe-fond" }));
+  [0, 0.25, 0.5, 0.75, 1].forEach(v => {
+    s.appendChild(svg("line", { x1: x(v), y1: 8, x2: x(v), y2: h - 26, class: "graphe-grille" }));
+    s.appendChild(texteSvg(x(v), h - 12, Math.round(100 * v) + " %", { class: "graphe-texte", "text-anchor": "middle" }));
+  });
+  axes.forEach((a, k) => {
+    const y = 30 + 40 * k, sc = scores[a];
+    s.appendChild(texteSvg(26, y + 4, a, { class: "graphe-texte", "text-anchor": "end" }));
+    s.appendChild(svg("rect", { x: x(sc.plage.bas), y: y - 5, width: Math.max(1.5, x(sc.plage.haut) - x(sc.plage.bas)), height: 10, class: "barre-svg" }));
+    s.appendChild(svg("line", { x1: x(hasards[a]), y1: y - 11, x2: x(hasards[a]), y2: y + 11, class: "graphe-diagonale" }));
+    s.appendChild(svg("circle", { cx: x(sc.valeur), cy: y, r: 5, class: "graphe-point" }));
+  });
+  return s;
+}
+
+// Courbe d'étalonnage : courbeEtalonnage() du site, sans modification (niveaux 50 à 99 %) ; le niveau 25 % à part
+function blocEtalonnage(lignes) {
+  const avec = lignes.filter(l => l.juste !== null && l.reponse.certitude !== null);
+  if (avec.length < ITEMS_MIN_PLAGE) return null;
+  const cumul = {};
+  avec.forEach(l => { const c = l.reponse.certitude; const [n, j] = cumul[c] || [0, 0]; cumul[c] = [n + 1, j + (l.juste ? 1 : 0)]; });
+  const bloc = el("div", "gt-etalonnage");
+  const graphe = courbeEtalonnage(Object.fromEntries(NIVEAUX_CONFIANCE.filter(c => cumul[c]).map(c => [c, cumul[c]])));
+  graphe.setAttribute("aria-label", "Courbe d'étalonnage : réussite observée selon la certitude annoncée ; la diagonale correspond à un étalonnage parfait");
+  bloc.appendChild(graphe);
+  bloc.appendChild(tableauEquivalent("Réussite selon la certitude annoncée", ["Certitude", "Réponses", "Justes", "Réussite"],
+    Object.keys(cumul).map(Number).sort((a, b) => a - b).map(c => [c + " %" + (c === 25 ? " (hors du graphique)" : ""), String(cumul[c][0]), String(cumul[c][1]), pourcentArrondi(cumul[c][1] / cumul[c][0])])));
+  return bloc;
+}
+
+// Séries par axe pour la progression : réponses justes (0/1) de chaque test terminé, dans l'ordre
+function seriesAxe(tests, axe) {
+  return tests.map(t => lignesPassation(t).filter(l => l.item.axe === axe && l.juste !== null).map(l => l.juste ? 1 : 0));
+}
+
+// Progression d'un axe : un point par test (complet plein, express creux), plage verticale ; les points ne sont
+// reliés qu'entre tests du même mode, qui seuls sont comparables
+function grapheProgression(tests, axe) {
+  const pts = tests.map((t, k) => ({ k, mode: t.mode, s: (t.scores && t.scores[axe] && t.scores[axe].n >= ITEMS_MIN_PLAGE) ? t.scores[axe] : null })).filter(p => p.s);
+  if (!pts.length) return null;
+  const n = tests.length, x = k => 40 + (n === 1 ? 125 : 250 * k / (n - 1)), y = v => 150 - 130 * v;
+  const s = svgAccessible("0 0 320 190", "Progression de l'axe " + axe + " : " + AXES_GT[axe].nom,
+    pts.map(p => "test " + (p.k + 1) + " (" + p.mode + ") : " + pourcentArrondi(p.s.valeur)).join(" ; ") + ". Les tests express et complets ne sont pas reliés.");
+  s.appendChild(svg("rect", { x: 40, y: 20, width: 250, height: 130, class: "graphe-fond" }));
+  [0, 0.5, 1].forEach(v => {
+    s.appendChild(svg("line", { x1: 40, y1: y(v), x2: 290, y2: y(v), class: "graphe-grille" }));
+    s.appendChild(texteSvg(34, y(v) + 3, Math.round(100 * v) + " %", { class: "graphe-texte", "text-anchor": "end" }));
+  });
+  const pasEtiquettes = Math.ceil(n / 8);
+  tests.forEach((t, k) => { if (k % pasEtiquettes === 0 || k === n - 1) s.appendChild(texteSvg(x(k), 168, String(k + 1), { class: "graphe-texte", "text-anchor": "middle" })); });
+  s.appendChild(texteSvg(165, 184, "Tests, dans l'ordre", { class: "graphe-texte", "text-anchor": "middle" }));
+  ["complet", "express"].forEach(mode => {
+    const m = pts.filter(p => p.mode === mode);
+    if (m.length > 1) s.appendChild(svg("polyline", { points: m.map(p => x(p.k) + "," + y(p.s.valeur)).join(" "), class: mode === "complet" ? "graphe-point-ligne" : "graphe-point-partie-ligne" }));
+  });
+  pts.forEach(p => {
+    s.appendChild(svg("line", { x1: x(p.k), y1: y(p.s.plage.bas), x2: x(p.k), y2: y(p.s.plage.haut), class: "sch-trait" }));
+    s.appendChild(svg("circle", { cx: x(p.k), cy: y(p.s.valeur), r: 4, class: p.mode === "complet" ? "graphe-point" : "graphe-point-partie" }));
+  });
+  return s;
+}
+
+// Section « Au fil de vos tests » : graphiques, tableau, tendance selon la règle préenregistrée
+function blocProgression(etat) {
+  const tests = passationsTerminees(etat);
+  const bloc = el("section", "gt-progression-tests");
+  bloc.appendChild(el("h3", null, "Au fil de vos tests"));
+  if (!tests.length) { bloc.appendChild(paragraphe("Aucun test terminé.")); return bloc; }
+  ["A", "B", "C"].forEach(a => {
+    const g = grapheProgression(tests, a);
+    if (!g) return;
+    bloc.appendChild(el("p", "consigne", a + ". " + AXES_GT[a].nom));
+    bloc.appendChild(g);
+    const complets = tests.filter(t => t.mode === "complet");
+    const tdc = tendance(seriesAxe(complets, a), graineDe(a + complets.map(t => t.id).join()));
+    bloc.appendChild(paragraphe("Tests complets : " + tdc.verdict + "." + (complets.length >= 3 ? "" : " Une tendance ne s'annonce qu'à partir de trois tests comparables."), "source"));
+  });
+  bloc.appendChild(paragraphe("Point plein : test complet ; point creux : test express. " + AVERTISSEMENT_PROGRESSION, "source"));
+  bloc.appendChild(tableauEquivalent("Vos tests terminés", ["Test", "Mode", "Date", "A", "B", "C", "Idées fausses corrigées"],
+    tests.map((t, k) => [String(k + 1), t.mode, new Date(t.dateFin).toLocaleDateString("fr-FR"),
+      ...["A", "B", "C"].map(a => t.scores && t.scores[a] && t.scores[a].plage ? pourcentArrondi(t.scores[a].valeur) + " (" + pourcentArrondi(t.scores[a].plage.bas) + "–" + pourcentArrondi(t.scores[a].plage.haut) + ")" : "—"),
+      String((t.ideesFaussesCorrigees || []).length)])));
+  return bloc;
+}
+
+// Idées fausses rencontrées et corrigées dans une passation : affirmations fausses jugées vraies
+const ideesFaussesCorrigees = t => lignesPassation(t).filter(l => l.item.type === "vf" && l.item.juste === false && l.reponse.valeur === true).map(l => l.item.instanceId);
 
 // ===================== Inscription =====================
 // Seulement si le test est publié (ou dans la copie d'essai du banc) : sinon aucune carte, aucune route.
