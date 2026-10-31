@@ -42,6 +42,23 @@ Chaque fiche a un numéro de catalogue (champ `num` de `static/donnees.js`), aff
 (sophisme), lu « Biais numéro 10 » par les lecteurs d'écran. **Stable** : une nouvelle fiche prend le numéro suivant
 libre de son type, et un numéro n'est jamais réattribué. La recherche accepte « B 10 », « b10 », « S7 ».
 
+## Page d'une fiche
+
+- **La définition est le chapô** : Newsreader romain, 21 px (23 px dès 760 px de large). C'est le seul texte courant
+  en serif de la fiche ; l'en-tête (étiquette, numéro, titre, autres noms, définition) se ferme par le trait.
+- **Quatre groupes, dans cet ordre**, après un groupe de tête sans intertitre (schéma de l'argument, illustration,
+  mécanisme) : *En pratique* (exemple, cas célèbre), *Se défendre* (parade, ne pas confondre), *S'entraîner*
+  (exercices, ateliers), *Aller plus loin* (source, voir aussi). Intertitres h2 en Newsreader 19 px ; sections en h3.
+  Un groupe vide ne s'affiche pas.
+- **Le trait sépare l'en-tête et les groupes, pas les sections** : dans un groupe, un simple espace de 18 px. Le pied
+  de fiche (acquise, mémorisation, repérages) est séparé par un filet, sans trait.
+- **Une seule boîte, réservée à l'exemple** (fond `--encadre`, coins de 4 px). Le cas célèbre et « Ne pas confondre »
+  sont du texte simple ; la distinction s'ouvre par « ≠ » et le nom de la notion voisine.
+- **La couleur de catégorie est réservée** à la barre de la carte, à l'étiquette et aux liens.
+- **Le schéma de l'argument est composé en lignes** (`forme`, tableau de lignes) : les prémisses, un trait, puis la
+  conclusion (« Donc », « Alors ») ; les variables (A, P, P′…) en italique ; filet gris à gauche, sans fond.
+- **Une légende d'illustration décrit le dessin**, sans répéter la source (`tests/pages/legendes_sources.py`).
+
 ## Proscrit
 
 Refonte de la mise en page, nouvelle palette, dégradés, ombres portées, illustrations décoratives, mascotte,
