@@ -34,6 +34,23 @@ f.onload = async () => {
       const q = w.eval("quiz").serie[w.eval("quiz").index];
       vue().querySelectorAll(".choix")[q.options.findIndex(o => o !== q.fiche)].click();
     },
+    // Les 39 schémas d'argument, rendus par schemaArgument (relecture des découpages, comme tests/formes.html)
+    "formes": async () => {
+      await aller("accueil");
+      const zone = vue();
+      zone.innerHTML = "";
+      const carte = w.document.createElement("article");
+      carte.className = "carte carte-fiche";
+      w.eval("SOPHISMES").forEach(s => {
+        const titre = w.document.createElement("p");
+        titre.className = "consigne";
+        titre.textContent = "S " + s.num + " · " + s.nom;
+        const bloc = w.schemaArgument(s.forme);
+        bloc.style.marginBottom = "20px";
+        carte.append(titre, bloc);
+      });
+      zone.appendChild(carte);
+    },
     "quiz-faux-verdict": async () => {
       w.localStorage.setItem("certitudeQuiz", "false");
       await aller("quiz/tout");

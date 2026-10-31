@@ -1023,6 +1023,29 @@ function majProgression(type) {
   $("jauge").style.width = (100 * n / fiches.length) + "%";
 }
 
+// Le schéma d'un argument, composé comme en logique : les prémisses l'une sous l'autre, un trait, puis la conclusion
+// (ligne qui commence par « Donc » ou « Alors »). Les lettres majuscules isolées, avec une éventuelle apostrophe
+// (P'), sont les variables, en italique (<var>).
+function schemaArgument(lignes) {
+  const bloc = el("div", "forme");
+  let conclusion = false;
+  lignes.forEach(ligne => {
+    const p = el("p");
+    if (!conclusion && /^(Donc|Alors)\b/.test(ligne)) { p.className = "conclusion"; conclusion = true; }
+    // Sans recherche arrière dans l'expression régulière (absente de Safari avant la version 16.4)
+    const texte = typo(ligne);
+    let pos = 0;
+    for (const m of texte.matchAll(/(^|[^\p{L}'’])([A-Z](?:['’′](?!\p{L}))?)(?![\p{L}'’])/gu)) {
+      const debut = m.index + m[1].length;
+      p.append(document.createTextNode(texte.slice(pos, debut)), el("var", null, m[2]));
+      pos = debut + m[2].length;
+    }
+    p.appendChild(document.createTextNode(texte.slice(pos)));
+    bloc.appendChild(p);
+  });
+  return bloc;
+}
+
 // Une section de fiche : un intertitre h3 (facultatif) et son contenu ; rien si le contenu est vide
 function creerSection(titre, contenu, classe) {
   if (!contenu) return null;
@@ -1081,7 +1104,7 @@ function afficherFiche(type, fiche) {
     figure.append(svg, el("figcaption", null, legende));
     illustration = creerSection("Illustration", figure);
   }
-  ajouterGroupe(carte, null, [creerSection("Schéma de l'argument", fiche.forme, "forme"), illustration, creerSection(conf.titreMecanisme, fiche.mecanisme)]);
+  ajouterGroupe(carte, null, [creerSection("Schéma de l'argument", fiche.forme && schemaArgument(fiche.forme)), illustration, creerSection(conf.titreMecanisme, fiche.mecanisme)]);
   ajouterGroupe(carte, "En pratique", [creerSection("Exemple", fiche.exemple, "encadre"), creerSection("Cas célèbre", fiche.celebre, "celebre")]);
   let distinction = null;
   if (fiche.distinction) {
