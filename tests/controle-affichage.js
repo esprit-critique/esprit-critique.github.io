@@ -17,7 +17,8 @@
 //   a11y-sans-nom               un bouton, un lien ou un champ sans nom pour les lecteurs d'écran
 //   id-double                   un identifiant HTML utilisé plusieurs fois
 //   image-sans-texte            une image ou un dessin SVG non décoratif sans texte alternatif
-//   contraste-faible            un texte trop peu contrasté avec son fond (WCAG AA : 4,5:1, 3:1 en grands caractères)
+//   contraste-faible            un texte trop peu contrasté avec son fond (WCAG AA : 4,5:1, 3:1 en grands caractères),
+//                               y compris le texte saisi dans un champ (input, textarea, select)
 
 (function () {
   const MARGE = 0.5; // tolérance, en pixels ou en unités du viewBox
@@ -186,7 +187,9 @@
     };
     vue.querySelectorAll("*").forEach(e => {
       if (e.closest("svg") || e.matches(":disabled, [aria-hidden=true] *")) return;
-      if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) return;
+      // Un champ de saisie n'a pas de nœud de texte, mais son contenu doit être lisible lui aussi
+      const champ = e.matches("textarea, select, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]):not([type=color])");
+      if (!champ && ![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) return;
       const cs = getComputedStyle(e);
       if (cs.visibility === "hidden" || cs.display === "none" || e.getBoundingClientRect().width < 1) return;
       let opacite = 1;
@@ -201,7 +204,7 @@
       const ratio = (l1 + 0.05) / (l2 + 0.05);
       const taille = parseFloat(cs.fontSize), gras = +cs.fontWeight >= 700;
       const seuil = taille >= 24 || (gras && taille >= 18.66) ? 3 : 4.5;
-      if (ratio < seuil) defauts.push({ type: "contraste-faible", ou: e.tagName.toLowerCase() + (e.classList.length ? "." + [...e.classList].join(".") : ""), texte: (e.textContent || "").trim().slice(0, 60), detail: ratio.toFixed(2) + ":1 pour " + seuil + ":1 (" + cs.color + " sur rgb(" + fond.map(Math.round).join(", ") + "))" });
+      if (ratio < seuil) defauts.push({ type: "contraste-faible", ou: e.tagName.toLowerCase() + (e.classList.length ? "." + [...e.classList].join(".") : ""), texte: (champ ? "(champ de saisie)" : (e.textContent || "").trim()).slice(0, 60), detail: ratio.toFixed(2) + ":1 pour " + seuil + ":1 (" + cs.color + " sur rgb(" + fond.map(Math.round).join(", ") + "))" });
     });
     // Textes alternatifs : une image doit avoir un alt ; un dessin SVG est soit décoratif (aria-hidden), soit décrit
     vue.querySelectorAll("img").forEach(i => { if (!i.hasAttribute("alt")) defauts.push({ type: "image-sans-texte", ou: "img", texte: i.src, detail: "pas d'attribut alt" }); });

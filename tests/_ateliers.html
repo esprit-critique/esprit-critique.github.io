@@ -426,6 +426,10 @@ f.onload = async () => {
     await aller("accueil"); await aller("tests/cecite");
     for (let k = 0; k < 12; k++) { visibles(".choix")[1].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }
     ok("cécité : quatre réponses à justifier", vue().querySelectorAll(".question-test").length === 4 && vue().querySelectorAll("textarea").length === 4);
+    vue().querySelectorAll("textarea").forEach(t => { t.value = "Une justification"; });
+    controler();   // texte saisi lisible, en clair comme en sombre
+    const saisie = vue().querySelector("textarea"), corps = w.getComputedStyle(d.body);
+    ok("cécité : le texte saisi a la couleur du texte du site (thème sombre compris)", w.getComputedStyle(saisie).color === corps.color, w.getComputedStyle(saisie).color + " / " + corps.color);
     const affichees = [...vue().querySelectorAll(".question-test")].map(b => Number((b.textContent.match(/Votre réponse\s?: (\d)/) || [])[1]));
     ok("cécité : deux réponses inversées en secret (2 devient 8)", affichees.filter(n => n === 2).length === 2 && affichees.filter(n => n === 8).length === 2, affichees.join(","));
     vue().querySelector(".question-test .lien-bouton").click();

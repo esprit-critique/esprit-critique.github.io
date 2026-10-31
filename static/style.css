@@ -95,7 +95,9 @@ body {
   color: var(--texte);
 }
 
-button, input { font: inherit; color: inherit; }
+/* Les contrôles de formulaire prennent la police et la couleur du texte : sans cela, en thème sombre, la saisie
+   d'une zone de texte resterait noire sur fond sombre */
+button, input, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
