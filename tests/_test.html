@@ -260,7 +260,7 @@ f.onload = async () => {
       await aller(type + "/" + fiche.id);
       const carte = vue().querySelector("article.carte");
       const texte = sansEspaces(carte.textContent);
-      const contient = (nom, valeur) => { if (valeur && !texte.includes(sansEspaces(Array.isArray(valeur) ? valeur.join(" ") : valeur))) manques.push(cle + " : " + nom); };
+      const contient = (nom, valeur) => { if (valeur && !texte.toLowerCase().includes(sansEspaces(Array.isArray(valeur) ? valeur.join(" ") : valeur).toLowerCase())) manques.push(cle + " : " + nom); };
       ["definition", "forme", "mecanisme", "exemple", "celebre", "parade", "source"].forEach(c => contient(c, fiche[c]));
       if (fiche.distinction) { contient("distinction", fiche.distinction[1]); const v = w.eval("INDEX").get(fiche.distinction[0]); if (v && !carte.querySelector('a[href="#' + v.type + "/" + v.fiche.id + '"]')) manques.push(cle + " : lien de distinction"); }
       if (w.eval("SCHEMAS")[cle] && !carte.querySelector("figure.schema svg")) manques.push(cle + " : illustration");

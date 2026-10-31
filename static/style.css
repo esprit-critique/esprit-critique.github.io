@@ -1287,3 +1287,9 @@ h3.titre-bloc {
 .carte-fiche .section p.source { font-size: 14px; }
 /* Le pied de fiche (acquise, mémorisation, repérages) est du suivi personnel : un simple filet, sans trait */
 .carte-fiche .pied-fiche { border-top: 1px solid var(--trait); margin-top: 26px; padding-top: 16px; }
+/* Une seule boîte sur la fiche, réservée à l'exemple (un objet concret à lire) ; la couleur de catégorie reste à la
+   barre de la carte, à l'étiquette et aux liens : le cas célèbre et la distinction sont du texte simple */
+.carte-fiche .encadre { background: var(--encadre); border-left: 0; border-radius: var(--rayon); padding: 12px 14px; }
+.carte-fiche .celebre { background: none; border-left: 0; padding: 0; }
+.carte-fiche .distinction { border: 0; padding: 0; }
+.carte-fiche .distinction p.contre { font-family: var(--titre); font-size: 18px; font-weight: 600; line-height: 1.3; margin: 0 0 2px; }

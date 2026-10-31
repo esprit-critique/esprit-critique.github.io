@@ -1088,9 +1088,14 @@ function afficherFiche(type, fiche) {
     const [cible, texte] = fiche.distinction;
     const r = INDEX.get(cible);
     if (r) {
-      const p = el("p", "distinction");
-      p.append(texteNoeud("Avec "), lienVers("#" + r.type + "/" + r.fiche.id, r.fiche.nom + (r.type !== type ? " (" + TYPES[r.type].singulier + ")" : "")), texteNoeud(" : " + texte));
-      distinction = creerSection("Ne pas confondre", p);
+      // « ≠ Notion voisine », puis le critère qui les distingue ; le signe est caché aux lecteurs d'écran
+      const bloc = el("div", "distinction");
+      const contre = el("p", "contre");
+      const signe = el("span", null, "≠ ");
+      signe.setAttribute("aria-hidden", "true");
+      contre.append(signe, el("span", "invisible", "À ne pas confondre avec : "), lienVers("#" + r.type + "/" + r.fiche.id, r.fiche.nom + (r.type !== type ? " (" + TYPES[r.type].singulier + ")" : "")));
+      bloc.append(contre, el("p", null, texte.charAt(0).toUpperCase() + texte.slice(1)));
+      distinction = creerSection("Ne pas confondre", bloc);
     }
   }
   ajouterGroupe(carte, "Se défendre", [creerSection(conf.titreParade, fiche.parade), distinction]);
