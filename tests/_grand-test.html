@@ -81,7 +81,8 @@ f.onload = async () => {
     ok("essai : GRAND_TEST_VISIBLE vaut true dans la copie", w.eval("GRAND_TEST_VISIBLE === true && GRAND_TEST_ESSAI === true"));
     await aller("tests/grand-test");
     ok("essai : la route ouvre « Le Grand test »", vue().id === "vue-tests" && /Le Grand test/.test(vue().querySelector("h1").textContent));
-    ok("essai : sans données, « aucun test passé »", /Aucun test passé/.test(vue().textContent));
+    ok("essai : accueil avec les deux parcours et leur durée", /Commencer le test express/.test(vue().textContent) && /Commencer le test complet/.test(vue().textContent) && /12 à 15 minutes/.test(vue().textContent));
+    ok("essai : « Ce que le test ne mesure pas » sur l'accueil, liste complète", /Ce que le test ne mesure pas/.test(vue().textContent) && vue().querySelectorAll(".gt-limites li").length === 8);
     ok("essai : la consigne dit que rien n'est envoyé", /ne sont pas envoyées/.test(vue().textContent));
 
     // --- État vide, passation, réponses ---
@@ -162,7 +163,7 @@ f.onload = async () => {
     [...vue().querySelectorAll("button")].find(b => /Effacer seulement/.test(b.textContent)).click();
     await pause(100);
     ok("effacement isolé : seule la clé grandTest disparaît", w.localStorage.getItem("grandTest") === null && w.localStorage.getItem("acquis") === '["biais:ancrage"]');
-    ok("après effacement : la page redevient utilisable", !vue().querySelector(".gt-probleme") && /Aucun test passé/.test(vue().textContent));
+    ok("après effacement : la page redevient utilisable", !vue().querySelector(".gt-probleme") && /Commencer le test express/.test(vue().textContent));
 
     // --- Espace plein : l'ancien contenu reste ---
     w.localStorage.setItem("grandTest", JSON.stringify(etatTermine));
@@ -173,11 +174,61 @@ f.onload = async () => {
     ok("espace plein : erreur signalée, ancien contenu intact", rq.erreur === "espace de stockage plein" && w.localStorage.getItem("grandTest") === JSON.stringify(etatTermine));
     ok("état invalide : jamais écrit", !!E("enregistrerGrandTest")({ versionSchema: 2 }).erreur && w.localStorage.getItem("grandTest") === JSON.stringify(etatTermine));
 
-    // --- Reprise après rechargement ---
-    w.localStorage.setItem("grandTest", JSON.stringify(etat));
-    await recharger();
-    await aller("tests/grand-test");
-    ok("reprise : la passation en cours est retrouvée après rechargement", /test express est en cours\s*:\s*1 réponse validée sur 3/.test(vue().textContent));
+    // --- Parcours simulés de bout en bout, avec reprise après rechargement en cours de route ---
+    // Pilote générique : remplit les champs, choisit la première option de chaque groupe, valide, puis passe à la suite
+    const etape = () => {
+      const zone = vue().querySelector(".zone-jeu");
+      zone.querySelectorAll("input.champ:not(:disabled)").forEach((c, k, tous) => {
+        if (c.value) return;
+        c.value = tous.length === 3 ? ["100", "1", "1000000000"][k] : "3";
+        c.dispatchEvent(new w.Event("input", { bubbles: true }));
+      });
+      let clique = false;
+      zone.querySelectorAll("fieldset.gt-groupe").forEach(fs => {
+        if (!fs.isConnected || fs.querySelector('[aria-pressed="true"], .choisi')) return;
+        const b = fs.querySelector("button:not(:disabled)");
+        if (b) { b.click(); clique = true; }
+      });
+      const valider = zone.querySelector("[data-valider]:not(:disabled)");
+      if (valider) { valider.click(); return "valider"; }
+      const suite = zone.querySelector("[data-suivant]");
+      if (suite) { suite.click(); return "suite"; }
+      return clique ? "choix" : "rien";
+    };
+    const parcourir = async (mode, couperA) => {
+      w.localStorage.removeItem("grandTest");
+      await aller("accueil"); await aller("tests/grand-test");
+      [...vue().querySelectorAll(".gt-modes button")].find(b => b.textContent.includes(mode)).click();
+      await pause(30);
+      let pas = 0, reprise = null;
+      while (pas < 400 && !/Vos résultats/.test(vue().textContent)) {
+        if (pas === couperA) {
+          // Écran logique courant : le premier écran inachevé (une question validée dont on lit la correction est achevée)
+          const ecranLogique = () => JSON.stringify(w.eval("ecranCourant(passationEnCours(GT.etat))"));
+          const titre = ecranLogique();
+          const avant = JSON.parse(w.localStorage.getItem("grandTest")).historiqueTests[0].reponses.length;
+          await recharger(); await aller("tests/grand-test");
+          const apres = JSON.parse(w.localStorage.getItem("grandTest")).historiqueTests[0].reponses.length;
+          reprise = { titre, titreApres: ecranLogique(), avant, apres };
+        }
+        if (etape() === "rien") break;
+        await pause(15);
+        pas++;
+      }
+      const etatFinal = JSON.parse(w.localStorage.getItem("grandTest"));
+      return { pas, reprise, etat: etatFinal, texte: vue().textContent };
+    };
+    for (const [mode, couper] of [["express", 9], ["complet", 57]]) {
+      const r = await parcourir(mode, couper);
+      const t = r.etat.historiqueTests[0];
+      ok(mode + " : parcours complet jusqu'aux résultats (" + r.pas + " écrans)", /Vos résultats/.test(r.texte) && t.dateFin !== null, r.pas);
+      ok(mode + " : reprise exacte après rechargement (même écran, aucune réponse perdue ni doublée)", !!r.reprise && r.reprise.titre === r.reprise.titreApres && r.reprise.avant === r.reprise.apres, JSON.stringify(r.reprise));
+      ok(mode + " : une réponse par item, données valides après le parcours", w.eval("grandTestValide")(r.etat) && t.reponses.length === t.instances.length, t.reponses.length + " / " + t.instances.length);
+      ok(mode + " : scores enregistrés pour les six axes, aucun score global", ["A", "B", "C", "D", "E", "F"].every(a => t.scores[a] && typeof t.scores[a].n === "number") && !("global" in t.scores));
+      ok(mode + " : profil sans valeur indéfinie, limites rappelées", !/undefined|NaN|\[object/.test(r.texte) && /Ce que le test ne mesure pas/.test(r.texte) && /pas de score global/.test(r.texte));
+      if (mode === "express") ok("express : pas de d′ personnel (démonstration), pas d'impartialité", t.scores.D.valeur === null && t.scores.F.valeur === null && /Démonstration seulement/.test(r.texte));
+      if (mode === "complet") ok("complet : d′ calculé avec sa plage, démonstrations de mémoire restituées", typeof t.scores.D.valeur === "number" && !!t.scores.D.plage && /Les affirmations déjà lues/.test(r.texte + w.localStorage.getItem("grandTest")) !== null);
+    }
 
     // --- Export et import ---
     w.localStorage.setItem("grandTest", JSON.stringify(etatTermine));

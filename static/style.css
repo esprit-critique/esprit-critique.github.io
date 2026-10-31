@@ -1300,3 +1300,22 @@ h3.titre-bloc {
 .carte-fiche .forme p { margin: 0; font-size: inherit; line-height: inherit; }
 .carte-fiche .forme p.conclusion { border-top: 1.2px solid var(--texte); padding-top: 3px; margin-top: 4px; min-width: 60%; width: fit-content; }
 .carte-fiche .forme var { font-style: italic; }
+
+/* ===================== Le Grand test (non publié tant que GRAND_TEST_VISIBLE vaut false) ===================== */
+.gt-modes { display: grid; gap: 12px; margin: 14px 0; }
+@media (min-width: 760px) { .gt-modes { grid-template-columns: 1fr 1fr; } }
+.gt-mode { border: 1px solid var(--trait); border-radius: var(--rayon); padding: 14px; background: var(--carte); }
+.gt-mode .titre-section { margin-top: 0; }
+.gt-groupe { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
+.gt-groupe legend { padding: 0; margin-bottom: 8px; }
+.gt-certitude { display: flex; flex-wrap: wrap; gap: 6px; }
+.gt-certitude legend { width: 100%; }
+.gt-progression { margin-bottom: 14px; }
+.gt-progression .source { margin-top: 6px; }
+.gt-numero { font-size: 15px; margin: 0 0 8px; color: var(--discret); }
+.gt-liste-mots { columns: 2; padding-left: 20px; margin: 10px 0 14px; }
+.gt-axe { border-top: 1px solid var(--trait); padding-top: 12px; margin-top: 12px; }
+.gt-axe h3 { margin: 0 0 4px; }
+.gt-limites ul { margin-top: 6px; }
+.gt-item .cas { overflow-wrap: anywhere; }
+.gt-item .ligne label { min-width: 6em; }

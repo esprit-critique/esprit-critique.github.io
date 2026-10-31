@@ -362,3 +362,43 @@ Commandes : `grand_test_banques.py` 39 / 39 · `grand_test_familles.py` 93 / 93 
 publié : la suite des quatre configurations sera relancée au lot 6, qui change l'interface.
 
 Lot suivant : lot 6 — interface des parcours express et complet.
+
+---
+
+## Lot 6 — parcours express et complet, interface (31 octobre 2026, reprise automatique)
+
+### Livrables
+
+- `static/grand-test.js` : `resoudreItem` (reconstruit tout item depuis son instance et la graine), `reponseJuste`,
+  `reponseLeurre`, `lignesPassation`, `calculerScores` (A, B, C : Wilson ; D : d′ et c au complet, démonstration à
+  l'express ; E : surconfiance avec plage ; F : indice de camp, exploratoire, complet seulement, sans plage).
+- `static/grand-test-interface.js` : accueil (deux parcours avec leur durée, consigne du mandat, « Ce que le test ne
+  mesure pas » en entier), plan d'écrans et **reprise au premier écran inachevé**, introduction d'étape (pourquoi,
+  durée, avertissement non révélateur, estimation préalable de réussite), items (QCM, calcul, raisonnement,
+  vrai-faux, fourchette, rappel, angle mort, exposition, société), certitude à 25/50/70/90/99 %, corrections « au
+  crayon rouge » avec « Réponse attendue », explication, source, liens réels vers fiches et ateliers, auto-explication
+  facultative après une erreur sûre, corrections différées annoncées (vrai-faux et raisonnements du complet, fourchettes
+  du biais rétrospectif, affirmations notées), consentement et restitution des démonstrations de mémoire, page de
+  résultats par axe (lot 7 y ajoutera les graphiques). Brouillons vérifiés puis intégrés et retirés.
+- `static/style.css` : classes `.gt-*`, uniquement avec les jetons existants.
+- `tests/_grand-test.html` : 60 vérifications, dont **deux parcours simulés de bout en bout** (express et complet,
+  pilote générique au clavier et à la souris), rechargement au milieu de chacun.
+
+### Commandes et résultats
+
+    tests/lancer.sh grand csp test ateliers   (quatre configurations)
+      grand 60 / 60 · csp aucun blocage (18 adresses) · test 131 / 131 · ateliers 237 / 237, 0 défaut d'affichage
+
+Problèmes trouvés par le banc et corrigés : `montrer()` recevait le bouton « Suivant » au lieu du bloc de correction
+(erreurs JavaScript) ; le pilote du banc s'arrêtait sur les écrans qui avancent dès le choix (expositions). Reprise :
+recharger pendant la lecture d'une correction déjà validée reprend à la question suivante — la réponse est
+enregistrée, aucune n'est perdue ni doublée (34 avant, 34 après) ; c'est le comportement voulu.
+
+### Durées : pilotage simulé (pas une mesure sur des personnes)
+
+Nombre de mots de tous les écrans d'une passation tirée (graine 12345), lus à 200 mots par minute, plus 12 à 20 s par
+réponse : **express** 24 items, 1 885 mots → 14 à 17 min ; **complet** 105 items, 5 610 mots → 49 à 63 min. Annonces
+conservées : « 12 à 15 minutes » (estimation centrale 14 min, explications lues surtout après une erreur) et « environ
+45 à 60 minutes, en une ou plusieurs fois ». À confirmer par de vrais essais chronométrés (fichier à relire).
+
+Lot suivant : lot 7 — graphiques et progression.
