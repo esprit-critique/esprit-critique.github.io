@@ -266,7 +266,7 @@ const SCHEMAS = {
     });
     return {
       svg,
-      legende: "Tversky et Kahneman (1974) : estimation médiane du pourcentage de pays africains membres de l'ONU, après une roue truquée qui s'arrête sur 10 ou sur 65. Le nombre tiré, sans rapport avec la question, tire l'estimation vers lui."
+      legende: "Estimation médiane selon le nombre sur lequel la roue s'est arrêtée, 10 ou 65 (Tversky et Kahneman, 1974) : le nombre tiré, sans rapport avec la question, tire l'estimation vers lui."
     };
   },
 
@@ -275,7 +275,7 @@ const SCHEMAS = {
       { libelle: "Formulé en vies sauvées", valeur: 72, texte: "72 %" },
       { libelle: "Formulé en décès", valeur: 22, texte: "22 %", classe: "sch-orange" }
     ], { max: 100 }),
-    legende: "Problème de la « maladie asiatique » (Tversky et Kahneman, 1981) : part des participants qui choisissent l'option sûre. Les deux formulations décrivent exactement le même résultat pour les 600 personnes menacées."
+    legende: "Part des participants qui préfèrent l'option sûre, pour deux présentations d'une seule et unique situation (Tversky et Kahneman, 1981) : la formulation suffit à renverser la préférence."
   }),
 
   "biais:aversion-perte": () => {
@@ -299,7 +299,7 @@ const SCHEMAS = {
     ecrireTexte(svg, ox - 6, 18, "valeur ressentie", "sch-petit", "end");
     return {
       svg,
-      legende: "Fonction de valeur de la théorie des perspectives, avec les paramètres estimés par Tversky et Kahneman (1992) : une perte de 100 € pèse environ 2,25 fois plus qu'un gain de 100 €."
+      legende: "Fonction de valeur (Tversky et Kahneman, 1992) : la courbe est plus raide du côté des pertes ; perdre 100 € pèse plus lourd que gagner 100 €."
     };
   },
 
@@ -308,7 +308,7 @@ const SCHEMAS = {
       { libelle: "Allemagne : il faut s'inscrire", valeur: 12, texte: "≈ 12 %", classe: "sch-orange" },
       { libelle: "Autriche : consentement présumé", valeur: 99.98, texte: "> 99 %" }
     ], { max: 100 }),
-    legende: "Consentement enregistré au don d'organes selon l'option par défaut (Johnson et Goldstein, 2003). Les deux pays sont voisins et culturellement proches ; seule la règle par défaut diffère."
+    legende: "Deux pays proches, deux règles par défaut (Johnson et Goldstein, 2003) : il faut s'inscrire en Allemagne, l'accord est présumé en Autriche. Seule cette règle diffère."
   }),
 
   "biais:leurre": () => {
@@ -384,7 +384,7 @@ const SCHEMAS = {
       { libelle: "Estimation « dans le pire des cas »", valeur: 48.6, texte: "48,6 jours" },
       { libelle: "Durée réelle (moyenne)", valeur: 55.5, texte: "55,5 jours", classe: "sch-rouge" }
     ], { max: 62 }),
-    legende: "Buehler, Griffin et Ross (1994) : 37 étudiants terminant leur mémoire. La durée réelle dépasse en moyenne même leur estimation la plus pessimiste."
+    legende: "Estimations et durée réelle de rédaction d'un mémoire (Buehler, Griffin et Ross, 1994) : la durée réelle dépasse même l'estimation la plus pessimiste."
   }),
 
   // ---------------------------------------------------------------- Sophismes
@@ -553,7 +553,7 @@ const SCHEMAS = {
     ecrireTexte(svg, x(12), 44, "Réel : 12e", "sch-texte sch-gras", "middle");
     ecrireTexte(svg, x(62), 44, "Estimé : 62e", "sch-texte sch-gras", "middle");
     ecrireTexte(svg, 160, 18, "Le quart le moins performant", "sch-petit", "middle");
-    return { svg, legende: "Kruger et Dunning (1999), moyenne de quatre études : les participants du quart le moins performant se situaient vers le 12e centile, mais se plaçaient eux-mêmes vers le 62e. Une partie de l'écart tient à des artefacts statistiques (voir la source)." };
+    return { svg, legende: "Rang réel et rang estimé du quart le moins performant (Kruger et Dunning, 1999, moyenne de quatre études). Une partie de l'écart tient à des artefacts statistiques (voir la source)." };
   },
 
   "biais:confirmation": () => {
