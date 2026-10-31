@@ -51,6 +51,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 class Serveur(socketserver.ThreadingTCPServer):
     allow_reuse_address = True  # permet de relancer le serveur tout de suite après un arrêt
     daemon_threads = True
+    # File d'attente des connexions : 5 par défaut, trop peu quand le navigateur demande d'un coup les scripts, la
+    # feuille de style et la police ; une connexion refusée faisait parfois manquer un script (« Chargement incomplet »)
+    request_queue_size = 64
 
     def handle_error(self, request, client_address):
         # Connexion coupée par le navigateur ou par un filtre réseau : fréquent et sans gravité,
