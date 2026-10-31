@@ -1263,3 +1263,9 @@ h3.titre-bloc {
 .etiquette-numero { display: inline-flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .numero-fiche { font-family: var(--titre); font-variant-numeric: oldstyle-nums; font-size: 15px; color: var(--discret); }
 .lf-num { font-family: var(--titre); font-variant-numeric: oldstyle-nums; color: var(--discret); font-weight: 400; margin-right: 6px; }
+/* Ouverture de l'accueil (nouveau visiteur) : l'emblème en grand, à toucher */
+.ouverture { display: flex; gap: 16px; align-items: center; margin: 0 0 16px; padding: 12px 14px; background: var(--encadre); border-radius: var(--rayon); }
+.ouverture-dessin { flex: none; padding: 4px; margin: 0; border: 0; background: none; border-radius: var(--rayon); }
+.ouverture .embleme { width: 76px; height: 54px; display: block; }
+.ouverture p { margin: 0; font-family: var(--titre); font-size: 18px; line-height: 1.35; }
+.ouverture small { display: block; font-family: var(--police); font-size: 13.5px; color: var(--discret); margin-top: 4px; }

@@ -701,12 +701,38 @@ function situationDuJour() {
   return creerQuestion(type, fiche, alea);
 }
 
+// L'emblème de Müller-Lyer en grand : toucher le dessin révèle que les deux traits ont la même longueur.
+// Mêmes classes que l'emblème de l'en-tête (embleme-trait, embleme-ailette, embleme-guide, revele).
+function ouverture() {
+  const bloc = el("div", "ouverture");
+  const bouton = el("button", "ouverture-dessin");
+  bouton.setAttribute("aria-pressed", "false");
+  bouton.setAttribute("aria-label", "Vérifier : afficher des repères verticaux aux extrémités des traits");
+  const dessin = svg("svg", { viewBox: "0 0 40 28", class: "embleme", "aria-hidden": "true" });
+  dessin.append(svg("path", { class: "embleme-guide", d: "M10 2v24M30 2v24" }), svg("path", { class: "embleme-trait", d: "M10 8h20M10 20h20" }),
+    svg("path", { class: "embleme-ailette", d: "M10 8 5 3M10 8l-5 5M30 8l5-5M30 8l5 5M10 20l5-5M10 20l5 5M30 20l-5-5M30 20l-5 5" }));
+  bouton.appendChild(dessin);
+  bouton.addEventListener("click", () => {
+    const revele = dessin.classList.toggle("revele");
+    bouton.setAttribute("aria-pressed", String(revele));
+    if (revele) annoncer("Les repères le montrent : les deux traits ont la même longueur.");
+  });
+  const texte = el("p", null, "Ces deux traits ont la même longueur.");
+  texte.appendChild(el("small", null, "Le savoir ne change rien à ce que l'on voit : c'est tout le problème des biais. Touchez pour vérifier."));
+  bloc.append(bouton, texte);
+  return bloc;
+}
+
 function afficherAccueil() {
   const zone = $("vue-accueil");
   zone.innerHTML = "";
   const date = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
   zone.append(el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1)), el("h1", "page-titre", "Aujourd'hui"));
   zone.appendChild(el("p", "page-intro", BIAIS.length + " biais et " + SOPHISMES.length + " sophismes, un quiz qui revient sur vos erreurs, et " + tousLesAteliers().length + " ateliers : données réelles, perception, expériences classiques et philosophie."));
+
+  // Ouverture : pour un nouveau visiteur (aucune activité, aucun atelier), l'emblème en grand, première leçon du site
+  const resultats = lire("resultatsAteliers", {});
+  if (!lire("activite", []).length && !Object.keys(formeDe(resultats) === "objet" ? resultats : {}).length) zone.appendChild(ouverture());
 
   // Appel à l'action : réviser s'il y a des notions dues, sinon commencer le quiz ; les fiches en second choix
   const nbAReviser = clesAReviser().length;

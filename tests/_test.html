@@ -250,6 +250,20 @@ f.onload = async () => {
     ok("repérage : bloc du portrait", /Vos repérages/.test(vue().textContent) && /une publicité de soldes/.test(vue().textContent));
 
 
+    // ---------- Ouverture de l'accueil ----------
+    const sauveActivite = w.localStorage.getItem("activite"), sauveResultats = w.localStorage.getItem("resultatsAteliers");
+    w.localStorage.removeItem("activite"); w.localStorage.removeItem("resultatsAteliers");
+    await aller("quiz"); await aller("accueil");
+    const boutonOuv = vue().querySelector(".ouverture-dessin");
+    ok("ouverture : visible pour un nouveau visiteur, avant l'appel à l'action", !!boutonOuv && boutonOuv.closest(".ouverture").nextElementSibling.classList.contains("appel-action"));
+    boutonOuv.click();
+    ok("ouverture : toucher révèle les repères (aria-pressed)", boutonOuv.getAttribute("aria-pressed") === "true" && boutonOuv.querySelector("svg").classList.contains("revele"));
+    w.localStorage.setItem("activite", JSON.stringify([w.eval("aujourdHui()")]));
+    await aller("quiz"); await aller("accueil");
+    ok("ouverture : disparaît dès qu'une activité existe", !vue().querySelector(".ouverture"));
+    if (sauveActivite !== null) w.localStorage.setItem("activite", sauveActivite); else w.localStorage.removeItem("activite");
+    if (sauveResultats !== null) w.localStorage.setItem("resultatsAteliers", sauveResultats);
+
     // ---------- Numéros de catalogue ----------
     const numerosOk = ["biais", "sophismes"].every(t => { const n = w.eval("TYPES")[t].fiches.map(f => f.num).sort((a, b) => a - b); return n.every((v, i) => v === i + 1); });
     ok("numéros : uniques et sans trou, par type", numerosOk);

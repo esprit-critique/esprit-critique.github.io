@@ -58,6 +58,8 @@ pour l'utiliser comme une application.
 
 ## Principes
 
+Charte graphique (polices, couleurs, motif, corrections, numérotation des fiches) : [DESIGN.md](DESIGN.md).
+
 - **Sources vérifiées** : chaque chiffre est accompagné de sa source ; les résultats discutés ou non répliqués
   sont signalés comme tels.
 - **Aucun compte, aucune donnée envoyée** : la progression est enregistrée uniquement dans le navigateur du
@@ -93,7 +95,8 @@ puis ouvrir http://localhost:8000. Le serveur n'accepte que les connexions de l'
 | `static/indices.js` | « Trouver l'indice » : le passage révélateur de chacune des 180 situations |
 | `static/sw.js` | mode hors ligne ; à chaque nouveau fichier, l'ajouter à la liste et changer le numéro de version |
 | `static/mentions-legales.html`, `confidentialite.html`, `cgu.html`, `404.html` | pages fixes, générées par `tests/pages/generer_pages.py` (ne pas les modifier à la main) |
-| `static/robots.txt`, `static/sitemap.xml`, `static/apercu.png` | référencement et aperçu de partage (source de l'image : `tests/pages/apercu.html`) |
+| `static/robots.txt`, `static/sitemap.xml`, `static/apercu.png` | référencement et aperçu de partage (`tests/pages/generer_apercu.sh` régénère l'image à partir de `tests/pages/apercu.html`) |
+| `static/polices/` | Newsreader, caractère de titre (licence SIL OFL, `OFL.txt`) |
 | `static/jeux-donnees.js`, `static/pays.js` | contenus et données des ateliers |
 | `app.py` | petit serveur local (Python, sans dépendance) |
 
