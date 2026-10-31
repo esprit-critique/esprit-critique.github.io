@@ -560,3 +560,499 @@ function entiteAffaiblie(avant, apres, graine) {
   const plage = reechantillonnerStrates([a, b], ([x, y]) => moyenneGT(x) - moyenneGT(y), TIRAGES_PLAGE, generateur(graine));
   return plage.bas > 0 ? { affaiblie: true, baisse: moyenneGT(a) - moyenneGT(b), plage } : { affaiblie: false, raison: "évolution non mesurable", plage };
 }
+
+// ===================== Générateurs d'items =====================
+// Table fermée : une famille de grand-test-donnees.js nomme son générateur (champ « generer ») ; aucun code ne vient
+// des données. Un générateur est une fonction pure (famille, i) → item, où i (de 0 à tailleFamille(f) − 1) désigne
+// l'instance. La bonne réponse et le leurre sont CALCULÉS à partir des valeurs ; l'ordre des choix d'un QCM est tiré
+// ensuite (instanceGT). Item : { type, texte, question, choix, juste, leurre, unite, explication, valeurs, chances }.
+// Pour un QCM, juste et leurre sont des rangs dans « choix » (ordre canonique) ; pour un calcul, des nombres ;
+// pour un raisonnement (binaire), des booléens (« valide »).
+
+// Nombre à la française, sans dépendre d'Intl : virgule décimale, espace fine insécable entre les milliers
+function nombreGT(x, decimales) {
+  const d = decimales === undefined ? (Number.isInteger(x) ? 0 : 1) : decimales;
+  const [entier, frac] = Math.abs(x).toFixed(d).split(".");
+  const groupes = entier.length > 3 ? entier.replace(/\B(?=(\d{3})+(?!\d))/g, " ") : entier;
+  return (x < 0 ? "−" : "") + groupes + (frac && Number(frac) !== 0 ? "," + frac.replace(/0+$/, "") : "");
+}
+const pourcentGT = x => nombreGT(x) + " %";
+const majuscule = t => t.charAt(0).toUpperCase() + t.slice(1);
+const elision = (mot, suite) => /^[aeiouyhâéèêîôœ]/i.test(suite) ? mot.slice(0, -1) + "'" + suite : mot + " " + suite;
+// Élisions oubliées par l'assemblage des gabarits : « que une » → « qu'une », « de Adam » → « d'Adam »
+const elisions = t => t.replace(/\b([Qq]u|[Dd])e (?=[aeiouàâéèêëîïôûœAEIOUÉÈÎ])/g, "$1'");
+
+// Prénom d'une instance, décalé selon la famille pour varier les surfaces
+const prenomGT = (i, decalage) => PRENOMS_GT[(i * 7 + (decalage || 0)) % PRENOMS_GT.length];
+
+// Accords d'un texte selon le genre de la personne : {p} prénom, {Il} {il} {lui}, {e}, {er} (-er/-ère), {ne}, {r} (-r/-se)
+function accorder(texte, prenom, genre) {
+  const f = genre === "f";
+  return texte.replace(/\{p\}/g, prenom).replace(/\{Il\}/g, f ? "Elle" : "Il").replace(/\{il\}/g, f ? "elle" : "il")
+    .replace(/\{lui\}/g, f ? "elle" : "lui").replace(/\{e\}/g, f ? "e" : "").replace(/\{er\}/g, f ? "ère" : "er")
+    .replace(/\{ne\}/g, f ? "ne" : "").replace(/\{r\}/g, f ? "se" : "r").replace(/\{son\}/g, "son");
+}
+
+// Remplace {cle} par la valeur du champ ; {Cle} par la même valeur avec une majuscule
+function remplir(texte, valeurs) {
+  return texte.replace(/\{([A-Za-z0-9]+)\}/g, (m, cle) => {
+    const v = valeurs[cle] !== undefined ? valeurs[cle] : valeurs[cle.charAt(0).toLowerCase() + cle.slice(1)];
+    if (v === undefined) return m;
+    const t = typeof v === "number" ? nombreGT(v) : String(v);
+    return /^[A-Z]/.test(cle) && valeurs[cle] === undefined ? majuscule(t) : t;
+  });
+}
+
+// Liste de surfaces d'une famille (directe, ou nom d'une liste partagée)
+const LISTES_PARTAGEES_GT = () => ({ SURFACES_DETECTION });
+const surfacesDe = f => typeof f.surfaces === "string" ? LISTES_PARTAGEES_GT()[f.surfaces] : f.surfaces;
+
+// Les raisonnements : énumère les instances d'une forme et d'une crédibilité à partir de la taxonomie
+function instancesSyllogisme(f) {
+  const T = TAXONOMIE_GT, liste = [];
+  T.forEach((g, gi) => g.sous.forEach((s, si) => s.membres.forEach(m => {
+    const autreGroupe = T[(gi + 1 + si) % T.length], soeur = g.sous[1 - si];
+    if (f.forme === "chaine") liste.push(f.credible ? { a: m, b: s.b, c: g.c } : { a: m, b: autreGroupe.sous[si].b, c: autreGroupe.c });
+    if (f.forme === "exclusion") liste.push(f.credible ? { a: m, b: s.b, c: autreGroupe.c } : { a: m, b: autreGroupe.sous[si].b, c: g.c });
+    if (f.forme === "moyen") liste.push(f.credible ? { a: m, b: s.b, c: g.c } : { a: m, b: soeur.b, c: g.c });
+    if (f.forme === "certains") liste.push(f.credible ? { a: m, b: s.b, c: g.c } : { a: m, b: soeur.b, c: g.c });
+  })));
+  return liste;
+}
+
+function tailleFamille(f) {
+  if (f.generer === "syllogisme") return instancesSyllogisme(f).length;
+  return surfacesDe(f).length;
+}
+
+const tous = ([nom, fem]) => (fem ? "Toutes les " : "Tous les ") + nom;
+const certains = ([nom, fem]) => (fem ? "Certaines " : "Certains ") + nom;
+
+const GENERATEURS_GT = {
+  // ---------- Axe A ----------
+  vitesseMoyenne(f, i) {
+    const [a, b] = f.nombres[i % f.nombres.length], [prenom, genre] = prenomGT(i, 1);
+    const juste = 2 * a * b / (a + b), leurre = (a + b) / 2;
+    return {
+      type: "calcul", unite: "km/h",
+      texte: accorder("{p} " + f.surfaces[i] + ". À l'aller, sa vitesse moyenne est de " + a + " km/h ; au retour, par le même chemin, de " + b + " km/h.", prenom, genre),
+      question: "Quelle est sa vitesse moyenne sur l'ensemble de l'aller-retour ?",
+      juste, leurre, valeurs: { a, b },
+      explication: "Le trajet le plus lent dure plus longtemps : il pèse davantage dans la moyenne. Pour une distance d, le temps total est d/" + a + " + d/" + b + ", et la vitesse moyenne vaut 2d divisé par ce temps, soit " + nombreGT(juste) + " km/h. La moyenne simple, " + nombreGT(leurre) + " km/h, oublie que l'on passe plus de temps à " + a + " km/h."
+    };
+  },
+  hausseBaisse(f, i) {
+    const [base, p] = f.nombres[i % f.nombres.length], [objet] = f.surfaces[i];
+    const juste = Math.round(base * (1 + p / 100) * (1 - p / 100) * 100) / 100, hausse = base * (1 + p / 100);
+    return {
+      type: "calcul", unite: "€",
+      texte: objet + " est de " + nombreGT(base) + " €. Il augmente de " + p + " %, puis, le mois suivant, baisse de " + p + " %.",
+      question: "Quelle est sa valeur finale, en euros ?",
+      juste, leurre: base, valeurs: { base, p },
+      explication: "La baisse s'applique à la valeur déjà augmentée, " + nombreGT(hausse) + " €, et non à " + nombreGT(base) + " €. " + p + " % de " + nombreGT(hausse) + " € font plus que " + p + " % de " + nombreGT(base) + " € : on finit plus bas qu'au départ, à " + nombreGT(juste) + " €."
+    };
+  },
+  piquets(f, i) {
+    const [longueur, pas] = f.nombres[i % f.nombres.length], [lieu, pluriel, singulier] = f.surfaces[i];
+    const n = longueur / pas;
+    return {
+      type: "calcul", unite: pluriel.replace(/^des /, ""),
+      texte: lieu + " mesure " + longueur + " mètres. On y place " + singulier + " tous les " + pas + " mètres, d'un bout à l'autre, avec " + singulier + " à chaque extrémité.",
+      question: "Combien en faut-il en tout ?",
+      juste: n + 1, leurre: n, valeurs: { longueur, pas },
+      explication: longueur + " mètres font " + n + " intervalles de " + pas + " mètres. Il faut une borne de plus que d'intervalles, puisque les deux bouts en ont une : " + (n + 1) + ". Faire un petit dessin avec trois intervalles suffit à le voir."
+    };
+  },
+  moyennePonderee(f, i) {
+    const [n1, m1, n2, m2] = f.nombres[i % f.nombres.length], [cadre, g1, g2, mesure, unite] = f.surfaces[i];
+    const juste = (n1 * m1 + n2 * m2) / (n1 + n2), leurre = (m1 + m2) / 2;
+    return {
+      type: "calcul", unite,
+      texte: cadre + ", " + mesure + " est de " + m1 + " " + unite + " pour les " + n1 + " " + g1 + ", et de " + m2 + " " + unite + " pour les " + n2 + " " + g2 + ".",
+      question: "Quelle est la moyenne pour les " + (n1 + n2) + " réunis ?",
+      juste, leurre, valeurs: { n1, m1, n2, m2 },
+      explication: "Le groupe le plus nombreux compte davantage : il faut pondérer par les effectifs. (" + n1 + " × " + m1 + " + " + n2 + " × " + m2 + ") ÷ " + (n1 + n2) + " = " + nombreGT(juste) + ". La moyenne des deux moyennes, " + nombreGT(leurre) + ", traite les deux groupes comme s'ils avaient la même taille."
+    };
+  },
+  porteeNegation(f, i) {
+    const [groupe, fem, positif, negatifUn, negatifAucun] = f.surfaces[i];
+    const [Tous, Aucun, Certains, un] = fem ? ["Toutes", "Aucune", "Certaines", "une"] : ["Tous", "Aucun", "Certains", "un"];
+    return {
+      type: "qcm",
+      texte: "Une affirmation circule : « " + Tous + " les " + groupe + " " + positif + ". » On apprend qu'elle est fausse.",
+      question: "Que peut-on en conclure avec certitude ?",
+      choix: ["Au moins " + un + " des " + groupe + " " + negatifUn + ".", Aucun + " des " + groupe + " " + negatifAucun + ".",
+        Certains + " des " + groupe + " " + positif + ".", Tous + " les " + groupe + " " + positif + ", sauf " + un + "."],
+      juste: 0, leurre: 1, valeurs: {},
+      explication: "Pour qu'« tous » soit faux, il suffit d'une seule exception. On sait donc qu'au moins " + un + " fait exception. On ne sait ni combien d'exceptions il y a, ni s'il en reste qui conviennent."
+    };
+  },
+  presuppose(f, i) {
+    const [texte, question, fait, raisons] = f.surfaces[i];
+    return {
+      type: "qcm",
+      texte: texte + " Question posée : « " + question + " »",
+      question: "Quelle est la meilleure réponse ?",
+      choix: ["Le texte ne dit pas que " + fait + " : la question suppose un fait qui n'est pas établi.", raisons[0], raisons[1], raisons[2]],
+      juste: 0, leurre: 1, valeurs: {},
+      explication: "La question glisse un fait que rien n'établit : " + fait + ". Chercher une raison, c'est accepter ce fait sans preuve. Avant de répondre à « pourquoi ? », vérifiez que la chose s'est bien produite."
+    };
+  },
+  relations(f, i) {
+    const [posM, posF, negM, negF] = f.surfaces[i];
+    const p = [prenomGT(i, 2), prenomGT(i, 3), prenomGT(i, 4)];
+    const pos = q => q[1] === "f" ? posF : posM, neg = q => q[1] === "f" ? negF : negM;
+    return {
+      type: "qcm",
+      texte: p[0][0] + " est moins " + pos(p[0]) + " que " + p[1][0] + ". " + p[1][0] + " est plus " + neg(p[1]) + " que " + p[2][0] + ".",
+      question: "Laquelle de ces trois personnes est la plus " + posF + " ?",
+      choix: [p[2][0], p[0][0], p[1][0], "On ne peut pas le savoir avec ces informations."],
+      juste: 0, leurre: 1, valeurs: {},
+      explication: "Remettez les deux phrases dans le même sens : " + p[0][0] + " est moins " + pos(p[0]) + " que " + p[1][0] + ", et " + p[1][0] + " moins " + pos(p[1]) + " que " + p[2][0] + ". L'ordre est donc " + p[0][0] + ", " + p[1][0] + ", " + p[2][0] + ". Lire « moins » et « plus " + negM + " » trop vite inverse le classement."
+    };
+  },
+  seulementSi(f, i) {
+    const [regle, action, condition, infinitif] = f.surfaces[i], [prenom, genre] = prenomGT(i, 5);
+    const fait = accorder("{p} " + action, prenom, genre);
+    return {
+      type: "qcm",
+      texte: regle + " " + accorder("{p} " + condition + ".", prenom, genre),
+      question: "Que peut-on en conclure ?",
+      choix: ["On ne peut pas savoir si " + fait + ".", fait + ".", elision(prenom + " n'a pas le droit de", infinitif) + ".", "Tout le monde peut désormais " + infinitif + "."],
+      juste: 0, leurre: 1, valeurs: {},
+      explication: "« On ne peut … que si … » donne une condition nécessaire : sans elle, impossible ; avec elle, rien n'est garanti. " + accorder("{p} " + condition, prenom, genre) + ", mais rien ne dit que " + fait + ". Conclure le contraire revient à lire « si » à la place de « seulement si »."
+    };
+  },
+  syllogisme(f, i) {
+    const x = instancesSyllogisme(f)[i];
+    let premisses, conclusion;
+    if (f.forme === "chaine") { premisses = [tous(x.a) + " sont des " + x.b[0] + ".", tous(x.b) + " sont des " + x.c[0] + "."]; conclusion = "Donc " + tous(x.a).toLowerCase() + " sont des " + x.c[0] + "."; }
+    if (f.forme === "exclusion") { premisses = [tous(x.a) + " sont des " + x.b[0] + ".", "Les " + x.b[0] + " ne sont jamais des " + x.c[0] + "."]; conclusion = "Donc les " + x.a[0] + " ne sont jamais des " + x.c[0] + "."; }
+    if (f.forme === "moyen") { premisses = [tous(x.a) + " sont des " + x.c[0] + ".", tous(x.b) + " sont des " + x.c[0] + "."]; conclusion = "Donc " + tous(x.a).toLowerCase() + " sont des " + x.b[0] + "."; }
+    if (f.forme === "certains") { premisses = [tous(x.a) + " sont des " + x.c[0] + ".", certains(x.c) + " sont des " + x.b[0] + "."]; conclusion = "Donc " + certains(x.a).toLowerCase() + " sont des " + x.b[0] + "."; }
+    const explications = {
+      chaine: "Si tous les premiers sont inclus dans les seconds, et les seconds dans les troisièmes, les premiers le sont forcément dans les troisièmes : le raisonnement est valide, quel que soit le sujet.",
+      exclusion: "Si tous les premiers sont dans un ensemble qui n'a rien de commun avec un troisième, les premiers n'ont rien de commun avec lui non plus : le raisonnement est valide, quel que soit le sujet.",
+      moyen: "Deux groupes peuvent appartenir au même grand ensemble sans que l'un soit inclus dans l'autre : le raisonnement n'est pas valide, même quand la conclusion est vraie.",
+      certains: "Les « certains » dont parle la deuxième phrase ne sont peut-être pas ceux de la première : le raisonnement n'est pas valide, même quand la conclusion est vraie."
+    };
+    const croyance = f.credible ? "La conclusion paraît " + (f.credible ? "vraie" : "fausse") + " ; " : "La conclusion paraît fausse ; ";
+    return {
+      type: "binaire",
+      texte: premisses.join(" ") + " " + conclusion,
+      question: "Supposez que les deux premières phrases sont vraies, même si elles vous semblent fausses. La conclusion en découle-t-elle nécessairement ?",
+      choix: ["Oui, le raisonnement est valide", "Non, il n'est pas valide"],
+      juste: f.valide, leurre: f.valide === f.credible ? null : f.credible,
+      valeurs: { credible: f.credible }, credible: f.credible,
+      explication: explications[f.forme] + " " + croyance + "seule compte la forme du raisonnement."
+    };
+  },
+
+  // ---------- Axe B ----------
+  tauxDeBase(f, i) {
+    const [prev, sens, fp] = f.nombres[i % f.nombres.length];
+    const [cadre, cherche, appareil, ensemble] = surfacesDe(f)[(i + (f.decalage || 0)) % surfacesDe(f).length];
+    const vrais = 100 * prev * sens / 100, faux = (10000 - 100 * prev) * fp / 100, juste = Math.round(100 * vrais / (vrais + faux));
+    const leurre = f.prevalence === "faible" ? sens : prev;
+    // Distracteurs : d'autres nombres du texte, puis des valeurs de repli, tous différents
+    const candidats = (f.prevalence === "faible" ? [100 - fp, 50, 75, 25] : [Math.round(prev * sens / 100), 100 - sens, 30, 20]).filter(v => v !== juste && v !== leurre);
+    const autres = [...new Set(candidats)].slice(0, 2);
+    return {
+      type: "qcm",
+      texte: cadre + ", on veut repérer " + cherche + " : c'est le cas, en moyenne, de " + pourcentGT(prev) + " " + ensemble.replace(/^les /, "des ") + ". " + appareil + " donne l'alerte pour " + pourcentGT(sens) + " des cas recherchés, mais aussi, à tort, pour " + pourcentGT(fp) + " des autres.",
+      question: "Le dispositif donne l'alerte. Quelle est, à peu près, la probabilité qu'il s'agisse vraiment " + elision("de", cherche) + " ?",
+      choix: ["Environ " + pourcentGT(juste), "Environ " + pourcentGT(leurre), "Environ " + pourcentGT(autres[0]), "Environ " + pourcentGT(autres[1])],
+      juste: 0, leurre: 1, valeurs: { prev, sens, fp },
+      explication: "Sur 10 000 cas, " + nombreGT(100 * prev) + " sont concernés : l'alerte en signale " + nombreGT(vrais) + ". Sur les " + nombreGT(10000 - 100 * prev) + " autres, elle en signale à tort " + nombreGT(faux) + ". Sur " + nombreGT(vrais + faux) + " alertes, " + nombreGT(vrais) + " correspondent donc à de vrais cas, soit environ " + pourcentGT(juste) + (f.prevalence === "faible" ? " : ce qui est rare reste rare, même après une alerte." : " : quand ce que l'on cherche est fréquent, une alerte est le plus souvent juste.")
+    };
+  },
+  conjonction(f, i) {
+    const [portrait, a, b, c] = f.surfaces[i], [prenom, genre] = prenomGT(i, 6);
+    const P = accorder(portrait, prenom, genre), dire = t => accorder("{p} " + t, prenom, genre);
+    return {
+      type: "qcm",
+      texte: P,
+      question: "Laquelle de ces affirmations est la plus probable ?",
+      choix: [dire(a) + ".", dire(a) + " et " + accorder(b, prenom, genre) + ".", dire(a) + " et " + accorder(c, prenom, genre) + ".", dire(a) + ", " + accorder(b, prenom, genre) + " et " + accorder(c, prenom, genre) + "."],
+      juste: 0, leurre: 1, valeurs: {},
+      explication: "Chaque option qui ajoute une condition décrit un cas particulier de la première : elle ne peut pas être plus probable. Le portrait rend le second trait plausible, mais il faut en plus que la première affirmation soit vraie. Plus une description est détaillée, moins elle est probable, même si elle paraît plus vraisemblable."
+    };
+  },
+  echantillon(f, i) {
+    const [n1, n2, seuil] = f.nombres[i % f.nombres.length], [deux, grand, petit, unites, evenement] = f.surfaces[i];
+    return {
+      type: "qcm",
+      texte: "On compare " + deux + ". Chaque jour, " + grand.charAt(0).toLowerCase() + grand.slice(1) + " voit passer environ " + n1 + " " + unites + ", " + petit.charAt(0).toLowerCase() + petit.slice(1) + " environ " + n2 + ". Chacun, indépendamment des autres, " + evenement + " une fois sur deux.",
+      question: "Sur une année, où compte-t-on le plus de jours où cette proportion dépasse " + seuil + " % ?",
+      choix: [petit, grand, "À peu près autant dans les deux", "Impossible à dire sans connaître les jours de la semaine"],
+      juste: 0, leurre: 2, valeurs: { n1, n2, seuil },
+      explication: "Plus un échantillon est petit, plus sa proportion s'écarte souvent de la moyenne : avec " + n2 + " personnes, quelques choix suffisent à dépasser " + seuil + " %. Avec " + n1 + ", les écarts se compensent. Les résultats extrêmes viennent donc plus souvent des petits échantillons."
+    };
+  },
+  regression(f, i) {
+    const [t1, t2, b1, b2] = f.nombres[i % f.nombres.length], [epreuve, participants] = f.surfaces[i];
+    return {
+      type: "qcm",
+      texte: "Lors de " + epreuve + ", on suit les 10 % des " + participants + " qui ont le mieux réussi la première. En moyenne, ils passent de " + t1 + " à " + t2 + " points. Les 10 % les moins bons, eux, passent de " + b1 + " à " + b2 + " points. La moyenne de l'ensemble est la même aux deux.",
+      question: "Quelle est l'explication la plus probable ?",
+      choix: ["Le premier résultat mêlait niveau et chance ; la chance ne se répète pas, et les extrêmes se rapprochent de la moyenne.",
+        "Les meilleurs se sont relâchés après leur succès.", "La seconde fois était plus difficile pour tout le monde.", "Les moins bons ont copié les meilleurs."],
+      juste: 0, leurre: 1, valeurs: { t1, t2, b1, b2 },
+      explication: "Un très bon résultat tient au niveau, mais aussi à la chance du jour, qui ne se reproduit pas forcément. Les meilleurs baissent et les moins bons remontent, alors que la moyenne générale ne bouge pas : c'est la régression vers la moyenne. Elle ne demande aucune explication psychologique."
+    };
+  },
+  risqueRelatif(f, i) {
+    const [n, hausse] = f.nombres[i % f.nombres.length], [facteur, evenement, population] = f.surfaces[i];
+    const juste = n * hausse / 100, leurre = hausse * 100;
+    return {
+      type: "qcm",
+      texte: "Une étude (fictive) annonce : « " + majuscule(facteur) + " augmente de " + hausse + " % le risque de " + evenement + ". » Sans cela, ce risque concerne " + n + " " + population + " sur 10 000.",
+      question: "Pour 10 000 " + population + " concernés, combien de cas en plus faut-il attendre ?",
+      choix: [nombreGT(juste) + " cas", nombreGT(leurre) + " cas", nombreGT(n + juste) + " cas", nombreGT(n * hausse) + " cas"],
+      juste: 0, leurre: 1, valeurs: { n, hausse },
+      explication: "« +" + hausse + " % » est une hausse relative : elle s'applique aux " + n + " cas habituels. " + hausse + " % de " + n + " font " + nombreGT(juste) + " cas de plus sur 10 000, soit " + nombreGT(n + juste) + " au total. Un risque rare reste rare, même quand il augmente beaucoup en pourcentage."
+    };
+  },
+  esperance(f, i) {
+    const [mise, gain, k] = f.nombres[i % f.nombres.length], jeu = f.surfaces[i];
+    const juste = gain / k - mise, signe = v => (v > 0 ? "+" : "") + nombreGT(v) + " €";
+    return {
+      type: "qcm",
+      texte: "À " + jeu + ", une partie coûte " + mise + " €. On reçoit " + gain + " € avec une chance sur " + k + ", et rien sinon ; la mise n'est jamais rendue.",
+      question: "En moyenne, combien gagne-t-on (ou perd-on) par partie ?",
+      choix: [signe(juste), signe(gain - mise), signe(gain / k), signe(-mise)],
+      juste: 0, leurre: 1, valeurs: { mise, gain, k },
+      explication: "En moyenne, une partie rapporte " + gain + " € × 1/" + k + " = " + nombreGT(gain / k) + " €, et coûte toujours " + mise + " €. Le bilan moyen est donc de " + signe(juste) + " par partie. Le gain affiché, " + gain + " €, n'arrive qu'une fois sur " + k + "."
+    };
+  },
+  simpson(f, i) {
+    const [a1, na1, a2, na2, b1, nb1, b2, nb2] = f.nombres[i % f.nombres.length], [titre, succes, g1, g2] = f.surfaces[i];
+    const pc = (k, n) => pourcentGT(Math.round(100 * k / n));
+    return {
+      type: "qcm",
+      texte: "On a comparé " + titre.charAt(0).toLowerCase() + titre.slice(1) + " (" + succes + "). Méthode A : " + a1 + " sur " + na1 + " pour les " + g1 + ", " + a2 + " sur " + na2 + " pour les " + g2 + ", soit " + (a1 + a2) + " sur " + (na1 + na2) + " au total. Méthode B : " + b1 + " sur " + nb1 + " pour les " + g1 + ", " + b2 + " sur " + nb2 + " pour les " + g2 + ", soit " + (b1 + b2) + " sur " + (nb1 + nb2) + " au total.",
+      question: "Pour les " + g1 + " comme pour les " + g2 + ", quelle méthode réussit le mieux ?",
+      choix: ["La méthode A", "La méthode B", "Les deux font aussi bien", "Cela dépend du nombre total de cas"],
+      juste: 0, leurre: 1, valeurs: {},
+      explication: "Groupe par groupe, A fait mieux : " + pc(a1, na1) + " contre " + pc(b1, nb1) + ", puis " + pc(a2, na2) + " contre " + pc(b2, nb2) + ". Au total, B semble meilleure parce qu'elle a surtout traité les cas faciles. C'est le paradoxe de Simpson : un total peut inverser ce que montre chaque groupe."
+    };
+  },
+  joueur(f, i) {
+    const [objet, issue, k, n] = f.surfaces[i];
+    const chance = "1 chance sur " + k;
+    return {
+      type: "qcm",
+      texte: objet + " vient de tomber sur " + issue + " " + n + " fois de suite.",
+      question: "Au coup suivant, quelle est la probabilité de tomber de nouveau sur " + issue + " ?",
+      choix: [majuscule(chance), "Moins de " + chance + " : une telle série doit s'interrompre", "Plus de " + chance + " : la série est lancée", "Cela dépend du nombre total de coups déjà joués"],
+      juste: 0, leurre: 1, valeurs: { k, n },
+      explication: "Chaque coup est indépendant : l'objet n'a pas de mémoire et ne « rattrape » rien. La probabilité reste de " + chance + ", série ou pas. Les longues séries sont d'ailleurs plus fréquentes au hasard qu'on ne le croit."
+    };
+  },
+  denominateur(f, i) {
+    const [part, evenement, groupe, conclusion, ensemble] = f.surfaces[i];
+    return {
+      type: "qcm",
+      texte: part + " % " + evenement + " concernent " + groupe + ". Quelqu'un en conclut que " + conclusion + ".",
+      question: "Que faut-il savoir pour juger cette conclusion ?",
+      choix: ["La part " + elision("de", groupe.replace(/^des /, "")) + " parmi les " + ensemble + ".", "Rien de plus : " + part + " %, c'est une nette majorité.",
+        "Le nombre total de cas recensés.", "La date à laquelle ces chiffres ont été publiés."],
+      juste: 0, leurre: 1, valeurs: { part },
+      explication: "Si " + groupe.replace(/^des /, "les ") + " représentent déjà " + part + " % des " + ensemble + ", ce chiffre ne montre rien de particulier. Il faut comparer la part des cas à la part du groupe dans l'ensemble. Sans ce dénominateur, la conclusion ne tient pas."
+    };
+  },
+  unites(f, i) {
+    const [objet, verbe, options] = f.surfaces[i];
+    const base = options.map(([v, , facteur]) => v * facteur), texteOpt = ([v, u]) => nombreGT(v, 3) + " " + u;
+    const juste = base.indexOf(Math.max(...base)), leurre = options.map(o => o[0]).indexOf(Math.max(...options.map(o => o[0])));
+    const ordre = [juste, leurre, ...[0, 1, 2, 3].filter(k => k !== juste && k !== leurre)];
+    const pluriel = objet.split(" ").map((m, k) => k === 0 && !/[sx]$/.test(m) ? m + "s" : m).join(" ");
+    return {
+      type: "qcm",
+      texte: "On compare quatre " + pluriel + " : voici leurs mesures.",
+      question: "Laquelle de ces quatre mesures est la plus grande ?",
+      choix: ordre.map(k => texteOpt(options[k])),
+      juste: 0, leurre: 1, valeurs: {},
+      explication: "Il faut tout convertir dans la même unité avant de comparer : le plus grand nombre n'est pas forcément la plus grande quantité. Ici, " + texteOpt(options[juste]) + " l'emporte. " + texteOpt(options[leurre]) + " affiche le plus grand nombre, dans une unité plus petite."
+    };
+  },
+  pointsPourcents(f, i) {
+    const [a, b] = f.nombres[i % f.nombres.length], sujet = f.surfaces[i];
+    const points = a - b, rel = 100 * points / a, faux = 100 * points / b;
+    const environ = x => (Number.isInteger(x) ? "" : "environ ") + pourcentGT(Math.round(x));
+    return {
+      type: "qcm",
+      texte: sujet + " passe de " + pourcentGT(a) + " à " + pourcentGT(b) + ".",
+      question: "Quelle description est exacte ?",
+      choix: ["Une baisse de " + points + " points, soit " + environ(rel) + " de moins.", "Une baisse de " + points + " points, soit " + pourcentGT(points) + " de moins.",
+        "Une baisse de " + Math.round(rel) + " points, soit " + pourcentGT(points) + " de moins.", "Une baisse de " + points + " points, soit " + environ(faux) + " de moins."],
+      juste: 0, leurre: 1, valeurs: { a, b },
+      explication: "La différence entre deux pourcentages se compte en points : " + a + " − " + b + " = " + points + " points. Rapportée à la valeur de départ, elle fait " + environ(rel) + " de moins. Confondre points et pourcents fait paraître un changement plus petit ou plus grand qu'il n'est."
+    };
+  },
+  montyIgnorant(f, i) {
+    const [pluriel, singulier, fem, ouvreur, n] = f.surfaces[i];
+    const [un, une, il, ferme] = fem ? ["une", "une", "elle", "fermée"] : ["un", "un", "il", "fermé"];
+    return {
+      type: "qcm",
+      texte: "Un lot est caché dans " + (fem ? "l'une" : "l'un") + " de " + n + " " + pluriel + ". Vous en choisissez " + un + ", sans l'ouvrir. " + ouvreur + " : " + il + " ne contient pas le lot. On vous propose de changer pour " + une + " autre " + singulier + " encore " + ferme + ".",
+      question: "Avez-vous intérêt à changer ?",
+      choix: ["Non : chaque " + singulier + " encore " + ferme + " a maintenant la même chance, 1 sur " + (n - 1) + ".", "Oui : changer augmente vos chances, comme dans le problème de Monty Hall.",
+        "Non : garder son premier choix est toujours plus sûr.", "Oui, mais seulement si l'on change deux fois."],
+      juste: 0, leurre: 1, valeurs: { n },
+      explication: "Dans le problème de Monty Hall, le présentateur sait où est le lot et ouvre toujours une porte vide : c'est ce qui rend le changement avantageux. Ici, l'ouverture est due au hasard, et elle aurait pu révéler le lot. " + (fem ? "Toutes les " : "Tous les ") + pluriel + " encore " + (fem ? "fermées" : "fermés") + " ont alors la même chance : la solution ne se transpose pas quand les règles changent."
+    };
+  },
+
+  // ---------- Axe C ----------
+  conceptuel(f, i) {
+    const s = f.surfaces[i], valeurs = {};
+    f.champs.forEach((c, k) => { valeurs[c] = s[k]; });
+    return {
+      type: "qcm",
+      texte: remplir(f.texte, valeurs), question: remplir(f.question, valeurs),
+      choix: f.choix.map(c => remplir(c, valeurs)),
+      juste: 0, leurre: f.leurre, valeurs: {},
+      explication: f.explication
+    };
+  }
+};
+
+// Instance d'une famille, avec l'ordre de ses choix tiré par la graine de la passation (rangs « affichés »)
+function instanceGT(f, i, graine) {
+  const item = GENERATEURS_GT[f.generer](f, i);
+  ["texte", "question", "explication"].forEach(k => { item[k] = elisions(item[k]); });
+  if (item.choix) item.choix = item.choix.map(elisions);
+  const instanceId = f.id + "@" + i;
+  Object.assign(item, { instanceId, itemId: instanceId, famille: f.id, axe: f.axe, i, aRelire: f.aRelire !== false,
+    fiches: f.fiches || [], ateliers: f.ateliers || [], surCorrection: !!f.surCorrection, preuveSuffisante: !!f.preuveSuffisante });
+  if (item.type === "qcm") {
+    const ordre = melanger([0, 1, 2, 3], generateur(graineDe(instanceId + ":" + graine)));
+    item.ordre = ordre;
+    item.choixAffiches = ordre.map(k => item.choix[k]);
+    item.justeAffiche = ordre.indexOf(item.juste);
+    item.leurreAffiche = item.leurre === null ? null : ordre.indexOf(item.leurre);
+    item.chance = 0.25;
+  } else item.chance = item.type === "binaire" ? 0.5 : 0;
+  return item;
+}
+
+const familleGT = id => FAMILLES_GT.find(f => f.id === id);
+
+// ===================== Tirage =====================
+// Tirage stratifié et reproductible des items d'une passation. Règles (tests/grand-test-plan.md §6 et §7) :
+// une famille au plus une fois par test ; une instance vue dans l'un des trois derniers tests terminés ne revient
+// pas ; si une famille n'a plus d'instance libre, la plus anciennement vue revient, marquée réutilisée et notée dans
+// « issues ». Une instance déjà vue (même il y a longtemps) est marquée dejaVu : elle n'est jamais présentée comme
+// nouvelle. Les items alternent les strates (exemples entrelacés) au lieu d'enchaîner ceux d'une même forme.
+
+const ATTENTE_REPETITION = 3;    // tests terminés avant qu'une instance vue puisse revenir
+
+const STRATES_GT = {
+  "A-calcul": f => f.axe === "A" && f.type === "calcul",
+  "A-lecture": f => f.axe === "A" && f.type === "qcm",
+  "A-raisonnement": f => f.axe === "A" && f.type === "binaire",
+  "B": f => f.axe === "B",
+  "C": f => f.axe === "C"
+};
+
+// Composition par mode : nombre de familles tirées par strate, et étape du parcours. « equilibre » : pour les
+// raisonnements, autant de formes valides que non valides.
+const COMPOSITION_GT = {
+  complet: [
+    { etape: 2, strate: "A-calcul", n: 4 }, { etape: 2, strate: "A-lecture", n: 4 }, { etape: 2, strate: "A-raisonnement", n: 8, equilibre: "valide" },
+    { etape: 3, strate: "B", n: 10 }, { etape: 4, strate: "C", n: 10 }
+  ],
+  express: [
+    { etape: 2, strate: "A-calcul", n: 1 }, { etape: 2, strate: "A-lecture", n: 1 }, { etape: 2, strate: "A-raisonnement", n: 2, equilibre: "valide" },
+    { etape: 3, strate: "B", n: 4 }, { etape: 4, strate: "C", n: 4 }
+  ]
+};
+
+// Ce que l'historique dit de chaque instance : rang du dernier test terminé où elle a été vue, nombre de tests
+function memoireDesVues(etat) {
+  const derniere = {}, tests = {};
+  etat.historiqueItemsVus.forEach(v => {
+    derniere[v.instanceId] = Math.max(derniere[v.instanceId] || 0, v.compteurTests);
+    (tests[v.instanceId] = tests[v.instanceId] || new Set()).add(v.runId);
+  });
+  return { derniere, tests, termines: passationsTerminees(etat).length };
+}
+
+// Choisit une instance d'une famille : jamais vue d'abord, sinon libre (hors des trois derniers tests), sinon la plus
+// anciennement vue (réutilisation signalée)
+function choisirInstance(f, memoire, alea) {
+  const ids = Array.from({ length: tailleFamille(f) }, (_, i) => i);
+  const id = i => f.id + "@" + i;
+  const jamais = ids.filter(i => memoire.derniere[id(i)] === undefined);
+  const libres = ids.filter(i => memoire.derniere[id(i)] !== undefined && memoire.derniere[id(i)] <= memoire.termines - ATTENTE_REPETITION);
+  let i, reutilisee = false;
+  if (jamais.length) i = jamais[Math.floor(alea() * jamais.length)];
+  else if (libres.length) {
+    const plusAncienne = Math.min(...libres.map(k => memoire.derniere[id(k)]));
+    const candidats = libres.filter(k => memoire.derniere[id(k)] === plusAncienne);
+    i = candidats[Math.floor(alea() * candidats.length)];
+  } else {
+    const plusAncienne = Math.min(...ids.map(k => memoire.derniere[id(k)]));
+    i = ids.find(k => memoire.derniere[id(k)] === plusAncienne);
+    reutilisee = true;
+  }
+  const vuDans = memoire.tests[id(i)];
+  return { i, reutilisee, dejaVu: !!vuDans, compteurTestsAvant: vuDans ? vuDans.size : 0 };
+}
+
+// Choisit n familles d'une strate ; avec « equilibre », alterne les valeurs du champ (ex. valide / non valide)
+function choisirFamilles(familles, n, equilibre, alea) {
+  const melangees = melanger(familles, alea);
+  if (!equilibre) return melangees.slice(0, n);
+  const groupes = [melangees.filter(f => f[equilibre]), melangees.filter(f => !f[equilibre])];
+  const choisies = [];
+  for (let k = 0; choisies.length < n && (groupes[0].length || groupes[1].length); k++) {
+    const g = groupes[k % 2].length ? groupes[k % 2] : groupes[1 - k % 2];
+    choisies.push(g.shift());
+  }
+  return choisies;
+}
+
+// Ordonne les items d'une étape en évitant deux items de même strate à la suite quand c'est possible : à chaque pas,
+// un item de la strate qui en compte le plus parmi celles qui diffèrent de la précédente (ex aequo : au hasard)
+function entrelacer(items, alea) {
+  const restants = melanger(items, alea), ordre = [];
+  while (restants.length) {
+    const precedente = ordre.length ? ordre[ordre.length - 1].strate : null;
+    const compte = {};
+    restants.forEach(x => { compte[x.strate] = (compte[x.strate] || 0) + 1; });
+    const permises = Object.keys(compte).filter(s => s !== precedente);
+    const strates = permises.length ? permises : Object.keys(compte);
+    const maximum = Math.max(...strates.map(s => compte[s]));
+    const choisie = strates.filter(s => compte[s] === maximum).sort()[0];
+    ordre.push(restants.splice(restants.findIndex(x => x.strate === choisie), 1)[0]);
+  }
+  return ordre;
+}
+
+// Tire les items générés d'une passation. Renvoie { instances, issues } ; chaque instance porte son étape et son
+// rang i dans ses valeurs, de quoi la reconstruire à l'identique (instanceGT) au moment de l'afficher.
+function tirerPassation(etat, mode, graine, familles) {
+  const alea = generateur(graine);
+  const memoire = memoireDesVues(etat);
+  const issues = [], parEtape = {};
+  const disponibles = (familles || FAMILLES_GT).filter(f => GRAND_TEST_ESSAI || f.aRelire === false);
+  COMPOSITION_GT[mode].forEach(({ etape, strate, n, equilibre }) => {
+    const candidates = disponibles.filter(STRATES_GT[strate]);
+    if (candidates.length < n) issues.push("strate " + strate + " : " + candidates.length + " famille(s) publiables sur " + n + " demandées");
+    choisirFamilles(candidates, n, equilibre, alea).forEach(f => {
+      const c = choisirInstance(f, memoire, alea);
+      if (c.reutilisee) issues.push("instance réutilisée faute de réserve : " + f.id + "@" + c.i);
+      (parEtape[etape] = parEtape[etape] || []).push({ instanceId: f.id + "@" + c.i, itemId: f.id + "@" + c.i, famille: f.id, strate,
+        valeurs: { i: c.i, etape }, dejaVu: c.dejaVu, compteurTestsAvant: c.compteurTestsAvant });
+    });
+  });
+  const instances = [];
+  Object.keys(parEtape).map(Number).sort((a, b) => a - b).forEach(e => entrelacer(parEtape[e], alea).forEach(x => {
+    const copie = Object.assign({}, x);
+    delete copie.strate;
+    instances.push(copie);
+  }));
+  return { instances, issues };
+}

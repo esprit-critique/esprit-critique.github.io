@@ -206,3 +206,79 @@ exacte, décomposition de Murphy, score d'intervalle, rapprochement). Les outils
 ### Lot suivant
 
 Lot 3 — générateurs de familles : instances isomorphes, tirage stratifié, anti-répétition.
+
+---
+
+## Lot 3 — générateurs de familles (31 octobre 2026)
+
+### Livrables
+
+- `static/grand-test-donnees.js` (nouveau) : 34 familles d'items. Axe A : 4 réponses calculées (vitesse moyenne,
+  hausse puis baisse, intervalles, moyenne pondérée), 4 lectures fines (portée de la négation, présupposé,
+  relations inversées, « seulement si »), 8 raisonnements (4 formes × crédible / non crédible). Axe B : 13 familles
+  (taux de base, sur-correction du dépistage, conjonction, échantillon, régression, risque relatif, espérance,
+  Simpson, erreur du joueur, dénominateur, unités, points et pourcents, sur-correction de Monty Hall). Axe C :
+  10 familles conceptuelles (témoin, confusion, causalité inverse, sélection, attente, hypothèse implicite,
+  conclusion excessive, information utile, sur-correction causale, sur-correction de la preuve). Plus les données
+  des démonstrations de mémoire (20 listes de mots, 20 récits, 5 jeux de sources). Toutes les situations sont
+  fictives et toutes les familles portent `aRelire: true`.
+- `static/grand-test.js` : table fermée `GENERATEURS_GT` (aucun code ne vient des données), `instanceGT` (ordre des
+  choix tiré par la graine), élisions automatiques, tirage stratifié `tirerPassation` (une famille par test, pas de
+  répétition avant trois tests terminés, réutilisation signalée, déjà-vu exact, équilibre des formes valides et
+  non valides, entrelacement des strates).
+- Banc « familles » : `tests/grand_test_familles.py`.
+- `index.html` charge `grand-test-donnees.js` avant le moteur ; `sw.js` le met en cache, version `v10`.
+
+### Commandes et résultats réels
+
+    python3 tests/grand_test_familles.py   → 89 / 89 (≈ 15 s)
+    python3 tests/grand_test_calculs.py    → 44 / 44
+    tests/lancer.sh                        → 40 / 40 rapports au vert (10 bancs × 4 configurations), 23 min 32 s
+
+### Ce que vérifie le banc « familles »
+
+- **Toutes** les instances de toutes les familles (au moins 20 chacune) : aucun reste de gabarit, choix distincts,
+  bonne réponse unique et différente du leurre, ordre affiché cohérent, explications de trois phrases au plus,
+  textes distincts dans chaque famille, fiches et ateliers réels (90 fiches, 45 ateliers relevés dans le code).
+- **Oracle indépendant, en Python**, pour chaque famille : moyenne harmonique, pourcentages successifs, bornes,
+  moyenne pondérée ; Bayes pour les deux familles de dépistage ; queue binomiale exacte pour l'échantillon ;
+  Simpson recalculé groupe par groupe ; Monty Hall par énumération exacte (fractions) ; unités converties. Pour
+  les raisonnements, l'oracle **relit le texte produit** et juge sa validité en énumérant tous les modèles de trois
+  ensembles non vides (256 répartitions) ; il juge la crédibilité de la conclusion d'après la taxonomie.
+- **Non-reprise** : aucune instance au-delà de 0,5 de similarité de Jaccard (trigrammes de mots) avec 4 468 textes
+  des banques du site (`jeux-donnees.js`, `experiences.js`, `raisonner.js`, `pratiques.js`, `debattre.js`,
+  `donnees.js`, `perception.js`, `chiffres.js`) ; aucune paire de familles différentes trop proche.
+- **Tirage** : 20 tests consécutifs pour quatre graines (deux en complet, deux en express) ; aucune répétition
+  avant trois tests, une instance par famille, quotas exacts, autant de raisonnements valides que non valides,
+  déjà-vu et compteur recalculés depuis l'historique, entrelacement, difficulté visée stable, aucune position de
+  bonne réponse au-delà de 40 % ; reproductibilité (même graine, même tirage) ; **la version publiée ne tire rien**
+  (déficit signalé), puisque tout est à relire.
+
+### Problèmes rencontrés et corrections
+
+1. Six lignes de la famille « unités » plaçaient la bonne réponse sur le plus grand nombre affiché, ou avaient
+   deux quantités égales : corrigées, et vérifiées ligne à ligne.
+2. Une explication de la famille « sur-correction causale » faisait quatre phrases : le message fixe sur la
+   sur-correction (« L'esprit critique n'est pas le contre-pied systématique… ») est affiché à part.
+3. Premier entrelacement trop naïf (suites évitables en fin d'étape) : remplacé par un choix de la strate la plus
+   nombreuse parmi celles qui diffèrent de la précédente.
+4. Relecture du français d'un échantillon (une instance par famille) : élisions manquantes (« que une »,
+   « que Adam »), milliers non séparés, « Toutes les coffres », articles indéfinis repris dans les questions de
+   l'axe C. Tout corrigé ; les élisions sont désormais faites automatiquement.
+5. L'inventaire des ateliers du banc en comptait 44 : `carnet` est déclaré dans `raisonner.js` mais dans `JEUX`
+   (`#chiffres/carnet`). Le banc lit désormais le tableau qui reçoit chaque atelier.
+
+### Décisions
+
+1. **Identifiant d'instance stable** : `famille@i`, sans la graine, pour que l'anti-répétition reconnaisse une
+   instance d'un test à l'autre ; la graine ne fixe que l'ordre des choix.
+2. **Huit familles de raisonnements** (deux formes par case validité × crédibilité), pour respecter à la fois
+   « deux items par case » et « une famille au plus par test ».
+3. **Hasard de l'axe A** : les lectures fines sont des QCM à quatre choix (chance 0,25).
+4. Les 12 familles de pièges avancés du mandat : sur-correction de Monty Hall, du dépistage, de la causalité et de
+   la preuve ; portée des quantificateurs ; présupposés ; dénominateur ; unités ; points et pourcents ; et les
+   trois démonstrations de mémoire (lot 5).
+
+### Lot suivant
+
+Lot 4 — réservoirs de faits : vrai-faux, expositions, grandeurs, angle mort, questions de société.

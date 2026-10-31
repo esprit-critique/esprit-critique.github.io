@@ -37,7 +37,7 @@ const MARQUEUR = "marqueur-prive-7f3a";
     }));
     ok("hors ligne : les " + FICHIERS.length + " fichiers se chargent depuis le cache", resultats.every(x => x === null), resultats.filter(Boolean).join(", "));
     const page = await (await fetch("index.html")).text();
-    ok("hors ligne : la page charge les scripts du Grand test", /grand-test\.js/.test(page) && /grand-test-interface\.js/.test(page));
+    ok("hors ligne : la page charge les scripts du Grand test", ["grand-test-donnees", "grand-test", "grand-test-interface"].every(n => page.includes('src="' + n + '.js"')));
     // Aucune donnée de l'utilisateur dans le cache : ni le marqueur, ni une adresse étrangère ou de banc
     const requetes = await cache.keys();
     const fuites = [];

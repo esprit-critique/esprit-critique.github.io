@@ -9,7 +9,7 @@
 # Les bancs sont copiés dans static/ le temps du test, puis enlevés ; le serveur local est arrêté à la fin.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles"}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair

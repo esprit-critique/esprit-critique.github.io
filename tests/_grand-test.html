@@ -66,10 +66,11 @@ f.onload = async () => {
     const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1]);
     const scripts = [...(await (await fetch("/index.html", { cache: "no-store" })).text()).matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
     ok("service worker : les " + scripts.length + " scripts de la page sont dans FICHIERS", scripts.every(s => fichiersSW.includes(s)), scripts.filter(s => !fichiersSW.includes(s)).join(", "));
-    ok("service worker : grand-test.js et grand-test-interface.js en cache, version v9 ou plus",
-      fichiersSW.includes("grand-test.js") && fichiersSW.includes("grand-test-interface.js") && Number((sw.match(/esprit-critique-v(\d+)/) || [])[1]) >= 9);
-    ok("index.html : les scripts du Grand test avant app.js",
-      scripts.indexOf("grand-test.js") > -1 && scripts.indexOf("grand-test.js") < scripts.indexOf("grand-test-interface.js") && scripts.indexOf("grand-test-interface.js") < scripts.indexOf("app.js"));
+    ok("service worker : les trois fichiers du Grand test en cache, version v10 ou plus",
+      ["grand-test-donnees.js", "grand-test.js", "grand-test-interface.js"].every(f => fichiersSW.includes(f)) && Number((sw.match(/esprit-critique-v(\d+)/) || [])[1]) >= 10);
+    ok("index.html : données, moteur puis interface du Grand test, avant app.js",
+      scripts.indexOf("grand-test-donnees.js") > -1 && scripts.indexOf("grand-test-donnees.js") < scripts.indexOf("grand-test.js")
+      && scripts.indexOf("grand-test.js") < scripts.indexOf("grand-test-interface.js") && scripts.indexOf("grand-test-interface.js") < scripts.indexOf("app.js"));
 
     // =============== 2. La copie d'essai ===============
     await charger("/_site-grand.html#accueil");
