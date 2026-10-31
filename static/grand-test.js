@@ -1309,3 +1309,30 @@ function calculerScores(t) {
   scores.F = { valeur: t.mode === "complet" && decisions >= 8 ? camp.indice : null, plage: null, n: decisions, statut: "exploratoire" };
   return scores;
 }
+
+// ===================== Niveaux (cachés : PERSONNAGES_VISIBLES = false) =====================
+// Règle fixée d'avance. Un axe (A, B, C : proportion ; D : d′) compte pour le niveau n si la borne basse de sa plage
+// dépasse le seuil de n dans DEUX tests complets distincts, espacés d'au moins sept jours, avec au moins trois items
+// notés pour cet axe et moins de la moitié d'items déjà vus. Niveau n atteint si au moins n − 1 axes comptent, et si
+// le niveau n − 1 l'est aussi. Déclassement : seuls les quatre derniers tests complets entrent dans le calcul, si bien
+// qu'un niveau qui ne se confirme plus redescend. Aucun test complet : niveau inconnu. Jamais de somme globale.
+const SEUILS_NIVEAUX_GT = { proportion: { 2: 0.40, 3: 0.50, 4: 0.60, 5: 0.70 }, dprime: { 2: 0.25, 3: 0.5, 4: 0.75, 5: 1.0 } };
+const JOURS_ENTRE_TESTS = 7;
+
+function niveauObserve(etat) {
+  const complets = passationsTerminees(etat).filter(t => t.mode === "complet").slice(-4);
+  if (!complets.length) return { id: null, statut: "inconnu" };
+  const valable = (t, axe) => t.scores && t.scores[axe] && t.scores[axe].plage && t.scores[axe].n >= ITEMS_MIN_PLAGE
+    && t.instances.filter(x => x.dejaVu).length < t.instances.length / 2;
+  const reussi = (t, axe, n) => valable(t, axe) && t.scores[axe].plage.bas > (axe === "D" ? SEUILS_NIVEAUX_GT.dprime[n] : SEUILS_NIVEAUX_GT.proportion[n]);
+  const axeAtteint = (axe, n) => complets.some((a, i) => complets.slice(i + 1).some(b => reussi(a, axe, n) && reussi(b, axe, n)
+    && Math.abs(Date.parse(b.dateFin) - Date.parse(a.dateFin)) >= JOURS_ENTRE_TESTS * 86400000));
+  let niveau = 1;
+  for (let n = 2; n <= 5; n++) {
+    if (["A", "B", "C", "D"].filter(axe => axeAtteint(axe, n)).length >= n - 1) niveau = n; else break;
+  }
+  return { id: niveau, statut: "observe" };
+}
+
+// Fiches liées à un item (famille générée, vrai-faux ou affirmation)
+const fichesItem = item => item.fiches || [];

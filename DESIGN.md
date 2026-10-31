@@ -59,6 +59,10 @@ libre de son type, et un numéro n'est jamais réattribué. La recherche accepte
   conclusion (« Donc », « Alors ») ; les variables (A, P, P′…) en italique ; filet gris à gauche, sans fond.
 - **Une légende d'illustration décrit le dessin**, sans répéter la source (`tests/pages/legendes_sources.py`).
 
+## Personnages du Grand test
+
+**Personnages pédagogiques du Grand test (option désactivée par défaut)** — Les personnages sont des repères éditoriaux sobres, jamais des mascottes ni des portraits psychologiques. Leur dessin au trait, façon plume, emploie uniquement des lignes et ailettes issues du vocabulaire de l'emblème Müller-Lyer et la couleur existante de la catégorie. Les figures sont des SVG paramétriques générés à partir d'un corps commun et de quelques attributs distinctifs; elles n'utilisent ni dégradé, ni ombre, ni animation, ni image externe. Chaque figure reçoit un nom accessible qui décrit son rôle pédagogique. L'ensemble du site doit rester pleinement utilisable avec `PERSONNAGES_VISIBLES = false`.
+
 ## Proscrit
 
 Refonte de la mise en page, nouvelle palette, dégradés, ombres portées, illustrations décoratives, mascotte,

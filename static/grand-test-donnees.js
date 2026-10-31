@@ -1570,3 +1570,69 @@ const SOCIETE_GT = [
     "Quatre jours de classe allongent chaque journée, alors que les jeunes enfants se fatiguent vite.",
     "Les partisans des quatre jours pensent seulement à leur propre confort.", "ad-hominem"]
 ];
+
+// ===================== Entités pédagogiques et niveaux (cachés : PERSONNAGES_VISIBLES = false) =====================
+// Une entité par fiche : la métaphore d'un mécanisme qui peut arriver à tout le monde, jamais une étiquette posée sur
+// une personne. Configuration compacte : [fiche, nom, traits]. Son « pouvoir » est la définition de la fiche, sa
+// « parade » la première phrase de la parade de la fiche (lus dans donnees.js, pour ne rien dupliquer). Les traits
+// (2 ou 3) choisissent des éléments du dessin commun : ailettes de Müller-Lyer ouvertes ou fermées, double trait,
+// cercle, pointillé, flèche, vague, croix. Budget vérifié par le banc : 300 octets par entité.
+const ENTITES_GT = [
+  ["biais:disponibilite", "La Lanterne", ["cercle", "ouvertes"]], ["biais:taux-de-base", "Le Comptable distrait", ["double", "pointille"]],
+  ["biais:conjonction", "Le Conteur", ["ouvertes", "double", "vague"]], ["biais:erreur-du-joueur", "Le Joueur de dés", ["cercle", "croix"]],
+  ["biais:regression-moyenne", "Le Balancier", ["vague", "fermees"]], ["biais:survivant", "Le Rescapé", ["fleche", "pointille"]],
+  ["biais:procureur", "Le Procureur", ["croix", "double"]], ["biais:simpson", "Le Retourneur", ["double", "fleche", "fermees"]],
+  ["biais:taille-echantillon", "La Petite Poignée", ["cercle", "pointille"]], ["biais:ancrage", "L'Ancre", ["fermees", "croix"]],
+  ["biais:cadrage", "Le Cadre", ["double", "ouvertes"]], ["biais:aversion-perte", "La Balance penchée", ["fleche", "fermees"]],
+  ["biais:couts-irrecuperables", "Le Puits", ["cercle", "fleche"]], ["biais:statu-quo", "L'Habitude", ["double", "fermees"]],
+  ["biais:dotation", "Le Collectionneur", ["cercle", "double"]], ["biais:leurre", "Le Leurre", ["ouvertes", "pointille", "croix"]],
+  ["biais:ikea", "L'Artisan", ["croix", "vague"]], ["biais:resultat", "Le Juge de l'issue", ["fleche", "ouvertes"]],
+  ["biais:omission", "L'Abstention", ["pointille", "fermees"]], ["biais:prevision-affective", "Le Prophète d'humeur", ["vague", "ouvertes"]],
+  ["biais:retrospectif", "Le Voyant d'après coup", ["fleche", "double"]], ["biais:faux-souvenirs", "Le Retoucheur", ["vague", "pointille"]],
+  ["biais:primaute", "Le Premier Venu", ["fleche", "fermees"]], ["biais:negativite", "Le Nuage", ["vague", "croix"]],
+  ["biais:pic-fin", "Le Dernier Mot", ["ouvertes", "fleche"]], ["biais:frequence", "Le Projecteur", ["cercle", "ouvertes", "pointille"]],
+  ["biais:cryptomnesie", "L'Écho oublié", ["vague", "double"]], ["biais:confirmation", "Le Miroir", ["double", "cercle"]],
+  ["biais:croyance-logique", "Le Gardien des évidences", ["fermees", "double"]], ["biais:verite-illusoire", "La Rengaine", ["vague", "cercle"]],
+  ["biais:barnum", "Le Portrait universel", ["cercle", "pointille", "ouvertes"]], ["biais:illusion-controle", "Le Chef d'orchestre", ["fleche", "croix"]],
+  ["biais:apophenie", "Le Chercheur de formes", ["pointille", "vague"]], ["biais:raisonnement-motive", "L'Avocat intérieur", ["fleche", "fermees", "double"]],
+  ["biais:perseverance", "La Racine", ["fermees", "vague"]], ["biais:monde-juste", "La Balance parfaite", ["double", "croix"]],
+  ["biais:attribution", "Le Portraitiste", ["cercle", "fleche"]], ["biais:halo", "L'Auréole", ["cercle", "ouvertes"]],
+  ["biais:faux-consensus", "Le Chœur imaginaire", ["double", "vague"]], ["biais:conformisme", "Le Suiveur", ["fleche", "pointille"]],
+  ["biais:pensee-groupe", "Le Cercle fermé", ["cercle", "fermees"]], ["biais:autorite", "L'Uniforme", ["double", "fermees", "croix"]],
+  ["biais:exposition", "Le Familier", ["vague", "ouvertes"]], ["biais:malediction-savoir", "L'Expert pressé", ["fleche", "double"]],
+  ["biais:endogroupe", "La Bannière", ["double", "ouvertes"]], ["biais:dunning-kruger", "Le Débutant sûr", ["ouvertes", "croix"]],
+  ["biais:planification", "Le Calendrier", ["pointille", "fleche"]], ["biais:autocomplaisance", "Le Narrateur", ["ouvertes", "fermees"]],
+  ["biais:optimisme", "Le Ciel clair", ["cercle", "vague"]], ["biais:angle-mort", "L'Œil sans miroir", ["cercle", "croix"]],
+  ["biais:surprecision", "La Fourchette étroite", ["fermees", "pointille"]],
+  ["sophismes:ad-hominem", "Le Doigt pointé", ["fleche", "croix"]], ["sophismes:tu-quoque", "Le Renvoi", ["fleche", "double"]],
+  ["sophismes:association", "La Tache", ["pointille", "cercle"]], ["sophismes:autorite", "Le Sceau", ["cercle", "double"]],
+  ["sophismes:popularite", "La Foule", ["vague", "pointille"]], ["sophismes:tradition", "L'Ancien Usage", ["double", "fermees"]],
+  ["sophismes:nature", "La Feuille", ["vague", "ouvertes"]], ["sophismes:emotion", "Le Cœur battant", ["vague", "croix"]],
+  ["sophismes:consequences", "La Menace", ["fleche", "fermees"]], ["sophismes:genetique", "La Source tarie", ["fleche", "pointille"]],
+  ["sophismes:ad-baculum", "Le Bâton", ["croix", "fermees"]], ["sophismes:homme-de-paille", "L'Épouvantail", ["croix", "pointille"]],
+  ["sophismes:hareng-rouge", "La Fausse Piste", ["fleche", "vague"]], ["sophismes:question-piege", "La Trappe", ["fermees", "pointille"]],
+  ["sophismes:poteaux", "Le Poteau mobile", ["double", "fleche"]], ["sophismes:brandolini", "L'Avalanche", ["vague", "pointille", "fleche"]],
+  ["sophismes:faux-dilemme", "Les Deux Portes", ["double", "croix"]], ["sophismes:juste-milieu", "Le Milieu", ["double", "cercle"]],
+  ["sophismes:fausse-analogie", "Le Faux Jumeau", ["double", "ouvertes"]], ["sophismes:fausse-equivalence", "Le Signe égal", ["double", "pointille"]],
+  ["sophismes:nirvana", "L'Idéal", ["cercle", "ouvertes"]], ["sophismes:post-hoc", "L'Avant-Après", ["fleche", "ouvertes"]],
+  ["sophismes:correlation", "Les Deux Courbes", ["vague", "double"]], ["sophismes:pente-glissante", "La Pente", ["fleche", "vague"]],
+  ["sophismes:tireur-elite", "La Cible peinte", ["cercle", "croix"]], ["sophismes:cause-unique", "La Clé unique", ["fermees", "fleche"]],
+  ["sophismes:generalisation-hative", "Le Raccourci", ["fleche", "pointille", "ouvertes"]], ["sophismes:vrai-ecossais", "Le Gardien de la définition", ["fermees", "croix"]],
+  ["sophismes:composition", "La Mosaïque", ["pointille", "cercle"]], ["sophismes:cherry-picking", "Le Cueilleur", ["pointille", "fleche"]],
+  ["sophismes:affirmation-consequent", "La Marche arrière", ["fleche", "fermees"]], ["sophismes:negation-antecedent", "La Porte close", ["fermees", "croix"]],
+  ["sophismes:petition-principe", "Le Serpent", ["cercle", "vague"]], ["sophismes:ignorance", "Le Silence", ["pointille", "croix"]],
+  ["sophismes:sophisme-sophisme", "Le Contre-pied", ["ouvertes", "fermees", "croix"]], ["sophismes:equivoque", "Le Double Sens", ["double", "vague"]],
+  ["sophismes:hors-contexte", "Les Ciseaux", ["croix", "pointille"]], ["sophismes:continuum", "Le Dégradé", ["pointille", "vague"]],
+  ["sophismes:definition-persuasive", "Le Dictionnaire truqué", ["double", "fermees"]]
+];
+
+// Cinq niveaux, inspirés des étapes de l'allégorie de la caverne (Platon, République, VII). Ils décrivent une pratique
+// observée dans quelques exercices, jamais la valeur d'une personne. [titre, personnage, ce qu'il sait faire]
+const NIVEAUX_GT = [
+  ["Dans la caverne", "La prisonnière attentive", "Remarque que les ombres sur le mur ne sont peut-être pas tout."],
+  ["Le regard tourné", "Le prisonnier qui se retourne", "Prend le temps de vérifier avant d'accepter une première impression."],
+  ["La montée", "La marcheuse sur le chemin", "Repère régulièrement les pièges de chiffres et de raisonnement, avec une certitude mesurée."],
+  ["La lumière du jour", "L'observateur au soleil", "Distingue de façon répétée ce qu'une preuve permet de conclure, et ce qu'elle ne permet pas."],
+  ["Le retour", "La guide qui redescend", "Pratique tout cela de façon stable, et sait l'expliquer sans condescendance."]
+];
+const TEXTE_NIVEAU_GT = "Ce niveau décrit une pratique observée dans quelques exercices ; il ne mesure pas votre intelligence et ne vous définit pas.";

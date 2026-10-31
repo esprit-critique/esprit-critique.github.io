@@ -1323,3 +1323,5 @@ h3.titre-bloc {
 .gt-tableau { border-collapse: collapse; font-size: 13px; width: 100%; }
 .gt-tableau caption { text-align: left; font-weight: 600; margin-bottom: 4px; }
 .gt-tableau th, .gt-tableau td { border-bottom: 1px solid var(--trait); padding: 4px 6px; text-align: left; }
+.gt-entite { display: flex; gap: 12px; align-items: flex-start; border-top: 1px solid var(--trait); padding-top: 10px; margin-top: 10px; }
+.gt-entite .picto { flex: none; width: 48px; height: 48px; }

@@ -813,6 +813,8 @@ function terminerEtAfficher(t) {
   const fini = r.etat.historiqueTests.find(x => x.id === t.id);
   fini.scores = calculerScores(fini);
   fini.ideesFaussesCorrigees = ideesFaussesCorrigees(fini).slice(0, 300);
+  const niveau = niveauObserve(r.etat);
+  fini.niveau = { id: niveau.id, statut: niveau.statut, calculeLe: maintenantISO() };
   sauver(r.etat);
   GT.zone.innerHTML = "";
   afficherProfil(GT.zone, t.id);
@@ -913,6 +915,8 @@ function afficherProfil(zone, runId) {
   const etal = blocEtalonnage(lignes);
   if (etal) e.appendChild(etal);
   fourchettes.forEach((x, k) => { const l = lignes.filter(l => l.item.type === "fourchette" && Array.isArray(l.reponse.valeur))[k]; e.appendChild(ligneIntervalle({ q: l.item.q.q, v: x.q.v, unite: x.q.unite }, x.bas, x.haut, x.bas <= x.q.v && x.q.v <= x.haut)); });
+  zone.appendChild(blocAteliersConseilles(t));
+  [blocEntitesRencontrees(t), blocNiveau(GT.etat)].forEach(b => { if (b) zone.appendChild(b); });
   zone.appendChild(blocProgression(GT.etat));
 
   // Sur-correction, répétitions, réponses très rapides
@@ -1063,6 +1067,158 @@ function blocProgression(etat) {
 // Idées fausses rencontrées et corrigées dans une passation : affirmations fausses jugées vraies
 const ideesFaussesCorrigees = t => lignesPassation(t).filter(l => l.item.type === "vf" && l.item.juste === false && l.reponse.valeur === true).map(l => l.item.instanceId);
 
+
+// ===================== Ateliers conseillés et ateliers nouveaux (lot 8) =====================
+// Trois ateliers conseillés à la fin d'un test : erreurs pondérées par la certitude, lien famille → fiche → atelier
+// (identifiants réels, vérifiés par le banc « familles »), sections variées, ateliers déjà pratiqués écartés s'il
+// existe une autre piste. La phrase « Pourquoi celui-ci » décrit un type de raisonnement observé, jamais un trait.
+function ateliersConseilles(t) {
+  const poids = {}, raisons = {};
+  const pratiques = lire("resultatsAteliers", {});
+  lignesPassation(t).filter(l => l.juste === false).forEach(l => {
+    const w = l.reponse.certitude ? l.reponse.certitude / 100 : 0.5;
+    const adresses = new Set(l.item.ateliers || []);
+    (l.item.fiches || []).forEach(cle => ateliersDeLaFiche(cle).forEach(a => adresses.add(a.adresse)));
+    const famille = familleGT(l.item.famille);
+    adresses.forEach(ad => {
+      poids[ad] = (poids[ad] || 0) + w;
+      if (!raisons[ad] || w > raisons[ad].w) raisons[ad] = { w, texte: famille ? famille.construit : "une affirmation sur « " + (l.item.texte || "").slice(0, 60) + "… »" };
+    });
+  });
+  const tous = tousLesAteliers();
+  const candidats = Object.keys(poids).map(ad => tous.find(a => a.adresse === ad)).filter(Boolean)
+    .sort((a, b) => poids[b.adresse] - poids[a.adresse] || a.adresse.localeCompare(b.adresse));
+  const nouveaux = candidats.filter(a => !pratiques[a.atelier.id]), ordre = nouveaux.length >= 3 ? nouveaux : nouveaux.concat(candidats.filter(a => pratiques[a.atelier.id]));
+  const choisis = [], sections = new Set();
+  ordre.forEach(a => { if (choisis.length < 3 && !sections.has(a.atelier.section)) { choisis.push(a); sections.add(a.atelier.section); } });
+  ordre.forEach(a => { if (choisis.length < 3 && !choisis.includes(a)) choisis.push(a); });
+  return choisis.map(a => ({ atelier: a, raison: "Pourquoi celui-ci : plusieurs de vos réponses à revoir portaient sur ce point — " + raisons[a.adresse].texte.charAt(0).toLowerCase() + raisons[a.adresse].texte.slice(1) + "." }));
+}
+
+function blocAteliersConseilles(t) {
+  const conseils = ateliersConseilles(t);
+  const bloc = el("section", "gt-conseils");
+  bloc.appendChild(el("h3", null, "Trois ateliers pour aller plus loin"));
+  if (!conseils.length) { bloc.appendChild(paragraphe("Aucune erreur à approfondir dans ce test : explorez librement les ateliers.")); return bloc; }
+  conseils.forEach(c => {
+    const p = el("p");
+    p.append(lienVers(c.atelier.adresse, c.atelier.atelier.titre, "lien-texte"), el("br"), el("span", "source", c.raison));
+    bloc.appendChild(p);
+  });
+  return bloc;
+}
+
+// Deux ateliers nouveaux, issus de l'audit des manques : la mémoire (aucun atelier n'existait) et la sur-correction.
+// Leur contenu est à relire : ils ne sont inscrits que si le Grand test est visible (copie d'essai seulement).
+function atelierFauxSouvenirs(zone) {
+  zone.innerHTML = "";
+  const graine = Math.floor(Math.random() * 4294967295) >>> 0;
+  const demo = demonstrationDRM(Math.floor(Math.random() * LISTES_DRM_GT.length), graine);
+  zone.appendChild(paragraphe("Lisez cette liste de dix mots, sans vous presser. Vous devrez ensuite reconnaître ceux qui y figuraient."));
+  const ul = el("ul", "gt-liste-mots");
+  demo.liste.forEach(m => ul.appendChild(el("li", null, m)));
+  zone.appendChild(ul);
+  zone.appendChild(boutonSuivant("J'ai lu la liste", () => {
+    zone.innerHTML = "";
+    const reponses = demo.test.map(() => null);
+    const valider = boutonValider();
+    demo.test.forEach((x, k) => zone.appendChild(groupeChoix("« " + x.mot + " » était-il dans la liste ?", ["Oui", "Non"], null, j => { reponses[k] = j === 0; valider.disabled = reponses.some(r => r === null); }).element));
+    zone.appendChild(valider);
+    valider.addEventListener("click", () => {
+      const b = bilanDRM(demo, reponses);
+      zone.querySelectorAll("button").forEach(x => { x.disabled = true; });
+      valider.remove();
+      noterPartie("faux-souvenirs", b.critiqueReconnu ? 0 : 1, 1);
+      ajouterExplication(zone, "Ce que montre cet atelier", [(b.critiqueReconnu ? "Vous avez reconnu « " + demo.critique + " », absent de la liste. " : "« " + demo.critique + " » n'était pas dans la liste, et vous l'avez écarté. ") + demo.explication,
+        "Paradigme de Roediger et McDermott (1995). Ces listes françaises sont originales et non normées : c'est une démonstration, pas une mesure."], [["#biais/faux-souvenirs", "Fiche : faux souvenirs"]]);
+      boutonRejouer(zone, () => atelierFauxSouvenirs(zone));
+    });
+  }));
+}
+
+function atelierDouterJuste(zone) {
+  zone.innerHTML = "";
+  const graine = Math.floor(Math.random() * 4294967295) >>> 0, alea = generateur(graine);
+  const familles = melanger(FAMILLES_GT.filter(f => f.surCorrection), alea).slice(0, 4);
+  const items = familles.map(f => instanceGT(f, Math.floor(alea() * tailleFamille(f)), graine));
+  derouler(zone, items, (item, z, fini) => {
+    z.appendChild(paragraphe(item.texte));
+    const g = groupeChoix(item.question, item.choixAffiches, null, k => {
+      g.desactiver();
+      g.boutons[item.justeAffiche].classList.add("juste");
+      if (k !== item.justeAffiche) g.boutons[k].classList.add("faux");
+      const retour = correction(item, k, null);
+      z.appendChild(retour);
+      fini(k === item.justeAffiche, retour);
+    });
+    z.appendChild(g.element);
+  }, resultats => {
+    const justes = resultats.filter(Boolean).length;
+    afficherScore(zone, "douter-juste", justes, resultats.length);
+    ajouterExplication(zone, "Douter juste", [MESSAGE_SUR_CORRECTION, "Chaque situation était construite pour que la preuve permette de conclure, ou pour que la règle apprise ne s'applique plus. Rejeter par principe est une erreur aussi."], [["#sophismes/sophisme-sophisme", "Fiche : sophisme du sophisme"]]);
+    boutonRejouer(zone, () => atelierDouterJuste(zone));
+  });
+}
+
+
+// ===================== Entités et niveaux (lot 9 ; absents tant que PERSONNAGES_VISIBLES vaut false) =====================
+// Dessin commun au trait (le trait de Müller-Lyer) et 2 ou 3 traits distinctifs ; couleur de la catégorie de la fiche
+// (--c), aucun dégradé, aucune ombre, aucune animation. Nom accessible : le rôle pédagogique de l'entité.
+const TRAITS_ENTITE = {
+  ouvertes: '<path d="M10 24 4 18M10 24l-6 6M38 24l6-6M38 24l6 6"/>', fermees: '<path d="M10 24l6-6M10 24l6 6M38 24l-6-6M38 24l-6 6"/>',
+  double: '<path d="M10 32h28"/>', cercle: '<circle cx="24" cy="12" r="5" class="fond"/>', pointille: '<path d="M10 38h28" class="pointille"/>',
+  fleche: '<path d="M18 40h14m-4-4 4 4-4 4"/>', vague: '<path d="M10 8c4-4 8 4 12 0s8 4 12 0"/>', croix: '<path d="M36 6l6 6M42 6l-6 6"/>'
+};
+function dessinEntite(e, fiche) {
+  const s = svg("svg", { viewBox: "0 0 48 48", class: "picto", role: "img", "aria-label": e[1] + " : métaphore du mécanisme « " + fiche.nom + " »" });
+  s.innerHTML = '<path d="M10 24h28"/>' + e[2].map(t => TRAITS_ENTITE[t]).join("");   // dessins fixes, aucune donnée extérieure
+  return s;
+}
+const ficheDeCle = cle => { const [type, id] = cle.split(":"); return { type, id, fiche: trouverFiche(type, id) }; };
+const premierePhrase = t => (String(t).match(/^.*?[.!?](\s|$)/) || [t])[0].trim();
+
+// « Les mécanismes rencontrés aujourd'hui » : entités liées aux erreurs de cette passation, erreurs sûres d'abord
+function blocEntitesRencontrees(t, visible = PERSONNAGES_VISIBLES) {
+  if (!visible) return null;
+  const poids = {};
+  lignesPassation(t).filter(l => l.juste === false).forEach(l => fichesItem(l.item).forEach(cle => { poids[cle] = (poids[cle] || 0) + (l.reponse.certitude || 50); }));
+  const cles = Object.keys(poids).sort((a, b) => poids[b] - poids[a]).slice(0, 6);
+  const bloc = el("section", "gt-entites");
+  bloc.appendChild(el("h3", null, "Les mécanismes rencontrés aujourd'hui"));
+  if (!cles.length) { bloc.appendChild(paragraphe("Aucune erreur liée à une fiche dans ce test.")); return bloc; }
+  bloc.appendChild(paragraphe("Chaque figure représente un mécanisme qui peut arriver à tout le monde, pas une caractéristique de votre personne.", "source"));
+  cles.forEach(cle => {
+    const e = ENTITES_GT.find(x => x[0] === cle), f = ficheDeCle(cle);
+    if (!e || !f.fiche) return;
+    const carte = el("div", "gt-entite");
+    carte.style.setProperty("--c", COULEURS[f.fiche.categorie] || "");
+    const texte = el("div");
+    texte.append(el("p", "consigne", e[1]), paragraphe("Mécanisme : " + f.fiche.definition), paragraphe("Parade : " + premierePhrase(f.fiche.parade)));
+    const liens = el("div", "voir-aussi");
+    liens.appendChild(lienVers("#" + f.type + "/" + f.id, "Fiche : " + f.fiche.nom));
+    ateliersDeLaFiche(cle).slice(0, 1).forEach(a => liens.appendChild(lienVers(a.adresse, "Atelier : " + a.atelier.titre)));
+    texte.appendChild(liens);
+    carte.append(dessinEntite(e, f.fiche), texte);
+    bloc.appendChild(carte);
+  });
+  return bloc;
+}
+
+function blocNiveau(etat, visible = PERSONNAGES_VISIBLES) {
+  if (!visible) return null;
+  const n = niveauObserve(etat);
+  const bloc = el("section", "gt-niveau");
+  bloc.appendChild(el("h3", null, "Repère de pratique"));
+  if (n.id === null) bloc.appendChild(paragraphe("À mesurer : il faut au moins un test complet."));
+  else {
+    const [titre, personnage, saitFaire] = NIVEAUX_GT[n.id - 1];
+    bloc.append(el("p", "consigne", "Niveau " + n.id + " : " + titre), paragraphe(personnage + " — " + saitFaire));
+  }
+  bloc.appendChild(paragraphe(TEXTE_NIVEAU_GT, "source"));
+  bloc.appendChild(paragraphe("Monter d'un niveau demande une réussite répétée dans deux tests complets espacés d'au moins sept jours, en tenant compte de l'incertitude ; un niveau qui ne se confirme plus redescend.", "source"));
+  return bloc;
+}
+
 // ===================== Inscription =====================
 // Seulement si le test est publié (ou dans la copie d'essai du banc) : sinon aucune carte, aucune route.
 
@@ -1077,5 +1233,13 @@ if (GRAND_TEST_VISIBLE) {
     titre: "Le Grand test",
     resume: "Cinq façons de raisonner, mesurées séparément, avec leur marge d'incertitude : ni score global, ni classement. En version express (12 à 15 minutes) ou complète, en plusieurs fois.",
     lancer(zone) { afficherGrandTest(zone); }
+  }, {
+    id: "faux-souvenirs", section: "philosopher", picto: "pensee", couleur: "#8a3f8f", duree: "3 min", titre: "Faux souvenirs",
+    resume: "Lisez une liste de mots, puis reconnaissez-les : la mémoire ajoute parfois un mot qui n'y était pas.",
+    lancer(zone) { atelierFauxSouvenirs(zone); }
+  }, {
+    id: "douter-juste", section: "raisonner", picto: "balance", couleur: "#2f6db5", duree: "4 min", titre: "Douter juste",
+    resume: "Quatre situations où la preuve permet de conclure, ou où une règle apprise ne s'applique plus : l'esprit critique n'est pas le contre-pied.",
+    lancer(zone) { atelierDouterJuste(zone); }
   });
 }

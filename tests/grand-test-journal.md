@@ -424,3 +424,47 @@ Commandes : `tests/lancer.sh grand csp` → grand 86 / 86 et csp sans blocage, d
 Correction en cours de lot : l'attente du banc sur la tendance était fausse (avec 3 tests, les trois sont complets).
 
 Lot suivant : lot 8 — ateliers et navigation pédagogique.
+
+---
+
+## Lots 8 et 9 — ateliers, navigation pédagogique, entités et niveaux (1er novembre 2026, reprise automatique)
+
+Les deux lots sont réunis dans un seul commit : leurs changements touchent les mêmes fonctions de
+`grand-test-interface.js`, et une première suite du lot 8 a été faussée parce que j'avais modifié des fichiers du site
+pendant qu'elle tournait (deux bancs « inachevés », suite arrêtée, copies de banc nettoyées). Leçon déjà notée :
+ne jamais modifier `static/` pendant un `lancer.sh`.
+
+### Lot 8 — ateliers
+
+- **Audit des manques** (mandat §7.2) : *risques relatifs et absolus* → couvert par « Graphiques trompeurs »
+  (`grilleRisque`) ; *lecture d'une étude* → « Deux études, même méthode » et « Fabriquer un résultat » ;
+  *prévision et incertitude* → « Mon carnet de prévisions » et « Êtes-vous sûr à 90 % ? » ; *mémoire et faux souvenirs*
+  → **aucun atelier : créé « Faux souvenirs »** ; *sur-correction* → **aucun atelier : créé « Douter juste »**.
+- Les deux ateliers nouveaux réutilisent les générateurs (listes de mots, familles de sur-correction), notent leur
+  partie (`noterPartie`), renvoient aux fiches réelles. **Contenu à relire : inscrits seulement si `GRAND_TEST_VISIBLE`
+  vaut true** ; le site publié garde 45 ateliers (vérifié).
+- `ateliersConseilles` : trois ateliers en fin de test, erreurs pondérées par la certitude, lien famille → fiche →
+  atelier, sections variées, ateliers déjà pratiqués écartés s'il existe une autre piste, phrase « Pourquoi celui-ci ».
+
+### Lot 9 — entités et niveaux (cachés)
+
+- `ENTITES_GT` : 90 entités, une par fiche réelle (B 1–51, S 1–39), configuration compacte (nom + 2 ou 3 traits) ;
+  pouvoir et parade lus dans la fiche ; dessin commun au trait de Müller-Lyer, couleur de la catégorie.
+- `NIVEAUX_GT` : cinq niveaux inspirés de la caverne de Platon ; `niveauObserve` (règle fixée d'avance : borne basse
+  au-dessus du seuil dans deux tests complets espacés d'au moins 7 jours, ≥ 3 items, < 50 % d'items déjà vus,
+  n − 1 axes pour le niveau n, fenêtre des quatre derniers tests complets pour le déclassement). Seuils : proportion
+  0,40 / 0,50 / 0,60 / 0,70 ; d′ 0,25 / 0,5 / 0,75 / 1,0 (niveaux 2 à 5) — **seuils choisis, à faire relire**.
+- `PERSONNAGES_VISIBLES = false` : aucun bloc, aucun espace réservé dans le profil (vérifié). Rendu testé en forçant
+  `true` dans le banc seulement.
+- `DESIGN.md` : amendement du mandat recopié mot pour mot, section « Personnages du Grand test ».
+
+### Bancs
+
+`CONFIGS="390 clair" tests/lancer.sh grand` → 96 / 96 (ateliers nouveaux jouables jusqu'au bilan ; conseils réels ;
+entités absentes à false ; 90 entités, budget ≤ 300 octets chacune ; niveaux : inconnu, 1, 5, espacement de 3 jours
+refusé, déclassement). Suite complète des quatre configurations : voir le paragraphe suivant.
+Suite complète : `tests/lancer.sh` → **44 / 44 rapports au vert** (11 bancs × 4 configurations), 25 min 9 s : affichage
+0 défaut (108 pages), ateliers 237 / 237, test 131 / 131, niveaux 24 / 24, items 0 manque, csp sans blocage, grand
+96 / 96, hors-ligne 7 / 7, calculs 44 / 44, familles 93 / 93, banques 39 / 39.
+
+Lot suivant : lot 10 — cartes de sensibilisation et sources.

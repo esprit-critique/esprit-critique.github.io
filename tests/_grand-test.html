@@ -308,6 +308,46 @@ f.onload = async () => {
       ok(n + " test(s) : contrôle d'affichage du site sans défaut (noms, contraste, doublons d'identifiants)", !defauts.length, defauts.slice(0, 3).map(x => x.type + " " + x.ou + " " + x.detail).join(" | "));
     }
 
+    // --- Ateliers conseillés et ateliers nouveaux (lot 8) ---
+    ok("essai : 48 ateliers (45 + Grand test + deux ateliers nouveaux) ; publié : 45", w.eval("tousLesAteliers().length") === 48);
+    const conseils = w.eval("ateliersConseilles(passationsTerminees(GT.etat).slice(-1)[0])");
+    ok("trois ateliers conseillés au plus, adresses réelles, raison donnée", conseils.length <= 3 && conseils.length > 0 && conseils.every(c => w.eval("tousLesAteliers()").some(a => a.adresse === c.atelier.adresse) && /^Pourquoi celui-ci/.test(c.raison)));
+    for (const [route, motif] of [["tests/faux-souvenirs", /Ce que montre cet atelier/], ["tests/douter-juste", /Douter juste/]]) {
+      await aller("accueil"); await aller(route);
+      for (let k = 0; k < 40 && !motif.test(vue().textContent); k++) {
+        const zone = vue().querySelector(".zone-jeu");
+        zone.querySelectorAll("fieldset.gt-groupe").forEach(fs => { const b = fs.querySelector("button:not(:disabled)"); if (b && !fs.querySelector(".choisi, .juste")) b.click(); });
+        const v = zone.querySelector("[data-valider]:not(:disabled)") || zone.querySelector("[data-suivant]");
+        if (v) v.click();
+        await pause(20);
+      }
+      ok("atelier " + route + " : jouable jusqu'au bilan, sans valeur indéfinie", motif.test(vue().textContent) && !/undefined|NaN/.test(vue().textContent));
+    }
+
+    // --- Entités et niveaux (lot 9) : absents à false, rendus et accessibles quand on force true ---
+    ok("personnages : PERSONNAGES_VISIBLES vaut false, aucune entité ni niveau dans le profil",
+      w.eval("PERSONNAGES_VISIBLES") === false && !vue().querySelector(".gt-entites, .gt-niveau, .gt-entite"));
+    const derniere = "passationsTerminees(GT.etat).slice(-1)[0]";
+    const blocE = w.eval("blocEntitesRencontrees(" + derniere + ", true)"), blocN = w.eval("blocNiveau(GT.etat, true)");
+    ok("personnages forcés à true : entités dessinées avec un nom accessible, liens vers fiche et atelier",
+      !!blocE && [...blocE.querySelectorAll("svg")].every(g => g.getAttribute("role") === "img" && /métaphore du mécanisme/.test(g.getAttribute("aria-label"))) && !!blocE.querySelector('a[href^="#"]'));
+    ok("personnages forcés à true : texte obligatoire du niveau, aucune étiquette sur la personne",
+      !!blocN && blocN.textContent.includes("Ce niveau décrit une pratique observée dans quelques exercices ; il ne mesure pas votre intelligence et ne vous définit pas.".replace(" ;", "\u202f;")) || (blocN && /ne vous définit pas/.test(blocN.textContent)));
+    const ent = w.eval("ENTITES_GT"), toutesFiches = w.eval("[...INDEX.keys()]");
+    ok("90 entités, une par fiche réelle, noms distincts, 2 ou 3 traits connus", ent.length === 90 && new Set(ent.map(e => e[0])).size === 90 && ent.every(e => toutesFiches.includes(e[0]))
+      && new Set(ent.map(e => e[1])).size === 90 && ent.every(e => e[2].length >= 2 && e[2].length <= 3 && e[2].every(t => t in w.eval("TRAITS_ENTITE"))));
+    ok("budget : 300 octets au plus par entité (hors texte de la fiche)", ent.every(e => new TextEncoder().encode(JSON.stringify(e)).length <= 300));
+    const niveaux = w.eval(`(() => {
+      const t = (jour, bas, d) => ({ mode: "complet", dateFin: new Date(Date.UTC(2026, 0, jour)).toISOString(), instances: [{ dejaVu: false }],
+        scores: { A: { valeur: bas + .1, plage: { bas, haut: 1, niveau: .8, methode: "x" }, n: 8 }, B: { valeur: bas + .1, plage: { bas, haut: 1, niveau: .8, methode: "x" }, n: 8 },
+          C: { valeur: bas + .1, plage: { bas, haut: 1, niveau: .8, methode: "x" }, n: 8 }, D: { valeur: d + .2, plage: { bas: d, haut: 3, niveau: .8, methode: "x" }, n: 24 } } });
+      const etat = tests => ({ historiqueTests: tests });
+      return [niveauObserve(etat([])).statut, niveauObserve(etat([t(1, .2, 0)])).id, niveauObserve(etat([t(1, .8, 1.2), t(10, .8, 1.2)])).id,
+        niveauObserve(etat([t(1, .8, 1.2), t(4, .8, 1.2)])).id, niveauObserve(etat([t(1, .8, 1.2), t(10, .8, 1.2), t(20, .2, 0), t(30, .2, 0), t(40, .2, 0), t(50, .2, 0)])).id];
+    })()`);
+    ok("niveaux : inconnu sans test ; 1 au départ ; 5 avec deux tests forts espacés de 9 jours ; 1 s'ils sont à 3 jours ; déclassement après quatre tests faibles",
+      JSON.stringify(niveaux) === JSON.stringify(["inconnu", 1, 5, 1, 1]), JSON.stringify(niveaux));
+
     // --- Aucune requête réseau ---
     ok("aucune requête réseau pendant le test (fetch, XHR, beacon, WebSocket)", requetes.length === 0, requetes.join(" | "));
     const externes = w.performance.getEntriesByType("resource").filter(x => new URL(x.name).origin !== w.location.origin);
