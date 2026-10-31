@@ -268,3 +268,33 @@ instance revient, marquée réutilisée. Le profil affiche le nombre et la part 
 
 Lots 0 à 12 de la section 15 du mandat, dans l'ordre. Chaque lot : bancs, commit en français, push, journal,
 puis le lot suivant sans attendre.
+
+## 10. Les 12 familles de pièges avancés (lot 5)
+
+Toutes : situations fictives, 20 instances au moins, bonne réponse et leurre calculés par le générateur, oracle
+indépendant dans `tests/grand_test_familles.py` ou `tests/grand_test_banques.py`, `aRelire: true`. Les réponses ne
+sont qualifiées de « pièges » que dans cette note de conception, jamais auprès de la personne.
+
+| Famille | Construit | Variables | Réponse / leurre | Noté ? | Limite |
+|---|---|---|---|---|---|
+| `b-monty-surcorrection` | Ne pas transposer la solution de Monty Hall quand les règles changent | objets, ouvreur ignorant, n de 3 à 5 | « aucune différence, 1 sur n − 1 » / « changer augmente vos chances » | noté (B), compte dans l'indice de sur-correction | suppose qu'on connaît le problème classique |
+| `b-depistage-surcorrection` | Taux de base élevé : une alerte est le plus souvent juste | prévalence 30 à 70 %, détection, fausses alertes | probabilité a posteriori / prévalence | noté (B), sur-correction | arrondi à l'unité |
+| `c-causalite-surcorrection` | Un essai randomisé, en aveugle, permet de conclure | intervention, effectif, mesure | « a amélioré, dans ces conditions » / « corrélation n'est pas causalité » | noté (C), sur-correction | études fictives |
+| `c-preuve-surcorrection` | Des preuves indépendantes et convergentes justifient une conclusion | nombre d'équipes, sujet | « solide, révisable » / « rien n'est possible » | noté (C), sur-correction | sujets choisis non controversés |
+| `a-portee-negation` | « Il est faux que tous » = « au moins un ne… pas » | groupe, propriété, genre | « au moins un » / « aucun » | noté (A) | lecture du français |
+| `a-presuppose` | Repérer une prémisse non établie dans une question | texte, question, fait présupposé | « le texte ne dit pas que… » / une raison plausible | noté (A) | une seule réponse défendable : le fait est absent du texte |
+| `b-denominateur` | Une part des cas ne dit rien sans la part du groupe | pourcentage, événement, groupe | « la part du groupe dans l'ensemble » / « 65 %, c'est la majorité » | noté (B) | — |
+| `b-unites` | Convertir avant de comparer | quatre mesures, unités | plus grande quantité / plus grand nombre affiché | noté (B) | difficulté faible (1) |
+| `b-points-pourcents` | Points et pourcents ; « deux fois moins » | taux avant / après | « x points, soit y % de moins » / « x points, soit x % » | noté (B) | — |
+| `m-drm` | Faux souvenir d'un mot associé jamais présenté | 20 listes originales | reconnaissance du mot critique | **démonstration** : aucune norme française publiée connue | non normatif |
+| `m-desinformation` | Une question ultérieure glisse un détail faux | 20 scènes anodines, couleurs | couleur vue / couleur suggérée | **démonstration**, avec consentement et correction | aucune scène sensible |
+| `m-source` | Retenir le contenu sans sa source | 5 jeux × 4 répartitions | sources retrouvées, oublis | **démonstration** | informations fictives |
+
+**Indice de sur-correction** (`indiceSurCorrection`) : parmi les items des familles marquées `surCorrection`, part des
+réponses qui choisissent le leurre de rejet par principe. Descriptif, sans seuil ; affiché avec le message fixe :
+« L'esprit critique n'est pas le contre-pied systématique. Une conclusion peut être solide quand la méthode et les
+données le sont. »
+
+**Corrections différées** (mandat §4.1) : vérité illusoire (toutes les affirmations notées à l'étape 5, corrigées
+après la notation) ; biais rétrospectif (trois fourchettes sur six corrigées seulement après le rappel) ; d′ et
+raisonnements du complet (corrigés en bloc à la fin de leur étape). Chaque exception est annoncée au début de l'étape.

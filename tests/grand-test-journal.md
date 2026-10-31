@@ -343,3 +343,22 @@ Drapeaux toujours à false. Site publié intact (bancs ci-dessus).
 `profil.js` dans `static/grand-test-interface.js` (en remplaçant la page minimale du lot 1 : garder chargement,
 enregistrement, export brut et effacement), ajouter des styles `.gt-*` dans `style.css` sans nouveau jeton,
 étendre `tests/_grand-test.html` (parcours express et complet simulés, reprise à chaque frontière), puis lots 5 à 12.
+
+---
+
+## Lot 5 — pièges avancés et mémoire (31 octobre 2026, reprise automatique)
+
+- `static/grand-test.js` : démonstrations `demonstrationDRM`, `demonstrationRecit`, `demonstrationSource` (20 instances
+  chacune, ordre tiré par la graine), bilans `bilanDRM`, `bilanRecit`, `bilanSource`, `indiceSurCorrection` et le
+  message fixe du mandat. Brouillon `memoire.js` vérifié puis intégré (retiré des brouillons).
+- `tests/grand-test-plan.md` §10 : fiche de conception des 12 familles de pièges avancés (construit, variables,
+  réponse et leurre, noté ou démonstration, limites) et liste des corrections différées.
+- Banc « banques » étendu : 39 / 39 (DRM : mot critique jamais dans la liste, 3 appris + critique + 2 intrus ;
+  désinformation : couleur vue dans le récit, couleur suggérée seulement dans la question ; sources : 20 répartitions
+  distinctes ; bilans et indice de sur-correction sur cas construits ; explications ≤ 3 phrases).
+
+Commandes : `grand_test_banques.py` 39 / 39 · `grand_test_familles.py` 93 / 93 · `grand_test_calculs.py` 44 / 44 ·
+`CONFIGS="390 clair" tests/lancer.sh grand csp` → 48 / 48, aucun blocage. Fonctions pures non appelées par le site
+publié : la suite des quatre configurations sera relancée au lot 6, qui change l'interface.
+
+Lot suivant : lot 6 — interface des parcours express et complet.

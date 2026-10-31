@@ -23,7 +23,12 @@ JSON.stringify({
   vf: VF_GT, expositions: EXPOSITIONS_GT, grandeurs: GRANDEURS_PAYS_GT.map(([p, k]) => grandeurGT("gr-" + p + "-" + k)),
   angleMort: ANGLE_MORT_GT, societe: SOCIETE_GT, drm: LISTES_DRM_GT, recits: RECITS_GT, sources: SOURCES_GT,
   banques: Object.fromEntries(Object.keys(BANQUES_GT).map(b => [b, BANQUES_GT[b]().length])),
-  pays: PAYS, monde: MONDE_PAYS, vraiFauxSite: VRAI_FAUX.map(x => x.texte)
+  pays: PAYS, monde: MONDE_PAYS, vraiFauxSite: VRAI_FAUX.map(x => x.texte),
+  demoDRM: LISTES_DRM_GT.map((x, i) => demonstrationDRM(i, 7)), demoRecit: RECITS_GT.map((x, i) => demonstrationRecit(i, 7)),
+  demoSource: Array.from({ length: 20 }, (_, i) => demonstrationSource(i, 7)),
+  bilans: [bilanDRM(demonstrationDRM(0, 7), demonstrationDRM(0, 7).test.map(x => x.present || x.critique)), bilanRecit(demonstrationRecit(0, 7), demonstrationRecit(0, 7).suggeree),
+    bilanSource(demonstrationSource(0, 7), demonstrationSource(0, 7).test.map(x => x.source)), bilanSource(demonstrationSource(0, 7), demonstrationSource(0, 7).test.map(() => null))],
+  surCorr: [indiceSurCorrection([{ surCorrection: true, reponse: 1, leurreAffiche: 1 }, { surCorrection: true, reponse: 0, leurreAffiche: 1 }, { surCorrection: false, reponse: 1, leurreAffiche: 1 }]), indiceSurCorrection([]), MESSAGE_SUR_CORRECTION]
 });
 """
 try:
@@ -130,5 +135,27 @@ if R:
     ok("mémoire de source : 5 jeux de 6 informations, 20 combinaisons", len(R["sources"]) == 5 and all(len(s[2]) == 6 for s in R["sources"]) and R["banques"]["source"] == 20)
     ok("banques : effectifs de tirage (" + ", ".join(k + " " + str(v) for k, v in R["banques"].items()) + ")",
        R["banques"]["vf"] == 140 and R["banques"]["exposition"] == 100 and R["banques"]["grandeur"] == 80 and R["banques"]["drm"] == 20 and R["banques"]["recit"] == 20)
+
+    # ---------- Démonstrations de mémoire (lot 5) ----------
+    dd = R["demoDRM"]
+    ok("démonstration DRM : 20 instances ; six mots à reconnaître (3 appris, le mot critique jamais présenté, 2 sans rapport)",
+       len(dd) == 20 and all(len(d["test"]) == 6 and sum(x["present"] for x in d["test"]) == 3 and sum(x["critique"] for x in d["test"]) == 1
+                             and d["critique"] not in d["liste"] and all((x["mot"] in d["liste"]) == x["present"] for x in d["test"]) for d in dd))
+    dr = R["demoRecit"]
+    ok("démonstration de désinformation : 20 récits ; la couleur vue est dans le récit, la question glisse l'autre",
+       len(dr) == 20 and all(d["vue"] in d["recit"] and d["suggeree"] not in d["recit"] and d["suggeree"] in d["questionTrompeuse"] and d["vue"] not in d["questionTrompeuse"]
+                             and len(set(d["choix"])) == 4 and "{" not in d["recit"] for d in dr), [d["recit"][:40] for d in dr if "{" in d["recit"]])
+    ds = R["demoSource"]
+    ok("mémoire de source : 20 instances distinctes, chaque information attribuée à l'une des deux sources",
+       len({tuple((x["texte"], x["source"]) for x in d["lues"]) for d in ds}) == 20 and all(len(d["lues"]) == 6 and all(x["source"] in d["sources"] for x in d["lues"]) for d in ds))
+    b = R["bilans"]
+    ok("bilans des démonstrations : mot critique reconnu, couleur suggérée repérée, sources justes et oubliées comptées",
+       b[0]["critiqueReconnu"] and b[0]["apprisReconnus"] == 3 and b[0]["intrusReconnus"] == 0 and b[1]["suggeree"] and not b[1]["juste"]
+       and b[2]["justes"] == 6 and b[3]["oublis"] == 6 and b[3]["justes"] == 0)
+    sc = R["surCorr"]
+    ok("indice de sur-correction : 1 rejet sur 2 situations concluantes ; aucune situation → non calculé ; message exact du mandat",
+       sc[0] == {"indice": 0.5, "n": 2} and sc[1] is None and sc[2] == "L'esprit critique n'est pas le contre-pied systématique. Une conclusion peut être solide quand la méthode et les données le sont.")
+    phr = [d["explication"] for d in dd[:1] + dr[:1] + ds[:1]]
+    ok("démonstrations : explications de trois phrases au plus", all(len(phrases(x)) <= 3 for x in phr))
 
 sys.exit(1 if rapport.ecrire(sortie) else 0)
