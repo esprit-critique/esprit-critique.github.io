@@ -250,6 +250,27 @@ f.onload = async () => {
     ok("repérage : bloc du portrait", /Vos repérages/.test(vue().textContent) && /une publicité de soldes/.test(vue().textContent));
 
 
+    // ---------- Fiches : aucun contenu perdu (les 90 fiches) ----------
+    // Comparaison sans les espaces : la typographie (espaces insécables) et le découpage en lignes n'y changent rien
+    const sansEspaces = t => String(t).replace(/\s+/g, "");
+    const manques = [];
+    for (const r of w.eval("INDEX").values()) {
+      const { type, fiche } = r;
+      const cle = type + ":" + fiche.id;
+      await aller(type + "/" + fiche.id);
+      const carte = vue().querySelector("article.carte");
+      const texte = sansEspaces(carte.textContent);
+      const contient = (nom, valeur) => { if (valeur && !texte.includes(sansEspaces(Array.isArray(valeur) ? valeur.join(" ") : valeur))) manques.push(cle + " : " + nom); };
+      ["definition", "forme", "mecanisme", "exemple", "celebre", "parade", "source"].forEach(c => contient(c, fiche[c]));
+      if (fiche.distinction) { contient("distinction", fiche.distinction[1]); const v = w.eval("INDEX").get(fiche.distinction[0]); if (v && !carte.querySelector('a[href="#' + v.type + "/" + v.fiche.id + '"]')) manques.push(cle + " : lien de distinction"); }
+      if (w.eval("SCHEMAS")[cle] && !carte.querySelector("figure.schema svg")) manques.push(cle + " : illustration");
+      if (w.eval("entrainementFiche")(type, fiche) && !carte.querySelector(".entrainement .exercice")) manques.push(cle + " : exercices");
+      const ateliersF = w.eval("ateliersDeLaFiche")(cle);
+      if (ateliersF.length && carte.querySelectorAll(".ateliers-fiche a").length !== ateliersF.length) manques.push(cle + " : ateliers");
+      (fiche.lies || []).forEach(l => { const v = w.eval("INDEX").get(l); if (v && !carte.querySelector('.voir-aussi a[href="#' + v.type + "/" + v.fiche.id + '"]')) manques.push(cle + " : voir aussi " + l); });
+    }
+    ok("fiches : sur les 90, chaque champ rempli apparaît sur la page", manques.length === 0, manques.slice(0, 8).join(" | "));
+
     // ---------- Ouverture de l'accueil ----------
     const sauveActivite = w.localStorage.getItem("activite"), sauveResultats = w.localStorage.getItem("resultatsAteliers");
     w.localStorage.removeItem("activite"); w.localStorage.removeItem("resultatsAteliers");

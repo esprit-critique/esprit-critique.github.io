@@ -1053,9 +1053,12 @@ function afficherFiche(type, fiche) {
   const etiquette = el("span", "etiquette-numero");
   etiquette.append(el("span", "etiquette", conf.singulier + " · " + fiche.categorie), numeroFiche(type, fiche, "numero-fiche"));
   entete.append(etiquette, badge);
-  carte.append(entete, el("h1", "fiche-titre", fiche.nom));
-  if (fiche.autresNoms) carte.appendChild(el("p", "autres-noms", fiche.autresNoms));
-  carte.appendChild(el("p", "fiche-definition", fiche.definition));
+  // En-tête de la fiche, fermé par le trait de Müller-Lyer : la définition en est le chapô
+  const enteteFiche = el("div", "entete-fiche");
+  enteteFiche.append(entete, el("h1", "fiche-titre", fiche.nom));
+  if (fiche.autresNoms) enteteFiche.appendChild(el("p", "autres-noms", fiche.autresNoms));
+  enteteFiche.appendChild(el("p", "fiche-definition", fiche.definition));
+  carte.appendChild(enteteFiche);
 
   ajouterSection(carte, "Schéma de l'argument", fiche.forme, "forme");
   if (typeof SCHEMAS !== "undefined" && SCHEMAS[cle]) {

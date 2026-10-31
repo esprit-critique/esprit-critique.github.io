@@ -1,7 +1,7 @@
 // sw.js : mode hors ligne. Stratégie « réseau d'abord » : en ligne, on sert toujours la version publiée (et l'on met
 // le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Aucune donnée n'est envoyée nulle part.
 // À chaque nouveau fichier du site : l'ajouter à FICHIERS et changer le numéro de version du cache.
-const CACHE = "esprit-critique-v6";
+const CACHE = "esprit-critique-v7";
 const FICHIERS = [
   "./", "index.html", "style.css", "manifest.webmanifest?v=3", "favicon.svg?v=3", "icone-32.png?v=3", "icone.png?v=3", "icone-512.png?v=3",
   "donnees.js", "schemas.js", "pays.js", "jeux-donnees.js", "ateliers.js", "niveaux.js", "experiences.js", "chiffres.js",
