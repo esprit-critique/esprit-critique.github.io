@@ -7,7 +7,7 @@ faire, drapeau, personne et date de revue (à compléter par une personne réell
 
 Le drapeau est conservé même après relecture, pour la traçabilité : la colonne « personne-date » fait foi.
 
-## 1. Références du mandat §11.1 — aucune n'est encore ouverte
+## 1. Références du mandat §11.1 — 6 ouvertes (REF-07 à REF-12), 24 à ouvrir
 
 | ID | Affirmation ou décision | Source pressentie | Vérification exacte | Drapeau | Personne-date |
 |---|---|---|---|---|---|
