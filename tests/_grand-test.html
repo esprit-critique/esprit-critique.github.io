@@ -211,6 +211,7 @@ f.onload = async () => {
           const apres = JSON.parse(w.localStorage.getItem("grandTest")).historiqueTests[0].reponses.length;
           reprise = { titre, titreApres: ecranLogique(), avant, apres };
         }
+        if (mode === "express" && w.controleAffichage) w.controleAffichage().forEach(x => defautsParcours.add(x.type + " " + x.ou + " " + (x.detail || "")));
         if (etape() === "rien") break;
         await pause(15);
         pas++;
@@ -218,6 +219,18 @@ f.onload = async () => {
       const etatFinal = JSON.parse(w.localStorage.getItem("grandTest"));
       return { pas, reprise, etat: etatFinal, texte: vue().textContent };
     };
+    const defautsParcours = new Set();
+    await new Promise((res, rej) => { const sc = d.createElement("script"); sc.src = "/controle-affichage.js"; sc.onload = res; sc.onerror = rej; d.head.appendChild(sc); });
+    // Clavier seul : sur un écran de question, la touche 2 choisit la deuxième réponse, sans souris
+    w.localStorage.removeItem("grandTest");
+    await aller("accueil"); await aller("tests/grand-test");
+    [...vue().querySelectorAll(".gt-modes button")].find(b => b.textContent.includes("express")).click(); await pause(30);
+    vue().querySelector("[data-suivant]").click(); await pause(30);
+    d.body.dispatchEvent(new w.KeyboardEvent("keydown", { key: "2", bubbles: true })); await pause(20);
+    const choix = [...vue().querySelectorAll(".zone-jeu fieldset:not(.gt-certitude) .choix")];
+    ok("clavier : la touche 2 choisit la deuxième réponse ; les boutons de certitude ont un nom", choix.length >= 2 && choix[1].getAttribute("aria-pressed") === "true"
+      && [...vue().querySelectorAll(".gt-certitude button")].every(b => b.textContent.trim()));
+    ok("clavier : chaque groupe de choix a une légende", [...vue().querySelectorAll(".zone-jeu fieldset")].every(fs => fs.querySelector("legend") && fs.querySelector("legend").textContent.trim()));
     for (const [mode, couper] of [["express", 9], ["complet", 57]]) {
       const r = await parcourir(mode, couper);
       const t = r.etat.historiqueTests[0];
@@ -226,6 +239,7 @@ f.onload = async () => {
       ok(mode + " : une réponse par item, données valides après le parcours", w.eval("grandTestValide")(r.etat) && t.reponses.length === t.instances.length, t.reponses.length + " / " + t.instances.length);
       ok(mode + " : scores enregistrés pour les six axes, aucun score global", ["A", "B", "C", "D", "E", "F"].every(a => t.scores[a] && typeof t.scores[a].n === "number") && !("global" in t.scores));
       ok(mode + " : profil sans valeur indéfinie, limites rappelées", !/undefined|NaN|\[object/.test(r.texte) && /Ce que le test ne mesure pas/.test(r.texte) && /pas de score global/.test(r.texte));
+      if (mode === "express") ok("express : contrôle d'affichage sans défaut à chaque écran (noms accessibles, contraste, identifiants)", !defautsParcours.size, [...defautsParcours].slice(0, 3).join(" | "));
       if (mode === "express") ok("express : pas de d′ personnel (démonstration), pas d'impartialité", t.scores.D.valeur === null && t.scores.F.valeur === null && /Démonstration seulement/.test(r.texte));
       if (mode === "complet") ok("complet : d′ calculé avec sa plage, démonstrations de mémoire restituées", typeof t.scores.D.valeur === "number" && !!t.scores.D.plage && /Les affirmations déjà lues/.test(r.texte + w.localStorage.getItem("grandTest")) !== null);
     }
@@ -323,6 +337,26 @@ f.onload = async () => {
       }
       ok("atelier " + route + " : jouable jusqu'au bilan, sans valeur indéfinie", motif.test(vue().textContent) && !/undefined|NaN/.test(vue().textContent));
     }
+
+    // --- Rappels et cartes (lots 10 et 11) ---
+    await aller("accueil"); await aller("tests/grand-test");
+    [...vue().querySelectorAll("button")].find(b => /Voir vos résultats/.test(b.textContent)).click(); await pause(60);
+    const nbRessourcesAvant = w.performance.getEntriesByType("resource").length;
+    const boutonRappel = [...vue().querySelectorAll("button")].find(b => /Programmer les rappels/.test(b.textContent));
+    if (boutonRappel) boutonRappel.click();
+    await pause(50);
+    const apresRappel = JSON.parse(w.localStorage.getItem("grandTest"));
+    const auj = w.eval("aujourdHui()");
+    ok("rappels : J+7 et J+30 enregistrés localement, sans requête ni permission", !!boutonRappel && apresRappel.rappelsEnAttente.some(r => r.type === "j7" && r.jour === auj + 7) && apresRappel.rappelsEnAttente.some(r => r.type === "j30" && r.jour === auj + 30)
+      && w.performance.getEntriesByType("resource").filter(x => !/^blob:/.test(x.name)).length === nbRessourcesAvant && (w.Notification === undefined || w.Notification.permission !== "granted"));
+    apresRappel.rappelsEnAttente = apresRappel.rappelsEnAttente.map(r => Object.assign(r, { jour: auj - 1 }));
+    w.localStorage.setItem("grandTest", JSON.stringify(apresRappel));
+    await aller("accueil"); await aller("tests/grand-test");
+    ok("rappels : à la visite suivante, « À revoir aujourd'hui » avec les erreurs et la réponse attendue", /À revoir aujourd/.test(vue().textContent) && /réponse attendue/.test(vue().textContent), vue().textContent.slice(0, 300) + " | " + JSON.stringify(w.eval("erreursGrandTest")(JSON.parse(w.localStorage.getItem("grandTest")))).slice(0, 200));
+    [...vue().querySelectorAll("button")].find(b => /C'est revu/.test(b.textContent)).click(); await pause(30);
+    ok("rappels : « C'est revu » efface les rappels échus", !/À revoir aujourd/.test(vue().textContent) && JSON.parse(w.localStorage.getItem("grandTest")).rappelsEnAttente.every(r => r.jour > auj));
+    [...vue().querySelectorAll("button")].find(b => /Voir vos résultats/.test(b.textContent)).click(); await pause(60);
+    ok("cartes : une carte « Le saviez-vous ? » dans le profil, avec source et statut", /Le saviez-vous/.test(vue().textContent) && /Statut\s*:\s*(établi|discuté|à répliquer)/.test(vue().textContent));
 
     // --- Entités et niveaux (lot 9) : absents à false, rendus et accessibles quand on force true ---
     ok("personnages : PERSONNAGES_VISIBLES vaut false, aucune entité ni niveau dans le profil",

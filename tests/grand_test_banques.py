@@ -28,6 +28,7 @@ JSON.stringify({
   demoSource: Array.from({ length: 20 }, (_, i) => demonstrationSource(i, 7)),
   bilans: [bilanDRM(demonstrationDRM(0, 7), demonstrationDRM(0, 7).test.map(x => x.present || x.critique)), bilanRecit(demonstrationRecit(0, 7), demonstrationRecit(0, 7).suggeree),
     bilanSource(demonstrationSource(0, 7), demonstrationSource(0, 7).test.map(x => x.source)), bilanSource(demonstrationSource(0, 7), demonstrationSource(0, 7).test.map(() => null))],
+  cartes: CARTES_GT,
   surCorr: [indiceSurCorrection([{ surCorrection: true, reponse: 1, leurreAffiche: 1 }, { surCorrection: true, reponse: 0, leurreAffiche: 1 }, { surCorrection: false, reponse: 1, leurreAffiche: 1 }]), indiceSurCorrection([]), MESSAGE_SUR_CORRECTION]
 });
 """
@@ -157,5 +158,19 @@ if R:
        sc[0] == {"indice": 0.5, "n": 2} and sc[1] is None and sc[2] == "L'esprit critique n'est pas le contre-pied systématique. Une conclusion peut être solide quand la méthode et les données le sont.")
     phr = [d["explication"] for d in dd[:1] + dr[:1] + ds[:1]]
     ok("démonstrations : explications de trois phrases au plus", all(len(phrases(x)) <= 3 for x in phr))
+
+    # ---------- Cartes de sensibilisation (lot 10) ----------
+    ca = R["cartes"]
+    doms = {}
+    for c in ca: doms[c["domaine"]] = doms.get(c["domaine"], 0) + 1
+    ok("cartes : au moins 40, réparties entre prévision, idées fausses, hasard, mémoire, confiance et réplication (≥ 5 chacune)",
+       len(ca) >= 40 and set(doms) == {"prevision", "idees-fausses", "hasard", "memoire", "confiance", "replication"} and min(doms.values()) >= 5, doms)
+    ok("cartes : 45 mots au plus, identifiants uniques", all(len(c["texte"].split()) <= 45 for c in ca) and len({c["id"] for c in ca}) == len(ca))
+    ok("cartes : source, date, statut (établi, discuté, à répliquer) et limite pour chacune",
+       all(c["source"] and c["date"] and c["statut"] in ("établi", "discuté", "à répliquer") and c["limite"] for c in ca))
+    ouvertes = re.compile(r"Macdonald|Dekker|Simons et Chabris|Gapminder|Ipsos|pays\.js|paradoxe des anniversaires")
+    ok("cartes : « source ouverte » seulement pour les sources réellement ouvertes", all(not c.get("sourceOuverte") or ouvertes.search(c["source"]) for c in ca), [c["id"] for c in ca if c.get("sourceOuverte") and not ouvertes.search(c["source"])])
+    ok("cartes : toutes à relire ; aucun chiffre de sondage électoral sans données vérifiées", all(c.get("aRelire", True) for c in ca) and not re.search(r"\d", next(c for c in ca if c["id"] == "ca-sondages-loin")["texte"]))
+    ok("cartes : aucune peur, aucun conseil médical (mots exclus)", not [c["id"] for c in ca if re.search(r"danger mortel|mourir|terrifi|traitement|médicament|vaccin", c["texte"], re.I)])
 
 sys.exit(1 if rapport.ecrire(sortie) else 0)

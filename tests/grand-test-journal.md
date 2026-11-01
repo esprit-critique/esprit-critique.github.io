@@ -468,3 +468,31 @@ Suite complète : `tests/lancer.sh` → **44 / 44 rapports au vert** (11 bancs �
 96 / 96, hors-ligne 7 / 7, calculs 44 / 44, familles 93 / 93, banques 39 / 39.
 
 Lot suivant : lot 10 — cartes de sensibilisation et sources.
+
+---
+
+## Lots 10 et 11 — cartes, sources, rappels, pédagogie et accessibilité (1er novembre 2026)
+
+- **Cartes** (`CARTES_GT`) : 40 cartes de 45 mots au plus, 6 domaines (idées fausses 9, mémoire 8, réplication 7,
+  hasard 6, confiance 5, prévision 5), avec source, date, statut (établi, discuté, à répliquer) et limite. 14 reposent
+  sur des sources réellement ouvertes (Macdonald, Dekker, Simons et Chabris, Gapminder, Ipsos, données Banque mondiale
+  du site, calcul des anniversaires) ; les 26 autres sont marquées « à vérifier ». **Prévision électorale** : The
+  Economist (2019), Gallup (1999) et l'article du *Monde* n'ont pas été ouverts ; la carte correspondante ne donne
+  aucun chiffre (« le résultat dépend de ce que l'on compte comme favori et de la période »). Les cartes s'affichent en
+  fin d'étape et dans le profil, jamais au milieu d'une réponse ; on peut les masquer (préférence enregistrée).
+- **Rappels J+7 et J+30** : fichier `.ics` produit sur l'appareil par `fichierAgenda()` du site (aucune réponse
+  dedans), et `rappelsEnAttente` : à la visite suivante, « À revoir aujourd'hui » avec les erreurs et la réponse
+  attendue, puis « C'est revu ». Aucune notification, aucune permission, aucune requête (vérifié).
+- **Hypercorrection** : la liste de révision met d'abord les erreurs faites avec une certitude de 90 % ou plus.
+- **Accessibilité** : contrôle d'affichage du site à chaque écran du parcours express simulé (noms accessibles,
+  contraste, identifiants) ; clavier seul (la touche 2 choisit la deuxième réponse) ; chaque groupe de choix a une
+  légende ; boutons de certitude nommés ; focus déplacé vers le titre de chaque nouvel écran.
+- `tests/grand-test-a-relire.md` : références ouvertes reportées (REF-07, 08, 09, 11 confirmées ; REF-10 en partie ;
+  REF-12 non trouvée) ; liste générée étendue aux cartes et aux entités : **347 éléments à relire**.
+- `README.md` : section « Le Grand test (non publié) », bancs mis à jour.
+
+Bancs : `grand_test_banques.py` 45 / 45 ; `CONFIGS="390 clair" tests/lancer.sh grand` 103 / 103 (après deux
+corrections du banc lui-même : départ depuis le profil, et priorité d'opérateurs dans un contrôle) ; suite complète
+`tests/lancer.sh` → **44 / 44 au vert**, 23 min 14 s.
+
+Lot suivant : lot 12 — relecture finale et rapport.

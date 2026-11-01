@@ -108,7 +108,8 @@ Les bancs d'essai s'exécutent dans Chrome sans fenêtre (macOS, Chrome install�
 
 ```
 tests/lancer.sh                        # tous les bancs, à 390 et 1 280 px, en clair et en sombre
-tests/lancer.sh affichage              # un seul banc : affichage, ateliers, test, niveaux, items ou csp
+tests/lancer.sh affichage              # un seul banc : affichage, ateliers, test, niveaux, items, csp,
+                                       # grand, hors-ligne, calculs, familles ou banques
 CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 ```
 
@@ -122,14 +123,41 @@ CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 | `tests/controle-affichage.js` | détection des textes coupés ou superposés, des débordements, du défilement horizontal, des boutons et champs sans nom accessible, des identifiants en double |
 | `tests/safari.sh` | les mêmes bancs dans Safari, en temps réel (lecture du rapport par AppleScript) : `tests/safari.sh test` |
 | `tests/pages/optimiser_png.py` | recompression des PNG en Python pur, sans perte (option `--palette` : 256 couleurs) |
-| `tests/csp.py` | ouvre la vraie page, hors cadre, sur 14 adresses : aucun blocage de la CSP ni erreur JavaScript (les autres bancs utilisent une copie sans CSP, `_site.html`, car ils lisent l'état du site avec `eval`) |
+| `tests/csp.py` | ouvre la vraie page, hors cadre, sur 18 adresses : aucun blocage de la CSP ni erreur JavaScript (les autres bancs utilisent une copie sans CSP, `_site.html`, car ils lisent l'état du site avec `eval`) |
 | `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |
 | `tests/pays/` | `telecharger.sh` puis `generer_pays.py` : régénère `static/pays.js` (Banque mondiale, HCR) |
+| `tests/hors_ligne.py`, `tests/_hors-ligne.html` | service worker : installe le cache, coupe le serveur, recharge chaque fichier depuis le cache |
+| `tests/noms_globaux.py` | noms globaux déclarés deux fois entre les scripts du site (lancé avant tous les bancs) |
+| `tests/_grand-test.html` | Grand test : drapeaux, stockage, migration, parcours simulés, reprise, graphiques à 0/1/3/20 tests, rappels |
+| `tests/grand_test_*.py` | Grand test hors navigateur (moteur JavaScript de macOS) : calculs contre un oracle Python, familles d'items, banques |
 
 Les rapports et les captures vont dans `tests/rapports/`, qui n'est pas versionné.
 
 À relire : `tests/indices-a-relire.md`, `tests/situations-sup-a-relire.md`, `tests/sources-completees.md`,
 `tests/niveaux-a-relire.md`, `tests/paires-douteuses.md` et `tests/a-verifier.md`.
+
+## Le Grand test (non publié)
+
+Un instrument pédagogique d'évaluation de pratiques de raisonnement, **pas un diagnostic d'intelligence** : cinq axes
+séparés (réflexion et logique, probabilités, preuves, discernement, étalonnage) et un indicateur d'impartialité
+exploratoire, chacun avec sa plage d'incertitude, **sans score global ni classement**. Deux parcours : express
+(12 à 15 minutes) et complet (environ 45 à 60 minutes, en une ou plusieurs fois, reprise automatique). Tout reste
+dans le navigateur, sous la seule clé `grandTest`, exportée et importée avec le reste de la progression.
+
+**Il n'est pas visible** : `GRAND_TEST_VISIBLE = false` et `PERSONNAGES_VISIBLES = false` (en tête de
+`static/grand-test.js`). Tout son contenu a été rédigé avec une IA et attend une relecture humaine :
+`tests/grand-test-a-relire.md` (347 éléments). Un élément n'est tiré dans la version publiée que lorsque son champ
+`aRelire` a été levé après relecture.
+
+| Fichier | Contenu |
+|---|---|
+| `static/grand-test-donnees.js` | familles d'items, vrai-faux, expositions, grandeurs, angle mort, société, mémoire, cartes, entités, niveaux |
+| `static/grand-test.js` | drapeaux, stockage et migration, calculs, générateurs, tirage, scores (fonctions pures) |
+| `static/grand-test-interface.js` | page, parcours, corrections, résultats, graphiques, rappels |
+| `tests/grand-test-plan.md`, `tests/grand-test-journal.md` | plan, décisions et journal d'exécution |
+
+Pour l'essayer sur son ordinateur : `tests/lancer.sh grand` fabrique une copie d'essai (`static/_site-grand.html`,
+drapeaux à true) le temps du banc ; on peut aussi le faire à la main, sans jamais modifier `grand-test.js`.
 
 ## Licences
 

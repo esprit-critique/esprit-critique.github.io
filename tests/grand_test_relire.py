@@ -65,9 +65,17 @@ L += ["", "### Démonstrations de mémoire", "",
       "| m-desinformation | " + str(len(R["recits"])) + " récits neutres, couleur suggérée par une question ultérieure | paradigme de Loftus (étude précise à choisir) | Scènes anodines, sans enjeu ni sujet traumatique ; correction annoncée et faite | aRelire | |",
       "| m-source | " + str(len(R["sources"])) + " jeux de 6 informations d'un village fictif, 4 répartitions entre deux sources | aucune | Informations clairement fictives ; sources fictives | aRelire | |"]
 
-for nom, cle in (("Cartes de sensibilisation", "cartes"), ("Entités pédagogiques", "entites")):
-    if R[cle]:
-        L += ["", "### " + nom + " (" + str(len(R[cle])) + ")", "", "Voir la section correspondante plus haut ; chaque élément porte `aRelire: true`."]
+if R["cartes"]:
+    L += ["", "### Cartes de sensibilisation (" + str(len(R["cartes"])) + ")", "",
+          "| ID | affirmation ou décision | source | vérification exacte | drapeau | personne-date |", "|---|---|---|---|---|---|"]
+    for c in R["cartes"]:
+        L.append("| " + " | ".join(cellule(x) for x in [c["id"], c["texte"] + " (statut : " + c["statut"] + ")", c["source"] + " (" + c["date"] + ")",
+                 ("Source ouverte ; relire la formulation" if c.get("sourceOuverte") else "Ouvrir la source et vérifier chaque chiffre") + " ; limite : " + c["limite"], "aRelire", ""]) + " |")
+if R["entites"]:
+    L += ["", "### Entités pédagogiques et niveaux (cachés)", "",
+          "| ID | affirmation ou décision | source | vérification exacte | drapeau | personne-date |", "|---|---|---|---|---|---|",
+          "| entites | " + str(len(R["entites"])) + " noms : " + cellule(", ".join(e[1] for e in R["entites"])) + " | aucune | Chaque nom est une métaphore du mécanisme, sans jugement sur la personne ; relecture de la charte (DESIGN.md) | aRelire | |",
+          "| niveaux | Cinq niveaux inspirés de la caverne de Platon ; seuils proportion 0,40/0,50/0,60/0,70, d′ 0,25/0,5/0,75/1,0 | règle fixée dans grand-test.js | Pertinence des seuils, formulation, texte obligatoire | aRelire | |"]
 L += ["", FIN]
 
 texte = open(FICHIER, encoding="utf-8").read()
@@ -76,4 +84,4 @@ if DEBUT in texte:
 else:
     texte = texte.rstrip("\n") + "\n\n" + "\n".join(L) + "\n"
 open(FICHIER, "w", encoding="utf-8").write(texte)
-print(str(len(R["fam"]) + len(R["vf"]) + len(R["ex"]) + len(R["am"]) + len(R["so"]) + 3) + " lignes à relire inscrites dans " + os.path.basename(FICHIER))
+print(str(len(R["fam"]) + len(R["vf"]) + len(R["ex"]) + len(R["am"]) + len(R["so"]) + 3 + len(R["cartes"]) + (2 if R["entites"] else 0)) + " lignes à relire inscrites dans " + os.path.basename(FICHIER))

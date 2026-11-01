@@ -261,6 +261,8 @@ function blocCeQueLeTestNeMesurePas(titreNiveau) {
 }
 
 function accueilGrandTest(zone) {
+  const rappel = blocRappelsEchus();
+  if (rappel) zone.appendChild(rappel);
   zone.appendChild(paragraphe("Ce test ne produit pas de score global. Vos réponses restent dans votre navigateur et ne sont pas envoyées. Répondez sans chercher ailleurs : le but est d'observer votre raisonnement, pas ce que vous pouvez trouver. Vous pouvez fractionner le test complet ; votre progression sera reprise sur cet appareil."));
   const choix = el("div", "gt-modes");
   [["express", "Test express", "Un aperçu de chaque façon de raisonner. Certaines mesures y sont trop courtes pour être précises."],
@@ -284,7 +286,9 @@ function accueilGrandTest(zone) {
     p.appendChild(b);
     zone.appendChild(p);
   }
-  zone.appendChild(boutonEffacerGrandTest());
+  const cartes = el("button", "lien-bouton", GT.etat.preferences.cartesSensibilisation ? "Masquer les cartes « Le saviez-vous ? »" : "Afficher les cartes « Le saviez-vous ? »");
+  cartes.addEventListener("click", basculerCartes);
+  zone.append(cartes, el("br"), boutonEffacerGrandTest());
 }
 
 function boutonEffacerGrandTest() {
@@ -362,6 +366,8 @@ function ecranFin(zone, t, ecran) {
     differees.forEach(l => zone.appendChild(correctionCourte(l)));
   }
   if (e === 5) zone.appendChild(bilanMemoire(t));
+  const carte = carteSensibilisation(t, "etape-" + e);
+  if (carte) zone.appendChild(carte);
   zone.appendChild(boutonSuivant(e === 5 || !t.instances.some(x => x.valeurs.etape > e) ? "Voir les résultats" : "Étape suivante", () => marquer(ecran.cle)));
   if (t.instances.some(x => x.valeurs.etape > e)) zone.appendChild(paragraphe("Vous pouvez aussi vous arrêter ici : le test reprendra à l'étape suivante.", "source"));
 }
@@ -916,6 +922,9 @@ function afficherProfil(zone, runId) {
   if (etal) e.appendChild(etal);
   fourchettes.forEach((x, k) => { const l = lignes.filter(l => l.item.type === "fourchette" && Array.isArray(l.reponse.valeur))[k]; e.appendChild(ligneIntervalle({ q: l.item.q.q, v: x.q.v, unite: x.q.unite }, x.bas, x.haut, x.bas <= x.q.v && x.q.v <= x.haut)); });
   zone.appendChild(blocAteliersConseilles(t));
+  zone.appendChild(blocRevision(t));
+  const carte = carteSensibilisation(t, "profil");
+  if (carte) zone.appendChild(carte);
   [blocEntitesRencontrees(t), blocNiveau(GT.etat)].forEach(b => { if (b) zone.appendChild(b); });
   zone.appendChild(blocProgression(GT.etat));
 
@@ -1216,6 +1225,97 @@ function blocNiveau(etat, visible = PERSONNAGES_VISIBLES) {
   }
   bloc.appendChild(paragraphe(TEXTE_NIVEAU_GT, "source"));
   bloc.appendChild(paragraphe("Monter d'un niveau demande une réussite répétée dans deux tests complets espacés d'au moins sept jours, en tenant compte de l'incertitude ; un niveau qui ne se confirme plus redescend.", "source"));
+  return bloc;
+}
+
+
+// ===================== Cartes, rappels et révision (lots 10 et 11) =====================
+
+// Une carte de sensibilisation, choisie par la graine de la passation ; jamais au milieu d'une réponse. Seules les
+// cartes relues sont publiables (la copie d'essai les admet toutes). La personne peut les masquer.
+function carteSensibilisation(t, cle) {
+  if (!GT.etat.preferences.cartesSensibilisation) return null;
+  const cartes = CARTES_GT.filter(c => GRAND_TEST_ESSAI || c.aRelire === false);
+  if (!cartes.length) return null;
+  const c = cartes[graineDe(t.id + ":" + cle) % cartes.length];
+  const bloc = el("aside", "gt-carte");
+  bloc.setAttribute("aria-label", "Le saviez-vous ?");
+  bloc.append(el("p", "surtitre", "Le saviez-vous ?"), paragraphe(c.texte),
+    el("p", "source", "Source : " + c.source + (c.date !== "—" ? " (" + c.date + ")" : "") + ". Statut : " + c.statut + "." + (c.limite && c.limite !== "—" ? " Limite : " + c.limite : "")));
+  return bloc;
+}
+
+function basculerCartes() {
+  const e = copieProfonde(GT.etat);
+  e.preferences.cartesSensibilisation = !e.preferences.cartesSensibilisation;
+  sauver(e);
+  rafraichir();
+}
+
+// Révision : les erreurs commises avec assurance d'abord (hypercorrection), puis les autres
+function erreursAReviser(t) {
+  return lignesPassation(t).filter(l => l.juste === false)
+    .sort((a, b) => (b.reponse.certitude || 0) - (a.reponse.certitude || 0));
+}
+
+// Rappels à J+7 et J+30, sans serveur : un fichier d'agenda produit sur l'appareil, et un rappel à la prochaine
+// visite. Aucune notification, aucune permission, aucune requête ; le fichier ne contient aucune réponse.
+function blocRevision(t) {
+  const bloc = el("section", "gt-revision");
+  bloc.appendChild(el("h3", null, "Réviser dans une semaine, puis dans un mois"));
+  const erreurs = erreursAReviser(t);
+  if (erreurs.length) {
+    bloc.appendChild(paragraphe("Revoir ses erreurs après quelques jours aide à les corriger durablement, surtout celles faites avec assurance. Voici les premières à revoir :"));
+    const ul = el("ul", "liste-simple");
+    erreurs.slice(0, 5).forEach(l => ul.appendChild(el("li", null, (l.reponse.certitude >= 90 ? "Avec assurance — " : "") + (l.item.texte || l.item.question || "").slice(0, 140))));
+    bloc.appendChild(ul);
+  }
+  if (t.rappels.j7) bloc.appendChild(paragraphe("Rappels prévus le " + jourEnClair(t.rappels.j7) + " et le " + jourEnClair(t.rappels.j30) + ".", "source"));
+  else {
+    const b = el("button", "bouton secondaire", "Programmer les rappels (J+7 et J+30)");
+    b.addEventListener("click", () => {
+      const j7 = aujourdHui() + 7, j30 = aujourdHui() + 30;
+      const desc = "Revoir les erreurs de votre dernier Grand test sur Esprit critique. Rien n'est envoyé : ce rappel est local.";
+      fichierAgenda("esprit-critique-rappels.ics", [{ jour: j7, titre: "Esprit critique : révision du Grand test", description: desc, url: "https://esprit-critique.github.io/" },
+        { jour: j30, titre: "Esprit critique : révision du Grand test", description: desc, url: "https://esprit-critique.github.io/" }]);
+      const e = copieProfonde(GT.etat), te = e.historiqueTests.find(x => x.id === t.id);
+      te.rappels = { j7, j30 };
+      e.rappelsEnAttente = e.rappelsEnAttente.filter(r => r.runId !== t.id).concat([{ runId: t.id, type: "j7", jour: j7 }, { runId: t.id, type: "j30", jour: j30 }]).slice(-20);
+      sauver(e);
+      annoncer("Fichier d'agenda créé. Le site vous rappellera aussi ces révisions à votre prochaine visite.");
+      b.replaceWith(paragraphe("Rappels prévus le " + jourEnClair(j7) + " et le " + jourEnClair(j30) + ".", "source"));
+    });
+    bloc.appendChild(b);
+    bloc.appendChild(paragraphe("Le fichier s'ouvre dans votre agenda. Il ne contient aucune de vos réponses.", "source"));
+  }
+  return bloc;
+}
+const jourEnClair = jour => new Date(jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
+
+// Rappels échus, affichés sur l'accueil du test
+function blocRappelsEchus() {
+  const echus = GT.etat.rappelsEnAttente.filter(r => r.jour <= aujourdHui());
+  if (!echus.length) return null;
+  const bloc = el("div", "gt-rappel");
+  bloc.setAttribute("role", "status");
+  const t = GT.etat.historiqueTests.find(x => x.id === echus[0].runId);
+  bloc.appendChild(el("p", "consigne", "À revoir aujourd'hui"));
+  if (t) {
+    const ul = el("ul", "liste-simple");
+    erreursAReviser(t).slice(0, 5).forEach(l => {
+      const li = el("li", null, (l.item.texte || l.item.question || "").slice(0, 140) + " — réponse attendue : " + texteAttendu(l.item) + ".");
+      ul.appendChild(li);
+    });
+    bloc.appendChild(ul);
+  }
+  const fait = el("button", "bouton secondaire", "C'est revu");
+  fait.addEventListener("click", () => {
+    const e = copieProfonde(GT.etat);
+    e.rappelsEnAttente = e.rappelsEnAttente.filter(r => r.jour > aujourdHui());
+    sauver(e);
+    rafraichir();
+  });
+  bloc.appendChild(fait);
   return bloc;
 }
 
