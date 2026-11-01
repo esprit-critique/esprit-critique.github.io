@@ -55,7 +55,9 @@ f.onload = async () => {
     ok("publié : un test complet tire tous ses items, sans déficit", tirePublie.instances.length === 105 && !tirePublie.issues.some(x => /publiables/.test(x)), tirePublie.instances.length + " " + tirePublie.issues.join(" | "));
     await aller("ateliers");
     ok("publié : la carte du Grand test est sur la page des ateliers", !!d.querySelector('a[href="#tests/grand-test"]'));
-    ok("publié : le Grand test est la suggestion des nouveaux venus", /Le Grand test/.test(vue().querySelector(".bilan-ateliers").textContent));
+    ok("publié : le Grand test mis en avant en tête des ateliers, sans redite dans la suggestion", !!vue().querySelector('.gt-vedette[href="#tests/grand-test"]') && !/Le Grand test/.test(vue().querySelector(".bilan-ateliers").textContent));
+    await aller("accueil");
+    ok("publié : le Grand test mis en avant sur l'accueil, avec son appel à l'action", !!vue().querySelector(".gt-vedette") && /Commencer|Reprendre|Refaire/.test(vue().querySelector(".gt-vedette").textContent));
     await aller("tests/grand-test");
     ok("publié : la route #tests/grand-test ouvre le test", vue().id === "vue-tests" && /Le Grand test/.test(vue().querySelector("h1").textContent));
     await aller("portrait");

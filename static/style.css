@@ -1326,3 +1326,6 @@ h3.titre-bloc {
 .gt-entite { display: flex; gap: 12px; align-items: flex-start; border-top: 1px solid var(--trait); padding-top: 10px; margin-top: 10px; }
 .gt-entite .picto { flex: none; width: 48px; height: 48px; }
 .gt-carte, .gt-rappel { border-left: 3px solid var(--c, var(--accent)); padding: 4px 0 4px 12px; margin: 14px 0; }
+/* Le Grand test mis en avant : la carte d'atelier habituelle, en pleine largeur, avec un appel à l'action */
+.gt-vedette { margin: 14px 0; }
+.gt-vedette .bouton { display: inline-block; margin-top: 8px; }

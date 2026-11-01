@@ -743,6 +743,8 @@ function afficherAccueil() {
     : lienVers("#quiz", Object.keys(memoire).length ? "Continuer le quiz" : "Commencer le quiz : 10 situations", "bouton"));
   appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), "Parcourir les " + (BIAIS.length + SOPHISMES.length) + " fiches", "bouton secondaire"));
   zone.appendChild(appel);
+  // Le Grand test, mis en avant (grand-test-interface.js), s'il est publié
+  if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
 
   // Situation du jour : la même pour tout le monde, une par jour
   const q = situationDuJour();

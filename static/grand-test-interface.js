@@ -1331,13 +1331,33 @@ function resumePortraitGrandTest() {
   return paragraphe("Dernier test " + t.mode + ", le " + new Date(t.dateFin).toLocaleDateString("fr-FR") + ". " + (axes.length ? axes.join(" ; ") + ". " : "") + "Pas de score global : voir le détail de chaque axe dans vos résultats.");
 }
 
+// Carte mise en avant (accueil, page des ateliers) : un atelier à part. Toute la carte est un lien ; son libellé
+// suit l'état du test (commencer, reprendre, refaire). Classe « atelier » : comptée parmi les ateliers de la page.
+function carteGrandTest() {
+  const atelier = EXPERIENCES.find(e => e.id === "grand-test");
+  const charge = chargerGrandTest();
+  const enCours = charge.etat && passationEnCours(charge.etat);
+  const faits = charge.etat ? passationsTerminees(charge.etat) : [];
+  const carte = lienVers("#tests/grand-test", undefined, "carte entree atelier gt-vedette");
+  carte.style.setProperty("--c", atelier.couleur);
+  const cadre = el("div", "picto-cadre");
+  cadre.appendChild(pictogramme(atelier.picto));
+  const corps = el("div", "atelier-corps");
+  corps.append(el("p", "surtitre", "Le Grand test"), el("h2", null, "Cinq façons de raisonner, mesurées séparément"),
+    el("p", null, "Sans score global ni classement, et tout reste dans votre navigateur. Express : 12 à 15 minutes. Complet : environ 45 à 60 minutes, en une ou plusieurs fois."));
+  if (faits.length && !enCours) corps.appendChild(el("p", "source", "Dernier test terminé le " + new Date(faits[faits.length - 1].dateFin).toLocaleDateString("fr-FR") + "."));
+  corps.appendChild(el("span", "bouton", enCours ? "Reprendre le test " + enCours.mode : faits.length ? "Refaire le test" : "Commencer"));
+  carte.append(cadre, corps);
+  return carte;
+}
+
 // ===================== Inscription =====================
 // Seulement si le test est publié (ou dans la copie d'essai du banc) : sinon aucune carte, aucune route.
 
 if (GRAND_TEST_VISIBLE) {
   EXPERIENCES.push({
     id: "grand-test",
-    section: "confiance",
+    section: "a-part",       // hors des sections : mis en avant par carteGrandTest(), sur l'accueil et en tête des ateliers
     ordre: 1,
     picto: "jauge",
     couleur: "#5b5bb5",

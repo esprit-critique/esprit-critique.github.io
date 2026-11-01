@@ -601,3 +601,14 @@ Corrections du site : explication « postures de pouvoir » sans la phrase non v
 cartes Many Labs, épuisement de l'ego, postures, marshmallow, Dunning-Kruger, effet rebond, fourchettes réécrites
 pour ne dire que ce que montrent les résumés, et marquées « source ouverte » ; sources précisées sur cinq vrai-faux.
 Bancs : banques 45 / 45 ; `CONFIGS="390 clair" tests/lancer.sh grand csp test` → 106 / 106, aucun blocage, 131 / 131.
+
+---
+
+## Grand test mis en avant (1er novembre 2026)
+
+Demande du propriétaire : mettre le Grand test « légèrement plus en évidence ». Carte `carteGrandTest()` (lien pleine
+largeur, pictogramme et couleur existants, appel à l'action selon l'état : Commencer, Reprendre, Refaire) sur l'accueil
+après les boutons principaux et en tête de la page des ateliers ; l'expérience quitte la grille « Mesurer sa
+confiance » (section « a-part ») et la suggestion d'atelier ne le reprend plus (pas de redite). Captures vérifiées
+(390 px, sombre). Bancs : grand 107 / 107, ateliers 237 / 237, test 131 / 131 ; affichage 0 défaut et csp sans blocage
+(390 sombre, 1 280 clair). Cache v12, sitemap daté du 1er novembre.

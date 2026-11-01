@@ -461,10 +461,8 @@ function atelierConseille() {
   const tous = tousLesAteliers();
   const resultats = lire("resultatsAteliers", {});
   const anciens = new Set([...lire("jeuxFaits", []), ...lire("experiencesFaites", [])]);
-  const jamais = tous.filter(a => !resultats[a.atelier.id] && !anciens.has(a.atelier.id));
-  // Le Grand test, s'il est publié, est proposé en premier tant qu'il n'a pas été essayé
-  const grandTest = jamais.find(a => a.atelier.id === "grand-test");
-  if (grandTest) return grandTest;
+  // Le Grand test a sa propre carte mise en avant (carteGrandTest) : il n'est pas repris dans la suggestion
+  const jamais = tous.filter(a => !resultats[a.atelier.id] && !anciens.has(a.atelier.id) && a.atelier.id !== "grand-test");
   if (jamais.length) return jamais[Math.floor(generateur(aujourdHui())() * jamais.length)];
   return tous.slice().sort((a, b) => ((resultats[a.atelier.id] || {}).jour || 0) - ((resultats[b.atelier.id] || {}).jour || 0))[0];
 }
@@ -512,6 +510,8 @@ function afficherAteliers() {
     carte.appendChild(p);
   }
   zone.appendChild(carte);
+  // Le Grand test, atelier à part, mis en avant au-dessus des sections (grand-test-interface.js)
+  if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
 
   // Sommaire : un bouton par section, qui y fait défiler la page
   const sommaire = el("nav", "puces sommaire-ateliers");
