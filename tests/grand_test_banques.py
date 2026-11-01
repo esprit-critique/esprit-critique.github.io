@@ -65,10 +65,10 @@ if R:
     ok("vrai-faux : relecture d'ensemble enregistrée (aucun élément marqué à relire isolément)", not [x["id"] for x in vf if x.get("aRelire") is True])
     ok("vrai-faux : chaque affirmation a une source", all(len(x.get("source", "")) > 10 for x in vf))
     ok("vrai-faux : chaque affirmation fausse dit si sa diffusion est documentée", all(x.get("diffusion") for x in faux), [x["id"] for x in faux if not x.get("diffusion")])
-    ouvertes_diff = [x["id"] for x in vf if x.get("diffusionOuverte") and not re.match(r"^(MACDO|DEKKER|SIMONS)", x["diffusion"])]
-    ok("vrai-faux : diffusion « ouverte » seulement pour les trois enquêtes réellement ouvertes", not ouvertes_diff, ouvertes_diff)
-    ouvertes_src = [x["id"] for x in vf if x.get("sourceOuverte") and "pays.js" not in x["source"]]
-    ok("vrai-faux : source « ouverte » seulement pour les données Banque mondiale du site", not ouvertes_src, ouvertes_src)
+    ouvertes_diff = [x["id"] for x in vf if x.get("diffusionOuverte") and not re.match(r"^(MACDO|DEKKER|SIMONS|MCCLOSKEY)", x["diffusion"])]
+    ok("vrai-faux : diffusion « ouverte » seulement pour les enquêtes réellement ouvertes", not ouvertes_diff, ouvertes_diff)
+    ouvertes_src = [x["id"] for x in vf if x.get("sourceOuverte") and not re.search(r"pays\.js|Pashler|McCloskey|Philpot|Ranehill|Hagger", x["source"])]
+    ok("vrai-faux : source « ouverte » seulement pour les sources réellement ouvertes (31 octobre et 1er novembre 2026)", not ouvertes_src, ouvertes_src)
     ok("vrai-faux : explications de trois phrases au plus", all(len(phrases(x["explication"])) <= 3 for x in vf), [x["id"] for x in vf if len(phrases(x["explication"])) > 3])
     mauvaises = [(x["id"], f) for x in vf for f in x.get("fiches", []) if f not in fiches]
     ok("vrai-faux : fiches liées réelles", not mauvaises, mauvaises)
@@ -168,7 +168,7 @@ if R:
     ok("cartes : 45 mots au plus, identifiants uniques", all(len(c["texte"].split()) <= 45 for c in ca) and len({c["id"] for c in ca}) == len(ca))
     ok("cartes : source, date, statut (établi, discuté, à répliquer) et limite pour chacune",
        all(c["source"] and c["date"] and c["statut"] in ("établi", "discuté", "à répliquer") and c["limite"] for c in ca))
-    ouvertes = re.compile(r"Macdonald|Dekker|Simons et Chabris|Gapminder|Ipsos|pays\.js|paradoxe des anniversaires")
+    ouvertes = re.compile(r"Macdonald|Dekker|Simons et Chabris|Gapminder|Ipsos|pays\.js|paradoxe des anniversaires|Klein|Hagger|Ranehill|Watts|Gignac|Wood et Porter|Haran")
     ok("cartes : « source ouverte » seulement pour les sources réellement ouvertes", all(not c.get("sourceOuverte") or ouvertes.search(c["source"]) for c in ca), [c["id"] for c in ca if c.get("sourceOuverte") and not ouvertes.search(c["source"])])
     ok("cartes : aucun chiffre de sondage électoral sans données vérifiées",  not re.search(r"\d", next(c for c in ca if c["id"] == "ca-sondages-loin")["texte"]))
     ok("cartes : aucune peur, aucun conseil médical (mots exclus)", not [c["id"] for c in ca if re.search(r"danger mortel|mourir|terrifi|traitement|médicament|vaccin", c["texte"], re.I)])

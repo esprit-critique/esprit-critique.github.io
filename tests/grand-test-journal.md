@@ -583,3 +583,21 @@ Le propriétaire du site a déclaré avoir relu les 347 éléments et a choisi �
   attendu), puis banc ateliers relancé dans les quatre configurations : 237 / 237 ; tous les autres au vert
   (grand 106 / 106, test 131 / 131, affichage 0 défaut, csp sans blocage, hors-ligne 7 / 7, calculs 44 / 44,
   familles 93 / 93, banques 45 / 45).
+
+---
+
+## Vérification des 24 références restantes (1er novembre 2026)
+
+Résumés ouverts par DOI (Europe PMC, Crossref, Semantic Scholar) ; détail ligne par ligne dans
+`tests/grand-test-a-relire.md` §1. **Confirmées** : Hagger (23 labos, 2 141, d = 0,04), Klein (36 échantillons,
+6 344, 10 effets sur 13 répliqués, 2 amorçages non), Pashler, Persson, Hedge (0 à 0,82), Batailler, Morewedge
+(valeurs minimales). **Confirmées en substance, chiffres absents du résumé** : Philpot (219 conflits, 9 sur 10),
+Ranehill, McCloskey (plus de la moitié), Scopelliti, Gignac, Wood et Porter, Watts, Haran, MIST (n = 8 504).
+**Identifiées sans résumé** : Pietschnig, Blank, Evans, Tillema, Gneiting, Le Texier (American Psychologist 74(7)).
+**Erreur du mandat** : REF-15 (Henderson et al., 2022) est une cartographie de 181 études, pas la source de d = 0,39 /
+0,50, qui vient de Dechêne et al. (2010) ; le site ne cite pas ces valeurs. Stanovich (REF-18) : rien obtenu, non cité.
+
+Corrections du site : explication « postures de pouvoir » sans la phrase non vérifiée sur le sentiment de puissance ;
+cartes Many Labs, épuisement de l'ego, postures, marshmallow, Dunning-Kruger, effet rebond, fourchettes réécrites
+pour ne dire que ce que montrent les résumés, et marquées « source ouverte » ; sources précisées sur cinq vrai-faux.
+Bancs : banques 45 / 45 ; `CONFIGS="390 clair" tests/lancer.sh grand csp test` → 106 / 106, aucun blocage, 131 / 131.
