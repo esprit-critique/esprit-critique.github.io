@@ -496,3 +496,71 @@ corrections du banc lui-même : départ depuis le profil, et priorité d'opérat
 `tests/lancer.sh` → **44 / 44 au vert**, 23 min 14 s.
 
 Lot suivant : lot 12 — relecture finale et rapport.
+
+---
+
+## Lot 12 — relecture finale et RAPPORT FINAL (1er novembre 2026)
+
+### Statut : **partiel, livrable sûr**
+
+Tous les lots 0 à 12 ont été menés, commités et poussés ; le site publié est intact et rien n'expose le Grand test.
+Le travail est **partiel** au sens du mandat sur trois points, qui demandent une personne :
+1. **aucun contenu n'est relu par un humain** : les 347 éléments de `tests/grand-test-a-relire.md` gardent
+   `aRelire: true`, si bien que la version publiée ne tirerait aucun item même avec le drapeau levé ;
+2. **sources** : 6 références sur 30 du tableau §11.1 ont été ouvertes (REF-07, 08, 09, 11 confirmées ; REF-10 en
+   partie ; REF-12 non trouvée sur source primaire) ; toutes les autres pistes sont listées « à vérifier » ;
+3. **durées** : estimées par un pilotage simulé (nombre de mots, temps de réponse), pas chronométrées sur des personnes.
+
+### Drapeaux (confirmés dans `static/grand-test.js`)
+
+    const GRAND_TEST_VISIBLE = false;
+    const PERSONNAGES_VISIBLES = false;
+    const GRAND_TEST_ESSAI = false;
+
+### Commits et push, par lot
+
+| Lot | Commit |
+|---|---|
+| 0 audit, plan, journaux | `c827027` |
+| correctif thème sombre (zones de texte) | `327bad5` |
+| 1 stockage, migration, route cachée | `a288dcf` |
+| 2 calculs et oracle | `7eea452` |
+| 3 familles générées et tirage | `abdfab2` |
+| 4 réservoirs de faits, point de reprise | `35140f2` |
+| 5 démonstrations de mémoire, sur-correction | `284056c` |
+| 6 parcours express et complet | `d67e171` |
+| 7 graphiques et progression | `58f5e31` |
+| 8 et 9 ateliers, entités, niveaux | `7764a4a` |
+| 10 et 11 cartes, rappels, accessibilité | `7a85f78` |
+| 12 rapport final | ce commit |
+
+### Bancs (dernière suite complète, `tests/lancer.sh`, quatre configurations : 390 / 1 280 px × clair / sombre)
+
+44 / 44 au vert : affichage 0 défaut sur 108 pages · ateliers 237 / 237 · test 131 / 131 · niveaux 24 / 24 · items
+0 manque · csp aucun blocage sur 18 adresses · **grand 103 / 103** · **hors-ligne 7 / 7** · **calculs 44 / 44** ·
+**familles 93 / 93** · **banques 45 / 45**. Environnement : macOS 12, Python 3.12, Google Chrome sans fenêtre, moteur
+JavaScript de macOS (`osascript`), sans Node.js.
+
+### Stockage, CSP, service worker, hors ligne
+
+Clé unique `grandTest` (dans `CLES_SAUVEGARDE` et `FORMES_SAUVEGARDE.objet`), validée en profondeur, migrée par
+fonctions pures, effacement isolé, lecture seule et export brut si illisible, espace plein sans perte. CSP inchangée,
+aucune requête réseau (espionnée par le banc), aucune ressource externe. Cache `esprit-critique-v10`, trois fichiers
+précachés ; banc hors ligne : serveur coupé, les 27 fichiers rechargés depuis le cache, aucune donnée de l'utilisateur
+dans le cache.
+
+### Défauts connus et limites
+
+- Recharger pendant la lecture d'une correction déjà validée reprend à la question suivante (réponse gardée).
+- Zoom et agrandissement du texte du navigateur non testés automatiquement ; lecteur d'écran testé par les noms,
+  rôles, légendes et focus, pas avec un vrai lecteur d'écran (VoiceOver) : à faire par une personne.
+- La relecture du respect de la charte (DESIGN.md) par une personne reste à faire.
+- Seuils des niveaux et de « entité affaiblie » choisis, non validés.
+
+### Reprise
+
+Relire `tests/grand-test-a-relire.md` et lever `aRelire` élément par élément ; ouvrir les références restantes ;
+faire chronométrer les deux parcours par quelques personnes ; tester avec VoiceOver ; puis, seulement si le
+propriétaire le décide, passer `GRAND_TEST_VISIBLE` à true (et ajouter au banc « grand » la vérification de la
+version publiée qui en découle). `python3 tests/grand_test_relire.py` régénère la liste après toute modification des
+données.
