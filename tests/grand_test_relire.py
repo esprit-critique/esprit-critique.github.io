@@ -14,6 +14,7 @@ pilote = r"""
 const fam = FAMILLES_GT.map(f => ({ id: f.id, axe: f.axe, construit: f.construit, n: tailleFamille(f), aRelire: f.aRelire !== false, exemple: (() => { const x = instanceGT(f, 0, 1); return x.texte + " " + x.question; })() }));
 JSON.stringify({ fam, vf: VF_GT, ex: EXPOSITIONS_GT, gr: GRANDEURS_PAYS_GT.map(([p, k]) => grandeurGT("gr-" + p + "-" + k)), am: ANGLE_MORT_GT, so: SOCIETE_GT,
   drm: LISTES_DRM_GT, recits: RECITS_GT, sources: SOURCES_GT,
+  relecture: typeof RELECTURE_GT === "undefined" ? null : RELECTURE_GT,
   cartes: typeof CARTES_GT === "undefined" ? [] : CARTES_GT, entites: typeof ENTITES_GT === "undefined" ? [] : ENTITES_GT });
 """
 R = executer(pilote, ("pays.js", "grand-test-donnees.js", "grand-test.js"))
@@ -76,6 +77,11 @@ if R["entites"]:
           "| ID | affirmation ou décision | source | vérification exacte | drapeau | personne-date |", "|---|---|---|---|---|---|",
           "| entites | " + str(len(R["entites"])) + " noms : " + cellule(", ".join(e[1] for e in R["entites"])) + " | aucune | Chaque nom est une métaphore du mécanisme, sans jugement sur la personne ; relecture de la charte (DESIGN.md) | aRelire | |",
           "| niveaux | Cinq niveaux inspirés de la caverne de Platon ; seuils proportion 0,40/0,50/0,60/0,70, d′ 0,25/0,5/0,75/1,0 | règle fixée dans grand-test.js | Pertinence des seuils, formulation, texte obligatoire | aRelire | |"]
+# Relecture d'ensemble déclarée : drapeau levé et personne-date remplies pour chaque ligne
+if R["relecture"] and R["relecture"]["relu"]:
+    signe = R["relecture"]["personne"] + ", " + R["relecture"]["date"]
+    L = [l.replace("| aRelire |  |", "| relu | " + signe + " |").replace("| aRelire | |", "| relu | " + signe + " |").replace("| relue | |", "| relu | " + signe + " |") for l in L]
+    L.insert(2, "**Relecture d'ensemble déclarée par le propriétaire du site le " + R["relecture"]["date"] + "** : drapeaux levés dans `static/grand-test-donnees.js` (`RELECTURE_GT`).")
 L += ["", FIN]
 
 texte = open(FICHIER, encoding="utf-8").read()

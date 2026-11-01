@@ -1235,7 +1235,7 @@ function blocNiveau(etat, visible = PERSONNAGES_VISIBLES) {
 // cartes relues sont publiables (la copie d'essai les admet toutes). La personne peut les masquer.
 function carteSensibilisation(t, cle) {
   if (!GT.etat.preferences.cartesSensibilisation) return null;
-  const cartes = CARTES_GT.filter(c => GRAND_TEST_ESSAI || c.aRelire === false);
+  const cartes = CARTES_GT.filter(c => GRAND_TEST_ESSAI || aRelireGT(c) === false);
   if (!cartes.length) return null;
   const c = cartes[graineDe(t.id + ":" + cle) % cartes.length];
   const bloc = el("aside", "gt-carte");
@@ -1317,6 +1317,18 @@ function blocRappelsEchus() {
   });
   bloc.appendChild(fait);
   return bloc;
+}
+
+// Bloc discret du portrait (ateliers.js) : dernier test, axes séparés avec leur plage ; null si aucun test terminé
+function resumePortraitGrandTest() {
+  const charge = chargerGrandTest();
+  if (!charge.etat) return null;
+  const tests = passationsTerminees(charge.etat);
+  if (!tests.length) return null;
+  const t = tests[tests.length - 1];
+  const axes = ["A", "B", "C"].filter(a => t.scores && t.scores[a] && t.scores[a].plage)
+    .map(a => AXES_GT[a].nom + " : " + pourcentArrondi(t.scores[a].valeur) + " (plage " + pourcentArrondi(t.scores[a].plage.bas) + " – " + pourcentArrondi(t.scores[a].plage.haut) + ")");
+  return paragraphe("Dernier test " + t.mode + ", le " + new Date(t.dateFin).toLocaleDateString("fr-FR") + ". " + (axes.length ? axes.join(" ; ") + ". " : "") + "Pas de score global : voir le détail de chaque axe dans vos résultats.");
 }
 
 // ===================== Inscription =====================

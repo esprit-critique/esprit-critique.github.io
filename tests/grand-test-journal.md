@@ -564,3 +564,22 @@ faire chronométrer les deux parcours par quelques personnes ; tester avec Voice
 propriétaire le décide, passer `GRAND_TEST_VISIBLE` à true (et ajouter au banc « grand » la vérification de la
 version publiée qui en découle). `python3 tests/grand_test_relire.py` régénère la liste après toute modification des
 données.
+
+---
+
+## Publication (1er novembre 2026)
+
+Le propriétaire du site a déclaré avoir relu les 347 éléments et a choisi « Test et personnages ». Appliqué :
+- `RELECTURE_GT = { relu: true, date: "2026-11-01", personne: "propriétaire du site (relecture déclarée)" }` ; les
+  39 familles passent à `aRelire: false` ; les éléments sans champ propre en héritent (`aRelireGT`).
+- `GRAND_TEST_VISIBLE = true`, `PERSONNAGES_VISIBLES = true`, `GRAND_TEST_ESSAI = false`.
+- Le Grand test est proposé en premier aux nouveaux venus (`atelierConseille`), a sa carte dans « Mesurer sa
+  confiance », un bloc discret dans le portrait ; les ateliers « Faux souvenirs » et « Douter juste » apparaissent.
+  Textes publics : 48 ateliers (`index.html`, `404.html`, `README.md`). Cache `esprit-critique-v11`.
+- `tests/grand-test-a-relire.md` : drapeau « relu » et personne-date remplis pour 308 lignes générées ; les références
+  du §11.1 non ouvertes restent signalées « à vérifier ».
+- Bancs adaptés à l'état publié (drapeaux, 48 ateliers, tirage complet sans déficit, portrait à 15 cartes, personnages
+  présents). Suite complète `tests/lancer.sh` : 40 / 44 au premier passage (portrait : 15 cartes au lieu de 14,
+  attendu), puis banc ateliers relancé dans les quatre configurations : 237 / 237 ; tous les autres au vert
+  (grand 106 / 106, test 131 / 131, affichage 0 défaut, csp sans blocage, hors-ligne 7 / 7, calculs 44 / 44,
+  familles 93 / 93, banques 45 / 45).

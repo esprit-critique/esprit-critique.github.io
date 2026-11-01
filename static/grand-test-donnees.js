@@ -15,6 +15,10 @@
 // Aucun item n'est repris ni adapté de près d'un instrument protégé (CRT, CRT-2, CART, HCTA, Watson-Glaser, MIST…)
 // ni des banques du site : voir tests/grand-test-plan.md et le contrôle de similarité du banc « calculs ».
 
+// Relecture humaine : le propriétaire du site a déclaré avoir relu l'ensemble des contenus le 1er novembre 2026
+// (tests/grand-test-a-relire.md). Les éléments sans champ « aRelire » propre en héritent.
+const RELECTURE_GT = { relu: true, date: "2026-11-01", personne: "propriétaire du site (relecture déclarée)" };
+
 // Prénoms variés (genre : m ou f), pour les situations
 const PRENOMS_GT = [
   ["Léa", "f"], ["Karim", "m"], ["Inès", "f"], ["Tom", "m"], ["Aïcha", "f"], ["Hugo", "m"], ["Mei", "f"], ["Samuel", "m"],
@@ -29,7 +33,7 @@ const PRENOMS_GT = [
 const FAMILLES_GT = [
   // ---------- A, réponses calculées (4 familles) ----------
   {
-    id: "a-vitesse", axe: "A", type: "calcul", generer: "vitesseMoyenne", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-vitesse", axe: "A", type: "calcul", generer: "vitesseMoyenne", difficulte: 2, mode: "note", aRelire: false,
     construit: "Moyenne de vitesses sur un même trajet : la vitesse moyenne est la moyenne harmonique, pas la moyenne simple",
     fiches: ["biais:ancrage"], ateliers: ["#tests/classiques"],
     // [véhicule, [vitesse aller, vitesse retour] possibles] : la moyenne harmonique 2ab / (a + b) est entière
@@ -44,7 +48,7 @@ const FAMILLES_GT = [
     ]
   },
   {
-    id: "a-hausse-baisse", axe: "A", type: "calcul", generer: "hausseBaisse", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-hausse-baisse", axe: "A", type: "calcul", generer: "hausseBaisse", difficulte: 2, mode: "note", aRelire: false,
     construit: "Pourcentages successifs : une hausse puis une baisse du même pourcentage ne ramènent pas au point de départ",
     fiches: ["biais:ancrage"], ateliers: ["#chiffres/graphiques"],
     // [prix de départ, pourcentage] : le prix final est entier
@@ -58,7 +62,7 @@ const FAMILLES_GT = [
     ]
   },
   {
-    id: "a-intervalles", axe: "A", type: "calcul", generer: "piquets", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-intervalles", axe: "A", type: "calcul", generer: "piquets", difficulte: 2, mode: "note", aRelire: false,
     construit: "Compter des intervalles : n intervalles entre deux bouts demandent n + 1 bornes",
     fiches: ["biais:ancrage"], ateliers: ["#tests/classiques"],
     // [longueur en mètres, espacement en mètres] : de 6 à 30 intervalles
@@ -77,7 +81,7 @@ const FAMILLES_GT = [
     ]
   },
   {
-    id: "a-moyenne-ponderee", axe: "A", type: "calcul", generer: "moyennePonderee", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-moyenne-ponderee", axe: "A", type: "calcul", generer: "moyennePonderee", difficulte: 2, mode: "note", aRelire: false,
     construit: "Moyenne de deux groupes de tailles différentes : il faut pondérer par les effectifs",
     fiches: ["biais:simpson"], ateliers: ["#tests/classiques"],
     // [effectif 1, moyenne 1, effectif 2, moyenne 2] : moyenne pondérée entière, différente de la moyenne simple
@@ -106,7 +110,7 @@ const FAMILLES_GT = [
 
   // ---------- A, lecture fine (4 familles, QCM) ----------
   {
-    id: "a-portee-negation", axe: "A", type: "qcm", generer: "porteeNegation", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-portee-negation", axe: "A", type: "qcm", generer: "porteeNegation", difficulte: 2, mode: "note", aRelire: false,
     construit: "Portée de la négation : « il est faux que tous… » veut dire « au moins un ne… pas », pas « aucun »",
     fiches: ["sophismes:faux-dilemme"], ateliers: ["#tests/logique"],
     // [groupe (féminin ?), propriété à l'infinitif passé positive, négative]
@@ -134,7 +138,7 @@ const FAMILLES_GT = [
     ]
   },
   {
-    id: "a-presuppose", axe: "A", type: "qcm", generer: "presuppose", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-presuppose", axe: "A", type: "qcm", generer: "presuppose", difficulte: 2, mode: "note", aRelire: false,
     construit: "Présupposé : une question peut contenir une prémisse que rien n'établit ; la bonne réponse est alors de le dire",
     fiches: ["sophismes:question-piege"], ateliers: ["#tests/qui-prouve"],
     // [texte établi, question qui présuppose un fait absent du texte, fait présupposé, trois raisons plausibles mais non établies]
@@ -162,7 +166,7 @@ const FAMILLES_GT = [
     ]
   },
   {
-    id: "a-relations", axe: "A", type: "qcm", generer: "relations", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-relations", axe: "A", type: "qcm", generer: "relations", difficulte: 2, mode: "note", aRelire: false,
     construit: "Relations exprimées à l'envers (« moins… que », « plus jeune que ») : il faut les remettre dans un même sens",
     fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"],
     // [adjectif positif m, f ; adjectif inverse m, f ; question]
@@ -177,7 +181,7 @@ const FAMILLES_GT = [
     ]
   },
   {
-    id: "a-seulement-si", axe: "A", type: "qcm", generer: "seulementSi", difficulte: 2, mode: "note", aRelire: true,
+    id: "a-seulement-si", axe: "A", type: "qcm", generer: "seulementSi", difficulte: 2, mode: "note", aRelire: false,
     construit: "« Seulement si » : une condition nécessaire, pas suffisante. Remplir la condition ne garantit pas l'action",
     fiches: ["sophismes:affirmation-consequent", "sophismes:negation-antecedent"], ateliers: ["#tests/wason"],
     // [règle, action au passé composé ({e} : accord), condition remplie (présent), action à l'infinitif]
@@ -208,21 +212,21 @@ const FAMILLES_GT = [
   // ---------- A, raisonnements : validité × crédibilité (8 familles, deux formes par case) ----------
   // Forme et crédibilité sont fixées par famille ; les termes viennent de TAXONOMIE_GT. La crédibilité d'une conclusion
   // est calculée à partir des appartenances de la taxonomie, jamais écrite à la main.
-  { id: "a-syl-chaine-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "chaine", credible: true, valide: true, difficulte: 1, mode: "note", aRelire: true,
+  { id: "a-syl-chaine-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "chaine", credible: true, valide: true, difficulte: 1, mode: "note", aRelire: false,
     construit: "Forme valide, conclusion crédible", fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"] },
-  { id: "a-syl-chaine-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "chaine", credible: false, valide: true, difficulte: 3, mode: "note", aRelire: true,
+  { id: "a-syl-chaine-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "chaine", credible: false, valide: true, difficulte: 3, mode: "note", aRelire: false,
     construit: "Forme valide, conclusion non crédible : la croyance pousse à rejeter un raisonnement juste", fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"] },
-  { id: "a-syl-exclusion-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "exclusion", credible: true, valide: true, difficulte: 1, mode: "note", aRelire: true,
+  { id: "a-syl-exclusion-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "exclusion", credible: true, valide: true, difficulte: 1, mode: "note", aRelire: false,
     construit: "Forme valide (exclusion), conclusion crédible", fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"] },
-  { id: "a-syl-exclusion-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "exclusion", credible: false, valide: true, difficulte: 3, mode: "note", aRelire: true,
+  { id: "a-syl-exclusion-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "exclusion", credible: false, valide: true, difficulte: 3, mode: "note", aRelire: false,
     construit: "Forme valide (exclusion), conclusion non crédible", fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"] },
-  { id: "a-syl-moyen-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "moyen", credible: true, valide: false, difficulte: 3, mode: "note", aRelire: true,
+  { id: "a-syl-moyen-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "moyen", credible: true, valide: false, difficulte: 3, mode: "note", aRelire: false,
     construit: "Forme non valide (moyen terme non distribué), conclusion crédible : la croyance pousse à accepter", fiches: ["biais:croyance-logique", "sophismes:affirmation-consequent"], ateliers: ["#tests/logique"] },
-  { id: "a-syl-moyen-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "moyen", credible: false, valide: false, difficulte: 1, mode: "note", aRelire: true,
+  { id: "a-syl-moyen-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "moyen", credible: false, valide: false, difficulte: 1, mode: "note", aRelire: false,
     construit: "Forme non valide (moyen terme non distribué), conclusion non crédible", fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"] },
-  { id: "a-syl-certains-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "certains", credible: true, valide: false, difficulte: 3, mode: "note", aRelire: true,
+  { id: "a-syl-certains-credible", axe: "A", type: "binaire", generer: "syllogisme", forme: "certains", credible: true, valide: false, difficulte: 3, mode: "note", aRelire: false,
     construit: "Forme non valide (« certains »), conclusion crédible", fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"] },
-  { id: "a-syl-certains-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "certains", credible: false, valide: false, difficulte: 1, mode: "note", aRelire: true,
+  { id: "a-syl-certains-incredible", axe: "A", type: "binaire", generer: "syllogisme", forme: "certains", credible: false, valide: false, difficulte: 1, mode: "note", aRelire: false,
     construit: "Forme non valide (« certains »), conclusion non crédible", fiches: ["biais:croyance-logique"], ateliers: ["#tests/logique"] }
 ];
 
@@ -250,7 +254,7 @@ const TAXONOMIE_GT = [
 
 FAMILLES_GT.push(
   {
-    id: "b-taux-base", axe: "B", type: "qcm", generer: "tauxDeBase", prevalence: "faible", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-taux-base", axe: "B", type: "qcm", generer: "tauxDeBase", prevalence: "faible", difficulte: 2, mode: "note", aRelire: false,
     construit: "Taux de base : quand ce que l'on cherche est rare, la plupart des alertes sont fausses",
     fiches: ["biais:taux-de-base", "biais:procureur"], ateliers: ["#tests/depistage"],
     // [prévalence %, détection %, fausses alertes %] : probabilité calculée par le générateur
@@ -258,7 +262,7 @@ FAMILLES_GT.push(
     surfaces: "SURFACES_DETECTION"
   },
   {
-    id: "b-depistage-surcorrection", axe: "B", type: "qcm", generer: "tauxDeBase", prevalence: "elevee", difficulte: 2, mode: "note", aRelire: true, surCorrection: true,
+    id: "b-depistage-surcorrection", axe: "B", type: "qcm", generer: "tauxDeBase", prevalence: "elevee", difficulte: 2, mode: "note", aRelire: false, surCorrection: true,
     construit: "Sur-correction du taux de base : quand ce que l'on cherche est fréquent, une alerte est le plus souvent juste",
     fiches: ["biais:taux-de-base", "sophismes:sophisme-sophisme"], ateliers: ["#tests/depistage"],
     nombres: [[50, 90, 10], [40, 90, 5], [60, 80, 10], [50, 80, 20], [30, 90, 10], [70, 90, 20], [50, 95, 5], [40, 80, 10], [60, 90, 30], [45, 90, 10]],
@@ -292,7 +296,7 @@ const SURFACES_DETECTION = [
 
 FAMILLES_GT.push(
   {
-    id: "b-conjonction", axe: "B", type: "qcm", generer: "conjonction", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-conjonction", axe: "B", type: "qcm", generer: "conjonction", difficulte: 2, mode: "note", aRelire: false,
     construit: "Conjonction : « A et B » ne peut pas être plus probable que « A » seul, même si B colle au portrait",
     fiches: ["biais:conjonction"], ateliers: ["#tests/classiques"],
     // [portrait, fait A (neutre), trait B (représentatif du portrait), trait C (autre)]
@@ -320,7 +324,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-echantillon", axe: "B", type: "qcm", generer: "echantillon", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-echantillon", axe: "B", type: "qcm", generer: "echantillon", difficulte: 2, mode: "note", aRelire: false,
     construit: "Taille de l'échantillon : les petits échantillons s'écartent plus souvent de la moyenne",
     fiches: ["biais:taille-echantillon"], ateliers: ["#tests/classiques"],
     // [lieu au pluriel, grand / petit, ce qui est compté, événement à une chance sur deux]
@@ -349,7 +353,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-regression", axe: "B", type: "qcm", generer: "regression", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-regression", axe: "B", type: "qcm", generer: "regression", difficulte: 2, mode: "note", aRelire: false,
     construit: "Régression vers la moyenne : les meilleurs d'une première mesure font en moyenne moins bien à la suivante",
     fiches: ["biais:regression-moyenne"], ateliers: ["#tests/classiques", "#chiffres/correlation"],
     // [épreuve, participants, mesure]
@@ -368,7 +372,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-risque-relatif", axe: "B", type: "qcm", generer: "risqueRelatif", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-risque-relatif", axe: "B", type: "qcm", generer: "risqueRelatif", difficulte: 2, mode: "note", aRelire: false,
     construit: "Risque relatif et risque absolu : « +50 % » d'un risque rare ajoute très peu de cas",
     fiches: ["biais:cadrage", "biais:taux-de-base"], ateliers: ["#chiffres/graphiques"],
     // [cas sur 10 000 sans le facteur, hausse relative %] : cas supplémentaires = cas × hausse / 100
@@ -388,7 +392,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-esperance", axe: "B", type: "qcm", generer: "esperance", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-esperance", axe: "B", type: "qcm", generer: "esperance", difficulte: 2, mode: "note", aRelire: false,
     construit: "Espérance : le gain moyen par partie tient compte de la mise et de la probabilité de gagner",
     fiches: ["biais:illusion-controle"], ateliers: ["#tests/classiques"],
     // [mise €, gain €, une chance sur k] : gain moyen = gain / k − mise
@@ -402,7 +406,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-simpson", axe: "B", type: "qcm", generer: "simpson", difficulte: 3, mode: "note", aRelire: true,
+    id: "b-simpson", axe: "B", type: "qcm", generer: "simpson", difficulte: 3, mode: "note", aRelire: false,
     construit: "Paradoxe de Simpson : une méthode peut faire mieux dans chaque groupe et moins bien au total",
     fiches: ["biais:simpson"], ateliers: ["#tests/classiques"],
     // [A facile réussis, A facile total, A difficile réussis, A difficile total, B facile réussis, B facile total, B difficile réussis, B difficile total]
@@ -431,7 +435,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-joueur", axe: "B", type: "qcm", generer: "joueur", difficulte: 1, mode: "note", aRelire: true,
+    id: "b-joueur", axe: "B", type: "qcm", generer: "joueur", difficulte: 1, mode: "note", aRelire: false,
     construit: "Erreur du joueur : un tirage au hasard n'a pas de mémoire, une série ne change pas la probabilité suivante",
     fiches: ["biais:erreur-du-joueur"], ateliers: ["#chiffres/ecrire-hasard", "#chiffres/hasard"],
     // [objet, issue, k (une chance sur k), longueur de la série]
@@ -446,7 +450,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-denominateur", axe: "B", type: "qcm", generer: "denominateur", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-denominateur", axe: "B", type: "qcm", generer: "denominateur", difficulte: 2, mode: "note", aRelire: false,
     construit: "Dénominateur : une part des cas ne dit rien sans la part de ce groupe dans l'ensemble",
     fiches: ["biais:taux-de-base", "sophismes:cherry-picking"], ateliers: ["#chiffres/graphiques"],
     // [part %, événement, groupe, conclusion tentante, ensemble de référence]
@@ -474,7 +478,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-unites", axe: "B", type: "qcm", generer: "unites", difficulte: 1, mode: "note", aRelire: true,
+    id: "b-unites", axe: "B", type: "qcm", generer: "unites", difficulte: 1, mode: "note", aRelire: false,
     construit: "Unités : comparer des quantités exprimées dans des unités différentes",
     fiches: ["biais:ancrage"], ateliers: ["#chiffres/grandeurs"],
     // [grandeur, [valeur, unité, facteur vers l'unité de base] × 4]
@@ -502,7 +506,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-points-pourcents", axe: "B", type: "qcm", generer: "pointsPourcents", difficulte: 2, mode: "note", aRelire: true,
+    id: "b-points-pourcents", axe: "B", type: "qcm", generer: "pointsPourcents", difficulte: 2, mode: "note", aRelire: false,
     construit: "« Deux fois moins », points et pourcentages : une baisse de 4 % à 2 % est une baisse de 2 points, soit de moitié",
     fiches: ["biais:cadrage"], ateliers: ["#chiffres/graphiques"],
     // [taux avant %, taux après %]
@@ -518,7 +522,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "b-monty-surcorrection", axe: "B", type: "qcm", generer: "montyIgnorant", difficulte: 3, mode: "note", aRelire: true, surCorrection: true,
+    id: "b-monty-surcorrection", axe: "B", type: "qcm", generer: "montyIgnorant", difficulte: 3, mode: "note", aRelire: false, surCorrection: true,
     construit: "Sur-correction de Monty Hall : si la porte est ouverte au hasard, changer ne donne plus d'avantage",
     fiches: ["sophismes:sophisme-sophisme", "biais:taux-de-base"], ateliers: ["#tests/monty-hall"],
     // [objets au pluriel, objet au singulier (féminin ?), ce qui les ouvre au hasard, nombre]
@@ -543,7 +547,7 @@ FAMILLES_GT.push(
 
 FAMILLES_GT.push(
   {
-    id: "c-temoin", axe: "C", type: "qcm", generer: "conceptuel", champs: ["cadre", "intervention", "part", "mesure"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-temoin", axe: "C", type: "qcm", generer: "conceptuel", champs: ["cadre", "intervention", "part", "mesure"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Groupe témoin : une amélioration après une intervention ne dit rien sans comparaison",
     fiches: ["sophismes:post-hoc"], ateliers: ["#tests/etudes"],
     texte: "{cadre} essaie {intervention} pendant trois mois. À la fin, {part} % des participants ont amélioré {mesure}.",
@@ -566,7 +570,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-confusion", axe: "C", type: "qcm", generer: "conceptuel", champs: ["a", "b", "unite", "z"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-confusion", axe: "C", type: "qcm", generer: "conceptuel", champs: ["a", "b", "unite", "z"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Facteur de confusion : un troisième facteur peut produire les deux phénomènes à la fois",
     fiches: ["sophismes:correlation", "sophismes:cause-unique"], ateliers: ["#chiffres/correlation"],
     texte: "Dans une ville, {a} et {b} varient ensemble : les {unite} où l'on observe le plus de l'un sont aussi celles où l'on observe le plus de l'autre.",
@@ -589,7 +593,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-causalite-inverse", axe: "C", type: "qcm", generer: "conceptuel", champs: ["a", "inverse", "direct"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-causalite-inverse", axe: "C", type: "qcm", generer: "conceptuel", champs: ["a", "inverse", "direct"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Causalité inverse : le lien peut aller dans l'autre sens",
     fiches: ["sophismes:correlation"], ateliers: ["#chiffres/correlation"],
     texte: "Une enquête montre que {a}, plus que les autres.",
@@ -622,7 +626,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-selection", axe: "C", type: "qcm", generer: "conceptuel", champs: ["source", "conclusion", "probleme", "n"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-selection", axe: "C", type: "qcm", generer: "conceptuel", champs: ["source", "conclusion", "probleme", "n"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Biais de sélection : ceux que l'on voit ou qui répondent ne représentent pas tout le monde",
     fiches: ["biais:survivant", "sophismes:generalisation-hative"], ateliers: ["#tests/wald"],
     texte: "{source} Conclusion : « {conclusion} »",
@@ -655,7 +659,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-attente", axe: "C", type: "qcm", generer: "conceptuel", champs: ["objet", "effet", "faux"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-attente", axe: "C", type: "qcm", generer: "conceptuel", champs: ["objet", "effet", "faux"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Effet d'attente (placebo) : savoir ce que l'on reçoit peut suffire à changer ce que l'on ressent",
     fiches: ["biais:confirmation"], ateliers: ["#tests/etudes"],
     texte: "Des volontaires reçoivent {objet}, en sachant ce que c'est. Une semaine plus tard, la plupart déclarent {effet}.",
@@ -678,7 +682,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-hypothese", axe: "C", type: "qcm", generer: "conceptuel", champs: ["argument", "hypothese", "leurre", "autre1", "autre2"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-hypothese", axe: "C", type: "qcm", generer: "conceptuel", champs: ["argument", "hypothese", "leurre", "autre1", "autre2"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Hypothèse implicite : un raisonnement repose souvent sur une prémisse qu'il ne dit pas",
     fiches: ["sophismes:petition-principe", "sophismes:faux-dilemme"], ateliers: ["#tests/demonter"],
     texte: "« {argument} »",
@@ -710,7 +714,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-conclusion-excessive", axe: "C", type: "qcm", generer: "conceptuel", champs: ["qui", "resultat", "titre", "limite"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-conclusion-excessive", axe: "C", type: "qcm", generer: "conceptuel", champs: ["qui", "resultat", "titre", "limite"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Conclusion excessive : une étude ne vaut que pour ce qu'elle a mesuré, et sur qui",
     fiches: ["sophismes:generalisation-hative"], ateliers: ["#tests/etudes"],
     texte: "Une étude (fictive) menée sur {qui} montre que {resultat}. Un article titre : « {titre} ».",
@@ -742,7 +746,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-information-utile", axe: "C", type: "qcm", generer: "conceptuel", champs: ["situation", "utile", "leurre", "autre1", "autre2"], difficulte: 2, mode: "note", aRelire: true,
+    id: "c-information-utile", axe: "C", type: "qcm", generer: "conceptuel", champs: ["situation", "utile", "leurre", "autre1", "autre2"], difficulte: 2, mode: "note", aRelire: false,
     construit: "Information manquante utile : savoir quelle donnée trancherait la question",
     fiches: ["sophismes:cherry-picking", "biais:survivant"], ateliers: ["#tests/laterale"],
     texte: "{situation}",
@@ -774,7 +778,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-causalite-surcorrection", axe: "C", type: "qcm", generer: "conceptuel", champs: ["intervention", "n", "qui", "mesure"], difficulte: 2, mode: "note", aRelire: true, surCorrection: true,
+    id: "c-causalite-surcorrection", axe: "C", type: "qcm", generer: "conceptuel", champs: ["intervention", "n", "qui", "mesure"], difficulte: 2, mode: "note", aRelire: false, surCorrection: true,
     construit: "Sur-correction : une expérience bien faite, avec tirage au sort, permet de conclure à un effet",
     fiches: ["sophismes:sophisme-sophisme", "sophismes:correlation"], ateliers: ["#tests/etudes"],
     texte: "Pour tester {intervention}, des chercheurs (fictifs) tirent au sort {n} {qui} : la moitié suit {intervention}, l'autre moitié non, pendant la même période. Les personnes qui mesurent {mesure} ne savent pas qui a suivi quoi. Le groupe qui en a bénéficié progresse nettement plus, et l'écart est bien au-delà de ce que le hasard expliquerait.",
@@ -794,7 +798,7 @@ FAMILLES_GT.push(
     ]
   },
   {
-    id: "c-preuve-surcorrection", axe: "C", type: "qcm", generer: "conceptuel", champs: ["nombre", "sujet", "resultat"], difficulte: 2, mode: "note", aRelire: true, surCorrection: true,
+    id: "c-preuve-surcorrection", axe: "C", type: "qcm", generer: "conceptuel", champs: ["nombre", "sujet", "resultat"], difficulte: 2, mode: "note", aRelire: false, surCorrection: true,
     construit: "Sur-correction : des preuves solides et convergentes justifient une conclusion, même révisable",
     fiches: ["sophismes:sophisme-sophisme", "sophismes:nirvana"], ateliers: ["#tests/qui-prouve"],
     texte: "Dans un pays imaginaire, {nombre} équipes indépendantes, avec des méthodes différentes, ont étudié {sujet}. Toutes trouvent que {resultat}. Les données sont publiques et les analyses ont été refaites par d'autres.",

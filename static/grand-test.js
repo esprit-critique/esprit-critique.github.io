@@ -5,12 +5,12 @@
 // Plan et décisions : tests/grand-test-plan.md et tests/grand-test-journal.md.
 
 // ===================== Drapeaux =====================
-// Le Grand test n'est pas publié : tant que GRAND_TEST_VISIBLE vaut false, aucune carte, aucun lien, aucune route
-// ne l'expose. PERSONNAGES_VISIBLES commande les personnages pédagogiques (niveaux et entités), désactivés aussi.
+// Le Grand test est publié depuis le 1er novembre 2026, après relecture par le propriétaire du site. À false,
+// aucune carte, aucun lien, aucune route ne l'exposerait. PERSONNAGES_VISIBLES commande les personnages pédagogiques (niveaux et entités), désactivés aussi.
 // GRAND_TEST_ESSAI admet les contenus encore à relire (aRelire: true) : réservé au banc d'essai, qui le met à true
-// dans une copie du fichier (tests/lancer.sh). Ces trois valeurs restent false dans la version publiée.
-const GRAND_TEST_VISIBLE = false;
-const PERSONNAGES_VISIBLES = false;
+// dans une copie du fichier (tests/lancer.sh). Il reste false dans la version publiée.
+const GRAND_TEST_VISIBLE = true;
+const PERSONNAGES_VISIBLES = true;
 const GRAND_TEST_ESSAI = false;
 
 // ===================== Forme des données enregistrées =====================
@@ -961,15 +961,17 @@ const STRATES_GT = {
 // Toutes sont écrites par IA : aRelire, donc tirées seulement dans la copie d'essai tant qu'aucune personne ne les
 // a relues. Les démonstrations de mémoire ont 20 instances par famille, comme les familles générées.
 const COMBINAISONS_SOURCE_GT = [0b000111, 0b101010, 0b110001, 0b011100];
+// Un élément sans champ « aRelire » propre hérite de la relecture d'ensemble (RELECTURE_GT)
+const aRelireGT = x => x && x.aRelire !== undefined ? x.aRelire : !RELECTURE_GT.relu;
 const BANQUES_GT = {
-  vf: () => VF_GT.map(x => ({ id: x.id, famille: "vf:" + (x.groupe || x.id), strate: x.vrai ? "vrai" : "faux", domaine: x.domaine, aRelire: x.aRelire !== false })),
-  exposition: () => EXPOSITIONS_GT.map(([id, domaine, vrai]) => ({ id, famille: "ex:" + id, strate: vrai ? "vrai" : "faux", domaine, aRelire: true })),
-  grandeur: () => GRANDEURS_PAYS_GT.map(([pays, k]) => ({ id: "gr-" + pays + "-" + k, famille: "gr:" + pays, strate: "gr", domaine: k, aRelire: true })),
-  angleMort: () => ANGLE_MORT_GT.map(([id]) => ({ id, famille: "am:" + id, strate: "am", domaine: "am", aRelire: true })),
-  societe: () => SOCIETE_GT.map(([id]) => ({ id, famille: "so:" + id, strate: "so", domaine: "so", aRelire: true })),
-  drm: () => LISTES_DRM_GT.map((x, i) => ({ id: "drm@" + i, famille: "m-drm", strate: "m", domaine: "m", aRelire: true })),
-  recit: () => RECITS_GT.map((x, i) => ({ id: "recit@" + i, famille: "m-desinformation", strate: "m", domaine: "m", aRelire: true })),
-  source: () => Array.from({ length: SOURCES_GT.length * COMBINAISONS_SOURCE_GT.length }, (_, i) => ({ id: "source@" + i, famille: "m-source", strate: "m", domaine: "m", aRelire: true }))
+  vf: () => VF_GT.map(x => ({ id: x.id, famille: "vf:" + (x.groupe || x.id), strate: x.vrai ? "vrai" : "faux", domaine: x.domaine, aRelire: aRelireGT(x) })),
+  exposition: () => EXPOSITIONS_GT.map(([id, domaine, vrai]) => ({ id, famille: "ex:" + id, strate: vrai ? "vrai" : "faux", domaine, aRelire: aRelireGT(null) })),
+  grandeur: () => GRANDEURS_PAYS_GT.map(([pays, k]) => ({ id: "gr-" + pays + "-" + k, famille: "gr:" + pays, strate: "gr", domaine: k, aRelire: aRelireGT(null) })),
+  angleMort: () => ANGLE_MORT_GT.map(([id]) => ({ id, famille: "am:" + id, strate: "am", domaine: "am", aRelire: aRelireGT(null) })),
+  societe: () => SOCIETE_GT.map(([id]) => ({ id, famille: "so:" + id, strate: "so", domaine: "so", aRelire: aRelireGT(null) })),
+  drm: () => LISTES_DRM_GT.map((x, i) => ({ id: "drm@" + i, famille: "m-drm", strate: "m", domaine: "m", aRelire: aRelireGT(null) })),
+  recit: () => RECITS_GT.map((x, i) => ({ id: "recit@" + i, famille: "m-desinformation", strate: "m", domaine: "m", aRelire: aRelireGT(null) })),
+  source: () => Array.from({ length: SOURCES_GT.length * COMBINAISONS_SOURCE_GT.length }, (_, i) => ({ id: "source@" + i, famille: "m-source", strate: "m", domaine: "m", aRelire: aRelireGT(null) }))
 };
 
 // Composition par mode. Familles générées : « strate » et nombre de familles ; banques : « banque » et nombre
@@ -1228,7 +1230,7 @@ function resoudreItem(inst, graine) {
   const id = inst.instanceId, v = inst.valeurs || {};
   const famille = familleGT(inst.famille);
   if (famille) return instanceGT(famille, v.i, graine);
-  const base = { instanceId: id, itemId: inst.itemId, famille: inst.famille, etape: v.etape, banque: v.banque, aRelire: true };
+  const base = { instanceId: id, itemId: inst.itemId, famille: inst.famille, etape: v.etape, banque: v.banque, aRelire: aRelireGT(null) };
   if (v.banque === "vf") {
     const x = VF_GT.find(y => y.id === id);
     return Object.assign(base, { type: "vf", axe: "D", texte: x.texte, juste: x.vrai, explication: x.explication, source: x.source, fiches: x.fiches || [], chance: 0.5 });

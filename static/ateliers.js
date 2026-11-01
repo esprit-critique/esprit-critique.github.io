@@ -462,6 +462,9 @@ function atelierConseille() {
   const resultats = lire("resultatsAteliers", {});
   const anciens = new Set([...lire("jeuxFaits", []), ...lire("experiencesFaites", [])]);
   const jamais = tous.filter(a => !resultats[a.atelier.id] && !anciens.has(a.atelier.id));
+  // Le Grand test, s'il est publié, est proposé en premier tant qu'il n'a pas été essayé
+  const grandTest = jamais.find(a => a.atelier.id === "grand-test");
+  if (grandTest) return grandTest;
   if (jamais.length) return jamais[Math.floor(generateur(aujourdHui())() * jamais.length)];
   return tous.slice().sort((a, b) => ((resultats[a.atelier.id] || {}).jour || 0) - ((resultats[b.atelier.id] || {}).jour || 0))[0];
 }
@@ -582,6 +585,12 @@ function afficherPortrait() {
   const blocs = [];
   const ajouter = (titre, couleur, adresse, contenu, aMesurer) => blocs.push({ titre, couleur, adresse, contenu, aMesurer });
   const pct = x => Math.round(100 * x) + " %";
+
+  // 0. Le Grand test (grand-test-interface.js), s'il est publié : mode, date et axes séparés, sans score global
+  if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) {
+    const resume = resumePortraitGrandTest();
+    ajouter("Le Grand test", "#5b5bb5", "#tests/grand-test", resume, "Cinq façons de raisonner, mesurées séparément : à mesurer.");
+  }
 
   // 1. Confiance
   const confiance = lire("confiance", {});

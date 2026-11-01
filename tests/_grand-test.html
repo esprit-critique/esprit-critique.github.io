@@ -44,21 +44,22 @@ f.onload = async () => {
     brancher();
     w.localStorage.clear();
     await recharger();
-    ok("publié : les trois drapeaux valent false", w.eval("GRAND_TEST_VISIBLE === false && PERSONNAGES_VISIBLES === false && GRAND_TEST_ESSAI === false"));
+    // Publié depuis le 1er novembre 2026, après relecture déclarée par le propriétaire du site
+    ok("publié : Grand test et personnages visibles, mode d'essai désactivé", w.eval("GRAND_TEST_VISIBLE === true && PERSONNAGES_VISIBLES === true && GRAND_TEST_ESSAI === false"));
     const source = await (await fetch("/grand-test.js", { cache: "no-store" })).text();
-    ok("publié : grand-test.js déclare les drapeaux à false",
-      /^const GRAND_TEST_VISIBLE = false;$/m.test(source) && /^const PERSONNAGES_VISIBLES = false;$/m.test(source) && /^const GRAND_TEST_ESSAI = false;$/m.test(source));
-    ok("publié : aucune expérience « grand-test »", !w.eval("EXPERIENCES.some(e => e.id === 'grand-test')"));
-    ok("publié : toujours 45 ateliers", w.eval("tousLesAteliers().length") === 45);
+    ok("publié : grand-test.js déclare les drapeaux (true, true, essai false)",
+      /^const GRAND_TEST_VISIBLE = true;$/m.test(source) && /^const PERSONNAGES_VISIBLES = true;$/m.test(source) && /^const GRAND_TEST_ESSAI = false;$/m.test(source));
+    ok("publié : relecture enregistrée, contenus publiables", w.eval("RELECTURE_GT.relu === true && FAMILLES_GT.every(f => f.aRelire === false) && aRelireGT(VF_GT[0]) === false && aRelireGT(CARTES_GT[0]) === false"));
+    ok("publié : 48 ateliers (45 + Grand test + « Faux souvenirs » + « Douter juste »)", w.eval("tousLesAteliers().length") === 48);
+    const tirePublie = w.eval("tirerPassation(etatGrandTestVide(), 'complet', 9)");
+    ok("publié : un test complet tire tous ses items, sans déficit", tirePublie.instances.length === 105 && !tirePublie.issues.some(x => /publiables/.test(x)), tirePublie.instances.length + " " + tirePublie.issues.join(" | "));
+    await aller("ateliers");
+    ok("publié : la carte du Grand test est sur la page des ateliers", !!d.querySelector('a[href="#tests/grand-test"]'));
+    ok("publié : le Grand test est la suggestion des nouveaux venus", /Le Grand test/.test(vue().querySelector(".bilan-ateliers").textContent));
     await aller("tests/grand-test");
-    ok("publié : la route #tests/grand-test renvoie à la liste des ateliers", vue().id === "vue-ateliers");
-    let exposition = [];
-    for (const page of ["accueil", "ateliers", "portrait", "guide", "biais/ancrage", "sophismes/post-hoc", "quiz"]) {
-      await aller(page);
-      if (d.querySelector('a[href*="grand-test"]')) exposition.push(page + " (lien)");
-      if (/grand test/i.test(d.querySelector("main").textContent)) exposition.push(page + " (texte)");
-    }
-    ok("publié : ni lien ni mention du Grand test sur 7 pages", exposition.length === 0, exposition.join(", "));
+    ok("publié : la route #tests/grand-test ouvre le test", vue().id === "vue-tests" && /Le Grand test/.test(vue().querySelector("h1").textContent));
+    await aller("portrait");
+    ok("publié : bloc discret « Le Grand test » dans le portrait, « à mesurer » sans test", /Le Grand test/.test(vue().textContent) && /à mesurer/.test(vue().textContent));
     ok("publié : « grandTest » dans CLES_SAUVEGARDE et FORMES_SAUVEGARDE.objet",
       w.eval("CLES_SAUVEGARDE.includes('grandTest') && FORMES_SAUVEGARDE.objet.includes('grandTest') && !FORMES_SAUVEGARDE.tableau.includes('grandTest')"));
     // Service worker : chaque script chargé par la page est mis en cache, et le cache a changé de version
@@ -323,7 +324,7 @@ f.onload = async () => {
     }
 
     // --- Ateliers conseillés et ateliers nouveaux (lot 8) ---
-    ok("essai : 48 ateliers (45 + Grand test + deux ateliers nouveaux) ; publié : 45", w.eval("tousLesAteliers().length") === 48);
+    ok("essai : 48 ateliers (45 + Grand test + deux ateliers nouveaux)", w.eval("tousLesAteliers().length") === 48);
     const conseils = w.eval("ateliersConseilles(passationsTerminees(GT.etat).slice(-1)[0])");
     ok("trois ateliers conseillés au plus, adresses réelles, raison donnée", conseils.length <= 3 && conseils.length > 0 && conseils.every(c => w.eval("tousLesAteliers()").some(a => a.adresse === c.atelier.adresse) && /^Pourquoi celui-ci/.test(c.raison)));
     for (const [route, motif] of [["tests/faux-souvenirs", /Ce que montre cet atelier/], ["tests/douter-juste", /Douter juste/]]) {
@@ -359,8 +360,8 @@ f.onload = async () => {
     ok("cartes : une carte « Le saviez-vous ? » dans le profil, avec source et statut", /Le saviez-vous/.test(vue().textContent) && /Statut\s*:\s*(établi|discuté|à répliquer)/.test(vue().textContent));
 
     // --- Entités et niveaux (lot 9) : absents à false, rendus et accessibles quand on force true ---
-    ok("personnages : PERSONNAGES_VISIBLES vaut false, aucune entité ni niveau dans le profil",
-      w.eval("PERSONNAGES_VISIBLES") === false && !vue().querySelector(".gt-entites, .gt-niveau, .gt-entite"));
+    ok("personnages : visibles dans le profil (niveau, et mécanismes si erreurs liées à une fiche)",
+      w.eval("PERSONNAGES_VISIBLES") === true && !!vue().querySelector(".gt-niveau") && /ne vous définit pas/.test(vue().querySelector(".gt-niveau").textContent));
     const derniere = "passationsTerminees(GT.etat).slice(-1)[0]";
     const blocE = w.eval("blocEntitesRencontrees(" + derniere + ", true)"), blocN = w.eval("blocNiveau(GT.etat, true)");
     ok("personnages forcés à true : entités dessinées avec un nom accessible, liens vers fiche et atelier",

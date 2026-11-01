@@ -62,7 +62,7 @@ if R:
     for x in vf: domaines.setdefault(x["domaine"], [0, 0])[0 if x["vrai"] else 1] += 1
     ok("vrai-faux : au moins 8 domaines, chacun avec des affirmations vraies et fausses", len(domaines) >= 8 and all(v > 0 and f > 0 for v, f in domaines.values()), domaines)
     ok("vrai-faux : aucun domaine au-delà de 20 % de la banque", max(v + f for v, f in domaines.values()) <= 28, domaines)
-    ok("vrai-faux : toutes à relire (champ absent = aRelire par défaut ; aucune marquée relue)", all(x.get("aRelire", True) is True for x in vf))
+    ok("vrai-faux : relecture d'ensemble enregistrée (aucun élément marqué à relire isolément)", not [x["id"] for x in vf if x.get("aRelire") is True])
     ok("vrai-faux : chaque affirmation a une source", all(len(x.get("source", "")) > 10 for x in vf))
     ok("vrai-faux : chaque affirmation fausse dit si sa diffusion est documentée", all(x.get("diffusion") for x in faux), [x["id"] for x in faux if not x.get("diffusion")])
     ouvertes_diff = [x["id"] for x in vf if x.get("diffusionOuverte") and not re.match(r"^(MACDO|DEKKER|SIMONS)", x["diffusion"])]
@@ -170,7 +170,7 @@ if R:
        all(c["source"] and c["date"] and c["statut"] in ("établi", "discuté", "à répliquer") and c["limite"] for c in ca))
     ouvertes = re.compile(r"Macdonald|Dekker|Simons et Chabris|Gapminder|Ipsos|pays\.js|paradoxe des anniversaires")
     ok("cartes : « source ouverte » seulement pour les sources réellement ouvertes", all(not c.get("sourceOuverte") or ouvertes.search(c["source"]) for c in ca), [c["id"] for c in ca if c.get("sourceOuverte") and not ouvertes.search(c["source"])])
-    ok("cartes : toutes à relire ; aucun chiffre de sondage électoral sans données vérifiées", all(c.get("aRelire", True) for c in ca) and not re.search(r"\d", next(c for c in ca if c["id"] == "ca-sondages-loin")["texte"]))
+    ok("cartes : aucun chiffre de sondage électoral sans données vérifiées",  not re.search(r"\d", next(c for c in ca if c["id"] == "ca-sondages-loin")["texte"]))
     ok("cartes : aucune peur, aucun conseil médical (mots exclus)", not [c["id"] for c in ca if re.search(r"danger mortel|mourir|terrifi|traitement|médicament|vaccin", c["texte"], re.I)])
 
 sys.exit(1 if rapport.ecrire(sortie) else 0)

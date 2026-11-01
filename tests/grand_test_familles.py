@@ -176,7 +176,7 @@ if R:
     ok("au moins 12 familles marquées pour les pièges avancés (sur-correction, lecture fine, dénominateur, unités…)",
        len([f for f in familles if f["surCorrection"] or f["id"] in ("a-portee-negation", "a-presuppose", "a-relations", "a-seulement-si", "b-denominateur", "b-unites", "b-points-pourcents")]) >= 11)
     ok("identifiants de familles uniques", len({f["id"] for f in familles}) == len(familles))
-    ok("toutes les familles écrites par IA portent aRelire: true", all(f["aRelire"] is True for f in familles))
+    ok("toutes les familles relues (relecture déclarée le 1er novembre 2026) : aRelire false", all(f["aRelire"] is False for f in familles))
     mauvaises_fiches = [(f["id"], x) for f in familles for x in f["fiches"] if x not in ids_fiches]
     ok("fiches liées : toutes existent dans donnees.js (" + str(len(ids_fiches)) + " fiches)", not mauvaises_fiches and len(ids_fiches) == 90, mauvaises_fiches)
     mauvais_ateliers = [(f["id"], x) for f in familles for x in f["ateliers"] if x not in ateliers]
@@ -291,7 +291,7 @@ if R:
 
     # ---------- Tirage ----------
     ok("reproductibilité : même graine → même tirage ; autre graine → autre tirage ; même instance → même texte", R["reproductible"] and R["variable"] and R["memeGraineMemeTexte"])
-    ok("version publiée : aucun contenu à relire n'est tiré (0 item, déficit signalé)", R_publie["n"] == 0 and R_publie["issues"] > 0 and R["publiables"] == 0)
+    ok("version publiée : tous les items relus sont tirés, sans déficit", R_publie["n"] > 0 and R_publie["issues"] == 0 and R["publiables"] == len(familles))
     par_id = {f["id"]: f for f in familles}
     QUOTAS = {"complet": {"A-calcul": 4, "A-lecture": 4, "A-raisonnement": 8, "B": 10, "C": 10}, "express": {"A-calcul": 1, "A-lecture": 1, "A-raisonnement": 2, "B": 4, "C": 4}}
     def strate(f):

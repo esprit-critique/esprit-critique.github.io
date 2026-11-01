@@ -19,7 +19,7 @@ pour l'utiliser comme une application.
   passage de la situation qui trahit la notion. Chaque fiche a quatre situations : les révisions utilisent en priorité
   les deux dernières, pour ne pas reconnaître un texte déjà lu.
 - **Un défi du jour** : dix questions difficiles, les mêmes pour tout le monde, une tentative par jour.
-- **45 ateliers**, en six sections :
+- **48 ateliers**, en six sections, dont le Grand test :
   - *le monde en chiffres* : état du monde, causes de décès, duels entre 155 pays (démographie, économie,
     géopolitique), cartes mentales, ordres de grandeur, chronologie ;
   - *mesurer sa confiance* : vrai ou faux avec degré de certitude, intervalles à 90 %, effet d'ancrage,
@@ -136,7 +136,7 @@ Les rapports et les captures vont dans `tests/rapports/`, qui n'est pas versionn
 À relire : `tests/indices-a-relire.md`, `tests/situations-sup-a-relire.md`, `tests/sources-completees.md`,
 `tests/niveaux-a-relire.md`, `tests/paires-douteuses.md` et `tests/a-verifier.md`.
 
-## Le Grand test (non publié)
+## Le Grand test
 
 Un instrument pédagogique d'évaluation de pratiques de raisonnement, **pas un diagnostic d'intelligence** : cinq axes
 séparés (réflexion et logique, probabilités, preuves, discernement, étalonnage) et un indicateur d'impartialité
@@ -144,10 +144,10 @@ exploratoire, chacun avec sa plage d'incertitude, **sans score global ni classem
 (12 à 15 minutes) et complet (environ 45 à 60 minutes, en une ou plusieurs fois, reprise automatique). Tout reste
 dans le navigateur, sous la seule clé `grandTest`, exportée et importée avec le reste de la progression.
 
-**Il n'est pas visible** : `GRAND_TEST_VISIBLE = false` et `PERSONNAGES_VISIBLES = false` (en tête de
-`static/grand-test.js`). Tout son contenu a été rédigé avec une IA et attend une relecture humaine :
-`tests/grand-test-a-relire.md` (347 éléments). Un élément n'est tiré dans la version publiée que lorsque son champ
-`aRelire` a été levé après relecture.
+**Publié le 1er novembre 2026**, après une relecture d'ensemble déclarée par le propriétaire du site
+(`RELECTURE_GT` dans `static/grand-test-donnees.js`, détail dans `tests/grand-test-a-relire.md`) :
+`GRAND_TEST_VISIBLE = true` et `PERSONNAGES_VISIBLES = true`. Une partie des sources citées reste à ouvrir sur la
+source primaire (marquées « à vérifier » dans les cartes et le fichier à relire).
 
 | Fichier | Contenu |
 |---|---|
