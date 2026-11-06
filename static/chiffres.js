@@ -280,10 +280,10 @@ const JEUX = [
       }, (q, zone, fini) => {
         if (q.classement) {
           zone.appendChild(el("p", "cas", q.sens === "nord" ? "Classez ces villes du nord au sud." : "Classez ces villes d'ouest en est."));
-          classementInteractif(zone, q.villes, v => VILLES[v][0], ordre => {
+          classementInteractif(zone, q.villes, v => T(VILLES[v][0]), ordre => {
             const bon = [...q.villes].sort((a, b) => q.sens === "nord" ? VILLES[b][1] - VILLES[a][1] : VILLES[a][2] - VILLES[b][2]);
             const retour = el("div", "retour-quiz");
-            const part = corrigerClassement(retour, ordre, bon, v => VILLES[v][0], coordonnees);
+            const part = corrigerClassement(retour, ordre, bon, v => T(VILLES[v][0]), coordonnees);
             retour.appendChild(planisphere(bon, q.sens, true));   // numéros du bon ordre, comme la liste
             zone.appendChild(retour);
             fini(part, retour);
@@ -310,9 +310,9 @@ const JEUX = [
             else if (v === choix) x.classList.add("faux");
           });
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Non : ") + VILLES[bonne][0] + "."));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? T("Juste : ") : T("Non : ")) + T(VILLES[bonne][0]) + "."));
           retour.appendChild(planisphere([a, b], q.sens));
-          retour.appendChild(paragraphe([a, b].map(v => VILLES[v][0] + " : " + coordonnees(v)).join(" ; ") + "."));
+          retour.appendChild(paragraphe([a, b].map(v => T(VILLES[v][0]) + " : " + coordonnees(v)).join(" ; ") + "."));
           if (q.note) retour.appendChild(paragraphe(q.note));
           zone.appendChild(retour);
           fini(juste, retour);
@@ -603,7 +603,7 @@ const JEUX = [
 
       const champs = questions.map((q, k) => {
         const bloc = el("div", "question-test");
-        bloc.appendChild(paragraphe((k + 1) + ". " + q.q + (q.unite ? " (" + q.unite + ")" : "")));
+        bloc.appendChild(paragraphe((k + 1) + ". " + T(q.q) + (q.unite ? " (" + T(q.unite) + ")" : "")));
         const paire = etiquette => {
           const ligne = el("div", "ligne");
           const bas = el("input", "champ");
@@ -1136,7 +1136,7 @@ function tirerPaireChronologieNiveau(niveau, i, exclus) {
 // « 41,9° N, 12,5° E »
 function coordonnees(v) {
   const [, lat, lon] = VILLES[v];
-  return fr(Math.abs(lat)) + "° " + (lat >= 0 ? "N" : "S") + ", " + fr(Math.abs(lon)) + "° " + (lon >= 0 ? "E" : "O");
+  return fr(Math.abs(lat)) + "° " + (lat >= 0 ? "N" : "S") + ", " + fr(Math.abs(lon)) + "° " + (lon >= 0 ? "E" : (LANGUE === "en" ? "W" : "O"));
 }
 
 // Planisphère schématique : méridiens et parallèles tous les 30°, et les deux villes
@@ -1194,7 +1194,7 @@ function placerEtiquettes(points, obstacles) {
 function dateEvenement(e) {
   if (e.date) {
     const d = new Date(e.date + "T12:00:00");
-    const jour = d.getDate() === 1 ? "1er" : String(d.getDate());
+    const jour = d.getDate() === 1 && LANGUE !== "en" ? "1er" : String(d.getDate());
     return jour + " " + d.toLocaleDateString(LOCALE, { month: "long" }) + " " + d.getFullYear();
   }
   return (e.vers ? T("vers ") : "") + (e.annee < 0 ? T("{0} av. J.-C.", -e.annee) : String(e.annee));
@@ -1232,7 +1232,7 @@ function afficherFermi(f, zone, fini) {
     const champ = el("input", "champ");
     champ.inputMode = "decimal";
     champ.setAttribute("aria-label", libelle);
-    ligne.append(el("span", "facteur-fermi", (diviser ? "÷ " : "× ") + libelle), champ);
+    ligne.append(el("span", "facteur-fermi", (diviser ? "÷ " : "× ") + T(libelle)), champ);
     zone.appendChild(ligne);
     return champ;
   });
@@ -1330,7 +1330,7 @@ function scoreFourchette(q, bas, haut, alpha) {
 
 function ligneIntervalle(q, bas, haut, ok) {
   const ligne = el("div", "barre-ligne");
-  ligne.appendChild(el("div", "barre-nom", q.q + " : " + fr(q.v) + (q.unite ? " " + q.unite : "") + (q.note ? " (" + q.note + ")" : "")));
+  ligne.appendChild(el("div", "barre-nom", T(q.q) + " : " + fr(q.v) + (q.unite ? " " + T(q.unite) : "") + (q.note ? " (" + T(q.note) + ")" : "")));
   const min = Math.min(bas, q.v), max = Math.max(haut, q.v);
   const marge = (max - min) * 0.15 || Math.abs(q.v) * 0.1 || 1;
   const debut = min - marge, fin = max + marge;

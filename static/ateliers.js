@@ -548,7 +548,7 @@ function ouvrirAtelier(conteneur, atelier, adresseCourante) {
   const nav = el("div", "nav-atelier");
   nav.appendChild(lienVers("#ateliers", "← Ateliers", "lien retour"));
   const suivant = tous[(rang + 1) % tous.length];
-  nav.appendChild(lienVers(suivant.adresse, suivant.atelier.titre + " →", "lien retour atelier-suivant"));
+  nav.appendChild(lienVers(suivant.adresse, T(suivant.atelier.titre) + " →", "lien retour atelier-suivant"));
   conteneur.appendChild(nav);
 
   const carte = el("article", "carte");

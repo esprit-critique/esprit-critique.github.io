@@ -161,6 +161,8 @@ def ressemble_a_du_texte(s):
         return False
     if len(t) < 2 or not re.search(r"[A-Za-zÀ-ÿ]", t):
         return False
+    if re.match(r"^(l'|d')[A-ZÀ-Ý]", t):                      # « l'Inde », « d'Allemagne » : un nom précédé de son article
+        return True
     if re.fullmatch(r"[#.\[]?[\w\-:.#\[\]=\"'/*>+~, ()]*", t) and not ACCENTS.search(t) and " " not in t:
         # un seul mot ASCII : identifiant, sauf s'il commence par une majuscule suivie de minuscules (« Accueil »)
         return bool(re.fullmatch(r"[A-Z][a-z]{2,}[a-z\-']*", t))
