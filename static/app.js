@@ -150,9 +150,10 @@ function aujourdHui() {
   return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
 }
 
-// Le mot et son pluriel (« notion » / « notions ») sont cherchés dans le dictionnaire en anglais : 0 prend le pluriel en anglais
+// Le mot et son pluriel (« notion » / « notions ») sont cherchés dans le dictionnaire en anglais : 0 prend le pluriel en anglais.
+// Pour un mot invariable en français (« cas »), le pluriel anglais est cherché sous « cas (pluriel) ».
 const pluriel = (n, mot, motPluriel) => LANGUE === "en"
-  ? n + " " + T(n === 1 ? mot : (motPluriel || mot + "s"))
+  ? n + " " + (n === 1 ? T(mot) : motPluriel === mot && DICTIONNAIRE.has(cleTexte(mot + " (pluriel)")) ? T(mot + " (pluriel)") : T(motPluriel || mot + "s"))
   : n + " " + (n > 1 ? (motPluriel || mot + "s") : mot);
 
 // ===================== Sauvegarde locale =====================
