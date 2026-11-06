@@ -63,6 +63,17 @@ libre de son type, et un numéro n'est jamais réattribué. La recherche accepte
 
 **Personnages pédagogiques du Grand test (option désactivée par défaut)** — Les personnages sont des repères éditoriaux sobres, jamais des mascottes ni des portraits psychologiques. Leur dessin au trait, façon plume, emploie uniquement des lignes et ailettes issues du vocabulaire de l'emblème Müller-Lyer et la couleur existante de la catégorie. Les figures sont des SVG paramétriques générés à partir d'un corps commun et de quelques attributs distinctifs; elles n'utilisent ni dégradé, ni ombre, ni animation, ni image externe. Chaque figure reçoit un nom accessible qui décrit son rôle pédagogique. L'ensemble du site doit rester pleinement utilisable avec `PERSONNAGES_VISIBLES = false`.
 
+## Version anglaise
+
+La version anglaise (`/en/`) garde la mise en page, les polices et les couleurs ; seul le texte change (voir « Version anglaise » dans le README).
+Elle suit les usages de l'anglais, non ceux du français :
+
+- guillemets anglais « “ ” » (les guillemets français « » sont traduits à l'affichage), apostrophe typographique « ’ » ;
+- pas d'espace avant « : », « ; », « ! », « ? » (la typographie française les sépare par une espace fine insécable) ;
+- nombres à l'anglaise (`1,200.5`), pourcentage collé (`75%`), dates britanniques (`6 November 2026`), euro devant le nombre (`€1.10`) ;
+- titres en minuscules sauf le premier mot et les noms propres ; « the », « a » conservés (le français s'en passe parfois) ;
+- les phrases sont traduites pour leur ton et leur registre, non mot à mot : une explication reste aussi nette et aussi sourcée qu'en français.
+
 ## Proscrit
 
 Refonte de la mise en page, nouvelle palette, dégradés, ombres portées, illustrations décoratives, mascotte,
