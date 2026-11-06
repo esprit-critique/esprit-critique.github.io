@@ -27,8 +27,11 @@ function charger() {
   return ctx.D;
 }
 
+// Noms de listes partagées (surfaces: "SURFACES_DETECTION"), qui ne sont pas des textes
+const REFERENCES = new Set(["SURFACES_DETECTION"]);
+
 function feuilles(x, chemin, sortie) {
-  if (typeof x === "string") { if (A_LETTRE.test(x)) sortie.push([chemin, x]); }
+  if (typeof x === "string") { if (A_LETTRE.test(x) && !REFERENCES.has(x)) sortie.push([chemin, x]); }
   else if (Array.isArray(x)) x.forEach((y, i) => feuilles(y, chemin.concat(i), sortie));
   else if (x && typeof x === "object") Object.keys(x).forEach(k => feuilles(x[k], chemin.concat(k), sortie));
 }
