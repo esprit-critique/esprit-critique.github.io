@@ -16,7 +16,7 @@ import glob, hashlib, json, os, re, sys
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "..", "static")
-IGNORES = {"sw.js", "langue.js"}
+IGNORES = {"sw.js", "langue.js", "donnees.js", "indices.js"}   # donnees.js et indices.js : traduits par static/en/fiches.js
 
 
 def lire(chemin):
@@ -186,7 +186,9 @@ def parties_de_gabarit(parties):
 
 def extraire(chemin):
     """Rend (complets, assembles) : complets = [(ligne, texte)], assembles = [(ligne, texte avec {k})]."""
-    jetons = analyser(lire(chemin))
+    source = lire(chemin)
+    lignes = source.split("\n")
+    jetons = analyser(source)
     complets, assembles = [], []
     for k, t in enumerate(jetons):
         if t[0] == "chaine":
@@ -205,6 +207,8 @@ def extraire(chemin):
                 voisin_valeur = True
             if apres and apres[0] == "p" and apres[1] == "+" and k + 2 < len(jetons) and jetons[k + 2][0] != "chaine":
                 voisin_valeur = True
+            if colle and voisin_valeur and "fr-seulement" in lignes[t[2] - 1]:
+                continue                       # texte d'une branche réservée au français
             (assembles if colle and voisin_valeur else complets).append((t[2], t[1]))
         elif t[0] == "gabarit":
             if len(t[1]) == 1:
