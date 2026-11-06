@@ -170,9 +170,9 @@ function courbeCarnet(resolues) {
   s.appendChild(svg("rect", { x: 46, y: 20, width: 250, height: 180, class: "graphe-fond" }));
   [0, 25, 50, 75, 100].forEach(r => {
     s.appendChild(svg("line", { x1: 46, y1: y(r), x2: 296, y2: y(r), class: "graphe-grille" }));
-    s.appendChild(texteSvg(40, y(r) + 3, r + " %", { class: "graphe-texte", "text-anchor": "end" }));
+    s.appendChild(texteSvg(40, y(r) + 3, r + PC, { class: "graphe-texte", "text-anchor": "end" }));
   });
-  [50, 60, 70, 80, 90, 100].forEach(c => s.appendChild(texteSvg(x(c), 214, c + " %", { class: "graphe-texte", "text-anchor": "middle" })));
+  [50, 60, 70, 80, 90, 100].forEach(c => s.appendChild(texteSvg(x(c), 214, c + PC, { class: "graphe-texte", "text-anchor": "middle" })));
   s.appendChild(svg("line", { x1: x(50), y1: y(50), x2: x(100), y2: y(100), class: "graphe-diagonale" }));
   s.appendChild(texteSvg(171, 230, "Probabilité annoncée", { class: "graphe-texte", "text-anchor": "middle" }));
   const tranches = {};
@@ -758,7 +758,7 @@ JEUX.push({
             souvenir.type = "range"; souvenir.min = 5; souvenir.max = 95; souvenir.step = 5; souvenir.value = 50;
             souvenir.setAttribute("aria-label", "Probabilité dont vous vous souvenez");
             const aff = el("p", "valeur-curseur");
-            const m = () => { aff.textContent = typo(souvenir.value + " %"); };
+            const m = () => { aff.textContent = typo(souvenir.value + PC); };
             souvenir.addEventListener("input", m);
             m();
             const ok = el("button", "bouton", "Révéler");

@@ -770,7 +770,7 @@ const EXPERIENCES = [
           tableau.appendChild(entete);
           [["En gardant", s.garder], ["En changeant", s.changer]].forEach(([libelle, [g, n]]) => {
             const tr = el("tr");
-            tr.append(el("td", null, libelle), el("td", null, n ? g + " / " + n + " (" + Math.round(100 * g / n) + " %)" : "—"));
+            tr.append(el("td", null, libelle), el("td", null, n ? g + " / " + n + " (" + Math.round(100 * g / n) + PC + ")" : "—"));
             tableau.appendChild(tr);
           });
         }

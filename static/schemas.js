@@ -211,7 +211,7 @@ const SCHEMAS = {
         ecrireTexte(svg, 8, yb + 12, lettre, "sch-petit");
         svg.appendChild(S("rect", { x: 22, y: yb, width: 200, height: 15, class: "sch-fond" }));
         svg.appendChild(S("rect", { x: 22, y: yb, width: 2 * v, height: 15, class: classe }));
-        ecrireTexte(svg, 22 + 2 * v + 6, yb + 12, v + " % (" + f + ")", "sch-petit");
+        ecrireTexte(svg, 22 + 2 * v + 6, yb + 12, v + PC + " (" + f + ")", "sch-petit");
       });
     });
     ecrireTexte(svg, 8, 206, "A : chirurgie ouverte · B : néphrolithotomie percutanée", "sch-petit");
@@ -260,7 +260,7 @@ const SCHEMAS = {
       ecrireTexte(svg, 20, y + 10, T("{0} : estimation médiane", T(libelle)), "sch-texte");
       svg.appendChild(S("rect", { x: 20, y: y + 16, width: 280, height: 18, class: "sch-fond" }));
       svg.appendChild(S("rect", { x: 20, y: y + 16, width: x(estimation) - 20, height: 18, class: "sch-c" }));
-      ecrireTexte(svg, x(estimation) - 6, y + 29, estimation + " %", "sch-sur-c", "end");
+      ecrireTexte(svg, x(estimation) - 6, y + 29, estimation + PC, "sch-sur-c", "end");
       svg.appendChild(S("line", { x1: x(ancre), y1: y + 12, x2: x(ancre), y2: y + 38, class: "sch-rouge-trait" }));
       ecrireTexte(svg, x(ancre), y + 50, T("ancre : {0}", ancre), "sch-petit", "middle");
     });

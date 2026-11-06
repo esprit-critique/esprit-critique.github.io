@@ -398,7 +398,7 @@ function groupeChoix(legende, options, classe, surChoix) {
 function groupeCertitude(type, surChoix) {
   const niveaux = NIVEAUX_CERTITUDE_GT[type];
   const libelles = LIBELLES_CERTITUDE_GT[type] || {};
-  const g = groupeChoix("Votre certitude d'avoir juste", niveaux.map(n => libelles[n] || n + " %"), "gt-certitude", () => surChoix());
+  const g = groupeChoix("Votre certitude d'avoir juste", niveaux.map(n => libelles[n] || n + PC), "gt-certitude", () => surChoix());
   g.niveau = () => g.valeur() === null ? null : niveaux[g.valeur()];
   return g;
 }
@@ -992,7 +992,7 @@ function grapheAxes(scores, hasards) {
   s.appendChild(svg("rect", { x: 34, y: 8, width: 270, height: h - 34, class: "graphe-fond" }));
   [0, 0.25, 0.5, 0.75, 1].forEach(v => {
     s.appendChild(svg("line", { x1: x(v), y1: 8, x2: x(v), y2: h - 26, class: "graphe-grille" }));
-    s.appendChild(texteSvg(x(v), h - 12, Math.round(100 * v) + " %", { class: "graphe-texte", "text-anchor": "middle" }));
+    s.appendChild(texteSvg(x(v), h - 12, Math.round(100 * v) + PC, { class: "graphe-texte", "text-anchor": "middle" }));
   });
   axes.forEach((a, k) => {
     const y = 30 + 40 * k, sc = scores[a];
@@ -1015,7 +1015,7 @@ function blocEtalonnage(lignes) {
   graphe.setAttribute("aria-label", "Courbe d'étalonnage : réussite observée selon la certitude annoncée ; la diagonale correspond à un étalonnage parfait");
   bloc.appendChild(graphe);
   bloc.appendChild(tableauEquivalent("Réussite selon la certitude annoncée", ["Certitude", "Réponses", "Justes", "Réussite"],
-    Object.keys(cumul).map(Number).sort((a, b) => a - b).map(c => [c + " %" + (c === 25 ? " (hors du graphique)" : ""), String(cumul[c][0]), String(cumul[c][1]), pourcentArrondi(cumul[c][1] / cumul[c][0])])));
+    Object.keys(cumul).map(Number).sort((a, b) => a - b).map(c => [c + PC + (c === 25 ? " (hors du graphique)" : ""), String(cumul[c][0]), String(cumul[c][1]), pourcentArrondi(cumul[c][1] / cumul[c][0])])));
   return bloc;
 }
 
@@ -1035,7 +1035,7 @@ function grapheProgression(tests, axe) {
   s.appendChild(svg("rect", { x: 40, y: 20, width: 250, height: 130, class: "graphe-fond" }));
   [0, 0.5, 1].forEach(v => {
     s.appendChild(svg("line", { x1: 40, y1: y(v), x2: 290, y2: y(v), class: "graphe-grille" }));
-    s.appendChild(texteSvg(34, y(v) + 3, Math.round(100 * v) + " %", { class: "graphe-texte", "text-anchor": "end" }));
+    s.appendChild(texteSvg(34, y(v) + 3, Math.round(100 * v) + PC, { class: "graphe-texte", "text-anchor": "end" }));
   });
   const pasEtiquettes = Math.ceil(n / 8);
   tests.forEach((t, k) => { if (k % pasEtiquettes === 0 || k === n - 1) s.appendChild(texteSvg(x(k), 168, String(k + 1), { class: "graphe-texte", "text-anchor": "middle" })); });
