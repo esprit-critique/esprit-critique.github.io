@@ -60,7 +60,7 @@ const WASON_ABSTRAITES = [
       consigne: "Chaque carte porte une lettre sur une face et un nombre sur l'autre.",
       regle: "Règle : si une carte porte une voyelle d'un côté, alors elle porte un nombre pair de l'autre côté.",
       cartes: [voyelle, consonne, pair, impair],
-      explication: "La règle est de la forme « si P, alors Q ». Il faut retourner " + voyelle + " (une voyelle : vérifier qu'il y a bien un nombre pair derrière) et " + impair + " (si une voyelle s'y cache, la règle est violée). Le " + pair + " est inutile : la règle ne dit rien des consonnes, et une consonne derrière un nombre pair ne la contredit pas. Le réflexe de retourner le " + pair + " consiste à chercher une confirmation au lieu d'une réfutation possible."
+      explication: T("La règle est de la forme « si P, alors Q ». Il faut retourner {0} (une voyelle : vérifier qu'il y a bien un nombre pair derrière) et {1} (si une voyelle s'y cache, la règle est violée). Le {2} est inutile : la règle ne dit rien des consonnes, et une consonne derrière un nombre pair ne la contredit pas. Le réflexe de retourner le {2} consiste à chercher une confirmation au lieu d'une réfutation possible.", voyelle, impair, pair)
     };
   },
   () => ({
@@ -458,7 +458,7 @@ const EXPERIENCES = [
     couleur: "#2f6db5",
     duree: "1 min",
     titre: "Trois questions faciles",
-    resume: "Le test de réflexion cognitive : des problèmes simples dont la première réponse qui vient à l'esprit est fausse. " + QUESTIONS_CRT.length + " questions, trois par partie.",
+    resume: T("Le test de réflexion cognitive : des problèmes simples dont la première réponse qui vient à l'esprit est fausse. {0} questions, trois par partie.", QUESTIONS_CRT.length),
     lancer(zone) {
       zone.innerHTML = "";
       // Questions toutes affichées ensemble : le niveau s'ajuste d'une partie à l'autre. Le niveau 1 réunit
@@ -478,7 +478,7 @@ const EXPERIENCES = [
         const ligne = el("div", "ligne");
         const champ = el("input", "champ");
         if (!q.texteLibre) champ.inputMode = "decimal";
-        champ.setAttribute("aria-label", "Votre réponse à la question " + (i + 1));
+        champ.setAttribute("aria-label", T("Votre réponse à la question {0}", i + 1));
         ligne.append(champ, el("span", "source", q.unite));
         bloc.appendChild(ligne);
         const resultat = el("p", null);
@@ -508,14 +508,14 @@ const EXPERIENCES = [
             resultat.textContent = typo("Juste. " + q.explication);
           } else {
             if (verdict === "intuitive") intuitives++;
-            resultat.textContent = typo((verdict === "intuitive" ? "C'est la réponse intuitive, mais elle est fausse. " : "Réponse attendue : " + (q.texteLibre ? "Émilie" : q.juste + " " + q.unite) + ". ") + q.explication);
+            resultat.textContent = typo((verdict === "intuitive" ? T("C'est la réponse intuitive, mais elle est fausse.") + " " : T("Réponse attendue : {0}.", q.texteLibre ? "Émilie" : q.juste + " " + T(q.unite)) + " ") + T(q.explication));
           }
-          if (q.reussite) resultat.appendChild(el("span", "source bloc", "Dans l'étude de Thomson et Oppenheimer (2016), " + q.reussite + " % de bonnes réponses."));
+          if (q.reussite) resultat.appendChild(el("span", "source bloc", T("Dans l'étude de Thomson et Oppenheimer (2016), {0} % de bonnes réponses.", q.reussite)));
         });
         valider.remove();
         noterPartieEntiere("crt", niveau, questions.map((q, i) => !!justes[i]));
         afficherScore(zone, "crt", bonnes, 3);
-        if (intuitives) zone.appendChild(paragraphe("Dont " + pluriel(intuitives, "réponse intuitive", "réponses intuitives") + " : exactement l'erreur que la question tend."));
+        if (intuitives) zone.appendChild(paragraphe(T("Dont {0} : exactement l'erreur que la question tend.", pluriel(intuitives, "réponse intuitive", "réponses intuitives"))));
         ajouterExplication(zone, "Ce que montre ce test", [
           "Chaque question suggère immédiatement une réponse fausse. Répondre juste suppose de remarquer cette réponse, de s'en méfier et de vérifier : c'est le passage du système 1 au système 2.",
           "Shane Frederick (2005) a soumis les trois questions originales à environ 3 400 personnes : 17 % seulement ont répondu juste aux trois. Ces questions sont devenues célèbres : beaucoup de participants les connaissent déjà, d'où les nouvelles versions de Thomson et Oppenheimer (2016), moins dépendantes du calcul."
@@ -544,7 +544,7 @@ const EXPERIENCES = [
         // Cartes dans le désordre : on retient la position de P et de non-Q
         const ordre = melanger([0, 1, 2, 3]);
         const bloc = el("div", "etape-wason");
-        bloc.appendChild(el("p", "consigne", "Version " + numero + " sur 2"));
+        bloc.appendChild(el("p", "consigne", T("Version {0} sur 2", numero)));
         bloc.appendChild(paragraphe(config.consigne));
         bloc.appendChild(paragraphe(config.regle, "encadre"));
         bloc.appendChild(paragraphe("Touchez les cartes qu'il faut retourner, et seulement celles-là.", "source"));
@@ -587,7 +587,7 @@ const EXPERIENCES = [
           etape(concrete, 2, () => {
             afficherScore(zone, "wason", resultats.filter(Boolean).length, 2);
             ajouterExplication(zone, "Ce que montre cette expérience", [
-              (resultats[0] ? "Vous avez réussi la version abstraite, ce qui est rare. " : "") + "Dans sa version abstraite, la tâche de Wason (1968) est réussie par moins de 10 % des participants. La plupart choisissent la voyelle et le nombre pair, ou la voyelle seule.",
+              (resultats[0] ? T("Vous avez réussi la version abstraite, ce qui est rare.") + " " : "") + T("Dans sa version abstraite, la tâche de Wason (1968) est réussie par moins de 10 % des participants. La plupart choisissent la voyelle et le nombre pair, ou la voyelle seule."),
               "Dans un contexte familier, en particulier quand il s'agit de repérer une infraction, une nette majorité réussit (Griggs et Cox, 1982). Notre logique dépend fortement du contenu.",
               "La bonne stratégie est celle du modus tollens : pour tester « si P, alors Q », examiner les cas P et les cas non-Q. Chercher à confirmer (retourner Q) ne prouve rien."
             ], [["#biais/confirmation", "Biais de confirmation"], ["#sophismes/affirmation-consequent", "Affirmation du conséquent"]]);
@@ -621,7 +621,7 @@ const EXPERIENCES = [
       const suites = [];   // valeurs proposées, pour le bilan
       const essais = [];
 
-      zone.appendChild(paragraphe("J'ai en tête une règle qui s'applique à des suites de trois nombres. La suite " + graine.map(fr).join(", ") + " la respecte." + (budget < Infinity ? " Vous avez droit à " + budget + " suites : choisissez-les bien." : "")));
+      zone.appendChild(paragraphe(T("J'ai en tête une règle qui s'applique à des suites de trois nombres. La suite {0} la respecte.", graine.map(fr).join(", ")) + (budget < Infinity ? " " + T("Vous avez droit à {0} suites : choisissez-les bien.", budget) : "")));
       zone.appendChild(paragraphe("Proposez autant de suites que vous voulez : je vous dirai si chacune respecte la règle. Quand vous pensez avoir trouvé, écrivez votre hypothèse, puis demandez la réponse.", "source"));
 
       const ligne = el("div", "ligne");
@@ -629,7 +629,7 @@ const EXPERIENCES = [
         const c = el("input", "champ");
         c.inputMode = "decimal";
         c.style.width = "4.5em";
-        c.setAttribute("aria-label", "Nombre " + (k + 1));
+        c.setAttribute("aria-label", T("Nombre {0}", k + 1));
         ligne.appendChild(c);
         return c;
       });
@@ -678,16 +678,16 @@ const EXPERIENCES = [
         delete PARTIES_EN_COURS["regle-246"];
         noterPartie("regle-246");
         const negatifs = essais.filter(ok => !ok).length;
-        zone.appendChild(el("p", "verdict", "La règle était : " + regle.texte + "."));
-        if (hypothese.value.trim()) zone.appendChild(paragraphe("Votre hypothèse : « " + hypothese.value.trim() + " »."));
-        if (suites.length) zone.appendChild(paragraphe("Suites informatives : " + informatives + " sur " + suites.length + ". Elles sortaient de l'hypothèse la plus évidente (« " + evidente.texte + " ») : ce sont elles qui pouvaient montrer qu'elle était trop étroite. Une suite qui la respecte ne peut que la confirmer."));
-        zone.appendChild(paragraphe("Vous avez proposé " + pluriel(essais.length, "suite") + ", dont " + negatifs + " qui ne respectai" + (negatifs > 1 ? "ent" : "t") + " pas la règle."));
+        zone.appendChild(el("p", "verdict", T("La règle était : {0}.", T(regle.texte))));
+        if (hypothese.value.trim()) zone.appendChild(paragraphe(T("Votre hypothèse : « {0} ».", hypothese.value.trim())));
+        if (suites.length) zone.appendChild(paragraphe(T("Suites informatives : {0} sur {1}. Elles sortaient de l'hypothèse la plus évidente (« {2} ») : ce sont elles qui pouvaient montrer qu'elle était trop étroite. Une suite qui la respecte ne peut que la confirmer.", informatives, suites.length, T(evidente.texte))));
+        zone.appendChild(paragraphe(T(negatifs > 1 ? "Vous avez proposé {0}, dont {1} qui ne respectaient pas la règle." : "Vous avez proposé {0}, dont {1} qui ne respectait pas la règle.", pluriel(essais.length, "suite"), negatifs)));
         ajouterExplication(zone, "Ce que montre cette expérience", [
           negatifs === 0 && essais.length > 0
             ? "Toutes vos suites respectaient la règle : chacune a confirmé votre hypothèse sans jamais pouvoir la mettre en défaut. C'est la stratégie la plus courante."
             : "Proposer des suites qui ne respectent pas la règle est la seule façon de tester les limites d'une hypothèse. Peu de participants le font spontanément.",
           "Peter Wason (1960) : la plupart des participants proposent des suites comme 8, 10, 12 ou 20, 22, 24, qui confirment l'hypothèse « nombres pairs croissant de 2 ». Ils annoncent cette règle avec assurance ; environ un sur cinq seulement trouve la bonne (« trois nombres croissants ») au premier essai.",
-          "Une hypothèse se teste en cherchant ce qui pourrait la réfuter (Karl Popper). Les " + REGLES_246.length + " règles possibles de cet atelier sont toutes compatibles avec 2, 4, 6."
+          T("Une hypothèse se teste en cherchant ce qui pourrait la réfuter (Karl Popper). Les {0} règles possibles de cet atelier sont toutes compatibles avec 2, 4, 6.", REGLES_246.length)
         ], [["#biais/confirmation", "Biais de confirmation"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "regle-246").lancer(zone), "Une nouvelle règle");
       });
@@ -742,14 +742,14 @@ const EXPERIENCES = [
           if (ouverte || (partie.fini && i !== partie.voiture)) { texte = "Chèvre"; classe += " ouverte"; }
           if (partie.fini && i === partie.voiture) { texte = "Voiture"; classe += " voiture"; }
           const b = el("button", classe, texte);
-          b.setAttribute("aria-label", "Porte " + (i + 1) + (texte !== String(i + 1) ? " : " + texte : ""));
+          b.setAttribute("aria-label", T("Porte {0}", i + 1) + (texte !== String(i + 1) ? " : " + T(texte) : ""));
           b.disabled = partie.choix !== null;
           b.addEventListener("click", () => choisir(i));
           portes.appendChild(b);
         }
         if (partie.choix !== null && !partie.fini) {
-          const garder = el("button", "bouton secondaire", "Garder la porte " + (partie.choix + 1));
-          const changer = el("button", "bouton", "Prendre la porte " + (partie.restante + 1));
+          const garder = el("button", "bouton secondaire", T("Garder la porte {0}", partie.choix + 1));
+          const changer = el("button", "bouton", T("Prendre la porte {0}", partie.restante + 1));
           garder.addEventListener("click", () => terminer(false));
           changer.addEventListener("click", () => terminer(true));
           actions.append(garder, changer);
@@ -766,7 +766,7 @@ const EXPERIENCES = [
         const s = stats[nbPortes];
         if (s.garder[1] + s.changer[1] > 0) {
           const entete = el("tr");
-          entete.append(el("th", null, "Vos parties à " + nbPortes + " portes"), el("th", null, "Gagnées"));
+          entete.append(el("th", null, T("Vos parties à {0} portes", nbPortes)), el("th", null, "Gagnées"));
           tableau.appendChild(entete);
           [["En gardant", s.garder], ["En changeant", s.changer]].forEach(([libelle, [g, n]]) => {
             const tr = el("tr");
@@ -782,8 +782,8 @@ const EXPERIENCES = [
         const autres = [...Array(nbPortes).keys()].filter(p => p !== i);
         partie.restante = i === partie.voiture ? autres[Math.floor(Math.random() * autres.length)] : partie.voiture;
         message.textContent = typo(nbPortes === 3
-          ? "Le présentateur ouvre une autre porte : une chèvre. Gardez-vous votre porte ou prenez-vous la porte " + (partie.restante + 1) + " ?"
-          : "Le présentateur ouvre " + (nbPortes - 2) + " portes : que des chèvres. Gardez-vous votre porte ou prenez-vous la porte " + (partie.restante + 1) + " ?");
+          ? T("Le présentateur ouvre une autre porte : une chèvre. Gardez-vous votre porte ou prenez-vous la porte {0} ?", partie.restante + 1)
+          : T("Le présentateur ouvre {0} portes : que des chèvres. Gardez-vous votre porte ou prenez-vous la porte {1} ?", nbPortes - 2, partie.restante + 1));
         dessiner();
       }
 
@@ -804,7 +804,7 @@ const EXPERIENCES = [
       function simulation() {
         let gardeGagne = 0;
         for (let k = 0; k < 1000; k++) if (Math.floor(Math.random() * nbPortes) === Math.floor(Math.random() * nbPortes)) gardeGagne++;
-        message.textContent = typo("Sur 1 000 parties simulées à " + nbPortes + " portes : en gardant, " + fr(gardeGagne) + " voitures (" + fr(gardeGagne / 10) + " %) ; en changeant, " + fr(1000 - gardeGagne) + " (" + fr((1000 - gardeGagne) / 10) + " %).");
+        message.textContent = typo(T("Sur 1 000 parties simulées à {0} portes : en gardant, {1} voitures ({2} %) ; en changeant, {3} ({4} %).", nbPortes, fr(gardeGagne), fr(gardeGagne / 10), fr(1000 - gardeGagne), fr((1000 - gardeGagne) / 10)));
       }
 
       function expliquer() {
@@ -823,7 +823,7 @@ const EXPERIENCES = [
           "= P(V2 | ouvre 3) = (1 × 1/3) / (1/2 × 1/3 + 1 × 1/3 + 0 × 1/3) = (1/3) / (1/2) = 2/3",
           "Garder gagne donc 1 fois sur 3, changer 2 fois sur 3. Avec dix portes, le présentateur ouvre huit portes en évitant la voiture : garder gagne 1 fois sur 10, changer 9 fois sur 10.",
           (total("changer") + total("garder"))
-            ? "Vos parties : en changeant, " + gagnes("changer") + " victoires sur " + total("changer") + " ; en gardant, " + gagnes("garder") + " sur " + total("garder") + ". Sur peu de parties, le hasard peut masquer l'écart."
+            ? T("Vos parties : en changeant, {0} victoires sur {1} ; en gardant, {2} sur {3}. Sur peu de parties, le hasard peut masquer l'écart.", gagnes("changer"), total("changer"), gagnes("garder"), total("garder"))
             : "Jouez quelques parties : vos propres résultats s'afficheront ici."
         ]));
         // Pour aller plus loin : le présentateur ouvre une porte au hasard, et révèle une chèvre par chance
@@ -843,7 +843,7 @@ const EXPERIENCES = [
             retenues++;
             if (autres.find(p => p !== ouverte) === voiture) gainsEnChangeant++;
           }
-          resultatDistrait.textContent = typo("Sur " + fr(retenues) + " parties où une chèvre est apparue par hasard : en changeant, " + fr(gainsEnChangeant) + " victoires, soit " + fr(Math.round(1000 * gainsEnChangeant / retenues) / 10) + " %.");
+          resultatDistrait.textContent = typo(T("Sur {0} parties où une chèvre est apparue par hasard : en changeant, {1} victoires, soit {2} %.", fr(retenues), fr(gainsEnChangeant), fr(Math.round(1000 * gainsEnChangeant / retenues) / 10)));
         });
         loin.append(simulerDistrait, resultatDistrait);
         bloc.appendChild(loin);
@@ -861,7 +861,7 @@ const EXPERIENCES = [
     couleur: "#8a3f8f",
     duree: "4 min",
     titre: "Problèmes classiques",
-    resume: "Linda, les deux maternités, le taxi, l'urne d'Ellsberg, Sally Clark… " + PROBLEMES.length + " problèmes célèbres, cinq par partie, avec les résultats des études originales.",
+    resume: T("Linda, les deux maternités, le taxi, l'urne d'Ellsberg, Sally Clark… {0} problèmes célèbres, cinq par partie, avec les résultats des études originales.", PROBLEMES.length),
     lancer(zone) {
       deroulerNiveaux(zone, {
         id: "classiques", n: 5, libelle: "Problème", relancer: () => EXPERIENCES.find(e => e.id === "classiques").lancer(zone),
@@ -891,7 +891,7 @@ const EXPERIENCES = [
               boutons.forEach(x => { x.disabled = true; });
               boutons[p.juste].classList.add("juste");
               if (k !== p.juste) b.classList.add("faux");
-              conclure(k === p.juste, el("div", "retour-quiz"), k === p.juste ? "Juste." : "Réponse : " + p.options[p.juste]);
+              conclure(k === p.juste, el("div", "retour-quiz"), k === p.juste ? T("Juste.") : T("Réponse : {0}", T(p.options[p.juste])));
             });
             zone.appendChild(b);
             return b;
@@ -937,7 +937,7 @@ const EXPERIENCES = [
                 const coherent = p.coherent(premier, k);
                 conclure(coherent, el("div", "retour-quiz"), coherent
                   ? "Vos deux choix sont cohérents entre eux."
-                  : "Vos deux choix se contredisent : « " + p.options[premier] + " » puis « " + p.options2[k] + " ». C'est le choix le plus fréquent.");
+                  : T("Vos deux choix se contredisent : « {0} » puis « {1} ». C'est le choix le plus fréquent.", T(p.options[premier]), T(p.options2[k])));
               });
               zone.appendChild(b);
               return b;
@@ -949,7 +949,7 @@ const EXPERIENCES = [
         afficherScore(zone, "classiques", bonnes, resultats.length);
         ajouterExplication(zone, "À retenir", [
           "Ces problèmes ont fondé l'étude des biais de jugement. Leur point commun : une réponse intuitive, appuyée sur la ressemblance, la formulation ou la certitude, l'emporte sur le calcul.",
-          "Les problèmes que vous n'avez pas encore vus passent en priorité : " + PROBLEMES.length + " en tout."
+          T("Les problèmes que vous n'avez pas encore vus passent en priorité : {0} en tout.", PROBLEMES.length)
         ], [["#biais", "Toutes les fiches de biais"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "classiques").lancer(zone), "Cinq autres problèmes");
       });
@@ -973,10 +973,10 @@ const EXPERIENCES = [
         tirer: (niveau, i) => i === 0 ? tirerNouveaux("depistage", SCENARIOS_DEPISTAGE, 1)[0] : scenarioAuHasard()
       }, (s, zone, fini, niveau) => {
         const c = comptesDepistage(s);
-        const accord = (n, nom) => n > 1 ? nom : nom.split(" ").map(m => m !== "sans" && m.endsWith("s") ? m.slice(0, -1) : m).join(" ");
+        const accord = (n, nom) => T(n > 1 ? nom : nom.split(" ").map(m => m !== "sans" && m.endsWith("s") ? m.slice(0, -1) : m).join(" "));
         const deuxTests = niveau === 3;
         if (niveau === 1) {
-          zone.appendChild(el("p", "cas", "Sur " + fr(s.population) + " personnes testées : " + fr(c.malades) + " " + accord(c.malades, s.noms[0]) + ", dont " + fr(c.vraisPositifs) + " avec un résultat positif ; " + fr(c.sains) + " " + accord(c.sains, s.noms[1]) + ", dont " + fr(c.fauxPositifs) + " avec un résultat positif quand même. Une personne a un résultat positif."));
+          zone.appendChild(el("p", "cas", T("Sur {0} personnes testées : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Une personne a un résultat positif.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs))));
         } else {
           zone.appendChild(el("p", "cas", s.contexte + (deuxTests ? " Elle passe ensuite un second test, indépendant du premier et aussi fiable, qui est lui aussi positif." : "")));
         }
@@ -1002,20 +1002,20 @@ const EXPERIENCES = [
           const retour = el("div", "retour-quiz");
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Réponse : ") + "environ " + fr(vrai < 10 ? Number(vrai.toFixed(1)) : Math.round(vrai)) + " %."));
           retour.appendChild(arbreFrequences(s, c));
-          retour.appendChild(paragraphe("Sur " + fr(s.population) + " personnes : " + fr(c.malades) + " " + accord(c.malades, s.noms[0]) + ", dont " + fr(c.vraisPositifs) + " avec un résultat positif ; " + fr(c.sains) + " " + accord(c.sains, s.noms[1]) + ", dont " + fr(c.fauxPositifs) + " avec un résultat positif quand même. Sur " + fr(c.vraisPositifs + c.fauxPositifs) + " résultats positifs, " + fr(c.vraisPositifs) + " seulement " + (c.vraisPositifs > 1 ? "correspondent" : "correspond") + " à un vrai cas."));
+          retour.appendChild(paragraphe(T(c.vraisPositifs > 1 ? "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspondent à un vrai cas." : "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspond à un vrai cas.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs), fr(c.vraisPositifs + c.fauxPositifs))));
           if (s.resultat) retour.appendChild(paragraphe(s.resultat, "source"));
-          const pc = x => fr(Number((100 * x).toPrecision(3))) + " %";
+          const pc = x => fr(Number((100 * x).toPrecision(3))) + PC;
           const pPositif = s.sensibilite * s.prevalence + s.fauxPositifs * (1 - s.prevalence);
           retour.appendChild(calculEnDetail([
             "La formule de Bayes donne la probabilité d'un vrai cas sachant que le résultat est positif :",
             "= P(cas | positif) = P(positif | cas) × P(cas) / P(positif)",
-            "Ici : P(cas) = " + pc(s.prevalence) + " ; P(positif | cas) = " + pc(s.sensibilite) + " ; P(positif | pas un cas) = " + pc(s.fauxPositifs) + ".",
-            "= P(positif) = " + pc(s.sensibilite) + " × " + pc(s.prevalence) + " + " + pc(s.fauxPositifs) + " × " + pc(1 - s.prevalence) + " = " + pc(pPositif),
-            "= P(cas | positif) = " + pc(s.sensibilite * s.prevalence) + " / " + pc(pPositif) + " = " + pc(s.sensibilite * s.prevalence / pPositif),
-            "L'arbre fait le même calcul avec des effectifs : " + fr(c.vraisPositifs) + " / (" + fr(c.vraisPositifs) + " + " + fr(c.fauxPositifs) + "), à l'arrondi près. Le dénominateur compte tous les résultats positifs, vrais et faux : c'est là que le taux de base pèse.",
+            T("Ici : P(cas) = {0} ; P(positif | cas) = {1} ; P(positif | pas un cas) = {2}.", pc(s.prevalence), pc(s.sensibilite), pc(s.fauxPositifs)),
+            T("= P(positif) = {0} × {1} + {2} × {3} = {4}", pc(s.sensibilite), pc(s.prevalence), pc(s.fauxPositifs), pc(1 - s.prevalence), pc(pPositif)),
+            T("= P(cas | positif) = {0} / {1} = {2}", pc(s.sensibilite * s.prevalence), pc(pPositif), pc(s.sensibilite * s.prevalence / pPositif)),
+            T("L'arbre fait le même calcul avec des effectifs : {0} / ({0} + {1}), à l'arrondi près. Le dénominateur compte tous les résultats positifs, vrais et faux : c'est là que le taux de base pèse.", fr(c.vraisPositifs), fr(c.fauxPositifs)),
             ...(deuxTests ? [
-              "Second test : la probabilité obtenue après le premier, " + pc(apres1) + ", devient la nouvelle prévalence.",
-              "= P(cas | deux positifs) = " + pc(s.sensibilite) + " × " + pc(apres1) + " / (" + pc(s.sensibilite) + " × " + pc(apres1) + " + " + pc(s.fauxPositifs) + " × " + pc(1 - apres1) + ") = " + pc(apres2),
+              T("Second test : la probabilité obtenue après le premier, {0}, devient la nouvelle prévalence.", pc(apres1)),
+              T("= P(cas | deux positifs) = {0} × {1} / ({0} × {1} + {2} × {3}) = {4}", pc(s.sensibilite), pc(apres1), pc(s.fauxPositifs), pc(1 - apres1), pc(apres2)),
               "Un second test positif rend le diagnostic bien plus probable : c'est pourquoi on confirme un dépistage positif par un autre examen, si possible indépendant du premier."
             ] : [])
           ]));
@@ -1062,19 +1062,19 @@ const EXPERIENCES = [
         ok.remove();
         noterPartie("anniversaires");
         const retour = el("div", "retour-quiz");
-        retour.appendChild(el("p", "verdict " + (Math.abs(v - 23) <= 2 ? "juste" : "faux"), "Il suffit de 23 personnes : " + fr(Number((100 * probaAnniversaire(23)).toFixed(1))) + " %."));
-        retour.appendChild(paragraphe("Avec " + v + " personnes, la probabilité est de " + fr(Number((100 * probaAnniversaire(Math.min(v, 366))).toFixed(1))) + " %. Avec 57 personnes, elle dépasse 99 %."));
+        retour.appendChild(el("p", "verdict " + (Math.abs(v - 23) <= 2 ? "juste" : "faux"), T("Il suffit de 23 personnes : {0} %.", fr(Number((100 * probaAnniversaire(23)).toFixed(1))))));
+        retour.appendChild(paragraphe(T("Avec {0} personnes, la probabilité est de {1} %. Avec 57 personnes, elle dépasse 99 %.", v, fr(Number((100 * probaAnniversaire(Math.min(v, 366))).toFixed(1))))));
         retour.appendChild(courbeAnniversaires(v));
         retour.appendChild(paragraphe("L'intuition pense à « quelqu'un qui a le même anniversaire que moi » : pour cela, il faudrait 253 personnes. Mais n'importe quelle paire convient, et 23 personnes forment 253 paires.", "source"));
         const sansPaire = n => 1 - probaAnniversaire(n);
         const n = Math.min(v, 366);
-        const pc = x => fr(Number((100 * x).toFixed(1))) + " %";
+        const pc = x => fr(Number((100 * x).toFixed(1))) + PC;
         retour.appendChild(calculEnDetail([
           "On calcule d'abord la probabilité que tous les anniversaires soient différents : la deuxième personne doit éviter 1 date, la troisième 2 dates, et ainsi de suite.",
           "= P(tous différents) = 365/365 × 364/365 × 363/365 × … × (365 − n + 1)/365",
           "La probabilité d'au moins un anniversaire commun en est le complément : 1 − P(tous différents).",
-          "= Avec " + n + " personnes : 1 − " + fr(Number(sansPaire(n).toFixed(3))) + " = " + pc(probaAnniversaire(n)),
-          "= Avec 22 personnes : 1 − " + fr(Number(sansPaire(22).toFixed(3))) + " = " + pc(probaAnniversaire(22)) + " ; avec 23 : 1 − " + fr(Number(sansPaire(23).toFixed(3))) + " = " + pc(probaAnniversaire(23)),
+          T("= Avec {0} personnes : 1 − {1} = {2}", n, fr(Number(sansPaire(n).toFixed(3))), pc(probaAnniversaire(n))),
+          T("= Avec 22 personnes : 1 − {0} = {1} ; avec 23 : 1 − {2} = {3}", fr(Number(sansPaire(22).toFixed(3))), pc(probaAnniversaire(22)), fr(Number(sansPaire(23).toFixed(3))), pc(probaAnniversaire(23))),
           "23 est donc le plus petit groupe où la probabilité dépasse une chance sur deux. Chaque facteur est proche de 1, mais il y en a autant que de personnes, et 23 personnes forment 23 × 22 / 2 = 253 paires.",
           "On suppose les 365 jours équiprobables et l'on ignore le 29 février ; les naissances réelles, un peu inégales selon les jours, rendent les coïncidences très légèrement plus probables."
         ]));
@@ -1085,8 +1085,8 @@ const EXPERIENCES = [
         const unJour = seuilAnniversaire(n => probaAnniversaireProche(n, 1));
         const loin = el("div", "section");
         loin.append(el("h3", null, "Pour aller plus loin"),
-          paragraphe("Même anniversaire que vous : chaque autre personne a une chance sur 365 de le partager. Il faut " + fr(moi) + " autres personnes pour dépasser une chance sur deux, puisque 1 − (364/365)ⁿ ne passe 50 % qu'à n = " + fr(moi) + "."),
-          paragraphe("Anniversaires à un jour près (le même jour ou deux jours voisins) : il suffit de " + unJour + " personnes pour que la probabilité dépasse une chance sur deux (" + fr(Number((100 * probaAnniversaireProche(unJour, 1)).toFixed(1))) + " %), contre " + fr(Number((100 * probaAnniversaireProche(unJour - 1, 1)).toFixed(1))) + " % avec " + (unJour - 1) + "."),
+          paragraphe(T("Même anniversaire que vous : chaque autre personne a une chance sur 365 de le partager. Il faut {0} autres personnes pour dépasser une chance sur deux, puisque 1 − (364/365)ⁿ ne passe 50 % qu'à n = {0}.", fr(moi))),
+          paragraphe(T("Anniversaires à un jour près (le même jour ou deux jours voisins) : il suffit de {0} personnes pour que la probabilité dépasse une chance sur deux ({1} %), contre {2} % avec {3}.", unJour, fr(Number((100 * probaAnniversaireProche(unJour, 1)).toFixed(1))), fr(Number((100 * probaAnniversaireProche(unJour - 1, 1)).toFixed(1))), unJour - 1)),
           paragraphe("Calcul : on compte les façons de placer n anniversaires sur une année circulaire de 365 jours, deux à deux séparés d'au moins deux jours, puis on prend le complément.", "source"));
         zone.appendChild(loin);
         ajouterExplication(zone, "Ce que montre cet atelier", [
@@ -1106,7 +1106,7 @@ const EXPERIENCES = [
     couleur: "#7a5c2e",
     duree: "3 min",
     titre: "Qui l'a vraiment dit ?",
-    resume: "Voltaire, Einstein, Gandhi, Machiavel… Huit citations célèbres par partie : authentiques, déformées ou inventées ? " + CITATIONS.length + " citations vérifiées.",
+    resume: T("Voltaire, Einstein, Gandhi, Machiavel… Huit citations célèbres par partie : authentiques, déformées ou inventées ? {0} citations vérifiées.", CITATIONS.length),
     lancer(zone) {
       const statuts = [["authentique", "Authentique : bien de cet auteur"], ["deformee", "Déformée : l'original est différent"], ["apocryphe", "Inventée ou mal attribuée"]];
       const verdicts = { authentique: "Authentique.", deformee: "Déformée.", apocryphe: "Inventée ou mal attribuée." };
@@ -1115,7 +1115,7 @@ const EXPERIENCES = [
         tirer: niveau => tirerSelonNiveau("citations", CITATIONS, 1, niveau)[0]
       }, (c, zone, fini) => {
         zone.appendChild(el("blockquote", "citation", "« " + c.texte + " »"));
-        zone.appendChild(el("p", "auteur-citation", "— attribuée à " + c.auteur));
+        zone.appendChild(el("p", "auteur-citation", T("— attribuée à {0}", T(c.auteur))));
         zone.appendChild(el("p", "consigne", "Cette citation est-elle…"));
         const boutons = statuts.map(([statut, libelle], k) => {
           const b = boutonChoix(libelle, k);
@@ -1170,7 +1170,7 @@ const EXPERIENCES = [
             reponses[x.id] = k;
             ecrire("reponsesPensee", reponses);
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict", "Votre réponse : « " + texte + " »."));
+            retour.appendChild(el("p", "verdict", T("Votre réponse : « {0} ».", texte)));
             retour.appendChild(paragraphe(x.discussion));
             retour.appendChild(paragraphe(x.critique, "encadre"));
             const l = el("div", "voir-aussi");
@@ -1187,7 +1187,7 @@ const EXPERIENCES = [
         noterPartie("pensee");
         const vues = Object.keys(lire("reponsesPensee", {})).length;
         zone.appendChild(el("p", "consigne", "Fin de la série"));
-        zone.appendChild(paragraphe("Vous avez réfléchi à " + vues + " expérience" + (vues > 1 ? "s" : "") + " de pensée sur " + EXPERIENCES_PENSEE.length + "."));
+        zone.appendChild(paragraphe(T(vues > 1 ? "Vous avez réfléchi à {0} expériences de pensée sur {1}." : "Vous avez réfléchi à {0} expérience de pensée sur {1}.", vues, EXPERIENCES_PENSEE.length)));
         ajouterExplication(zone, "À quoi servent les expériences de pensée ?", [
           "Elles isolent une question en imaginant une situation simple, souvent irréalisable, où un seul facteur varie. Galilée, Einstein ou Darwin s'en sont servis autant que les philosophes.",
           "Elles ont leurs limites : nos intuitions sur des cas extrêmes et inhabituels peuvent être peu fiables, et changer avec la formulation. Les philosophes discutent donc aussi de la valeur de ces intuitions.",
@@ -1250,13 +1250,13 @@ function simulationMaternites() {
 // Scénario de dépistage tiré au hasard, dans un contexte varié (chiffres fictifs)
 function scenarioAuHasard() {
   const contextes = [
-    { texte: (p, s, f) => "Une maladie fictive touche " + p + " des personnes testées. Le test est positif chez " + s + " des malades, et à tort chez " + f + " des personnes en bonne santé. Une personne est testée positive.",
+    { texte: (p, s, f) => T("Une maladie fictive touche {0} des personnes testées. Le test est positif chez {1} des malades, et à tort chez {2} des personnes en bonne santé. Une personne est testée positive.", p, s, f),
       question: "Quelle est la probabilité qu'elle soit malade ?", noms: ["malades", "bien portants"], courts: ["malades", "bien portants"], prevalences: [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2] },
-    { texte: (p, s, f) => "Un logiciel de reconnaissance faciale surveille une gare. Parmi les voyageurs, " + p + " sont des personnes recherchées. Il donne l'alerte pour " + s + " des personnes recherchées, et par erreur pour " + f + " des autres voyageurs. Une alerte se déclenche.",
+    { texte: (p, s, f) => T("Un logiciel de reconnaissance faciale surveille une gare. Parmi les voyageurs, {0} sont des personnes recherchées. Il donne l'alerte pour {1} des personnes recherchées, et par erreur pour {2} des autres voyageurs. Une alerte se déclenche.", p, s, f),
       question: "Quelle est la probabilité que la personne soit vraiment recherchée ?", noms: ["personnes recherchées", "autres voyageurs"], courts: ["recherchées", "autres voyageurs"], prevalences: [0.0005, 0.001, 0.002] },
-    { texte: (p, s, f) => "Dans une messagerie, " + p + " des courriels reçus sont des spams. Le filtre repère " + s + " des spams, et classe à tort " + f + " des courriels légitimes comme spams. Un courriel est classé comme spam.",
+    { texte: (p, s, f) => T("Dans une messagerie, {0} des courriels reçus sont des spams. Le filtre repère {1} des spams, et classe à tort {2} des courriels légitimes comme spams. Un courriel est classé comme spam.", p, s, f),
       question: "Quelle est la probabilité que ce soit vraiment un spam ?", noms: ["spams", "courriels légitimes"], courts: ["spams", "légitimes"], prevalences: [0.3, 0.5, 0.6] },
-    { texte: (p, s, f) => "Dans une banque, " + p + " des paiements par carte sont frauduleux. Le système d'alerte signale " + s + " des fraudes, et à tort " + f + " des paiements honnêtes. Un paiement est signalé.",
+    { texte: (p, s, f) => T("Dans une banque, {0} des paiements par carte sont frauduleux. Le système d'alerte signale {1} des fraudes, et à tort {2} des paiements honnêtes. Un paiement est signalé.", p, s, f),
       question: "Quelle est la probabilité qu'il soit frauduleux ?", noms: ["paiements frauduleux", "paiements honnêtes"], courts: ["fraudes", "honnêtes"], prevalences: [0.001, 0.002, 0.005] }
   ];
   const c = melanger(contextes)[0];
@@ -1264,8 +1264,8 @@ function scenarioAuHasard() {
   const sensibilite = melanger([0.8, 0.9, 0.95, 0.99])[0];
   const fauxPositifs = melanger([0.01, 0.02, 0.05, 0.1])[0];
   const population = prevalence >= 0.01 ? 10000 : prevalence >= 0.001 ? 100000 : 1000000;
-  const pct = x => fr(Number((100 * x).toFixed(2))) + " %";
-  return { contexte: c.texte(pct(prevalence), pct(sensibilite), pct(fauxPositifs)) + " (Chiffres fictifs.)", question: c.question, prevalence, sensibilite, fauxPositifs, population, noms: c.noms, courts: c.courts };
+  const pct = x => fr(Number((100 * x).toFixed(2))) + PC;
+  return { contexte: c.texte(pct(prevalence), pct(sensibilite), pct(fauxPositifs)) + " " + T("(Chiffres fictifs.)"), question: c.question, prevalence, sensibilite, fauxPositifs, population, noms: c.noms, courts: c.courts };
 }
 
 function comptesDepistage(s) {
@@ -1335,7 +1335,7 @@ function courbeAnniversaires(estimation) {
   s.appendChild(svg("rect", { x: 40, y: 20, width: 260, height: 150, class: "graphe-fond" }));
   [0, 0.5, 1].forEach(p => {
     s.appendChild(svg("line", { x1: 40, y1: y(p), x2: 300, y2: y(p), class: "graphe-grille" }));
-    s.appendChild(texteSvg(34, y(p) + 3.5, Math.round(100 * p) + " %", { class: "graphe-texte", "text-anchor": "end" }));
+    s.appendChild(texteSvg(34, y(p) + 3.5, Math.round(100 * p) + PC, { class: "graphe-texte", "text-anchor": "end" }));
   });
   [0, 20, 40, 60, 80].forEach(n => s.appendChild(texteSvg(x(n), 186, String(n), { class: "graphe-texte", "text-anchor": "middle" })));
   const pts = [];
@@ -1370,7 +1370,7 @@ function simulationAnniversaires() {
   const sortie = paragraphe("");
   const bilan = paragraphe("", "source");
   let groupes = 0, coincidences = 0;
-  const majLibelle = () => { libelle.textContent = typo(curseur.value + " personnes (probabilité théorique : " + Math.round(100 * probaAnniversaire(Number(curseur.value))) + " %)"); };
+  const majLibelle = () => { libelle.textContent = typo(T("{0} personnes (probabilité théorique : {1} %)", curseur.value, Math.round(100 * probaAnniversaire(Number(curseur.value))))); };
   curseur.addEventListener("input", () => { majLibelle(); groupes = 0; coincidences = 0; bilan.textContent = ""; });
   majLibelle();
   bouton.addEventListener("click", () => {
@@ -1386,8 +1386,8 @@ function simulationAnniversaires() {
     const communs = Object.values(compte).filter(c => c > 1).length;
     groupes++;
     if (communs) coincidences++;
-    sortie.textContent = typo(communs ? "Anniversaire commun : " + pluriel(communs, "date partagée", "dates partagées") + " (en rouge)." : "Aucun anniversaire commun dans ce groupe.");
-    bilan.textContent = typo("Groupes formés : " + groupes + " ; avec au moins un anniversaire commun : " + coincidences + " (" + Math.round(100 * coincidences / groupes) + " %).");
+    sortie.textContent = typo(communs ? T("Anniversaire commun : {0} (en rouge).", pluriel(communs, "date partagée", "dates partagées")) : T("Aucun anniversaire commun dans ce groupe."));
+    bilan.textContent = typo(T("Groupes formés : {0} ; avec au moins un anniversaire commun : {1} ({2} %).", groupes, coincidences, Math.round(100 * coincidences / groupes)));
   });
   bloc.append(reglage, bouton, annee, sortie, bilan);
   return bloc;
