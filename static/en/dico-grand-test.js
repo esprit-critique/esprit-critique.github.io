@@ -1,0 +1,33 @@
+// dico-grand-test.js : traductions anglaises des textes de grand-test.js (français à gauche, anglais à droite).
+// Les {0}, {1}… sont remplacés par les valeurs que passe le code : T("… {0} …", valeur).
+EN_AJOUTER([
+  ["la valeur n'est pas un objet", "the value is not an object"],
+  ["valeur non sérialisable", "value that cannot be serialised"],
+  ["plusieurs passations en cours", "several tests in progress"],
+  ["données invalides", "invalid data"],
+  ["une passation est déjà en cours", "a test is already in progress"],
+  ["aucune passation en cours", "no test in progress"],
+  ["item inconnu dans cette passation", "unknown item in this test"],
+  ["réponse déjà validée", "answer already submitted"],
+  ["réponse mal formée", "malformed answer"],
+  ["wilsonCorrige : k et n entiers, 0 ≤ k ≤ n", "wilsonCorrige: k and n must be integers, 0 ≤ k ≤ n"],
+  ["non mesuré", "not measured"],
+  ["trop peu d'items pour estimer", "too few items to estimate"],
+  ["au niveau du hasard", "at chance level"],
+  ["en dessous du hasard", "below chance"],
+  ["nettement au-dessus du hasard", "clearly above chance"],
+  ["reechantillonner : de 200 à 5 000 tirages", "reechantillonner: 200 to 5,000 draws"],
+  ["notes incomplètes", "incomplete ratings"],
+  ["progrès net", "clear progress"],
+  ["pas de changement net mesurable", "no clear measurable change"],
+  ["pas assez de tests comparables", "not enough comparable tests"],
+  ["tendance à la hausse", "upward trend"],
+  ["tendance à la baisse", "downward trend"],
+  ["moins de trois items par test", "fewer than three items per test"],
+  ["items répétés", "repeated items"],
+  ["évolution non mesurable", "change not measurable"],
+  ["L'esprit critique n'est pas le contre-pied systématique. Une conclusion peut être solide quand la méthode et les données le sont.", "Critical thinking is not systematic contrarianism. A conclusion can be solid when the method and the data are."],
+  ["Wilson corrigé", "Wilson-corrected"],
+  ["rééchantillonnage", "resampling"],
+  ["démonstration", "demonstration"]
+]);

@@ -586,6 +586,7 @@ const elisions = t => LANGUE === "en" ? t : t.replace(/\b([Qq]u|[Dd])e (?=[aeiou
 // Prénom d'une instance, décalé selon la famille pour varier les surfaces
 const prenomGT = (i, decalage) => PRENOMS_GT[(i * 7 + (decalage || 0)) % PRENOMS_GT.length];
 
+// fr-seulement-debut : accords français
 // Accords d'un texte selon le genre de la personne : {p} prénom, {Il} {il} {lui}, {e}, {er} (-er/-ère), {ne}, {r} (-r/-se)
 function accorder(texte, prenom, genre) {
   const f = genre === "f";
@@ -594,6 +595,7 @@ function accorder(texte, prenom, genre) {
     .replace(/\{ne\}/g, f ? "ne" : "").replace(/\{r\}/g, f ? "se" : "r").replace(/\{son\}/g, "son");
 }
 
+// fr-seulement-fin
 // Remplace {cle} par la valeur du champ ; {Cle} par la même valeur avec une majuscule
 function remplir(texte, valeurs) {
   return texte.replace(/\{([A-Za-z0-9]+)\}/g, (m, cle) => {
@@ -626,9 +628,12 @@ function tailleFamille(f) {
   return surfacesDe(f).length;
 }
 
+// fr-seulement-debut : articles français
 const tous = ([nom, fem]) => (fem ? "Toutes les " : "Tous les ") + nom;
 const certains = ([nom, fem]) => (fem ? "Certaines " : "Certains ") + nom;
+// fr-seulement-fin
 
+// fr-seulement-debut : générateurs français (la version anglaise a les siens : static/en/grand-test.js)
 const GENERATEURS_GT = {
   // ---------- Axe A ----------
   vitesseMoyenne(f, i) {
@@ -918,6 +923,7 @@ const GENERATEURS_GT = {
     };
   }
 };
+// fr-seulement-fin
 
 // Instance d'une famille, avec l'ordre de ses choix tiré par la graine de la passation (rangs « affichés »)
 function instanceGT(f, i, graine) {
@@ -1152,6 +1158,7 @@ function grandeurGT(id) {
 // désinformation (une question glisse une couleur fausse), mémoire de la source (qui a dit quoi). Elles ne comptent
 // dans aucun axe. Chacune est annoncée avant, et suivie d'une correction complète.
 
+// fr-seulement-debut : démonstrations françaises (l'anglais : static/en/grand-test.js)
 const FEMININS_RECITS_GT = new Set(["enveloppe", "laisse", "voiture", "valise", "écharpe", "couverture"]);
 
 // Liste de mots associés : la liste à apprendre, puis six mots à reconnaître (trois appris, le mot critique jamais
@@ -1194,6 +1201,8 @@ function demonstrationSource(i, graine) {
     test: melanger(lues, generateur(graineDe("source@" + i + ":" + graine))),
     explication: "On retient souvent une information sans se rappeler d'où elle vient. Le contenu et sa source sont mémorisés en partie séparément, et la source s'efface plus vite. Avant de répéter une information, demandez-vous où vous l'avez lue." };
 }
+
+// fr-seulement-fin
 
 // Bilans des démonstrations (fonctions pures, à partir des réponses)
 // DRM : reponses = tableau de booléens (« était dans la liste ») dans l'ordre du test

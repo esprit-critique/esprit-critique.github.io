@@ -16,7 +16,7 @@ import glob, hashlib, json, os, re, sys
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "..", "static")
-IGNORES = {"sw.js", "langue.js", "donnees.js", "indices.js", "pays.js"}   # donnees.js et indices.js : traduits par static/en/fiches.js ; pays.js : par static/en/pays.js
+IGNORES = {"sw.js", "langue.js", "donnees.js", "indices.js", "pays.js", "grand-test-donnees.js"}   # donnees.js et indices.js : traduits par static/en/fiches.js ; pays.js : par static/en/pays.js ; grand-test-donnees.js : par static/en/grand-test-donnees.js (tests/en/gt_liste.js)
 
 
 def lire(chemin):
@@ -147,7 +147,7 @@ def analyser(source):
 
 # ------------------------------------------------------------ tri des textes
 # Mots qui ressemblent à du texte mais n'en sont pas (noms de touches, de balises, de types de fichiers…)
-NON_TEXTES = {"Enter", "Escape", "ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Tab", "Backspace", "Home", "End",
+NON_TEXTES = {"@lecture", "@note", "Enter", "Escape", "ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Tab", "Backspace", "Home", "End",
               "Esprit critique : affichage dans le cadre d'un autre site refusé", "les deux", "\\n", "PRODID:-//Esprit critique//esprit-critique.github.io//FR", "text/calendar;charset=utf-8"}
 
 ACCENTS = re.compile(r"[àâäçéèêëîïôöùûüœÿÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŒ«»]")
@@ -222,7 +222,13 @@ def extraire(chemin):
                 texte = parties_de_gabarit(t[1])
                 if ressemble_a_du_texte(re.sub(r"\{\d+\}", "", texte)):
                     assembles.append((t[2], texte))
-    return complets, assembles
+    # Blocs réservés au français : entre « fr-seulement-debut » et « fr-seulement-fin » (commentaires du script)
+    blocs, debut = [], None
+    for n, l in enumerate(lignes, 1):
+        if "fr-seulement-debut" in l: debut = n
+        elif "fr-seulement-fin" in l and debut: blocs.append((debut, n)); debut = None
+    dans = lambda n: any(d <= n <= f for d, f in blocs)
+    return [c for c in complets if not dans(c[0])], [a for a in assembles if not dans(a[0])]
 
 
 def identifiant(texte):

@@ -1,13 +1,13 @@
 // sw.js : mode hors ligne. Stratégie « réseau d'abord » : en ligne, on sert toujours la version publiée (et l'on met
 // le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Aucune donnée n'est envoyée nulle part.
 // À chaque nouveau fichier du site : l'ajouter à FICHIERS et changer le numéro de version du cache.
-const CACHE = "esprit-critique-v14";
+const CACHE = "esprit-critique-v15";
 const FICHIERS = [
   "./", "index.html", "style.css", "manifest.webmanifest?v=3", "favicon.svg?v=3", "icone-32.png?v=3", "icone.png?v=3", "icone-512.png?v=3",
   "langue.js", "donnees.js", "schemas.js", "pays.js", "jeux-donnees.js", "ateliers.js", "niveaux.js", "experiences.js", "chiffres.js",
   "perception.js", "debattre.js", "raisonner.js", "pratiques.js", "indices.js", "grand-test-donnees.js", "grand-test.js", "grand-test-interface.js", "app.js",
   // Version anglaise : la page et ses dictionnaires (liste complète : python3 tests/en/controle.py)
-  "en/dico-app.js", "en/dico-ateliers.js", "en/dico-chiffres.js", "en/dico-debattre.js", "en/dico-experiences.js", "en/dico-jeux-donnees.js", "en/dico-niveaux.js", "en/dico-nombres.js", "en/dico-perception.js", "en/dico-pratiques.js", "en/dico-raisonner.js", "en/dico-schemas.js", "en/fiches.js", "en/index.html", "en/legal-notice.html", "en/pays.js", "en/privacy.html", "en/terms.html",
+  "en/dico-app.js", "en/dico-ateliers.js", "en/dico-chiffres.js", "en/dico-debattre.js", "en/dico-experiences.js", "en/dico-grand-test-interface.js", "en/dico-grand-test.js", "en/dico-jeux-donnees.js", "en/dico-niveaux.js", "en/dico-nombres.js", "en/dico-perception.js", "en/dico-pratiques.js", "en/dico-raisonner.js", "en/dico-schemas.js", "en/fiches.js", "en/grand-test-donnees.js", "en/grand-test.js", "en/index.html", "en/legal-notice.html", "en/pays.js", "en/privacy.html", "en/terms.html",
   "polices/newsreader-latin-opsz-normal.woff2", "polices/newsreader-latin-wght-italic.woff2", "polices/OFL.txt"
 ];
 
