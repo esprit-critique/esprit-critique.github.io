@@ -914,5 +914,6 @@ EN_AJOUTER([
   ["Juste : c'est un exemple de ce sophisme.", "Correct: this is an example of this fallacy."],
   ["Non : c'est un exemple de ce sophisme.", "No: this is an example of this fallacy."],
   ["La réparation est la réponse en vert.", "The repair is the answer in green."],
-  ["Notion voisine : laquelle des deux ?", "Related concept: which of the two?"]
+  ["Notion voisine : laquelle des deux ?", "Related concept: which of the two?"],
+  ["{0} :", "{0}: "]
 ]);

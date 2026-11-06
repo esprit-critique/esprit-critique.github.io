@@ -16,7 +16,7 @@ import glob, hashlib, json, os, re, sys
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "..", "static")
-IGNORES = {"sw.js", "langue.js", "donnees.js", "indices.js"}   # donnees.js et indices.js : traduits par static/en/fiches.js
+IGNORES = {"sw.js", "langue.js", "donnees.js", "indices.js", "pays.js"}   # donnees.js et indices.js : traduits par static/en/fiches.js ; pays.js : par static/en/pays.js
 
 
 def lire(chemin):
@@ -161,6 +161,8 @@ def ressemble_a_du_texte(s):
         return False
     if len(t) < 2 or not re.search(r"[A-Za-zÀ-ÿ]", t):
         return False
+    if re.fullmatch(r"[LlDd]'[A-Za-zÀ-ÿ]{2,}", t):             # « L'ancre », « l'humeur » : un nom précédé de son article élidé
+        return True
     if re.match(r"^(l'|d')[A-ZÀ-Ý]", t):                      # « l'Inde », « d'Allemagne » : un nom précédé de son article
         return True
     if re.fullmatch(r"[#.\[]?[\w\-:.#\[\]=\"'/*>+~, ()]*", t) and not ACCENTS.search(t) and " " not in t:

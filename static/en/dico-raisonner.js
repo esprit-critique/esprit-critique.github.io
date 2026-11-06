@@ -292,5 +292,6 @@ EN_AJOUTER([
   ["points", "points"],
   ["cas", "case"],
   ["cas (pluriel)", "cases"],
-  ["prévisions", "forecasts"]
+  ["prévisions", "forecasts"],
+  ["Ouvrez votre carnet pour indiquer l'issue : {0}", "Open your log to record the outcome: {0}"]
 ]);

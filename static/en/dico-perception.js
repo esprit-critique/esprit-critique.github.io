@@ -217,5 +217,6 @@ EN_AJOUTER([
   ["case vide", "empty square"],
   ["cases vides", "empty squares"],
   ["grappe", "cluster"],
-  ["grappes", "clusters"]
+  ["grappes", "clusters"],
+  ["{0} : {1} sur 10 000", "{0}: {1} in 10,000"]
 ]);

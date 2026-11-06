@@ -197,5 +197,8 @@ EN_AJOUTER([
   ["résultats", "results"],
   ["jour", "day"],
   ["jours", "days"],
-  ["Révisions du quiz : {0}", "Quiz reviews: {0}"]
+  ["Révisions du quiz : {0}", "Quiz reviews: {0}"],
+  ["L'ancre", "The anchor"],
+  ["L'illusion", "The illusion"],
+  ["Réponse :", "Answer: "]
 ]);

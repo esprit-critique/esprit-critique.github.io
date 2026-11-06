@@ -453,7 +453,7 @@ JEUX.push(
             boutons[p.juste].classList.add("juste");
             if (k !== p.juste) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict " + (k === p.juste ? "juste" : "faux"), (k === p.juste ? "Juste. " : "Non. ") + p.piege));
+            retour.appendChild(el("p", "verdict " + (k === p.juste ? "juste" : "faux"), T(k === p.juste ? "Juste." : "Non.") + " " + T(p.piege)));
             if (p.honnete) {
               const f = el("figure", "figure-piege honnete");
               f.appendChild(p.honnete());
@@ -1046,7 +1046,7 @@ function grilleRisque(avant, apres) {
   const bloc = el("div", "risque-duo");
   [["Sans le médicament", avant], ["Avec le médicament", apres]].forEach(([titre, n]) => {
     const fig = el("figure", "panneau");
-    fig.appendChild(el("figcaption", null, titre + " : " + n + " sur 10 000"));
+    fig.appendChild(el("figcaption", null, T("{0} : {1} sur 10 000", T(titre), n)));
     const s = svg("svg", { viewBox: "0 0 100 100", class: "grille-10000", role: "img", "aria-label": titre });
     s.appendChild(svg("rect", { x: 0, y: 0, width: 100, height: 100, class: "grille-fond" }));
     // Positions dispersées mais toujours dans le cadre (pas de 37 et 23 modulo 80 et 76)

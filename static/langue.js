@@ -40,13 +40,36 @@ if (LANGUE === "en") {
   const deja = new WeakMap();
   const ATTRIBUTS = ["aria-label", "title", "placeholder", "alt"];
 
+  // Textes qui entourent un texte du dictionnaire sans figurer eux-mêmes dans le dictionnaire :
+  //   - un numéro de liste : « 3. Pourquoi ? » ;
+  //   - un ou plusieurs passages entre guillemets français : « Léon : « Vu comme ça… » » ; le passage traduit passe aux guillemets anglais.
+  function traduireAutour(cle) {
+    const numero = cle.match(/^(\d+\.\s)(.+)$/s);
+    if (numero) {
+      const reste = DICTIONNAIRE.get(numero[2]);
+      return reste !== undefined ? numero[1] + reste : undefined;
+    }
+    let change = false;
+    const texte = cle.replace(/«\s*([^»]*?)\s*»/g, (m, interieur) => {
+      const t = DICTIONNAIRE.get(cleTexte(interieur));
+      if (t === undefined) return m;
+      change = true;
+      return "“" + t + "”";
+    });
+    return change ? texte : undefined;
+  }
+
   function traduireNoeud(n) {
     const brut = n.nodeValue;
     if (deja.get(n) === brut) return;
     const cle = cleTexte(brut);
     if (!cle) return;
-    const traduit = DICTIONNAIRE.get(cle);
-    if (traduit === undefined) return;
+    let traduit = DICTIONNAIRE.get(cle);
+    if (traduit === undefined) traduit = traduireAutour(cle);
+    // En anglais, pas d'espace avant « : », « ; », « ! » et « ? » (le code français les écrit " : ")
+    const net = (traduit === undefined ? cle : traduit).replace(/ ([:;!?])/g, "$1");
+    if (traduit === undefined && net === cle) return;
+    traduit = net;
     // On garde les blancs du début et de la fin (ils séparent des nœuds voisins)
     const nouveau = brut.match(/^\s*/)[0] + traduit + brut.match(/\s*$/)[0];
     deja.set(n, nouveau);
@@ -57,8 +80,10 @@ if (LANGUE === "en") {
     for (const a of ATTRIBUTS) {
       const v = e.getAttribute && e.getAttribute(a);
       if (!v) continue;
-      const traduit = DICTIONNAIRE.get(cleTexte(v));
-      if (traduit !== undefined && traduit !== v) e.setAttribute(a, traduit);
+      const cle = cleTexte(v);
+      let traduit = DICTIONNAIRE.has(cle) ? DICTIONNAIRE.get(cle) : traduireAutour(cle);
+      traduit = (traduit === undefined ? cle : traduit).replace(/ ([:;!?])/g, "$1");
+      if (traduit !== v) e.setAttribute(a, traduit);
     }
   }
 

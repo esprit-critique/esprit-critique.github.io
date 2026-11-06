@@ -573,14 +573,15 @@ function entiteAffaiblie(avant, apres, graine) {
 function nombreGT(x, decimales) {
   const d = decimales === undefined ? (Number.isInteger(x) ? 0 : 1) : decimales;
   const [entier, frac] = Math.abs(x).toFixed(d).split(".");
-  const groupes = entier.length > 3 ? entier.replace(/\B(?=(\d{3})+(?!\d))/g, " ") : entier;
-  return (x < 0 ? "−" : "") + groupes + (frac && Number(frac) !== 0 ? "," + frac.replace(/0+$/, "") : "");
+  const groupes = entier.length > 3 ? entier.replace(/\B(?=(\d{3})+(?!\d))/g, LANGUE === "en" ? "," : " ") : entier;
+  return (x < 0 ? "−" : "") + groupes + (frac && Number(frac) !== 0 ? (LANGUE === "en" ? "." : ",") + frac.replace(/0+$/, "") : "");
 }
-const pourcentGT = x => nombreGT(x) + " %";
+const pourcentGT = x => nombreGT(x) + (LANGUE === "en" ? "%" : " %");
 const majuscule = t => t.charAt(0).toUpperCase() + t.slice(1);
 const elision = (mot, suite) => /^[aeiouyhâéèêîôœ]/i.test(suite) ? mot.slice(0, -1) + "'" + suite : mot + " " + suite;
 // Élisions oubliées par l'assemblage des gabarits : « que une » → « qu'une », « de Adam » → « d'Adam »
-const elisions = t => t.replace(/\b([Qq]u|[Dd])e (?=[aeiouàâéèêëîïôûœAEIOUÉÈÎ])/g, "$1'");
+// (en anglais, les phrases viennent de GENERATEURS_GT_EN, static/en/grand-test.js : rien à élider)
+const elisions = t => LANGUE === "en" ? t : t.replace(/\b([Qq]u|[Dd])e (?=[aeiouàâéèêëîïôûœAEIOUÉÈÎ])/g, "$1'");
 
 // Prénom d'une instance, décalé selon la famille pour varier les surfaces
 const prenomGT = (i, decalage) => PRENOMS_GT[(i * 7 + (decalage || 0)) % PRENOMS_GT.length];
@@ -920,7 +921,7 @@ const GENERATEURS_GT = {
 
 // Instance d'une famille, avec l'ordre de ses choix tiré par la graine de la passation (rangs « affichés »)
 function instanceGT(f, i, graine) {
-  const item = GENERATEURS_GT[f.generer](f, i);
+  const item = (LANGUE === "en" && typeof GENERATEURS_GT_EN !== "undefined" && GENERATEURS_GT_EN[f.generer] || GENERATEURS_GT[f.generer])(f, i);
   ["texte", "question", "explication"].forEach(k => { item[k] = elisions(item[k]); });
   if (item.choix) item.choix = item.choix.map(elisions);
   const instanceId = f.id + "@" + i;

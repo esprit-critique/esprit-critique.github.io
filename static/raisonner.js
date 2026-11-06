@@ -5,6 +5,7 @@
 
 // Première lettre en minuscule (« Tous les… » -> « tous les… »)
 const minuscule1 = t => t.charAt(0).toLowerCase() + t.slice(1);
+const majuscule1 = t => t.charAt(0).toUpperCase() + t.slice(1);
 // Écart en points : « 2 points » / « 1 point » (en français, le pluriel commence à 2 ; en anglais, tout sauf 1)
 const pointsAsym = (v, brut) => fr(Number(v.toFixed(1))) + " " + (LANGUE === "en" ? T(Number(v.toFixed(1)) === 1 ? "point" : "points") : (brut >= 2 ? "points" : "point"));
 
@@ -563,7 +564,7 @@ EXPERIENCES.push(
             zone.appendChild(el("p", "cas", p.enonce));
             zone.appendChild(el("p", "consigne", "Vos réponses individuelles"));
             const liste = el("ul", "liste-simple");
-            p.options.forEach((o, j) => liste.appendChild(el("li", null, o + " : " + pluriel(individuelles.filter(x => x === j).length, "joueur"))));
+            p.options.forEach((o, j) => liste.appendChild(el("li", null, T(o) + " : " + pluriel(individuelles.filter(x => x === j).length, "joueur"))));
             zone.appendChild(liste);
             zone.appendChild(paragraphe("Discutez : chacun explique son raisonnement, puis mettez-vous d'accord sur une réponse commune.", "source"));
             discussion(zone, 180, () => {
@@ -579,7 +580,7 @@ EXPERIENCES.push(
                   if (j !== p.juste) b.classList.add("faux");
                   resultats.push({ individuels: individuelles.filter(x => x === p.juste).length / individuelles.length, groupe: j === p.juste });
                   const retour = el("div", "retour-quiz");
-                  retour.appendChild(el("p", "verdict " + (j === p.juste ? "juste" : "faux"), (j === p.juste ? "Juste : " : "Réponse : ") + p.options[p.juste] + "."));
+                  retour.appendChild(el("p", "verdict " + (j === p.juste ? "juste" : "faux"), (j === p.juste ? T("Juste : ") : T("Réponse : ")) + T(p.options[p.juste]) + "."));
                   retour.appendChild(paragraphe(p.explication));
                   retour.appendChild(boutonSuivant(i === PROBLEMES_GROUPE.length - 1 ? "Voir le bilan" : "Problème suivant", () => { i++; probleme(); }));
                   zone.appendChild(retour);

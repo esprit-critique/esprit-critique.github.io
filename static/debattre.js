@@ -1012,7 +1012,7 @@ EXPERIENCES.push(
             const liste = el("ul", "liste-simple");
             ["rep", "autre", "acc", "concl"].forEach(t => {
               const li = el("li");
-              li.append(el("strong", null, LIBELLES[t] + " : "), texteNoeud(explications[t]));
+              li.append(el("strong", null, T("{0} : ", T(LIBELLES[t]))), texteNoeud(explications[t]));
               liste.appendChild(li);
             });
             retour.appendChild(liste);
@@ -1092,7 +1092,7 @@ EXPERIENCES.push(
               if (t !== attendu) b.classList.add("faux");
               else points++;
               const retour = el("div", "retour-quiz");
-              retour.appendChild(el("p", "verdict " + (t === attendu ? "juste" : "faux"), (t === attendu ? "Juste : " : "Réponse : ") + TYPES_REFORMULATION[attendu][0].toLowerCase() + "."));
+              retour.appendChild(el("p", "verdict " + (t === attendu ? "juste" : "faux"), (t === attendu ? T("Juste : ") : T("Réponse : ")) + T(TYPES_REFORMULATION[attendu][0]).toLowerCase() + "."));
               retour.appendChild(paragraphe(TYPES_REFORMULATION[attendu][1]));
               if (t !== attendu) retour.appendChild(paragraphe(T("Votre choix : {0}.", T(TYPES_REFORMULATION[t][0]).toLowerCase()) + " " + T(TYPES_REFORMULATION[t][1]), "source"));
               zone.appendChild(retour);
@@ -1327,7 +1327,7 @@ function entrainementFiche(type, fiche) {
         boutons[noms.indexOf(cible.f)].classList.add("juste");
         if (f !== cible.f) b.classList.add("faux");
         const retour = el("div", "retour-quiz");
-        retour.appendChild(el("p", "verdict " + (f === cible.f ? "juste" : "faux"), (f === cible.f ? "Juste : " : "Réponse : ") + cible.f.nom + "."));
+        retour.appendChild(el("p", "verdict " + (f === cible.f ? "juste" : "faux"), (f === cible.f ? T("Juste : ") : T("Réponse : ")) + cible.f.nom + "."));
         retour.appendChild(paragraphe(cible.r.pourquoi));
         const p = el("p", "distinction");
         p.append(el("strong", null, "Ce qui les distingue : "), texteNoeud(fiche.distinction[1]));

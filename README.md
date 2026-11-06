@@ -93,6 +93,7 @@ puis ouvrir http://localhost:8000. Le serveur n'accepte que les connexions de l'
 | `static/debattre.js` | section « Débattre » : débats, réparations, reformulations (contenus fictifs) |
 | `static/pratiques.js` | ateliers du lot 5 : Wald, fabriquer un résultat, foule intérieure, cécité au choix, bingo, qui doit prouver, pyramide, décision guidée, comprenez-vous, démonter, lecture latérale, bilan avant et après |
 | `static/indices.js` | « Trouver l'indice » : le passage révélateur de chacune des 180 situations |
+| `static/langue.js`, `static/en/` | version anglaise : voir « Version anglaise » ci-dessous |
 | `static/sw.js` | mode hors ligne ; à chaque nouveau fichier, l'ajouter à la liste et changer le numéro de version |
 | `static/mentions-legales.html`, `confidentialite.html`, `cgu.html`, `404.html` | pages fixes, générées par `tests/pages/generer_pages.py` (ne pas les modifier à la main) |
 | `static/robots.txt`, `static/sitemap.xml`, `static/apercu.png` | référencement et aperçu de partage (`tests/pages/generer_apercu.sh` régénère l'image à partir de `tests/pages/apercu.html`) |
@@ -101,6 +102,34 @@ puis ouvrir http://localhost:8000. Le serveur n'accepte que les connexions de l'
 | `app.py` | petit serveur local (Python, sans dépendance) |
 
 La publication sur GitHub Pages est automatique : voir `.github/workflows/publier.yml`.
+
+## Version anglaise
+
+Le site est écrit en français ; `static/en/index.html` en est la version anglaise (`/en/`). Le français ne change pas :
+le choix se fait par un lien dans le pied de page (mémorisé), et la page française redirige vers `/en/` si l'anglais a été choisi.
+
+- **Même code, autre langue** : `en/index.html` charge les mêmes scripts que `index.html` (par `../`), précédés de `langue.js`
+  et des dictionnaires `en/dico-*.js`. La langue est celle de la page (`<html lang>`).
+- **Dictionnaires** : français à gauche, anglais à droite, une paire par ligne. Tout texte affiché dont le français figure dans
+  un dictionnaire est remplacé par son anglais au moment de l'affichage (texte des nœuds, `aria-label`, `title`, `placeholder`,
+  `alt`). Un texte sans traduction reste en français.
+- **Phrases construites par le code** : elles s'écrivent `T("texte avec {0}", valeur)` (identique en français), pour que la
+  traduction puisse réordonner la phrase. `pluriel()`, `PC` (« % »), `LOCALE` et `URL_SITE` suivent la langue.
+- **Fiches, indices, pays** : `en/fiches.js` et `en/pays.js` remplacent les données structurées (noms, définitions, exemples,
+  passages révélateurs : chaque passage doit rester une sous-chaîne exacte de la situation).
+- **Pages fixes** : `en/legal-notice.html`, `privacy.html`, `terms.html`, générées par `tests/pages/generer_pages.py` comme les pages françaises.
+
+Outils (dans `tests/en/`) :
+
+| Fichier | Rôle |
+|---|---|
+| `extraire.py` | liste les textes français d'un script (`extraire.py app.js`), ceux qu'il faut écrire en `T()` (`--assembles`) et ceux qui n'ont pas de traduction (`--manquants`) |
+| `ajouter.py` | ajoute des traductions (`{identifiant: anglais}`) à `static/en/dico-<script>.js` |
+| `controle.py` | contrôle d'ensemble : dictionnaires chargés, liste du service worker (`--sw` l'affiche), doublons, textes sans traduction |
+
+Quand on ajoute un texte au site : l'écrire en français comme d'habitude, puis `python3 tests/en/extraire.py --manquants`
+indique ce qu'il reste à traduire. Style de la traduction : équivalent de ton et de registre, pas mot à mot ; guillemets
+anglais “ ”, apostrophe ’, titres en minuscules (sauf noms propres), nombres à l'anglaise (1,200.5), dates en-GB.
 
 ## Tests
 

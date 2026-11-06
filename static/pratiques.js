@@ -226,7 +226,7 @@ EXPERIENCES.push(
       };
       const dessiner = () => {
         controles.innerHTML = "";
-        controles.append(puces("Mesure", MESURES_TISANE.map(([m, l]) => [m, l.replace(/^(la|le|l')\s?/, "")]), "mesure"),
+        controles.append(puces("Mesure", MESURES_TISANE.map(([m, l]) => [m, T(l).replace(/^(la|le|l')\s?/, "")]), "mesure"),
           puces("Participants", [["tous", "Tous"], ["femmes", "Femmes seulement"], ["hommes", "Hommes seulement"]], "groupe"),
           puces("Valeurs extrêmes (au-delà de 2 écarts-types)", [[false, "Gardées"], [true, "Retirées"]], "extremes"));
         const ajouter = el("button", "bouton secondaire", T("Ajouter 10 participants par groupe") + (ajouts ? " " + T("({0} par groupe)", 20 + 10 * ajouts) : ""));
@@ -580,7 +580,7 @@ EXPERIENCES.push(
             boutons[q.reponse].classList.add("juste");
             if (k !== q.reponse) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.append(el("p", "verdict " + (k === q.reponse ? "juste" : "faux"), (k === q.reponse ? "Juste : " : "Réponse : ") + OPTIONS_PREUVE[q.reponse].toLowerCase() + "."), paragraphe(q.explication));
+            retour.append(el("p", "verdict " + (k === q.reponse ? "juste" : "faux"), (k === q.reponse ? T("Juste : ") : T("Réponse : ")) + T(OPTIONS_PREUVE[q.reponse]).toLowerCase() + "."), paragraphe(q.explication));
             zone.appendChild(retour);
             fini(k === q.reponse, retour);
           });
@@ -619,7 +619,7 @@ EXPERIENCES.push(
             boutons[r.niveau].classList.add("juste");
             if (k !== r.niveau) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict " + (k === r.niveau ? "juste" : "faux"), (k === r.niveau ? "Juste : " : "Réponse : ") + NIVEAUX_GRAHAM[r.niveau].toLowerCase() + "."));
+            retour.appendChild(el("p", "verdict " + (k === r.niveau ? "juste" : "faux"), (k === r.niveau ? T("Juste : ") : T("Réponse : ")) + T(NIVEAUX_GRAHAM[r.niveau]).toLowerCase() + "."));
             zone.appendChild(retour);
             fini(k === r.niveau, retour);
           });
@@ -845,7 +845,7 @@ EXPERIENCES.push(
           return;
         }
         // Question diagnostique, puis l'explication de référence et une dernière note
-        zone.appendChild(el("p", "cas", m.objet[0].toUpperCase() + m.objet.slice(1) + " : " + m.question));
+        zone.appendChild(el("p", "cas", T("{0} : {1}", majuscule1(T(m.objet)), T(m.question))));
         const ordre = melanger([0, 1, 2, 3]);
         const boutons = ordre.map((o, i) => {
           const b = boutonChoix(m.options[o], i);
@@ -871,7 +871,7 @@ EXPERIENCES.push(
         const baisses = expliques.filter(k => notes[k][2] < notes[k][0]).length;
         afficherScore(zone, "comprendre", justes, diag.length, T("{0} / {1} aux questions", justes, diag.length));
         const liste = el("ul", "liste-simple");
-        expliques.forEach(k => liste.appendChild(el("li", null, MECANISMES[k].objet[0].toUpperCase() + MECANISMES[k].objet.slice(1) + " : " + notes[k].join(" → ") + " sur 7")));
+        expliques.forEach(k => liste.appendChild(el("li", null, T("{0} : {1} sur 7", majuscule1(T(MECANISMES[k].objet)), notes[k].join(" → ")))));
         zone.appendChild(paragraphe("Vos notes, avant d'expliquer, après l'explication, puis après la question :"));
         zone.appendChild(liste);
         zone.appendChild(paragraphe(baisses === 0 ? T("Votre note n'a baissé pour aucun des trois objets : votre première estimation était peut-être déjà prudente.") : T("Votre note a baissé pour {0}. Une baisse est le résultat le plus fréquent.", T(baisses === 3 ? "les trois objets" : baisses === 2 ? "deux des trois objets" : "un des trois objets"))));
@@ -992,7 +992,7 @@ EXPERIENCES.push(
               T("Elle ne soutient ni ne conteste rien : la retirer ne change pas l'argument.")
             ][p.role];
             const retour = el("div", "retour-quiz");
-            retour.append(el("p", "verdict " + (r === p.role ? "juste" : "faux"), (r === p.role ? "Juste : " : "Réponse : ") + ROLES_ARGUMENT[p.role].toLowerCase() + "."), paragraphe(detail));
+            retour.append(el("p", "verdict " + (r === p.role ? "juste" : "faux"), (r === p.role ? T("Juste : ") : T("Réponse : ")) + T(ROLES_ARGUMENT[p.role]).toLowerCase() + "."), paragraphe(detail));
             zone.appendChild(retour);
             fini(r === p.role, retour);
           });
@@ -1137,7 +1137,7 @@ EXPERIENCES.push(
             if (k !== s.verdict) b.classList.add("faux");
             montrerAilleurs();
             const retour = el("div", "retour-quiz");
-            retour.append(el("p", "verdict " + (k === s.verdict ? "juste" : "faux"), (k === s.verdict ? "Juste : " : "Réponse : ") + VERDICTS_SITE[s.verdict].charAt(0).toLowerCase() + VERDICTS_SITE[s.verdict].slice(1) + "."), paragraphe(s.explication));
+            retour.append(el("p", "verdict " + (k === s.verdict ? "juste" : "faux"), (k === s.verdict ? T("Juste : ") : T("Réponse : ")) + minuscule1(T(VERDICTS_SITE[s.verdict])) + "."), paragraphe(s.explication));
             zone.appendChild(retour);
             fini({ juste: k === s.verdict, cherche: !!s.cherche }, retour);
           });

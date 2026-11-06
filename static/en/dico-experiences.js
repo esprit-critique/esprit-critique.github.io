@@ -634,5 +634,12 @@ EN_AJOUTER([
   ["date partagée", "shared date"],
   ["dates partagées", "shared dates"],
   ["Aucun anniversaire commun dans ce groupe.", "No shared birthday in this group."],
-  ["Groupes formés : {0} ; avec au moins un anniversaire commun : {1} ({2} %).", "Groups formed: {0}; with at least one shared birthday: {1} ({2}%)."]
+  ["Groupes formés : {0} ; avec au moins un anniversaire commun : {1} ({2} %).", "Groups formed: {0}; with at least one shared birthday: {1} ({2}%)."],
+  ["L'arche", "The ark"],
+  ["Gagné : la voiture était derrière la porte {0}.", "Won: the car was behind door {0}."],
+  ["Perdu : la voiture était derrière la porte {0}.", "Lost: the car was behind door {0}."],
+  ["Juste : environ {0}.", "Correct: about {0}."],
+  ["Réponse : environ {0}.", "Answer: about {0}."],
+  ["Juste : environ {0} %.", "Correct: about {0}%."],
+  ["Réponse : environ {0} %.", "Answer: about {0}%."]
 ]);

@@ -505,7 +505,7 @@ const EXPERIENCES = [
           justes[i] = verdict === "juste";
           if (verdict === "juste") {
             bonnes++;
-            resultat.textContent = typo("Juste. " + q.explication);
+            resultat.textContent = typo(T("Juste.") + " " + T(q.explication));
           } else {
             if (verdict === "intuitive") intuitives++;
             resultat.textContent = typo((verdict === "intuitive" ? T("C'est la réponse intuitive, mais elle est fausse.") + " " : T("Réponse attendue : {0}.", q.texteLibre ? "Émilie" : q.juste + " " + T(q.unite)) + " ") + T(q.explication));
@@ -796,7 +796,7 @@ const EXPERIENCES = [
         if (gagne) s[0]++;
         ecrire("montyHall", stats);
         noterPartie("monty-hall");
-        message.textContent = typo((gagne ? "Gagné : la voiture était derrière la porte " : "Perdu : la voiture était derrière la porte ") + (partie.voiture + 1) + ".");
+        message.textContent = typo(T(gagne ? "Gagné : la voiture était derrière la porte {0}." : "Perdu : la voiture était derrière la porte {0}.", partie.voiture + 1));
         dessiner();
         if (!zone.querySelector(".explication-monty")) expliquer();
       }
@@ -911,7 +911,7 @@ const EXPERIENCES = [
             champ.disabled = true;
             ok.remove();
             const juste = Math.abs(v - p.reponse) <= p.tolerance;
-            conclure(juste, el("div", "retour-quiz"), (juste ? "Juste : " : "Réponse : ") + "environ " + fr(p.reponse) + " " + p.unite + ".");
+            conclure(juste, el("div", "retour-quiz"), T(juste ? "Juste : environ {0}." : "Réponse : environ {0}.", fr(p.reponse) + " " + T(p.unite)));
           });
         } else {
           // Deux choix successifs : on vérifie leur cohérence
@@ -1000,7 +1000,7 @@ const EXPERIENCES = [
           const vrai = 100 * (deuxTests ? apres2 : c.vraisPositifs / (c.vraisPositifs + c.fauxPositifs));
           const juste = Math.abs(v - vrai) <= Math.max(3, vrai * 0.2);
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Réponse : ") + "environ " + fr(vrai < 10 ? Number(vrai.toFixed(1)) : Math.round(vrai)) + " %."));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), T(juste ? "Juste : environ {0} %." : "Réponse : environ {0} %.", fr(vrai < 10 ? Number(vrai.toFixed(1)) : Math.round(vrai)))));
           retour.appendChild(arbreFrequences(s, c));
           retour.appendChild(paragraphe(T(c.vraisPositifs > 1 ? "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspondent à un vrai cas." : "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspond à un vrai cas.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs), fr(c.vraisPositifs + c.fauxPositifs))));
           if (s.resultat) retour.appendChild(paragraphe(s.resultat, "source"));
@@ -1125,7 +1125,7 @@ const EXPERIENCES = [
             boutons[bon].classList.add("juste");
             if (k !== bon) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict " + (k === bon ? "juste" : "faux"), (k === bon ? "Juste : " : "Non : ") + verdicts[c.statut].charAt(0).toLowerCase() + verdicts[c.statut].slice(1)));
+            retour.appendChild(el("p", "verdict " + (k === bon ? "juste" : "faux"), (k === bon ? T("Juste : ") : T("Non : ")) + minuscule1(T(verdicts[c.statut]))));
             retour.appendChild(paragraphe(c.explication));
             zone.appendChild(retour);
             fini(k === bon, retour);
@@ -1170,7 +1170,7 @@ const EXPERIENCES = [
             reponses[x.id] = k;
             ecrire("reponsesPensee", reponses);
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict", T("Votre réponse : « {0} ».", texte)));
+            retour.appendChild(el("p", "verdict", T("Votre réponse : « {0} ».", T(texte))));
             retour.appendChild(paragraphe(x.discussion));
             retour.appendChild(paragraphe(x.critique, "encadre"));
             const l = el("div", "voir-aussi");
