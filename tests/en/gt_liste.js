@@ -59,7 +59,7 @@ function liste() {
   return sortie;
 }
 
-const id = (nom, chemin) => crypto.createHash("sha1").update(nom + JSON.stringify(chemin)).digest("hex").slice(0, 7);
+const id = (nom, chemin) => crypto.createHash("sha1").update(nom + JSON.stringify(chemin)).digest("hex").slice(0, 12);
 
 if (require.main === module) {
   const L = liste();
