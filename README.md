@@ -18,8 +18,10 @@ pour l'utiliser comme une application.
   prévues s'exportent dans un agenda (fichier .ics). Après chaque réponse, « Trouver l'indice » demande de toucher le
   passage de la situation qui trahit la notion. Chaque fiche a quatre situations : les révisions utilisent en priorité
   les deux dernières, pour ne pas reconnaître un texte déjà lu.
+- **Une recherche dans tout le site** (en haut de chaque page) : fiches, ateliers, expériences de pensée, guide et lexique ; accents et casse ignorés, « B 10 » ouvre une fiche, flèches et Entrée au clavier.
+- **Question au hasard** (section « Mélanges ») : une question à la fois, tirée au hasard dans les jeux les plus rapides. Les réponses ne sont pas enregistrées.
 - **Un défi du jour** : dix questions difficiles, les mêmes pour tout le monde, une tentative par jour.
-- **48 ateliers**, en six sections, dont le Grand test :
+- **49 ateliers**, en six sections, dont le Grand test :
   - *le monde en chiffres* : état du monde, causes de décès, duels entre 155 pays (démographie, économie,
     géopolitique), cartes mentales, ordres de grandeur, chronologie ;
   - *mesurer sa confiance* : vrai ou faux avec degré de certitude, intervalles à 90 %, effet d'ancrage,
@@ -91,6 +93,8 @@ puis ouvrir http://localhost:8000. Le serveur n'accepte que les connexions de l'
 | `static/chiffres.js`, `static/perception.js`, `static/experiences.js` | les ateliers |
 | `static/raisonner.js` | logique contre croyance, moniteur de vol, deux études, résoudre à plusieurs, carnet de prévisions |
 | `static/debattre.js` | section « Débattre » : débats, réparations, reformulations (contenus fictifs) |
+| `static/melange.js` | « Question au hasard » : tire une question d'un jeu rapide (liste `MELANGE_JEUX`) |
+| `static/recherche.js` | recherche dans tout le site, dans l'en-tête |
 | `static/pratiques.js` | ateliers du lot 5 : Wald, fabriquer un résultat, foule intérieure, cécité au choix, bingo, qui doit prouver, pyramide, décision guidée, comprenez-vous, démonter, lecture latérale, bilan avant et après |
 | `static/indices.js` | « Trouver l'indice » : le passage révélateur de chacune des 180 situations |
 | `static/langue.js`, `static/en/` | version anglaise : voir « Version anglaise » ci-dessous |
@@ -144,6 +148,7 @@ CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 
 | Fichier | Rôle |
 |---|---|
+| `tests/recherche-melange.js` | recherche, sections pliables et « Question au hasard » dans Chromium (Playwright) : `node tests/recherche-melange.js`, serveur local lancé |
 | `tests/_test.html` | fiches, quiz, révisions, navigation, clavier, reprise des anciennes données |
 | `tests/_ateliers.html` | joue chaque atelier jusqu'au bilan ; contrôle l'affichage à chaque étape |
 | `tests/_niveaux.html` | moteur de progression : joueurs simulés, records par niveau, migration |

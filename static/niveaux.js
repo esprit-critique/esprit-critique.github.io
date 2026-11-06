@@ -111,23 +111,33 @@ function niveauDePartie(niveaux) {
   return meilleur;
 }
 
+// Mode « Question au hasard » (melange.js) : vrai pendant le lancement d'un jeu tiré au hasard, avec la fonction
+// qui reçoit la question jouée (résultat, juste ou non). Faux partout ailleurs : les ateliers gardent leur partie complète.
+const MELANGE = { actif: false, fin: null };
+
 // Déroule une partie dont chaque question est tirée au niveau du moment ; même forme que derouler().
 // options : { id, n, tirer(niveau, i), relancer(), libelle, estJuste(resultat), avant(zone) }
 // afficher(element, zone, fini, niveau) affiche une question ; bilan(resultats) conclut la partie.
 function deroulerNiveaux(zone, options, afficher, bilan) {
-  const { id, n, tirer, libelle, relancer } = options;
+  const { id, tirer, libelle, relancer } = options;
   const estJuste = options.estJuste || (r => r === true);
+  // En mode « Question au hasard » (melange.js), la partie ne compte qu'une question : pas de réglage de niveau,
+  // pas de bilan ni d'enregistrement de partie, et la fin passe la main au mélange. Le mode est lu une seule fois,
+  // au lancement : le mélange peut donc avoir fini de tirer sa question quand le joueur répond.
+  const melange = MELANGE.actif ? MELANGE.fin : null;
+  const n = melange ? 1 : options.n;
   let i = 0;
   let niveau = niveauAtelier(id).niveau;
   const resultats = [], niveaux = [];
   function etape() {
     zone.innerHTML = "";
     if (i >= n) {
+      if (melange) return melange(resultats[0], estJuste(resultats[0]));
       PARTIES_EN_COURS[id] = { niveaux, justes: resultats.map(estJuste) };
       enregistrerNiveau(id, { parties: niveauAtelier(id).parties + 1 });
       return bilan(resultats);
     }
-    if (i === 0) {
+    if (i === 0 && !melange) {
       zone.appendChild(choixNiveau(id, relancer));
       if (options.avant) options.avant(zone);
     }
@@ -137,7 +147,8 @@ function deroulerNiveaux(zone, options, afficher, bilan) {
     afficher(element, zone, (resultat, conteneur) => {
       resultats.push(resultat);
       niveau = suivreReponse(id, estJuste(resultat));
-      (conteneur || zone).appendChild(boutonSuivant(i === n - 1 ? "Voir le bilan" : "Suivant", () => { i++; etape(); }));
+      const suite = i === n - 1 ? (melange ? "Question suivante" : "Voir le bilan") : "Suivant";
+      (conteneur || zone).appendChild(boutonSuivant(suite, () => { i++; etape(); }));
       montrer(conteneur);
     }, niveau);
   }

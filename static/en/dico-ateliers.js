@@ -129,5 +129,13 @@ EN_AJOUTER([
   ["fausse alerte", "false alarm"],
   ["fausses alertes", "false alarms"],
   ["repérages", "sightings"],
-  ["1 fois", "once"]
+  ["1 fois", "once"],
+  ["Mélanges", "Mixes"],
+  ["{0} / {1} essayés", "{0} / {1} tried"],
+  ["Jeu tiré au hasard", "Game drawn at random"],
+  ["Cette session : {0} bonne(s) réponse(s) sur {1}. Les réponses ne sont pas enregistrées.", "This session: {0} correct answer(s) out of {1}. Answers are not recorded."],
+  ["Les réponses ne sont pas enregistrées : elles servent à s'entraîner.", "Answers are not recorded: they are for practice."],
+  ["Question au hasard", "Random question"],
+  ["Une question à la fois, tirée au hasard dans les jeux les plus rapides. Vous ne savez pas à l'avance quel jeu viendra.", "One question at a time, drawn at random from the quickest games. You never know in advance which game comes next."],
+  ["Une question à la fois, tirée au hasard dans les jeux les plus rapides : on ne sait pas à l'avance quel jeu viendra.", "One question at a time, drawn at random from the quickest games: you never know in advance which game comes next."]
 ]);

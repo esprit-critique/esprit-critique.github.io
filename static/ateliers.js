@@ -6,6 +6,7 @@
 // ===================== Sections de la page =====================
 
 const SECTIONS_ATELIERS = [
+  { id: "melange", titre: "Mélanges", intro: "Une question à la fois, tirée au hasard dans les jeux les plus rapides : on ne sait pas à l'avance quel jeu viendra." },
   { id: "monde", titre: "Le monde en chiffres", intro: "Des questions fondées sur des données publiques récentes (Banque mondiale, OMS, ONU), avec leurs sources. Nos idées sur le monde datent souvent de l'école." },
   { id: "confiance", titre: "Mesurer sa confiance", intro: "Savoir ce que l'on sait : vos certitudes sont-elles justifiées ? Les résultats s'accumulent d'une partie à l'autre." },
   { id: "perception", titre: "Percevoir", intro: "Quantités, hasard, corrélations, graphiques : ce que l'œil voit et ce qu'il croit voir." },
@@ -78,7 +79,9 @@ function calculEnDetail(lignes, titre) {
 // « niveau » (facultatif) : niveau de la question, affiché discrètement
 function entete(zone, numero, total, libelle, niveau) {
   const e = el("div", "quiz-entete");
-  e.appendChild(el("span", null, T(libelle || "Question") + " " + numero + " / " + total + (niveau ? " · " + T("niveau {0}", niveau) : "")));
+  // Une seule question (mode « Question au hasard ») : pas de compteur « 1 / 1 »
+  const compte = total > 1 ? " " + numero + " / " + total : "";
+  e.appendChild(el("span", null, T(libelle || "Question") + compte + (niveau ? " · " + T("niveau {0}", niveau) : "")));
   zone.appendChild(e);
   const jauge = el("div", "jauge");
   const rempli = el("div");
@@ -464,7 +467,8 @@ function atelierConseille() {
   const resultats = lire("resultatsAteliers", {});
   const anciens = new Set([...lire("jeuxFaits", []), ...lire("experiencesFaites", [])]);
   // Le Grand test a sa propre carte mise en avant (carteGrandTest) : il n'est pas repris dans la suggestion
-  const jamais = tous.filter(a => !resultats[a.atelier.id] && !anciens.has(a.atelier.id) && a.atelier.id !== "grand-test");
+  // Le mélange n'enregistre pas de résultat : il n'est jamais suggéré comme « jamais essayé »
+  const jamais = tous.filter(a => !resultats[a.atelier.id] && !anciens.has(a.atelier.id) && a.atelier.id !== "grand-test" && a.atelier.section !== "melange");
   if (jamais.length) return jamais[Math.floor(generateur(aujourdHui())() * jamais.length)];
   return tous.slice().sort((a, b) => ((resultats[a.atelier.id] || {}).jour || 0) - ((resultats[b.atelier.id] || {}).jour || 0))[0];
 }
@@ -515,29 +519,65 @@ function afficherAteliers() {
   // Le Grand test, atelier à part, mis en avant au-dessus des sections (grand-test-interface.js)
   if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
 
-  // Sommaire : un bouton par section, qui y fait défiler la page
+  // Sommaire : un bouton par section, qui l'ouvre et y fait défiler la page
   const sommaire = el("nav", "puces sommaire-ateliers");
   sommaire.setAttribute("aria-label", "Sections des ateliers");
   SECTIONS_ATELIERS.forEach(section => {
     const b = el("button", "puce", section.titre);
-    b.addEventListener("click", () => $("section-" + section.id).scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+    b.addEventListener("click", () => basculerSection($("section-" + section.id), true, true));
     sommaire.appendChild(b);
   });
   zone.insertBefore(sommaire, carte);
 
+  const ouvertes = lire("sectionsOuvertes", {});
   SECTIONS_ATELIERS.forEach(section => {
     const ateliers = tousLesAteliers().filter(a => a.atelier.section === section.id)
       .sort((a, b) => (a.atelier.ordre || 50) - (b.atelier.ordre || 50));
     if (!ateliers.length) return;
+    const essayes = ateliers.filter(a => resultats[a.atelier.id]).length;
     const bloc = el("section", "section-ateliers");
     bloc.id = "section-" + section.id;
-    bloc.appendChild(el("h2", "titre-section", section.titre));
-    bloc.appendChild(el("p", "intro-section", section.intro));
+    bloc.dataset.section = section.id;
+    // En-tête pliable : un bouton, qui indique le nombre d'ateliers et ceux déjà essayés
+    const titre = el("h2", "titre-section");
+    const bouton = el("button", "pliant");
+    bouton.setAttribute("aria-controls", "corps-" + section.id);
+    bouton.append(el("span", "pliant-titre", section.titre),
+      el("span", "pliant-compte", T("{0} / {1} essayés", essayes, ateliers.length)));
+    const fleche = svg("svg", { viewBox: "0 0 24 24", class: "pliant-fleche", "aria-hidden": "true" });
+    fleche.appendChild(svg("path", { d: "m6 9 6 6 6-6" }));
+    bouton.appendChild(fleche);
+    bouton.addEventListener("click", () => basculerSection(bloc, bouton.getAttribute("aria-expanded") !== "true", false));
+    titre.appendChild(bouton);
+    bloc.appendChild(titre);
+    // Corps de la section : masqué tant que la section est pliée
+    const corps = el("div", "corps-section");
+    corps.id = "corps-" + section.id;
+    corps.appendChild(el("p", "intro-section", section.intro));
     const grille = el("div", "cartes-grille");
     ateliers.forEach(a => grille.appendChild(carteAtelier(a)));
-    bloc.appendChild(grille);
+    corps.appendChild(grille);
+    bloc.appendChild(corps);
     zone.appendChild(bloc);
+    basculerSection(bloc, ouvertes[section.id] === true, false, false);
   });
+}
+
+// Ouvre ou plie une section d'ateliers. La position est retenue sur cet appareil (clé « sectionsOuvertes »),
+// sans être envoyée nulle part ni incluse dans la sauvegarde de la progression.
+function basculerSection(bloc, ouvrir, defiler, memoriser = true) {
+  if (!bloc) return;
+  bloc.querySelector(".pliant").setAttribute("aria-expanded", String(ouvrir));
+  bloc.querySelector(".corps-section").hidden = !ouvrir;
+  bloc.classList.toggle("ouverte", ouvrir);
+  if (memoriser) {
+    const ouvertes = lire("sectionsOuvertes", {});
+    ouvertes[bloc.dataset.section] = ouvrir;
+    ecrire("sectionsOuvertes", ouvertes);
+  }
+  if (ouvrir && defiler) {
+    bloc.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
 }
 
 // Page d'un atelier : lien de retour, titre, puis le jeu lui-même

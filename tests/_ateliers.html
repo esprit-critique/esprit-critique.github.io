@@ -50,10 +50,10 @@ f.onload = async () => {
     await aller("ateliers");
     const nbJeux = w.eval("JEUX.length"), nbExp = w.eval("EXPERIENCES.length");
     ok("page ateliers : " + (nbJeux + nbExp) + " cartes", vue().querySelectorAll(".atelier").length === nbJeux + nbExp);
-    ok("page ateliers : 6 sections", vue().querySelectorAll(".section-ateliers").length === 6);
+    ok("page ateliers : 7 sections (mélanges compris)", vue().querySelectorAll(".section-ateliers").length === 7);
     ok("page ateliers : un pictogramme par carte", vue().querySelectorAll(".atelier svg.picto path, .atelier svg.picto circle, .atelier svg.picto rect").length > 3 * (nbJeux + nbExp));
     ok("page ateliers : suggestion pour commencer", !!vue().querySelector(".conseil a"));
-    ok("page ateliers : l'illusion ouvre la section Percevoir", vue().querySelectorAll(".section-ateliers")[2].querySelector(".atelier").getAttribute("href") === "#chiffres/illusion");
+    ok("page ateliers : l'illusion ouvre la section Percevoir", vue().querySelectorAll(".section-ateliers")[3].querySelector(".atelier").getAttribute("href") === "#chiffres/illusion");
     const ids = w.eval("tousLesAteliers().map(a => a.adresse)");
     const sansPicto = w.eval("tousLesAteliers().filter(a => !PICTOS[a.atelier.picto]).map(a => a.atelier.id)");
     ok("chaque atelier a un pictogramme existant", sansPicto.length === 0, sansPicto.join(", "));

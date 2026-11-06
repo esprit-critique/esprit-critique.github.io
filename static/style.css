@@ -248,6 +248,54 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
   .navigation { order: 3; flex-basis: 100%; margin-top: 6px; }
 }
 
+/* Recherche dans tout le site (en-tête). Téléphone : sous la marque ; ordinateur : à droite de la marque, à gauche du bouton de langue */
+.recherche-globale { position: relative; order: 2; margin: 14px 0 0; }
+.recherche-champ {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 16px; /* 16px minimum : évite le zoom automatique de Safari */
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte);
+  color: var(--texte);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.recherche-champ:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.resultats-globaux {
+  position: absolute;
+  left: 0; right: 0; top: calc(100% + 4px);
+  z-index: 40;
+  max-height: min(64vh, 440px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte);
+}
+.resultats-globaux[hidden] { display: none; }
+.resultat + .resultat { border-top: 1px solid var(--trait-doux); }
+.resultat { border-radius: 2px; }
+.resultat.actif, .resultat:hover { background: var(--encadre); }
+.resultat-lien { display: block; padding: 8px 8px 9px; color: var(--texte); text-decoration: none; }
+.resultat-genre {
+  display: block;
+  font-family: var(--titre);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--discret);
+}
+.resultat-titre { display: block; font-family: var(--titre); font-size: 18px; line-height: 1.25; font-weight: 600; }
+.resultat-extrait { display: block; margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--discret); }
+.resultat-vide { padding: 10px 8px; font-size: 14px; color: var(--discret); }
+@media (min-width: 760px) {
+  .recherche-globale { order: 2; flex: 0 1 340px; margin: 0 132px 0 auto; }
+}
+
 /* ===================== Titres de page ===================== */
 
 .vue { animation: entree 0.18s ease-out; }
@@ -761,6 +809,44 @@ h3.titre-bloc {
 .section-ateliers { margin-top: 26px; }
 .titre-section { font-family: var(--titre); font-size: 22px; line-height: 1.2; margin: 0 0 2px; }
 .intro-section { font-size: 14.5px; color: var(--discret); margin: 0 0 12px; }
+
+/* Sections d'ateliers pliables : un bouton par section, fermé par défaut sauf si on l'a ouvert */
+.pliant {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 2px 9px;
+  border: 0;
+  border-bottom: 1px solid var(--trait);
+  background: none;
+  color: var(--texte);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pliant:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pliant-titre { flex: 1 1 auto; font-family: var(--titre); font-size: 22px; line-height: 1.2; font-weight: 700; }
+.pliant-compte { font-size: 13.5px; color: var(--discret); white-space: nowrap; }
+.pliant-fleche { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s ease; }
+.pliant[aria-expanded="true"] .pliant-fleche { transform: rotate(180deg); }
+.section-ateliers .titre-section { margin: 0; }
+.corps-section { padding-top: 10px; }
+.corps-section[hidden] { display: none; }
+.section-ateliers .intro-section { margin-top: 0; }
+@media (prefers-reduced-motion: reduce) { .pliant-fleche { transition: none; } }
+
+/* Question au hasard (melange.js) */
+.melange-jeu { margin: 0 0 14px; font-size: 15px; }
+.melange-etiquette {
+  font-family: var(--titre);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--discret);
+}
 
 .atelier { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: start; }
 .atelier .atelier-corps { min-width: 0; }

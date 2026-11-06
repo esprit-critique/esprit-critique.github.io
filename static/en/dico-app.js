@@ -227,5 +227,11 @@ EN_AJOUTER([
   ["à", "to"],
   ["(en {0})", "(in {0})"],
   ["{0} ?", "{0}?"],
-  ["{0} ({1})", "{0} ({1})"]
+  ["{0} ({1})", "{0} ({1})"],
+  ["Lexique", "Glossary"],
+  ["Aucun résultat pour « {0} ».", "No results for “{0}”."],
+  ["Encore {0} : précisez la recherche.", "{0} more: refine your search."],
+  ["Chercher dans tout le site", "Search the whole site"],
+  ["Chercher partout…", "Search everything…"],
+  ["Résultats de la recherche", "Search results"]
 ]);

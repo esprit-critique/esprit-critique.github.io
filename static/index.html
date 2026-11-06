@@ -12,18 +12,18 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Esprit critique">
-  <meta name="description" content="Biais cognitifs et sophismes : 90 fiches sourcées, un quiz à révision espacée et 48 ateliers fondés sur des données et des expériences classiques.">
+  <meta name="description" content="Biais cognitifs et sophismes : 90 fiches sourcées, un quiz à révision espacée et 49 ateliers fondés sur des données et des expériences classiques.">
   <!-- Aperçu lors d'un partage (messageries, réseaux) -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:site_name" content="Esprit critique">
   <meta property="og:title" content="Esprit critique">
-  <meta property="og:description" content="Biais cognitifs et sophismes : 90 fiches sourcées, un quiz à révision espacée et 48 ateliers.">
+  <meta property="og:description" content="Biais cognitifs et sophismes : 90 fiches sourcées, un quiz à révision espacée et 49 ateliers.">
   <meta property="og:url" content="https://esprit-critique.github.io/">
   <meta property="og:image" content="https://esprit-critique.github.io/apercu.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Esprit critique : biais cognitifs et sophismes. 90 fiches sourcées, un quiz, 48 ateliers.">
+  <meta property="og:image:alt" content="Esprit critique : biais cognitifs et sophismes. 90 fiches sourcées, un quiz, 49 ateliers.">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://esprit-critique.github.io/">
   <link rel="alternate" hreflang="fr" href="https://esprit-critique.github.io/">
@@ -54,6 +54,15 @@
         </svg>
         <span>Esprit critique</span>
       </a>
+
+      <!-- Recherche dans tout le site : fiches, ateliers, guide (recherche.js) -->
+      <div class="recherche-globale" role="search">
+        <label class="invisible" for="recherche-globale">Chercher dans tout le site</label>
+        <input id="recherche-globale" class="recherche-champ" type="search" placeholder="Chercher partout…" autocomplete="off" spellcheck="false"
+          role="combobox" aria-expanded="false" aria-controls="resultats-globaux" aria-autocomplete="list">
+        <ul id="resultats-globaux" class="resultats-globaux" role="listbox" aria-label="Résultats de la recherche" hidden></ul>
+        <p id="bilan-globale" class="invisible" role="status" aria-live="polite"></p>
+      </div>
 
       <!-- Navigation : en bas de l'écran sur téléphone, en haut sur ordinateur -->
       <nav class="navigation" aria-label="Navigation principale">
@@ -346,10 +355,12 @@
   <script src="debattre.js"></script>
   <script src="raisonner.js"></script>
   <script src="pratiques.js"></script>
+  <script src="melange.js"></script>
   <script src="indices.js"></script>
   <script src="grand-test-donnees.js"></script>
   <script src="grand-test.js"></script>
   <script src="grand-test-interface.js"></script>
   <script src="app.js"></script>
+  <script src="recherche.js"></script>
 </body>
 </html>

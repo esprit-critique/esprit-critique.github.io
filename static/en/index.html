@@ -11,18 +11,18 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Esprit critique">
-  <meta name="description" content="Cognitive biases and fallacies: 90 sourced entries, a spaced-repetition quiz and 48 workshops built on real data and classic experiments.">
+  <meta name="description" content="Cognitive biases and fallacies: 90 sourced entries, a spaced-repetition quiz and 49 workshops built on real data and classic experiments.">
   <!-- Preview when the page is shared -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_GB">
   <meta property="og:site_name" content="Esprit critique">
   <meta property="og:title" content="Esprit critique · Cognitive biases and fallacies">
-  <meta property="og:description" content="Cognitive biases and fallacies: 90 sourced entries, a spaced-repetition quiz and 48 workshops.">
+  <meta property="og:description" content="Cognitive biases and fallacies: 90 sourced entries, a spaced-repetition quiz and 49 workshops.">
   <meta property="og:url" content="https://esprit-critique.github.io/en/">
   <meta property="og:image" content="https://esprit-critique.github.io/apercu-en.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Esprit critique: cognitive biases and fallacies. 90 sourced entries, a quiz, 48 workshops.">
+  <meta property="og:image:alt" content="Esprit critique: cognitive biases and fallacies. 90 sourced entries, a quiz, 49 workshops.">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://esprit-critique.github.io/en/">
   <link rel="alternate" hreflang="fr" href="https://esprit-critique.github.io/">
@@ -52,6 +52,15 @@
         </svg>
         <span>Esprit critique</span>
       </a>
+
+      <!-- Site-wide search: sections, workshops, guide (recherche.js) -->
+      <div class="recherche-globale" role="search">
+        <label class="invisible" for="recherche-globale">Search the whole site</label>
+        <input id="recherche-globale" class="recherche-champ" type="search" placeholder="Search everything…" autocomplete="off" spellcheck="false"
+          role="combobox" aria-expanded="false" aria-controls="resultats-globaux" aria-autocomplete="list">
+        <ul id="resultats-globaux" class="resultats-globaux" role="listbox" aria-label="Search results" hidden></ul>
+        <p id="bilan-globale" class="invisible" role="status" aria-live="polite"></p>
+      </div>
 
       <!-- Navigation: at the bottom of the screen on a phone, at the top on a computer -->
       <nav class="navigation" aria-label="Main navigation">
@@ -359,6 +368,7 @@
   <script src="../debattre.js"></script>
   <script src="../raisonner.js"></script>
   <script src="../pratiques.js"></script>
+  <script src="../melange.js"></script>
   <script src="../indices.js"></script>
   <script src="../grand-test-donnees.js"></script>
   <script src="grand-test-donnees.js"></script>
@@ -367,5 +377,6 @@
   <script src="../grand-test-interface.js"></script>
   <script src="fiches.js"></script>
   <script src="../app.js"></script>
+  <script src="../recherche.js"></script>
 </body>
 </html>
