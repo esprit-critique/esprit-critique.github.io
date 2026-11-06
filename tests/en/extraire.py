@@ -148,7 +148,7 @@ def analyser(source):
 # ------------------------------------------------------------ tri des textes
 # Mots qui ressemblent à du texte mais n'en sont pas (noms de touches, de balises, de types de fichiers…)
 NON_TEXTES = {"Enter", "Escape", "ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Tab", "Backspace", "Home", "End",
-              "Esprit critique : affichage dans le cadre d'un autre site refusé", "les deux"}
+              "Esprit critique : affichage dans le cadre d'un autre site refusé", "les deux", "\\n", "PRODID:-//Esprit critique//esprit-critique.github.io//FR", "text/calendar;charset=utf-8"}
 
 ACCENTS = re.compile(r"[àâäçéèêëîïôöùûüœÿÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŒ«»]")
 MOT = re.compile(r"[A-Za-zÀ-ÿŒœ]{2,}")
