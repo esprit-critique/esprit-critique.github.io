@@ -811,8 +811,8 @@ JEUX.push({
       const agenda = el("button", "bouton secondaire", "Ajouter les échéances à mon agenda");
       agenda.addEventListener("click", () => fichierAgenda("previsions-esprit-critique.ics", enCours.map(x => ({
         jour: x.echeance, titre: T("Prévision à résoudre : {0}", x.texte),
-        description: "Ouvrez votre carnet pour indiquer l'issue : https://esprit-critique.github.io/#chiffres/carnet",
-        url: "https://esprit-critique.github.io/#chiffres/carnet"
+        description: T("Ouvrez votre carnet pour indiquer l'issue : {0}", URL_SITE + "#chiffres/carnet"),
+        url: URL_SITE + "#chiffres/carnet"
       }))));
       zone.appendChild(agenda);
     }

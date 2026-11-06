@@ -1276,8 +1276,8 @@ function blocRevision(t) {
     b.addEventListener("click", () => {
       const j7 = aujourdHui() + 7, j30 = aujourdHui() + 30;
       const desc = "Revoir les erreurs de votre dernier Grand test sur Esprit critique. Rien n'est envoyé : ce rappel est local.";
-      fichierAgenda("esprit-critique-rappels.ics", [{ jour: j7, titre: "Esprit critique : révision du Grand test", description: desc, url: "https://esprit-critique.github.io/" },
-        { jour: j30, titre: "Esprit critique : révision du Grand test", description: desc, url: "https://esprit-critique.github.io/" }]);
+      fichierAgenda("esprit-critique-rappels.ics", [{ jour: j7, titre: "Esprit critique : révision du Grand test", description: desc, url: URL_SITE },
+        { jour: j30, titre: "Esprit critique : révision du Grand test", description: desc, url: URL_SITE }]);
       const e = copieProfonde(GT.etat), te = e.historiqueTests.find(x => x.id === t.id);
       te.rappels = { j7, j30 };
       e.rappelsEnAttente = e.rappelsEnAttente.filter(r => r.runId !== t.id).concat([{ runId: t.id, type: "j7", jour: j7 }, { runId: t.id, type: "j30", jour: j30 }]).slice(-20);

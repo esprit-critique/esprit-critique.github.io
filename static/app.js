@@ -253,8 +253,8 @@ function exporterRevisions() {
   const evenements = Object.keys(parJour).map(Number).sort((a, b) => a - b).map(jour => ({
     jour,
     titre: T("Esprit critique : {0} à réviser", pluriel(parJour[jour], "notion")),
-    description: "Révisions du quiz : https://esprit-critique.github.io/#quiz/reviser",
-    url: "https://esprit-critique.github.io/#quiz"
+    description: T("Révisions du quiz : {0}", URL_SITE + "#quiz/reviser"),
+    url: URL_SITE + "#quiz"
   }));
   return fichierAgenda("revisions-esprit-critique.ics", evenements);
 }

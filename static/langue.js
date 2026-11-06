@@ -10,6 +10,9 @@ const LANGUE = document.documentElement.lang === "en" ? "en" : "fr";
 // Format des dates et des nombres (« 6 novembre » / « 6 November », « 1 200,5 » / « 1,200.5 »)
 const LOCALE = LANGUE === "en" ? "en-GB" : "fr-FR";
 
+// Adresse du site dans la langue de la page (liens placés dans les fichiers d'agenda)
+const URL_SITE = "https://esprit-critique.github.io/" + (LANGUE === "en" ? "en/" : "");
+
 // Pourcentage : « 75 % » en français (espace avant le signe), « 75% » en anglais
 const PC = LANGUE === "en" ? "%" : " %";
 
