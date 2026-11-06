@@ -174,7 +174,7 @@ EXPERIENCES.push(
             boutons[q.juste].classList.add("juste");
             if (k !== q.juste) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.append(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? "Juste." : "Réponse : " + q.options[q.juste].charAt(0).toLowerCase() + q.options[q.juste].slice(1) + "."), paragraphe(q.explication));
+            retour.append(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? T("Juste.") : T("Réponse : {0}.", minuscule1(T(q.options[q.juste])))), paragraphe(q.explication));
             zone.appendChild(retour);
             fini(k === q.juste, retour);
           });
@@ -226,10 +226,10 @@ EXPERIENCES.push(
       };
       const dessiner = () => {
         controles.innerHTML = "";
-        controles.append(puces("Mesure", MESURES_TISANE.map(([m, l]) => [m, l.replace(/^(la|le|l')\s?/, "")]), "mesure"),
+        controles.append(puces("Mesure", MESURES_TISANE.map(([m, l]) => [m, T(l).replace(/^(la|le|l')\s?/, "")]), "mesure"),
           puces("Participants", [["tous", "Tous"], ["femmes", "Femmes seulement"], ["hommes", "Hommes seulement"]], "groupe"),
           puces("Valeurs extrêmes (au-delà de 2 écarts-types)", [[false, "Gardées"], [true, "Retirées"]], "extremes"));
-        const ajouter = el("button", "bouton secondaire", "Ajouter 10 participants par groupe" + (ajouts ? " (" + (20 + 10 * ajouts) + " par groupe)" : ""));
+        const ajouter = el("button", "bouton secondaire", T("Ajouter 10 participants par groupe") + (ajouts ? " " + T("({0} par groupe)", 20 + 10 * ajouts) : ""));
         ajouter.disabled = ajouts >= 2;
         ajouter.addEventListener("click", () => {
           ajouts++;
@@ -244,7 +244,7 @@ EXPERIENCES.push(
         if (!r) { resultat.appendChild(paragraphe("Trop peu de participants dans ce sous-groupe.")); return; }
         const sig = r.p < 0.05;
         resultat.append(el("p", "grand-score p-valeur" + (sig ? " significatif" : ""), "p = " + fr(Number(r.p.toFixed(3)))),
-          paragraphe("Différence entre les groupes, sur " + MESURES_TISANE.find(([m]) => m === choix.mesure)[1] + " : " + signe(Number(r.ecart.toFixed(2))) + " écart-type. " + pluriel(analyses, "analyse essayée", "analyses essayées") + "."));
+          paragraphe(T("Différence entre les groupes, sur {0} : {1} écart-type.", T(MESURES_TISANE.find(([m]) => m === choix.mesure)[1]), signe(Number(r.ecart.toFixed(2)))) + " " + pluriel(analyses, "analyse essayée", "analyses essayées") + "."));
         if (sig) resultat.appendChild(el("p", "verdict juste", "« Significatif ! » La tisane semble agir… sur des données où elle n'a aucun effet."));
         const conclure = el("button", "bouton large", sig ? "Publier ce résultat" : "Abandonner et voir le bilan");
         conclure.dataset.valider = "1";
@@ -256,11 +256,11 @@ EXPERIENCES.push(
         zone.innerHTML = "";
         zone.appendChild(el("p", "consigne", "Bilan"));
         zone.appendChild(paragraphe(publie
-          ? "Vous avez obtenu un résultat « significatif » en " + pluriel(analyses, "analyse") + ", sans fraude : seulement des choix d'analyse, chacun défendable isolément."
-          : "Vous n'avez pas obtenu de résultat significatif en " + pluriel(analyses, "analyse") + ". Un chercheur obstiné y serait souvent parvenu."));
+          ? T("Vous avez obtenu un résultat « significatif » en {0}, sans fraude : seulement des choix d'analyse, chacun défendable isolément.", pluriel(analyses, "analyse"))
+          : T("Vous n'avez pas obtenu de résultat significatif en {0}. Un chercheur obstiné y serait souvent parvenu.", pluriel(analyses, "analyse"))));
         const part = simulerChercheurs(1000);
-        zone.appendChild(el("p", "grand-score", Math.round(100 * part) + " %"));
-        zone.appendChild(paragraphe("Sur 1 000 études simulées à l'instant, toutes sur une tisane sans effet, un chercheur qui essaie les trois mesures, les trois sous-groupes, avec ou sans valeurs extrêmes, puis ajoute dix participants par groupe faute de résultat, obtient p < 0,05 dans " + Math.round(100 * part) + " % des cas. Avec une seule analyse fixée d'avance, ce serait 5 %."));
+        zone.appendChild(el("p", "grand-score", Math.round(100 * part) + PC));
+        zone.appendChild(paragraphe(T("Sur 1 000 études simulées à l'instant, toutes sur une tisane sans effet, un chercheur qui essaie les trois mesures, les trois sous-groupes, avec ou sans valeurs extrêmes, puis ajoute dix participants par groupe faute de résultat, obtient p < 0,05 dans {0} % des cas. Avec une seule analyse fixée d'avance, ce serait 5 %.", Math.round(100 * part))));
         ajouterExplication(zone, "Les degrés de liberté du chercheur", [
           "Simmons, Nelson et Simonsohn (2011) ont montré qu'en combinant quelques libertés d'analyse de ce genre, on obtient un faux positif dans 61 % des cas. Ils ont ainsi « démontré » qu'écouter une chanson des Beatles rajeunissait les auditeurs.",
           "Les remèdes : déclarer à l'avance la mesure, l'échantillon et l'analyse (préenregistrement), publier toutes les analyses essayées, et se méfier d'un résultat isolé, surtout s'il est surprenant."
@@ -287,10 +287,10 @@ EXPERIENCES.push(
       const etapes = [...questions.map(q => ({ q, tour: 1 })), ...questions.map(q => ({ q, tour: 2 }))];
       derouler(zone, etapes, (e, zone, fini) => {
         const q = e.q;
-        zone.appendChild(el("p", "cas", q.q + (q.unite ? " (en " + q.unite + ")" : "") + " ?"));
+        zone.appendChild(el("p", "cas", T("{0} ?", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : ""))));
         if (e.tour === 2) {
           const p1 = premieres[questions.indexOf(q)];
-          zone.appendChild(paragraphe("Votre première estimation : " + fr(p1) + ". Supposez qu'elle soit fausse. Pourquoi le serait-elle ? Était-elle plutôt trop haute ou trop basse ? Faites une seconde estimation, différente, à partir de cette nouvelle hypothèse.", "consigne-longue"));
+          zone.appendChild(paragraphe(T("Votre première estimation : {0}. Supposez qu'elle soit fausse. Pourquoi le serait-elle ? Était-elle plutôt trop haute ou trop basse ? Faites une seconde estimation, différente, à partir de cette nouvelle hypothèse.", fr(p1)), "consigne-longue"));
         }
         const ligne = el("div", "ligne");
         const champ = el("input", "champ");
@@ -322,9 +322,9 @@ EXPERIENCES.push(
         const mieux = lignes.filter(l => l.em < l.e1).length;
         const moy = k => lignes.reduce((s, l) => s + l[k], 0) / lignes.length;
         afficherScore(zone, "foule", mieux, lignes.length);
-        zone.appendChild(paragraphe("La moyenne de vos deux estimations a fait mieux que la première dans " + mieux + " cas sur " + lignes.length + ". Erreur moyenne, en ordres de grandeur : première estimation " + fr(Number(moy("e1").toFixed(2))) + ", seconde " + fr(Number(moy("e2").toFixed(2))) + ", moyenne des deux " + fr(Number(moy("em").toFixed(2))) + "."));
+        zone.appendChild(paragraphe(T("La moyenne de vos deux estimations a fait mieux que la première dans {0} cas sur {1}. Erreur moyenne, en ordres de grandeur : première estimation {2}, seconde {3}, moyenne des deux {4}.", mieux, lignes.length, fr(Number(moy("e1").toFixed(2))), fr(Number(moy("e2").toFixed(2))), fr(Number(moy("em").toFixed(2))))));
         const liste = el("ul", "liste-simple");
-        lignes.forEach(l => liste.appendChild(el("li", null, l.q.q + " : " + fr(l.q.v) + (l.q.unite ? " " + l.q.unite : "") + " ; vous : " + fr(l.premiere) + " puis " + fr(l.seconde) + ", moyenne " + fr(Number(l.moyenne.toPrecision(3))))));
+        lignes.forEach(l => liste.appendChild(el("li", null, T("{0} : {1} ; vous : {2} puis {3}, moyenne {4}", T(l.q.q), fr(l.q.v) + (l.q.unite ? " " + T(l.q.unite) : ""), fr(l.premiere), fr(l.seconde), fr(Number(l.moyenne.toPrecision(3)))))));
         zone.appendChild(liste);
         ajouterExplication(zone, "La foule intérieure", [
           "La moyenne de plusieurs estimations indépendantes est souvent plus juste que chacune, parce que leurs erreurs se compensent en partie. Une seule personne peut imiter cet effet : Herzog et Hertwig (2009) ont montré qu'une seconde estimation faite après avoir cherché pourquoi la première serait fausse, moyennée avec elle, est plus juste qu'une simple seconde estimation.",
@@ -348,7 +348,7 @@ EXPERIENCES.push(
       const dejaFait = lire("ceciteFaite", false);
       const reponses = [];
       const commencer = () => derouler(zone, AFFIRMATIONS_CECITE, (a, zone, fini) => {
-        zone.appendChild(el("p", "cas", "« " + a + " »"));
+        zone.appendChild(el("p", "cas", T("« {0} »", T(a))));
         zone.appendChild(echelleNeuf(n => { reponses.push(n); const r = el("div", "retour-quiz"); zone.appendChild(r); fini(n, r); }));
       }, () => justifier(), "Affirmation");
       if (dejaFait) {
@@ -372,7 +372,7 @@ EXPERIENCES.push(
         choisies.forEach(k => {
           const affichee = inversees.has(k) ? 10 - reponses[k] : reponses[k];
           const bloc = el("div", "question-test");
-          bloc.append(el("p", "cas", "« " + AFFIRMATIONS_CECITE[k] + " »"), paragraphe("Votre réponse : " + affichee + " sur 9 (" + sensAccord(affichee) + ")."));
+          bloc.append(el("p", "cas", T("« {0} »", T(AFFIRMATIONS_CECITE[k]))), paragraphe(T("Votre réponse : {0} sur 9 ({1}).", affichee, T(sensAccord(affichee)))));
           const texte = el("textarea", "champ champ-texte");
           texte.rows = 2;
           texte.setAttribute("aria-label", "Pourquoi ?");
@@ -395,9 +395,9 @@ EXPERIENCES.push(
         zone.innerHTML = "";
         zone.appendChild(el("p", "consigne", "Révélation"));
         zone.appendChild(el("p", "grand-score", reperees + " / " + inversees.size));
-        zone.appendChild(paragraphe("Deux des quatre réponses affichées avaient été inversées : on vous montrait l'avis contraire du vôtre. Vous en avez signalé " + reperees + "."));
+        zone.appendChild(paragraphe(T("Deux des quatre réponses affichées avaient été inversées : on vous montrait l'avis contraire du vôtre. Vous en avez signalé {0}.", reperees)));
         const liste = el("ul", "liste-simple");
-        [...inversees].forEach(k => liste.appendChild(el("li", null, "« " + AFFIRMATIONS_CECITE[k] + " » : vous aviez répondu " + reponses[k] + ", on vous a montré " + (10 - reponses[k]) + (signalees.has(k) ? ". Repéré." : ". Non repéré.") )));
+        [...inversees].forEach(k => liste.appendChild(el("li", null, T("« {0} » : vous aviez répondu {1}, on vous a montré {2}.", T(AFFIRMATIONS_CECITE[k]), reponses[k], 10 - reponses[k]) + " " + T(signalees.has(k) ? "Repéré." : "Non repéré."))));
         zone.appendChild(liste);
         ajouterExplication(zone, "Défendre un choix qu'on n'a pas fait", [
           "Hall, Johansson et Strandberg (2012) ont fait remplir à 160 personnes un questionnaire d'opinions politiques, puis leur ont montré certaines réponses inversées en secret. 69 % n'ont pas repéré au moins une des deux inversions, et 53 % ont défendu sans ambiguïté l'avis opposé au leur.",
@@ -441,7 +441,7 @@ function afficherBingo(zone, graine) {
   const maj = () => {
     ecrire("bingo", { graine, cochees: [...cochees] });
     const bingo = lignes.some(l => l.every(k => cochees.has(k)));
-    message.textContent = bingo ? "Bingo ! Une ligne complète." : pluriel(cochees.size, "case cochée", "cases cochées") + " sur 16.";
+    message.textContent = bingo ? T("Bingo ! Une ligne complète.") : T("{0} sur 16.", pluriel(cochees.size, "case cochée", "cases cochées"));
   };
   fiches.forEach((f, k) => {
     const b = el("button", "bingo-case" + (cochees.has(k) ? " cochee" : ""), f.nom);
@@ -457,7 +457,7 @@ function afficherBingo(zone, graine) {
   zone.append(grille, message);
   maj();
   const adresse = location.origin + location.pathname + "#bingo/" + graine;
-  zone.appendChild(paragraphe("Grille n° " + graine + " : " + adresse, "source bingo-adresse"));
+  zone.appendChild(paragraphe(T("Grille n° {0} : {1}", graine, adresse), "source bingo-adresse"));
   const actions = el("div", "actions");
   const nouvelle = el("button", "bouton secondaire", "Nouvelle grille");
   nouvelle.addEventListener("click", () => { location.hash = "bingo/" + Math.floor(Math.random() * 1e6); });
@@ -466,7 +466,7 @@ function afficherBingo(zone, graine) {
   const partager = el("button", "bouton secondaire", "Partager cette grille");
   partager.addEventListener("click", async () => {
     try {
-      if (navigator.share) { await navigator.share({ text: "Bingo des sophismes : " + adresse }); return; }
+      if (navigator.share) { await navigator.share({ text: T("Bingo des sophismes : {0}", adresse) }); return; }
       await navigator.clipboard.writeText(adresse);
       annoncer("Adresse copiée.");
     } catch (e) { if (!e || e.name !== "AbortError") annoncer(adresse); }
@@ -580,7 +580,7 @@ EXPERIENCES.push(
             boutons[q.reponse].classList.add("juste");
             if (k !== q.reponse) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.append(el("p", "verdict " + (k === q.reponse ? "juste" : "faux"), (k === q.reponse ? "Juste : " : "Réponse : ") + OPTIONS_PREUVE[q.reponse].toLowerCase() + "."), paragraphe(q.explication));
+            retour.append(el("p", "verdict " + (k === q.reponse ? "juste" : "faux"), (k === q.reponse ? T("Juste : ") : T("Réponse : ")) + T(OPTIONS_PREUVE[q.reponse]).toLowerCase() + "."), paragraphe(q.explication));
             zone.appendChild(retour);
             fini(k === q.reponse, retour);
           });
@@ -610,7 +610,7 @@ EXPERIENCES.push(
       const etapes = melanger(PYRAMIDES).flatMap(p => melanger(p.repliques).map(([texte, niveau]) => ({ affirmation: p.affirmation, texte, niveau })));
       derouler(zone, etapes, (r, zone, fini) => {
         zone.appendChild(paragraphe(r.affirmation, "source"));
-        zone.appendChild(el("p", "cas", "Réponse : « " + r.texte + " »"));
+        zone.appendChild(el("p", "cas", T("Réponse : « {0} »", T(r.texte))));
         zone.appendChild(el("p", "consigne", "À quel étage de la pyramide est cette réponse ?"));
         const boutons = NIVEAUX_GRAHAM.map((t, k) => {
           const b = boutonChoix(t, k);
@@ -619,7 +619,7 @@ EXPERIENCES.push(
             boutons[r.niveau].classList.add("juste");
             if (k !== r.niveau) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict " + (k === r.niveau ? "juste" : "faux"), (k === r.niveau ? "Juste : " : "Réponse : ") + NIVEAUX_GRAHAM[r.niveau].toLowerCase() + "."));
+            retour.appendChild(el("p", "verdict " + (k === r.niveau ? "juste" : "faux"), (k === r.niveau ? T("Juste : ") : T("Réponse : ")) + T(NIVEAUX_GRAHAM[r.niveau]).toLowerCase() + "."));
             zone.appendChild(retour);
             fini(k === r.niveau, retour);
           });
@@ -648,13 +648,13 @@ EXPERIENCES.push(
     lancer(zone) {
       const decisions = () => lire("decisions", []);
       const auj = aujourdHui();
-      const dateDe = jour => new Date(jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+      const dateDe = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
       const relancer = () => EXPERIENCES.find(x => x.id === "decision").lancer(zone);
       zone.innerHTML = "";
       // Bilans arrivés à échéance : on sépare la qualité de la décision de celle du résultat
       decisions().filter(d => !d.bilanFait && d.bilan <= auj).forEach(d => {
         const bloc = el("div", "prevision a-resoudre");
-        bloc.append(el("p", "consigne", "Bilan à faire"), el("p", "cas", d.texte), paragraphe("Ce que vous attendiez : « " + (d.reponses[7] || "non noté") + " »", "source"));
+        bloc.append(el("p", "consigne", "Bilan à faire"), el("p", "cas", d.texte), paragraphe(T("Ce que vous attendiez : « {0} »", d.reponses[7] || T("non noté")), "source"));
         const issue = el("textarea", "champ champ-texte");
         issue.rows = 2; issue.maxLength = 1000; issue.placeholder = "Qu'est-il arrivé ?"; issue.setAttribute("aria-label", "Qu'est-il arrivé ?");
         bloc.appendChild(issue);
@@ -699,7 +699,7 @@ EXPERIENCES.push(
           const ok = el("button", "bouton", "Noter");
           ok.dataset.valider = "1";
           zone.append(champ, ok, paragraphe("", "source"));
-          zone.lastChild.appendChild(lienVers(lien, "En savoir plus : " + nom));
+          zone.lastChild.appendChild(lienVers(lien, T("En savoir plus : {0}", T(nom))));
           ok.addEventListener("click", () => {
             reponses.push(champ.value.trim());
             champ.disabled = true;
@@ -726,9 +726,9 @@ EXPERIENCES.push(
             ecrire("decisions", l.slice(-50));
             noterActivite();
             zone.innerHTML = "";
-            zone.appendChild(el("p", "verdict juste", "Décision enregistrée. Bilan prévu le " + dateDe(jour) + "."));
+            zone.appendChild(el("p", "verdict juste", T("Décision enregistrée. Bilan prévu le {0}.", dateDe(jour))));
             const agenda = el("button", "bouton secondaire", "Ajouter le bilan à mon agenda");
-            agenda.addEventListener("click", () => fichierAgenda("bilan-decision.ics", [{ jour, titre: "Bilan de décision : " + sujet, description: "Faites le bilan sur https://esprit-critique.github.io/#tests/decision", url: "https://esprit-critique.github.io/#tests/decision" }]));
+            agenda.addEventListener("click", () => fichierAgenda("bilan-decision.ics", [{ jour, titre: T("Bilan de décision : {0}", sujet), description: T("Faites le bilan sur {0}", URL_SITE + "#tests/decision"), url: URL_SITE + "#tests/decision" }]));
             zone.appendChild(agenda);
             ajouterExplication(zone, "Juger la décision, pas seulement le résultat", [
               "Une bonne décision peut mal tourner, et une mauvaise réussir par chance. Noter avant ce que l'on sait et ce que l'on attend permet, au bilan, de juger la décision avec les informations qu'on avait, sans le biais rétrospectif ni le biais du résultat."
@@ -743,7 +743,7 @@ EXPERIENCES.push(
       if (passees.length) {
         zone.appendChild(el("p", "consigne", "Vos décisions"));
         const ul = el("ul", "liste-simple");
-        passees.slice().reverse().forEach(d => ul.appendChild(el("li", null, d.texte + " — " + (d.bilanFait ? "bilan fait : " + ({ bonne: "bonne décision", mauvaise: "mauvaise décision", incertain: "jugement incertain" })[d.jugement] : "bilan le " + dateDe(d.bilan)))));
+        passees.slice().reverse().forEach(d => ul.appendChild(el("li", null, d.texte + " — " + (d.bilanFait ? T("bilan fait : {0}", T(({ bonne: "bonne décision", mauvaise: "mauvaise décision", incertain: "jugement incertain" })[d.jugement])) : T("bilan le {0}", dateDe(d.bilan))))));
         zone.appendChild(ul);
       }
     }
@@ -823,12 +823,12 @@ EXPERIENCES.push(
         const m = MECANISMES[e.k];
         const n = notes[e.k] || (notes[e.k] = []);
         if (e.type === "note") {
-          zone.appendChild(el("p", "cas", "Comment comprenez-vous le fonctionnement d'" + m.objet + " ?"));
+          zone.appendChild(el("p", "cas", T("Comment comprenez-vous le fonctionnement d'{0} ?", T(m.objet))));
           zone.appendChild(echelle(v => { n.push(v); fini(null, zone); }));
           return;
         }
         if (e.type === "expliquer") {
-          zone.appendChild(el("p", "cas", "Expliquez, étape par étape, comment fonctionne " + m.objet + "."));
+          zone.appendChild(el("p", "cas", T("Expliquez, étape par étape, comment fonctionne {0}.", T(m.objet))));
           zone.appendChild(paragraphe("Écrivez comme pour quelqu'un qui n'en a jamais vu : chaque pièce, et ce qu'elle fait. Personne d'autre ne lira votre texte.", "consigne-longue"));
           const texte = el("textarea", "champ champ-texte");
           texte.rows = 5;
@@ -845,7 +845,7 @@ EXPERIENCES.push(
           return;
         }
         // Question diagnostique, puis l'explication de référence et une dernière note
-        zone.appendChild(el("p", "cas", m.objet[0].toUpperCase() + m.objet.slice(1) + " : " + m.question));
+        zone.appendChild(el("p", "cas", T("{0} : {1}", majuscule1(T(m.objet)), T(m.question))));
         const ordre = melanger([0, 1, 2, 3]);
         const boutons = ordre.map((o, i) => {
           const b = boutonChoix(m.options[o], i);
@@ -869,12 +869,12 @@ EXPERIENCES.push(
         const diag = resultats.filter(Boolean);
         const justes = diag.filter(r => r.juste).length;
         const baisses = expliques.filter(k => notes[k][2] < notes[k][0]).length;
-        afficherScore(zone, "comprendre", justes, diag.length, justes + " / " + diag.length + " aux questions");
+        afficherScore(zone, "comprendre", justes, diag.length, T("{0} / {1} aux questions", justes, diag.length));
         const liste = el("ul", "liste-simple");
-        expliques.forEach(k => liste.appendChild(el("li", null, MECANISMES[k].objet[0].toUpperCase() + MECANISMES[k].objet.slice(1) + " : " + notes[k].join(" → ") + " sur 7")));
+        expliques.forEach(k => liste.appendChild(el("li", null, T("{0} : {1} sur 7", majuscule1(T(MECANISMES[k].objet)), notes[k].join(" → ")))));
         zone.appendChild(paragraphe("Vos notes, avant d'expliquer, après l'explication, puis après la question :"));
         zone.appendChild(liste);
-        zone.appendChild(paragraphe(baisses === 0 ? "Votre note n'a baissé pour aucun des trois objets : votre première estimation était peut-être déjà prudente." : "Votre note a baissé pour " + (baisses === 3 ? "les trois objets" : baisses === 2 ? "deux des trois objets" : "un des trois objets") + ". Une baisse est le résultat le plus fréquent."));
+        zone.appendChild(paragraphe(baisses === 0 ? T("Votre note n'a baissé pour aucun des trois objets : votre première estimation était peut-être déjà prudente.") : T("Votre note a baissé pour {0}. Une baisse est le résultat le plus fréquent.", T(baisses === 3 ? "les trois objets" : baisses === 2 ? "deux des trois objets" : "un des trois objets"))));
         ajouterExplication(zone, "L'illusion de profondeur explicative", [
           "Rozenblit et Keil (2002) ont fait noter à des étudiants leur compréhension d'objets courants (fermeture éclair, chasse d'eau, serrure à cylindre…), puis la leur ont fait expliquer pas à pas et répondre à une question précise. Leurs notes ont baissé après l'explication, puis encore après la question : nous confondons la familiarité avec un objet et la compréhension de son mécanisme. Cette illusion est plus forte pour les mécanismes que pour les faits (une capitale) ou les procédures (une recette).",
           "Lawson (2006) a demandé de compléter le dessin d'un vélo : beaucoup de participants ont commis des erreurs graves, comme faire passer la chaîne autour de la roue avant aussi bien que de la roue arrière.",
@@ -951,7 +951,7 @@ function arbreArgument(arg) {
   racine.appendChild(branche(arg.phrases.findIndex(p => p.role === 0)));
   bloc.appendChild(racine);
   const hors = arg.phrases.filter(p => p.role === 4);
-  if (hors.length) bloc.appendChild(paragraphe("Hors de l'arbre : " + hors.map(p => "« " + p.t + " »").join(" ") + " Ces phrases ne soutiennent ni ne contestent rien.", "source"));
+  if (hors.length) bloc.appendChild(paragraphe(T("Hors de l'arbre : {0} Ces phrases ne soutiennent ni ne contestent rien.", hors.map(p => T("« {0} »", T(p.t))).join(" ")), "source"));
   return bloc;
 }
 
@@ -968,7 +968,7 @@ EXPERIENCES.push(
       const arg = tirerNouveaux("demonter", ARGUMENTS_A_DEMONTER, 1)[0];
       derouler(zone, arg.phrases.map((p, k) => k), (k, zone, fini) => {
         const p = arg.phrases[k];
-        zone.appendChild(el("p", "consigne", "« " + arg.titre + " » (texte fictif)"));
+        zone.appendChild(el("p", "consigne", T("« {0} » (texte fictif)", T(arg.titre))));
         // Le texte entier, la phrase à classer mise en évidence
         const texte = el("p", "texte-argument");
         arg.phrases.forEach((q, j) => {
@@ -983,16 +983,16 @@ EXPERIENCES.push(
             boutons.forEach(x => { x.disabled = true; });
             boutons[p.role].classList.add("juste");
             if (r !== p.role) b.classList.add("faux");
-            const cible = p.appui === null ? "" : " « " + arg.phrases[p.appui].t + " »";
+            const cible = p.appui === null ? "" : " " + T("« {0} »", T(arg.phrases[p.appui].t));
             const detail = [
-              "C'est la thèse que tout le texte veut établir.",
-              "Elle soutient :" + cible,
-              "Elle conteste :" + cible,
-              "Elle répond à l'objection :" + cible,
-              "Elle ne soutient ni ne conteste rien : la retirer ne change pas l'argument."
+              T("C'est la thèse que tout le texte veut établir."),
+              T("Elle soutient :") + cible,
+              T("Elle conteste :") + cible,
+              T("Elle répond à l'objection :") + cible,
+              T("Elle ne soutient ni ne conteste rien : la retirer ne change pas l'argument.")
             ][p.role];
             const retour = el("div", "retour-quiz");
-            retour.append(el("p", "verdict " + (r === p.role ? "juste" : "faux"), (r === p.role ? "Juste : " : "Réponse : ") + ROLES_ARGUMENT[p.role].toLowerCase() + "."), paragraphe(detail));
+            retour.append(el("p", "verdict " + (r === p.role ? "juste" : "faux"), (r === p.role ? T("Juste : ") : T("Réponse : ")) + T(ROLES_ARGUMENT[p.role]).toLowerCase() + "."), paragraphe(detail));
             zone.appendChild(retour);
             fini(r === p.role, retour);
           });
@@ -1101,7 +1101,7 @@ EXPERIENCES.push(
     lancer(zone) {
       const sites = tirerNouveaux("laterale", SITES_FICTIFS, 4);
       derouler(zone, sites, (s, zone, fini) => {
-        zone.appendChild(el("p", "consigne", "Site fictif : « " + s.nom + " »"));
+        zone.appendChild(el("p", "consigne", T("Site fictif : « {0} »", T(s.nom))));
         zone.appendChild(el("p", "cas", s.affirmation));
         let ailleursVu = false, verdictDonne = false;
         const actions = el("div", "ligne actions-lecture");
@@ -1137,7 +1137,7 @@ EXPERIENCES.push(
             if (k !== s.verdict) b.classList.add("faux");
             montrerAilleurs();
             const retour = el("div", "retour-quiz");
-            retour.append(el("p", "verdict " + (k === s.verdict ? "juste" : "faux"), (k === s.verdict ? "Juste : " : "Réponse : ") + VERDICTS_SITE[s.verdict].charAt(0).toLowerCase() + VERDICTS_SITE[s.verdict].slice(1) + "."), paragraphe(s.explication));
+            retour.append(el("p", "verdict " + (k === s.verdict ? "juste" : "faux"), (k === s.verdict ? T("Juste : ") : T("Réponse : ")) + minuscule1(T(VERDICTS_SITE[s.verdict])) + "."), paragraphe(s.explication));
             zone.appendChild(retour);
             fini({ juste: k === s.verdict, cherche: !!s.cherche }, retour);
           });
@@ -1148,7 +1148,7 @@ EXPERIENCES.push(
         const justes = resultats.filter(r => r.juste).length;
         const cherches = resultats.filter(r => r.cherche).length;
         afficherScore(zone, "laterale", justes, resultats.length);
-        zone.appendChild(paragraphe("Vous avez cherché ce que d'autres disaient du site avant de juger " + (cherches === 0 ? "pour aucun des " + resultats.length + " sites." : cherches === resultats.length ? "pour les " + resultats.length + " sites." : "pour " + cherches + " sites sur " + resultats.length + ".")));
+        zone.appendChild(paragraphe(cherches === 0 ? T("Vous avez cherché ce que d'autres disaient du site avant de juger pour aucun des {0} sites.", resultats.length) : cherches === resultats.length ? T("Vous avez cherché ce que d'autres disaient du site avant de juger pour les {0} sites.", resultats.length) : T("Vous avez cherché ce que d'autres disaient du site avant de juger pour {0} sites sur {1}.", cherches, resultats.length)));
         ajouterExplication(zone, "Lire en largeur, pas en profondeur", [
           "Wineburg et McGrew (2019) ont observé 45 internautes expérimentés évaluer des sites réels : 10 historiens docteurs, 10 vérificateurs de faits professionnels et 25 étudiants de Stanford. Historiens et étudiants restaient sur le site et se laissaient souvent prendre à des signes faciles à imiter : logo officiel, nom de domaine, présentation soignée. Les vérificateurs, eux, quittaient le site après un coup d'œil et ouvraient d'autres onglets pour savoir qui était derrière : ils arrivaient à des conclusions mieux fondées, bien plus vite.",
           "La question utile n'est pas « ce site a-t-il l'air sérieux ? » mais « que disent de lui des sources indépendantes ? » : qui le finance, qui l'écrit, que vaut ce qu'il avance ailleurs."
@@ -1189,10 +1189,10 @@ EXPERIENCES.push(
     lancer(zone) {
       const passe = lire("bilanFormes", {});
       zone.innerHTML = "";
-      const dateDe = j => new Date(j * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+      const dateDe = j => new Date(j * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric" });
       zone.appendChild(paragraphe("La forme A se passe au début ; la forme B, sur les mêmes vingt notions avec d'autres situations, après quelques semaines de pratique. Ces deux formes n'ont pas été validées : rien ne garantit qu'elles soient de même difficulté, et un écart de quelques points peut tenir au hasard.", "consigne-longue"));
       ["A", "B"].forEach(f => {
-        if (passe[f]) zone.appendChild(paragraphe("Forme " + f + " : " + passe[f].score + " / 20, le " + dateDe(passe[f].jour) + ".", "source"));
+        if (passe[f]) zone.appendChild(paragraphe(T("Forme {0} : {1} / 20, le {2}.", f, passe[f].score, dateDe(passe[f].jour)), "source"));
       });
       if (passe.A && passe.B) {
         const d = passe.B.score - passe.A.score;
@@ -1202,7 +1202,7 @@ EXPERIENCES.push(
       const forme = !passe.A ? "A" : !passe.B ? "B" : null;
       if (passe.A && !passe.B && aujourdHui() - passe.A.jour < 14) zone.appendChild(paragraphe("Pour mesurer un progrès, attendez de préférence deux semaines au moins après la forme A, en pratiquant entre-temps.", "source"));
       if (forme) {
-        const b = el("button", "bouton large", "Commencer la forme " + forme);
+        const b = el("button", "bouton large", T("Commencer la forme {0}", forme));
         b.dataset.suivant = "1";
         b.addEventListener("click", () => passer(forme));
         zone.appendChild(b);
@@ -1214,7 +1214,7 @@ EXPERIENCES.push(
 
       function passer(forme) {
         derouler(zone, formesParalleles()[forme], (q, zone, fini) => {
-          zone.appendChild(el("p", "consigne", "Quel " + (q.type === "biais" ? "biais" : "sophisme") + " cette situation illustre-t-elle ?"));
+          zone.appendChild(el("p", "consigne", T(q.type === "biais" ? "Quel biais cette situation illustre-t-elle ?" : "Quel sophisme cette situation illustre-t-elle ?")));
           zone.appendChild(el("p", "cas", q.cas));
           const boutons = q.options.map((o, k) => {
             const b = boutonChoix(o.nom, k);
@@ -1223,7 +1223,7 @@ EXPERIENCES.push(
               boutons[q.options.indexOf(q.fiche)].classList.add("juste");
               if (o !== q.fiche) b.classList.add("faux");
               const retour = el("div", "retour-quiz");
-              retour.appendChild(el("p", "verdict " + (o === q.fiche ? "juste" : "faux"), o === q.fiche ? "Juste." : "Réponse : " + q.fiche.nom + "."));
+              retour.appendChild(el("p", "verdict " + (o === q.fiche ? "juste" : "faux"), o === q.fiche ? T("Juste.") : T("Réponse : {0}.", q.fiche.nom)));
               zone.appendChild(retour);
               fini(o === q.fiche, retour);
             });
@@ -1234,12 +1234,12 @@ EXPERIENCES.push(
           const score = resultats.filter(Boolean).length;
           ecrire("bilanFormes", { ...lire("bilanFormes", {}), [forme]: { jour: aujourdHui(), score } });
           zone.innerHTML = "";
-          zone.appendChild(el("p", "consigne", "Forme " + forme));
+          zone.appendChild(el("p", "consigne", T("Forme {0}", forme)));
           zone.appendChild(el("p", "grand-score", score + " / 20"));
           if (forme === "A") {
             zone.appendChild(paragraphe("Revenez dans quelques semaines pour la forme B. Vous pouvez noter la date dans votre agenda."));
             const agenda = el("button", "bouton secondaire", "Ajouter un rappel à l'agenda");
-            agenda.addEventListener("click", () => fichierAgenda("bilan-forme-b.ics", [{ jour: aujourdHui() + 21, titre: "Esprit critique : bilan, forme B", description: "https://esprit-critique.github.io/#tests/avant-apres", url: "https://esprit-critique.github.io/#tests/avant-apres" }]));
+            agenda.addEventListener("click", () => fichierAgenda("bilan-forme-b.ics", [{ jour: aujourdHui() + 21, titre: T("Esprit critique : bilan, forme B"), description: URL_SITE + "#tests/avant-apres", url: URL_SITE + "#tests/avant-apres" }]));
             zone.appendChild(agenda);
           }
           ajouterExplication(zone, "Mesurer un progrès", [

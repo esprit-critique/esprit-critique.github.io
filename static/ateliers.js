@@ -23,12 +23,15 @@ function tousLesAteliers() {
 
 // ===================== Outils communs =====================
 
-// Nombre à la française : virgule décimale, espace fine entre les milliers (y compris pour 1 000 à 9 999)
-const fr = n => Number(n).toLocaleString("fr-FR").replace(/^(-?\d)(\d{3})(?=,|$)/, "$1\u202f$2");
+// Nombre à la française (en anglais : point décimal et virgule entre les milliers) : virgule décimale, espace fine entre les milliers (y compris pour 1 000 à 9 999)
+const fr = n => LANGUE === "en" ? Number(n).toLocaleString(LOCALE) : Number(n).toLocaleString(LOCALE).replace(/^(-?\d)(\d{3})(?=,|$)/, "$1\u202f$2");
 
 // Convertit une saisie (« 0,05 », « 5 ct », « 12 000 »…) en nombre, ou NaN
 function lireNombre(texte) {
-  return parseFloat(String(texte).replace(/\s/g, "").replace(",", ".").replace(/[^\d.\-]/g, ""));
+  let t = String(texte).replace(/\s/g, "");
+  // Anglais : « 12,000 » est un nombre à milliers ; « 0,05 » (habitude française) reste une décimale
+  t = LANGUE === "en" && /^-?\d{1,3}(,\d{3})+(\.|$)/.test(t) ? t.replace(/,/g, "") : t.replace(",", ".");
+  return parseFloat(t.replace(/[^\d.\-]/g, ""));
 }
 
 function paragraphe(texte, classe) { return el("p", classe, texte); }
@@ -75,7 +78,7 @@ function calculEnDetail(lignes, titre) {
 // « niveau » (facultatif) : niveau de la question, affiché discrètement
 function entete(zone, numero, total, libelle, niveau) {
   const e = el("div", "quiz-entete");
-  e.appendChild(el("span", null, (libelle || "Question") + " " + numero + " / " + total + (niveau ? " · niveau " + niveau : "")));
+  e.appendChild(el("span", null, T(libelle || "Question") + " " + numero + " / " + total + (niveau ? " · " + T("niveau {0}", niveau) : "")));
   zone.appendChild(e);
   const jauge = el("div", "jauge");
   const rempli = el("div");
@@ -297,15 +300,14 @@ function afficherScore(zone, id, score, sur, texteScore) {
   const partie = PARTIES_EN_COURS[id];
   const niveau = partie ? niveauDePartie(partie.niveaux) : undefined;
   const r = noterPartie(id, score, sur, niveau);
-  const auNiveau = niveau ? " au niveau " + niveau : "";
   zone.appendChild(el("p", "consigne", "Bilan"));
   zone.appendChild(el("p", "grand-score", texteScore || (score + " / " + sur)));
   if (partie) {
     zone.appendChild(bilanNiveaux(id));
     delete PARTIES_EN_COURS[id];
   }
-  if (r.nouveauRecord) zone.appendChild(el("p", "verdict juste", "Nouveau record" + auNiveau + " ! L'ancien était de " + fr(r.ancienRecord) + " / " + sur + "."));
-  else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", "Votre record" + auNiveau + " : " + fr(r.record) + " / " + sur + " · " + pluriel(r.parties, "partie") + " jouées."));
+  if (r.nouveauRecord) zone.appendChild(el("p", "verdict juste", T(niveau ? "Nouveau record au niveau {0} ! L'ancien était de {1} / {2}." : "Nouveau record ! L'ancien était de {1} / {2}.", niveau, fr(r.ancienRecord), sur)));
+  else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", T(niveau ? "Votre record au niveau {0} : {1} / {2} · {3} jouées." : "Votre record : {1} / {2} · {3} jouées.", niveau, fr(r.record), sur, pluriel(r.parties, "partie"))));
   if (r.historique && r.historique.length > 1) zone.appendChild(histogrammeParties(r.historique, sur));
   if (niveau === 3 && atelierMaitrise(id)) zone.appendChild(el("p", "source", "Atelier maîtrisé : au moins 90 % au niveau 3 sur trois parties."));
 }
@@ -449,7 +451,7 @@ function carteAtelier({ atelier, adresse }) {
   const haut = el("div", "entete-carte");
   const r = resultatAtelier(atelier.id);
   let badge = "";
-  if (r && r.n) badge = "✓ " + pluriel(r.n, "partie") + (r.record !== undefined && r.sur ? " · record " + r.record + "/" + r.sur : "");
+  if (r && r.n) badge = "✓ " + pluriel(r.n, "partie") + (r.record !== undefined && r.sur ? " · " + T("record {0}/{1}", r.record, r.sur) : "");
   haut.append(el("span", "etiquette", atelier.duree), el("span", "badge", badge));
   corps.append(haut, el("h2", null, atelier.titre), el("p", null, atelier.resume));
   carte.append(cadre, corps);
@@ -471,7 +473,7 @@ function afficherAteliers() {
   const zone = $("vue-ateliers");
   zone.innerHTML = "";
   zone.append(el("h1", "page-titre", "Ateliers"),
-    el("p", "page-intro", pluriel(tousLesAteliers().length, "atelier") + " : estimer le monde réel, mesurer sa confiance, éprouver sa perception et refaire les expériences classiques. Répondez spontanément : c'est la première réaction qui est intéressante."));
+    el("p", "page-intro", T("{0} : estimer le monde réel, mesurer sa confiance, éprouver sa perception et refaire les expériences classiques. Répondez spontanément : c'est la première réaction qui est intéressante.", pluriel(tousLesAteliers().length, "atelier"))));
 
   // Bilan personnel
   const resultats = lire("resultatsAteliers", {});
@@ -486,10 +488,10 @@ function afficherAteliers() {
     const [n90, j90] = confiance[90] || [0, 0];
     const [nf, df] = lire("fourchettes", [0, 0]);
     [
-      [String(parties), "partie" + (parties > 1 ? "s" : "") + " jouée" + (parties > 1 ? "s" : "")],
+      [String(parties), parties > 1 ? T("parties jouées") : T("partie jouée")],
       [essayes + " / " + tousLesAteliers().length, "ateliers essayés"],
-      n90 >= 5 ? [Math.round(100 * j90 / n90) + " %", "de réussite quand vous êtes « sûr à 90 % »"]
-        : nf >= 10 ? [Math.round(100 * df / nf) + " %", "de vos fourchettes « à 90 % » sont justes"]
+      n90 >= 5 ? [Math.round(100 * j90 / n90) + PC, "de réussite quand vous êtes « sûr à 90 % »"]
+        : nf >= 10 ? [Math.round(100 * df / nf) + PC, "de vos fourchettes « à 90 % » sont justes"]
         : ["—", "étalonnage : jouez à « Vrai ou faux ? »"]
     ].forEach(([nombre, libelle]) => {
       const t = el("div", "tuile");
@@ -546,7 +548,7 @@ function ouvrirAtelier(conteneur, atelier, adresseCourante) {
   const nav = el("div", "nav-atelier");
   nav.appendChild(lienVers("#ateliers", "← Ateliers", "lien retour"));
   const suivant = tous[(rang + 1) % tous.length];
-  nav.appendChild(lienVers(suivant.adresse, suivant.atelier.titre + " →", "lien retour atelier-suivant"));
+  nav.appendChild(lienVers(suivant.adresse, T(suivant.atelier.titre) + " →", "lien retour atelier-suivant"));
   conteneur.appendChild(nav);
 
   const carte = el("article", "carte");
@@ -584,7 +586,7 @@ function afficherPortrait() {
 
   const blocs = [];
   const ajouter = (titre, couleur, adresse, contenu, aMesurer) => blocs.push({ titre, couleur, adresse, contenu, aMesurer });
-  const pct = x => Math.round(100 * x) + " %";
+  const pct = x => Math.round(100 * x) + PC;
 
   // 0. Le Grand test (grand-test-interface.js), s'il est publié : mode, date et axes séparés, sans score global
   if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) {
@@ -601,8 +603,8 @@ function afficherPortrait() {
     const reelle = 100 * justes / n;
     const ecart = Math.round(annoncee - reelle);
     const bloc = el("div");
-    bloc.appendChild(paragraphe("Sur " + n + " réponses, vous vous êtes dit sûr à " + Math.round(annoncee) + " % en moyenne, et vous aviez raison dans " + Math.round(reelle) + " % des cas. " +
-      (ecart > 5 ? "Excès de confiance : " + ecart + " points." : ecart < -5 ? "Vous vous sous-estimez de " + (-ecart) + " points." : "Votre confiance est bien étalonnée.")));
+    bloc.appendChild(paragraphe(T("Sur {0} réponses, vous vous êtes dit sûr à {1} % en moyenne, et vous aviez raison dans {2} % des cas.", n, Math.round(annoncee), Math.round(reelle)) + " " +
+      (ecart > 5 ? T("Excès de confiance : {0} points.", ecart) : ecart < -5 ? T("Vous vous sous-estimez de {0} points.", -ecart) : T("Votre confiance est bien étalonnée."))));
     bloc.appendChild(courbeEtalonnage(confiance));
     ajouter("Votre confiance", "#5b5bb5", "#chiffres/vrai-faux", bloc);
   } else ajouter("Votre confiance", "#5b5bb5", "#chiffres/vrai-faux", null, "Quand vous êtes « sûr à 90 % », avez-vous raison 9 fois sur 10 ?");
@@ -610,21 +612,21 @@ function afficherPortrait() {
   // 2. Fourchettes
   const [nf, df] = lire("fourchettes", [0, 0]);
   if (nf >= 10) {
-    ajouter("Vos fourchettes", "#2f6db5", "#chiffres/intervalles", paragraphe(pct(df / nf) + " de vos fourchettes « sûres à 90 % » contiennent la bonne réponse (" + nf + " fourchettes). " +
-      (df / nf < 0.8 ? "Elles sont trop étroites : élargissez-les." : "C'est proche de l'objectif de 90 %.")));
+    ajouter("Vos fourchettes", "#2f6db5", "#chiffres/intervalles", paragraphe(T("{0} de vos fourchettes « sûres à 90 % » contiennent la bonne réponse ({1} fourchettes).", pct(df / nf), nf) + " " +
+      (df / nf < 0.8 ? T("Elles sont trop étroites : élargissez-les.") : T("C'est proche de l'objectif de 90 %."))));
   } else ajouter("Vos fourchettes", "#2f6db5", "#chiffres/intervalles", null, "Vos intervalles « sûrs à 90 % » le sont-ils vraiment ?");
 
   // 3. Ancrage
   const ancrages = lire("ancrages", []);
   if (ancrages.length) {
     const effet = Math.exp(moyenne(ancrages.map(a => Math.log(a.h / a.b)))) - 1;
-    ajouter("L'ancre", "#c0601b", "#chiffres/ancre", paragraphe("Après un nombre élevé, vos estimations sont en moyenne " + (effet >= 0 ? pct(effet) + " plus élevées" : pct(-effet) + " plus basses") + " qu'après un nombre faible (" + pluriel(ancrages.length, "partie") + "). Sans effet d'ancrage, l'écart serait proche de zéro."));
+    ajouter("L'ancre", "#c0601b", "#chiffres/ancre", paragraphe((effet >= 0 ? T("Après un nombre élevé, vos estimations sont en moyenne {0} plus élevées qu'après un nombre faible ({1}).", pct(effet), pluriel(ancrages.length, "partie")) : T("Après un nombre élevé, vos estimations sont en moyenne {0} plus basses qu'après un nombre faible ({1}).", pct(-effet), pluriel(ancrages.length, "partie"))) + " " + T("Sans effet d'ancrage, l'écart serait proche de zéro.")));
   } else ajouter("L'ancre", "#c0601b", "#chiffres/ancre", null, "Un nombre tiré au hasard influence-t-il vos estimations ?");
 
   // 4. Illusion
   const illusions = lire("illusions", []);
   if (illusions.length) {
-    ajouter("L'illusion", "#1d4f91", "#chiffres/illusion", paragraphe("Votre réglage de l'illusion de Müller-Lyer s'écarte en moyenne de " + pct(moyenne(illusions.map(i => Math.abs(i.avant)))) + " ; une fois averti du piège, de " + pct(moyenne(illusions.map(i => i.apres))) + "."));
+    ajouter("L'illusion", "#1d4f91", "#chiffres/illusion", paragraphe(T("Votre réglage de l'illusion de Müller-Lyer s'écarte en moyenne de {0} ; une fois averti du piège, de {1}.", pct(moyenne(illusions.map(i => Math.abs(i.avant)))), pct(moyenne(illusions.map(i => i.apres))))));
   } else ajouter("L'illusion", "#1d4f91", "#chiffres/illusion", null, "Savoir qu'une illusion existe suffit-il à ne plus la voir ?");
 
   // 5. Hasard
@@ -632,7 +634,7 @@ function afficherPortrait() {
   if (suites.length) {
     let plusLongueAttendue = 0;
     for (let m = 1; m <= 50; m++) plusLongueAttendue += 1 - (m === 1 ? 0 : probaSeriesAuPlus(50, m - 1));
-    ajouter("Le hasard", "#c23b5a", "#chiffres/ecrire-hasard", paragraphe("Dans vos suites inventées, vous changez de face " + fr(Number(moyenne(suites.map(x => x.c)).toFixed(1))) + " fois sur 49 en moyenne (une vraie pièce : 24,5), et votre plus longue série mesure " + fr(Number(moyenne(suites.map(x => x.l)).toFixed(1))) + " lancers (une vraie pièce : environ " + fr(Number(plusLongueAttendue.toFixed(1))) + ")."));
+    ajouter("Le hasard", "#c23b5a", "#chiffres/ecrire-hasard", paragraphe(T("Dans vos suites inventées, vous changez de face {0} fois sur 49 en moyenne (une vraie pièce : 24,5), et votre plus longue série mesure {1} lancers (une vraie pièce : environ {2}).", fr(Number(moyenne(suites.map(x => x.c)).toFixed(1))), fr(Number(moyenne(suites.map(x => x.l)).toFixed(1))), fr(Number(plusLongueAttendue.toFixed(1))))));
   } else ajouter("Le hasard", "#c23b5a", "#chiffres/ecrire-hasard", null, "Savez-vous imiter une vraie pièce de monnaie ?");
 
   // 6. Monty Hall
@@ -640,7 +642,7 @@ function afficherPortrait() {
   if (monty) {
     const tot = k => monty[3][k][1] + monty[10][k][1], gagnees = k => monty[3][k][0] + monty[10][k][0];
     const parties = tot("garder") + tot("changer");
-    if (parties) ajouter("Monty Hall", "#c0601b", "#tests/monty-hall", paragraphe("Vous changez de porte dans " + pct(tot("changer") / parties) + " des parties (" + parties + " au total). En changeant : " + gagnees("changer") + " victoires sur " + tot("changer") + " ; en gardant : " + gagnees("garder") + " sur " + tot("garder") + "."));
+    if (parties) ajouter("Monty Hall", "#c0601b", "#tests/monty-hall", paragraphe(T("Vous changez de porte dans {0} des parties ({1} au total). En changeant : {2} victoires sur {3} ; en gardant : {4} sur {5}.", pct(tot("changer") / parties), parties, gagnees("changer"), tot("changer"), gagnees("garder"), tot("garder"))));
   }
   if (!blocs.some(b => b.titre === "Monty Hall")) ajouter("Monty Hall", "#c0601b", "#tests/monty-hall", null, "Changez-vous de porte ?");
 
@@ -649,7 +651,7 @@ function afficherPortrait() {
     .map(([nom, id]) => [nom, reussiteAtelier(id)]).filter(([, r]) => r);
   if (lignes.length) {
     const liste = el("ul", "liste-simple");
-    lignes.forEach(([nom, r]) => liste.appendChild(el("li", null, nom + " : " + pct(r.taux) + " de réussite (" + pluriel(r.parties, "partie") + ")")));
+    lignes.forEach(([nom, r]) => liste.appendChild(el("li", null, T("{0} : {1} de réussite ({2})", T(nom), pct(r.taux), pluriel(r.parties, "partie")))));
     ajouter("Votre raisonnement", "#8a3f8f", "#tests/classiques", liste);
   } else ajouter("Votre raisonnement", "#8a3f8f", "#tests/classiques", null, "Résistez-vous aux pièges des problèmes classiques ?");
 
@@ -658,7 +660,7 @@ function afficherPortrait() {
     .map(([nom, id]) => [nom, reussiteAtelier(id)]).filter(([, r]) => r);
   if (monde.length) {
     const liste = el("ul", "liste-simple");
-    monde.forEach(([nom, r]) => liste.appendChild(el("li", null, nom + " : " + pct(r.taux) + " en moyenne, record " + r.record + " / " + r.sur)));
+    monde.forEach(([nom, r]) => liste.appendChild(el("li", null, T("{0} : {1} en moyenne, record {2} / {3}", T(nom), pct(r.taux), r.record, r.sur))));
     ajouter("Votre image du monde", "#2a8a5c", "#chiffres/monde", liste);
   } else ajouter("Votre image du monde", "#2a8a5c", "#chiffres/monde", null, "Votre image du monde est-elle à jour ?");
 
@@ -667,7 +669,7 @@ function afficherPortrait() {
   const vues = EXPERIENCES_PENSEE.filter(x => reponses[x.id] !== undefined);
   if (vues.length) {
     const liste = el("ul", "liste-simple");
-    vues.forEach(x => liste.appendChild(el("li", null, x.titre + " : « " + x.options[reponses[x.id]] + " »")));
+    vues.forEach(x => liste.appendChild(el("li", null, T("{0} : « {1} »", T(x.titre), T(x.options[reponses[x.id]])))));
     ajouter("Vos réponses philosophiques", "#44546a", "#tests/pensee", liste);
   } else ajouter("Vos réponses philosophiques", "#44546a", "#tests/pensee", null, "Que répondez-vous au poulet de Russell, au navire de Thésée ?");
 
@@ -677,7 +679,7 @@ function afficherPortrait() {
     const confondues = duels.filter(([, [n, j]]) => j < n).sort((a, b) => a[1][1] / a[1][0] - b[1][1] / b[1][0]);
     const bloc = el("div");
     const total = duels.reduce((t, [, [n]]) => t + n, 0), justes = duels.reduce((t, [, [, j]]) => t + j, 0);
-    bloc.appendChild(paragraphe(pct(justes / total) + " de bonnes réponses sur " + pluriel(total, "duel") + " entre notions proches." + (confondues.length ? "" : " Aucune paire confondue pour l'instant.")));
+    bloc.appendChild(paragraphe(T("{0} de bonnes réponses sur {1} entre notions proches.", pct(justes / total), pluriel(total, "duel")) + (confondues.length ? "" : " " + T("Aucune paire confondue pour l'instant."))));
     if (confondues.length) {
       const liste = el("ul", "liste-simple");
       confondues.slice(0, 8).forEach(([cle, [n, j]]) => {
@@ -685,7 +687,7 @@ function afficherPortrait() {
         const voisine = INDEX.get(fiche.distinction[0]);
         const li = el("li");
         li.append(lienVers("#" + type + "/" + fiche.id, fiche.nom), document.createTextNode(" / "),
-          lienVers("#" + voisine.type + "/" + voisine.fiche.id, voisine.fiche.nom), document.createTextNode(typo(" : " + pluriel(n - j, "erreur") + " sur " + n)));
+          lienVers("#" + voisine.type + "/" + voisine.fiche.id, voisine.fiche.nom), document.createTextNode(typo(" : " + T("{0} sur {1}", pluriel(n - j, "erreur"), n))));
         liste.appendChild(li);
       });
       bloc.append(el("p", "consigne", "Les paires que vous confondez"), liste);
@@ -699,7 +701,7 @@ function afficherPortrait() {
   if (niveaux.length) {
     const bloc = el("div");
     const liste = el("ul", "liste-simple");
-    niveaux.forEach(([k, libelle]) => liste.appendChild(el("li", null, libelle + " : " + pct(certitudes[k][1] / certitudes[k][0]) + " de bonnes réponses (" + pluriel(certitudes[k][0], "réponse") + ")")));
+    niveaux.forEach(([k, libelle]) => liste.appendChild(el("li", null, T("{0} : {1} de bonnes réponses ({2})", T(libelle), pct(certitudes[k][1] / certitudes[k][0]), pluriel(certitudes[k][0], "réponse")))));
     bloc.appendChild(liste);
     const sures = lire("erreursSures", []).filter(e => INDEX.has(e.cle)).reverse();
     if (sures.length) {
@@ -721,7 +723,7 @@ function afficherPortrait() {
   if (debats.length) {
     const tot = k => debats.reduce((t, x) => t + x[k], 0);
     const { d } = dPrime(tot("det"), tot("s"), tot("fa"), tot("r"));
-    ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", paragraphe("Sur " + pluriel(debats.length, "débat") + ", vous avez repéré " + tot("det") + " sophismes sur " + tot("s") + ", avec " + pluriel(tot("fa"), "fausse alerte", "fausses alertes") + " sur " + tot("r") + " répliques recevables. Sensibilité d′ cumulée : " + fr(Number(d.toFixed(2))) + " (0 : hasard ; 2 ou plus : très bonne distinction)."));
+    ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", paragraphe(T("Sur {0}, vous avez repéré {1} sophismes sur {2}, avec {3} sur {4} répliques recevables. Sensibilité d′ cumulée : {5} (0 : hasard ; 2 ou plus : très bonne distinction).", pluriel(debats.length, "débat"), tot("det"), tot("s"), pluriel(tot("fa"), "fausse alerte", "fausses alertes"), tot("r"), fr(Number(d.toFixed(2))))));
   } else ajouter("Repérer les sophismes", "#a8432e", "#tests/debat-truque", null, "Repérez-vous les sophismes d'un débat sans crier au sophisme à tort ?");
 
   // 14. Repérages dans la vie courante (bouton « Je l'ai repéré » des fiches)
@@ -733,15 +735,15 @@ function afficherPortrait() {
     Object.entries(compte).sort((a, b) => b[1] - a[1]).slice(0, 8).forEach(([cle, n]) => {
       const { type, fiche } = INDEX.get(cle);
       const li = el("li");
-      li.append(lienVers("#" + type + "/" + fiche.id, fiche.nom), texteNoeud(" : " + pluriel(n, "fois", "fois")));
+      li.append(lienVers("#" + type + "/" + fiche.id, fiche.nom), texteNoeud(" : " + (n === 1 ? T("1 fois") : T("{0} fois", n))));
       liste.appendChild(li);
     });
     const recents = reperages.filter(r => r.note).slice(-3).reverse();
     const bloc = el("div");
-    bloc.append(paragraphe(pluriel(reperages.length, "repérage") + " dans la vie courante, sur " + pluriel(Object.keys(compte).length, "notion") + "."), liste);
+    bloc.append(paragraphe(T("{0} dans la vie courante, sur {1}.", pluriel(reperages.length, "repérage"), pluriel(Object.keys(compte).length, "notion"))), liste);
     if (recents.length) {
       const l2 = el("ul", "liste-simple");
-      recents.forEach(r => l2.appendChild(el("li", null, INDEX.get(r.cle).fiche.nom + " : « " + r.note + " »")));
+      recents.forEach(r => l2.appendChild(el("li", null, T("{0} : « {1} »", INDEX.get(r.cle).fiche.nom, r.note))));
       bloc.append(el("p", "consigne", "Vos dernières notes"), l2);
     }
     ajouter("Vos repérages", "#2a8a5c", "#biais", bloc);
@@ -773,7 +775,7 @@ function afficherPortrait() {
   } else ajouter("Niveaux", "#44546a", "#ateliers", null, "Jusqu'où montez-vous ? Les ateliers ajustent leur difficulté à vos réponses.");
 
   const mesures = blocs.filter(b => b.contenu);
-  zone.appendChild(el("p", "source", mesures.length + " mesure" + (mesures.length > 1 ? "s" : "") + " sur " + blocs.length + " disponible" + (mesures.length > 1 ? "s" : "") + "."));
+  zone.appendChild(el("p", "source", mesures.length > 1 ? T("{0} mesures sur {1} disponibles.", mesures.length, blocs.length) : T("{0} mesure sur {1} disponible.", mesures.length, blocs.length)));
   [...mesures, ...blocs.filter(b => !b.contenu)].forEach(b => {
     const carte = el("article", "carte" + (b.contenu ? "" : " a-mesurer"));
     carte.style.setProperty("--c", b.couleur);

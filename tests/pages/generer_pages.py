@@ -2,34 +2,57 @@
 """Génère les pages fixes du site (mentions légales, confidentialité, conditions d'utilisation, page 404)
 à partir d'un gabarit commun : même en-tête, même pied, même politique de sécurité que index.html.
 python3 tests/pages/generer_pages.py   (réécrit les fichiers dans static/)"""
-import os, re, html
+import os, re, html, base64, hashlib
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "..", "static")
 MAJ = "30 octobre 2026"
 
-index = open(os.path.join(STATIC, "index.html"), encoding="utf-8").read()
-# Même CSP et même script de thème que la page principale (le script est autorisé par son empreinte)
-CSP = re.search(r'  <meta http-equiv="Content-Security-Policy"[^\n]*\n', index).group(0)
-THEME = re.search(r"  <script>try \{.*?</script>\n", index, re.S).group(0)
-EMBLEME = re.search(r'        <svg class="embleme".*?</svg>\n', index, re.S).group(0)
+# Même CSP et même script de thème que la page principale de la langue (le script est autorisé par son empreinte) :
+# la page française redirige vers en/ si l'anglais a été choisi, la page anglaise non, d'où un gabarit par langue
+GABARITS = {}
+for langue, chemin in (("fr", "index.html"), ("en", os.path.join("en", "index.html"))):
+    index = open(os.path.join(STATIC, chemin), encoding="utf-8").read()
+    csp = re.search(r'  <meta http-equiv="Content-Security-Policy"[^\n]*\n', index).group(0)
+    theme = re.search(r"  <script>try \{.*?</script>\n", index, re.S).group(0)
+    # Les pages fixes n'ont pas à rediriger vers en/ (la redirection de la page d'accueil enverrait vers l'accueil anglais) :
+    # script de thème seul, avec son empreinte dans la CSP
+    theme = re.sub(r' if \(JSON\.parse\(localStorage\.getItem\("langue"\)\) === "en"\) location\.replace\([^;]*\);', "", theme)
+    empreinte = base64.b64encode(hashlib.sha256(re.search(r"<script>(.*?)</script>", theme, re.S).group(1).encode("utf-8")).digest()).decode()
+    csp = re.sub(r"'sha256-[^']*'", "'sha256-" + empreinte + "'", csp)
+    GABARITS[langue] = (csp, theme, re.search(r'        <svg class="embleme".*?</svg>\n', index, re.S).group(0))
 
 # Même typographie que typo() dans app.js : espace fine insécable avant ; : ! ? et insécable dans les guillemets
 def typo(texte):
     return (texte.replace(" ;", "\u202f;").replace(" :", "\u202f:").replace(" !", "\u202f!").replace(" ?", "\u202f?")
             .replace("« ", "«\u00a0").replace(" »", "\u00a0»"))
 
-def page(fichier, titre, description, corps, racine="", indexer=True):
+TEXTES = {
+    "fr": {"accueil": "Retour à l'accueil d'Esprit critique", "retour": "Retour au site", "pied": ("Mentions légales", "Confidentialité", "Conditions d'utilisation"),
+           "titre": "{} · Esprit critique"},
+    "en": {"accueil": "Back to the Esprit critique home page", "retour": "Back to the site", "pied": ("Legal notice", "Privacy", "Terms of use"),
+           "titre": "{} · Esprit critique"},
+}
+
+def page(fichier, titre, description, corps, racine="", indexer=True, langue="fr", pied=None):
+    """Écrit une page fixe. langue « en » : fichier dans static/en/, ressources prises un niveau plus haut (racine « ../ »)."""
+    CSP, THEME, EMBLEME = GABARITS[langue]
+    t = TEXTES[langue]
+    dossier = "en/" if langue == "en" else ""
+    if langue == "en":
+        racine = "../"
     lien = lambda p: racine + p
-    corps = typo(corps)
+    if langue == "fr":
+        corps = typo(corps)
+    f1, f2, f3 = pied or ("mentions-legales.html", "confidentialite.html", "cgu.html")
     contenu = f'''<!DOCTYPE html>
-<html lang="fr">
+<html lang="{langue}">
 <head>
   <meta charset="UTF-8">
 {CSP}  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>{html.escape(titre)} · Esprit critique</title>
   <meta name="description" content="{html.escape(description)}">
-{'' if indexer else '  <meta name="robots" content="noindex">' + chr(10)}  <link rel="canonical" href="https://esprit-critique.github.io/{fichier if indexer else ''}">
+{'' if indexer else '  <meta name="robots" content="noindex">' + chr(10)}  <link rel="canonical" href="https://esprit-critique.github.io/{dossier}{fichier if indexer else ''}">
   <link rel="icon" href="{lien('favicon.svg?v=3')}" type="image/svg+xml">
   <link rel="icon" href="{lien('icone-32.png?v=3')}" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="{lien('icone.png?v=3')}">
@@ -41,7 +64,7 @@ def page(fichier, titre, description, corps, racine="", indexer=True):
 <body>
   <div class="conteneur page-fixe">
     <header class="entete">
-      <a class="marque" href="{lien('./')}" title="Retour à l'accueil d'Esprit critique">
+      <a class="marque" href="{'./' if langue == 'en' else lien('./')}" title="{t['accueil']}">
 {EMBLEME}        <span>Esprit critique</span>
       </a>
     </header>
@@ -49,16 +72,16 @@ def page(fichier, titre, description, corps, racine="", indexer=True):
       <article class="carte texte-fixe">
 {corps}
       </article>
-      <p class="retour-site"><a class="bouton" href="{lien('./')}">Retour au site</a></p>
+      <p class="retour-site"><a class="bouton" href="{'./' if langue == 'en' else lien('./')}">{t['retour']}</a></p>
     </main>
     <footer class="pied">
-      <p><a href="{lien('mentions-legales.html')}">Mentions légales</a> · <a href="{lien('confidentialite.html')}">Confidentialité</a> · <a href="{lien('cgu.html')}">Conditions d'utilisation</a></p>
+      <p><a href="{f1 if langue == 'en' else lien(f1)}">{t['pied'][0]}</a> · <a href="{f2 if langue == 'en' else lien(f2)}">{t['pied'][1]}</a> · <a href="{f3 if langue == 'en' else lien(f3)}">{t['pied'][2]}</a></p>
     </footer>
   </div>
 </body>
 </html>
 '''
-    open(os.path.join(STATIC, fichier), "w", encoding="utf-8").write(contenu)
+    open(os.path.join(STATIC, dossier + fichier), "w", encoding="utf-8").write(contenu)
 
 DEPOT = "https://github.com/esprit-critique/esprit-critique.github.io"
 
@@ -153,7 +176,94 @@ page("404.html", "Page introuvable", "Cette adresse n'existe pas sur Esprit crit
           <li><a href="/#biais">Les 51 biais cognitifs</a></li>
           <li><a href="/#sophismes">Les 39 sophismes</a></li>
           <li><a href="/#quiz">Le quiz</a></li>
-          <li><a href="/#ateliers">Les 45 ateliers</a></li>
+          <li><a href="/#ateliers">Les 48 ateliers</a></li>
           <li><a href="/#guide">Le guide</a></li>
         </ul>''', racine="/", indexer=False)
+# ---------------------------------------------------------------- pages anglaises (static/en/)
+MAJ_EN = "30 October 2026"
+PIED_EN = ("legal-notice.html", "privacy.html", "terms.html")
+
+page("legal-notice.html", "Legal notice", "Publisher, host and licences of the Esprit critique website.", f'''        <h1>Legal notice</h1>
+        <p class="source">Last updated {MAJ_EN}.</p>
+        <h2>Publisher</h2>
+        <p>Esprit critique is a personal, non-professional, non-commercial website published by GOATier (GitHub account
+        “Goatier-project”), within the GitHub organisation <a href="https://github.com/esprit-critique">esprit-critique</a>.
+        Publication director: GOATier.</p>
+        <p>In accordance with Article 1-1, II of French Law No. 2004-575 of 21 June 2004 on confidence in the digital economy,
+        the publisher, who runs this site on a non-professional basis, does not make personal contact details public; the
+        information identifying the publisher has been provided to the host.</p>
+        <h2>Contact</h2>
+        <p>To report a mistake, ask a question or exercise a right: open an issue on
+        <a href="{DEPOT}/issues">the repository’s issues page</a> (a free GitHub account is required).</p>
+        <h2>Host</h2>
+        <p>GitHub, Inc. (GitHub Pages service), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States.
+        Telephone: +1 415 857 5430. Website: <a href="https://github.com">github.com</a>.</p>
+        <h2>Intellectual property</h2>
+        <p>The site’s code is released under the MIT licence; the texts (entries, questions, explanations, guide) under the
+        Creative Commons Attribution 4.0 licence (CC BY 4.0): you may reuse and adapt them, crediting “Esprit critique,
+        by GOATier”. World Bank data are under the CC BY 4.0 licence; other figures come from the public sources given next to
+        each of them. Details: <a href="{DEPOT}/blob/main/LICENCE-CONTENU.md">content licence</a>.
+        Headings are set in Newsreader (Production Type), under the <a href="../polices/OFL.txt">SIL Open Font License 1.1</a>.</p>
+        <h2>Fictional content</h2>
+        <p>The situations, dialogues, debates, websites and organisations in the exercises are fictional; any resemblance to
+        real people or organisations would be coincidental. Real studies and figures are flagged as such,
+        with their source.</p>''', langue="en", pied=PIED_EN)
+
+page("privacy.html", "Privacy policy", "Esprit critique collects no personal data: no account, no cookies, no audience tracking.", f'''        <h1>Privacy policy</h1>
+        <p class="source">Last updated {MAJ_EN}.</p>
+        <p><strong>In short: the publisher collects no personal data.</strong> The site has no account, no form sent to a server,
+        no cookies, no audience tracking, no advertising, and no external resources (fonts, scripts or images from other sites).</p>
+        <h2>What stays in your browser</h2>
+        <p>Your progress is saved in your browser’s local storage (“localStorage”): entries marked as learned, quiz answers
+        and reviews, workshop results and levels, forecasts and decisions you record, anything you have spotted, and the
+        theme you chose. This data never leaves your device; the publisher has no access to it. It is used only to provide
+        the features you ask for: this strictly necessary storage does not require consent (Article 82 of the French Data
+        Protection Act), which is why there is no banner.</p>
+        <p>The site also keeps, in your browser, up to four copies of this progress: one per day, and one just before an
+        import or a restoration. They let you go back from <a href="./#guide/donnees">Your data</a>.</p>
+        <p>To let you read the site offline, your browser also keeps a copy of the site’s files (a service worker).
+        It contains no data about you.</p>
+        <h2>Your rights over this data</h2>
+        <ul>
+          <li>Take it with you: “Save to a file”, in <a href="./#guide/donnees">Your data</a>.</li>
+          <li>Erase it: “Erase my progress”, in the same place (the automatic copies are erased too), or by clearing the site’s browsing data.</li>
+          <li>The files the site creates (backup, .ics calendar) are produced on your device and are not sent anywhere.</li>
+        </ul>
+        <h2>The host</h2>
+        <p>The site is hosted by GitHub Pages. Like any host, GitHub receives requests for pages: according to its
+        documentation, visitors’ IP addresses are recorded and kept for security reasons. The publisher has no
+        access to these logs. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub’s privacy statement</a>.</p>
+        <h2>Sharing</h2>
+        <p>The “Share” button opens your device’s sharing menu, or copies the link: the site itself sends nothing.</p>
+        <h2>Contact and complaints</h2>
+        <p>For any question: <a href="{DEPOT}/issues">the repository’s issues</a>. You may also lodge a complaint with the
+        CNIL, the French data protection authority (<a href="https://www.cnil.fr/en">cnil.fr</a>).</p>''', langue="en", pied=PIED_EN)
+
+page("terms.html", "Terms of use", "Terms of use of the Esprit critique website: free and open access, educational content under a free licence.", f'''        <h1>Terms of use</h1>
+        <p class="source">Last updated {MAJ_EN}.</p>
+        <h2>Purpose</h2>
+        <p>Esprit critique offers entries on cognitive biases and fallacies, a quiz and workshops. Using the site
+        means accepting these terms.</p>
+        <h2>Access</h2>
+        <p>The site is free to use, with no registration and no advertising. The publisher does their best to keep it
+        accessible, but cannot guarantee it: it may be interrupted, changed or closed at any time, in particular for maintenance.</p>
+        <h2>Nature of the content</h2>
+        <p>The content is educational. It is sourced and checked with care, but may contain errors:
+        please report them. It is neither medical advice nor financial, legal or psychological advice. The tests
+        and assessments offered (portrait, before-and-after assessment…) are exercises, not validated evaluations.</p>
+        <p>The situations, debates, websites and organisations in the exercises are fictional.</p>
+        <h2>Your data</h2>
+        <p>Your progress stays in your browser: see the <a href="privacy.html">privacy policy</a>.
+        You alone are responsible for keeping it; the site offers to save it to a file.</p>
+        <h2>Intellectual property</h2>
+        <p>Code under the MIT licence, texts under the CC BY 4.0 licence: you may reuse them, including for
+        commercial purposes, crediting the source. See the <a href="legal-notice.html">legal notice</a>.</p>
+        <h2>Links to other sites</h2>
+        <p>Links to other sites (sources, host) are given for information; the publisher is not
+        responsible for their content.</p>
+        <h2>Liability</h2>
+        <p>The publisher cannot be held liable for the use made of the content, nor for any loss of progress caused by the
+        browser (data being cleared, changing device).</p>
+        <h2>Changes and applicable law</h2>
+        <p>These terms may change; the date of the last update appears at the top of the page. They are governed by French law.</p>''', langue="en", pied=PIED_EN)
 print("pages générées")

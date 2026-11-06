@@ -20,10 +20,17 @@ function moyenneGeometrique(t) {
 // Un grand nombre en clair : 3,04e12 → « 3 000 milliards » (2 chiffres significatifs par défaut)
 function enClair(x, chiffres = 2) {
   const p = v => fr(Number(v.toPrecision(chiffres)));
+  if (LANGUE === "en") { // échelle courte : million, billion (10⁹), trillion (10¹²), quadrillion (10¹⁵)
+    if (x < 1e6) return p(x);
+    if (x < 1e9) return p(x / 1e6) + " million";
+    if (x < 1e12) return p(x / 1e9) + " billion";
+    if (x < 1e15) return p(x / 1e12) + " trillion";
+    return p(x / 1e15) + " quadrillion";
+  }
   if (x < 1e6) return p(x);
   if (x < 1e9) return p(x / 1e6) + (x < 2e6 ? " million" : " millions");
   if (x < 1e15) return p(x / 1e9) + (x < 2e9 ? " milliard" : " milliards");
-  return p(x / 1e15) + (x < 2e15 ? " million" : " millions") + " de milliards";
+  return p(x / 1e15) + (x < 2e15 ? " million" : " millions") + " de milliards"; // fr-seulement
 }
 
 // Exposant en caractères surélevés : 12 → « ¹² »
@@ -41,7 +48,7 @@ function barresComparees(conteneur, elements, reference) {
   const max = Math.max(...elements.map(e => e.valeur), reference ? reference.valeur : 0);
   elements.forEach(e => {
     const ligne = el("div", "barre-ligne");
-    ligne.appendChild(el("div", "barre-nom", e.nom + " : " + e.texte));
+    ligne.appendChild(el("div", "barre-nom", T(e.nom) + " : " + T(e.texte)));
     const fond = el("div", "barre-fond");
     const barre = el("div", "barre" + (e.forte ? " forte" : ""));
     barre.style.width = Math.max(0.6, 100 * e.valeur / max) + "%";
@@ -55,7 +62,7 @@ function barresComparees(conteneur, elements, reference) {
     if (e.source) ligne.appendChild(el("div", "barre-source", e.source));
     conteneur.appendChild(ligne);
   });
-  if (reference) conteneur.appendChild(el("p", "barre-source", "Trait vertical : " + reference.texte));
+  if (reference) conteneur.appendChild(el("p", "barre-source", T("Trait vertical : {0}", T(reference.texte))));
 }
 
 // ===================== Les jeux =====================
@@ -83,10 +90,10 @@ const JEUX = [
             boutons[q.juste].classList.add("juste");
             if (k !== q.juste) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? "Juste." : "Réponse : " + q.options[q.juste] + "."));
+            retour.appendChild(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? T("Juste.") : T("Réponse : {0}.", T(q.options[q.juste]))));
             retour.appendChild(paragraphe(q.explication));
             if (q.public !== null) {
-              retour.appendChild(paragraphe("En 2017, " + q.public + " % des personnes interrogées par Gapminder ont répondu juste" + (q.notepublic ? " " + q.notepublic : "") + ". Un choix au hasard en donnerait 33 %.", "source"));
+              retour.appendChild(paragraphe(T("En 2017, {0} % des personnes interrogées par Gapminder ont répondu juste{1}. Un choix au hasard en donnerait 33 %.", q.public, q.notepublic ? " " + T(q.notepublic) : ""), "source"));
             }
             zone.appendChild(retour);
             fini(k === q.juste, retour);
@@ -101,7 +108,7 @@ const JEUX = [
         ajouterExplication(zone, "Pourquoi tant d'erreurs ?", [
           "Faire moins bien que le hasard signifie que l'erreur n'est pas due à l'ignorance seule : les réponses sont systématiquement trop pessimistes.",
           "Rosling y voyait plusieurs causes : les médias rapportent surtout les événements négatifs et spectaculaires, les progrès lents et continus ne font pas l'actualité, et nos connaissances datent souvent de notre scolarité.",
-          "Les questions changent d'une partie à l'autre (" + MONDE.length + " en tout) : celles que vous n'avez pas encore vues passent en priorité."
+          T("Les questions changent d'une partie à l'autre ({0} en tout) : celles que vous n'avez pas encore vues passent en priorité.", MONDE.length)
         ], [["#biais/negativite", "Biais de négativité"], ["#biais/disponibilite", "Heuristique de disponibilité"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "monde").lancer(zone));
       });
@@ -144,7 +151,7 @@ const JEUX = [
           const retour = el("div", "retour-quiz");
           const rapport = Math.max(a.valeur, b.valeur) / Math.min(a.valeur, b.valeur);
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"),
-            (juste ? "Juste : " : "Non : ") + gagnant.nom.charAt(0).toLowerCase() + gagnant.nom.slice(1) + ", environ " + (rapport < 10 ? fr(Number(rapport.toFixed(1))) : fr(Math.round(rapport))) + " fois plus."));
+            (juste ? T("Juste : ") : T("Non : ")) + (LANGUE === "en" ? T(gagnant.nom).replace(/^[A-Z](?![A-Z])/, c => c.toLowerCase()) : gagnant.nom.charAt(0).toLowerCase() + gagnant.nom.slice(1)) + T(", environ {0} fois plus.", rapport < 10 ? fr(Number(rapport.toFixed(1))) : fr(Math.round(rapport)))));
           barresComparees(retour, [a, b].map(c => ({ nom: c.nom, valeur: c.valeur, texte: c.texte, source: c.source, forte: c === gagnant })));
           if (a.facteur || b.facteur) retour.appendChild(paragraphe("Un facteur de risque (tabac, alcool, pollution) n'est pas une maladie : on compte les décès qui lui sont attribuables, toutes maladies confondues.", "source"));
           zone.appendChild(retour);
@@ -171,7 +178,7 @@ const JEUX = [
     couleur: "#0e7c86",
     duree: "3 min",
     titre: "Plus ou moins ?",
-    resume: "Dix duels entre " + PAYS.length + " pays : population, revenu, espérance de vie, dépenses militaires, réfugiés… Données 2024-2025 de la Banque mondiale et du HCR. Quatre thèmes au choix.",
+    resume: T("Dix duels entre {0} pays : population, revenu, espérance de vie, dépenses militaires, réfugiés… Données 2024-2025 de la Banque mondiale et du HCR. Quatre thèmes au choix.", PAYS.length),
     lancer(zone) {
       const theme = lire("themePays", "tout");
       const indicateurs = [];
@@ -188,7 +195,7 @@ const JEUX = [
           zone.appendChild(el("p", "consigne", "Classez ces quatre pays, en commençant par la réponse"));
           classementInteractif(zone, duel.pays, p => p.nom, ordre => {
             const annee = p => (p.annees && p.annees[duel.cle]) || ANNEES_PAYS[duel.cle];
-            const source = p => ind.source ? (ind.source.includes(String(annee(p))) ? ind.source : ind.source + ", " + annee(p)) : "Banque mondiale, " + annee(p);
+            const source = p => ind.source ? (ind.source.includes(String(annee(p))) ? T(ind.source) : T("{0}, {1}", T(ind.source), annee(p))) : T("Banque mondiale, {0}", annee(p));
             const bon = [...duel.pays].sort((a, b) => b[duel.cle] - a[duel.cle]);
             const retour = el("div", "retour-quiz");
             const part = corrigerClassement(retour, ordre, bon, p => p.nom, p => ind.format(p[duel.cle]) + " (" + source(p) + ")");
@@ -216,15 +223,15 @@ const JEUX = [
             else if (p === choix) x.classList.add("faux");
           });
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Non : ") + gagnant.nom + "."));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? T("Juste : ") : T("Non : ")) + gagnant.nom + "."));
           const annee = p => (p.annees && p.annees[duel.cle]) || ANNEES_PAYS[duel.cle];
-          const source = p => (ind.source ? (ind.source.includes(String(annee(p))) ? ind.source : ind.source + ", " + annee(p)) : "Banque mondiale, " + annee(p));
-          const mondial = MONDE_PAYS[duel.cle] !== undefined && duel.cle !== "pop" ? "moyenne mondiale, " + ind.format(MONDE_PAYS[duel.cle]) : null;
+          const source = p => (ind.source ? (ind.source.includes(String(annee(p))) ? T(ind.source) : T("{0}, {1}", T(ind.source), annee(p))) : T("Banque mondiale, {0}", annee(p)));
+          const mondial = MONDE_PAYS[duel.cle] !== undefined && duel.cle !== "pop" ? T("moyenne mondiale, {0}", ind.format(MONDE_PAYS[duel.cle])) : null;
           if (ind.barres === false) {
             const liste = el("ul", "liste-simple");
             [duel.a, duel.b].forEach(p => liste.appendChild(el("li", p === gagnant ? "valeur-forte" : null, p.nom + " : " + ind.format(p[duel.cle]) + " (" + source(p) + ")")));
             retour.appendChild(liste);
-            if (mondial) retour.appendChild(paragraphe("Pour comparaison : " + mondial + ".", "source"));
+            if (mondial) retour.appendChild(paragraphe(T("Pour comparaison : {0}.", mondial), "source"));
           } else {
             barresComparees(retour, [duel.a, duel.b].map(p => ({
               nom: p.nom, valeur: p[duel.cle], texte: ind.format(p[duel.cle]), forte: p === gagnant, source: source(p)
@@ -273,10 +280,10 @@ const JEUX = [
       }, (q, zone, fini) => {
         if (q.classement) {
           zone.appendChild(el("p", "cas", q.sens === "nord" ? "Classez ces villes du nord au sud." : "Classez ces villes d'ouest en est."));
-          classementInteractif(zone, q.villes, v => VILLES[v][0], ordre => {
+          classementInteractif(zone, q.villes, v => T(VILLES[v][0]), ordre => {
             const bon = [...q.villes].sort((a, b) => q.sens === "nord" ? VILLES[b][1] - VILLES[a][1] : VILLES[a][2] - VILLES[b][2]);
             const retour = el("div", "retour-quiz");
-            const part = corrigerClassement(retour, ordre, bon, v => VILLES[v][0], coordonnees);
+            const part = corrigerClassement(retour, ordre, bon, v => T(VILLES[v][0]), coordonnees);
             retour.appendChild(planisphere(bon, q.sens, true));   // numéros du bon ordre, comme la liste
             zone.appendChild(retour);
             fini(part, retour);
@@ -285,7 +292,7 @@ const JEUX = [
         }
         const [a, b] = q.villes;
         const libelle = { nord: "la plus au nord", est: "la plus à l'est", ouest: "la plus à l'ouest" }[q.sens];
-        zone.appendChild(el("p", "cas", "Quelle ville est " + libelle + " ?"));
+        zone.appendChild(el("p", "cas", T("Quelle ville est {0} ?", T(libelle))));
         const boutons = [a, b].map((v, k) => {
           const bouton = boutonChoix(VILLES[v][0], k);
           bouton.addEventListener("click", () => repondre(v));
@@ -303,9 +310,9 @@ const JEUX = [
             else if (v === choix) x.classList.add("faux");
           });
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Non : ") + VILLES[bonne][0] + "."));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? T("Juste : ") : T("Non : ")) + T(VILLES[bonne][0]) + "."));
           retour.appendChild(planisphere([a, b], q.sens));
-          retour.appendChild(paragraphe([a, b].map(v => VILLES[v][0] + " : " + coordonnees(v)).join(" ; ") + "."));
+          retour.appendChild(paragraphe([a, b].map(v => T(VILLES[v][0]) + " : " + coordonnees(v)).join(" ; ") + "."));
           if (q.note) retour.appendChild(paragraphe(q.note));
           zone.appendChild(retour);
           fini(juste, retour);
@@ -356,7 +363,7 @@ const JEUX = [
         curseur.value = 450;
         curseur.setAttribute("aria-label", "Votre estimation, sur une échelle logarithmique");
         const valeur = () => Math.pow(10, debut + 9 * curseur.value / 900);
-        const majAffichage = () => { affichage.textContent = typo("Environ " + enClair(valeur()) + "  (" + puissanceDeDix(valeur()) + ")"); };
+        const majAffichage = () => { affichage.textContent = typo(T("Environ {0}  ({1})", enClair(valeur()), puissanceDeDix(valeur()))); };
         curseur.addEventListener("input", majAffichage);
         majAffichage();
         const echelle = echelleLog(debut, fin);
@@ -377,11 +384,11 @@ const JEUX = [
           echelle.appendChild(repere);
           const retour = el("div", "retour-quiz");
           retour.appendChild(el("p", "verdict " + (points >= 2 ? "juste" : "faux"),
-            "Réponse : environ " + enClair(q.v, 3) + " (" + puissanceDeDix(q.v) + ")."));
-          retour.appendChild(paragraphe(facteur < 1.15 ? "Dans le mille." :
-            "Votre estimation était " + (estimation > q.v ? "trop haute" : "trop basse") + " d'un facteur " + fr(Number(facteur.toFixed(facteur < 10 ? 1 : 0))) + ". " +
-            ["Aucun point : plus d'un facteur 10 d'écart.", "1 point : moins d'un facteur 10.", "2 points : moins d'un facteur 3.", "3 points : moins d'un facteur 2."][points]));
-          retour.appendChild(paragraphe("Source : " + q.source + ".", "source"));
+            T("Réponse : environ {0} ({1}).", enClair(q.v, 3), puissanceDeDix(q.v))));
+          retour.appendChild(paragraphe(facteur < 1.15 ? T("Dans le mille.") :
+            T(estimation > q.v ? "Votre estimation était trop haute d'un facteur {0}." : "Votre estimation était trop basse d'un facteur {0}.", fr(Number(facteur.toFixed(facteur < 10 ? 1 : 0)))) + " " +
+            T(["Aucun point : plus d'un facteur 10 d'écart.", "1 point : moins d'un facteur 10.", "2 points : moins d'un facteur 3.", "3 points : moins d'un facteur 2."][points])));
+          retour.appendChild(paragraphe(T("Source : {0}.", T(q.source)), "source"));
           zone.appendChild(retour);
           fini(points, retour);
         });
@@ -417,10 +424,10 @@ const JEUX = [
       }, (paire, zone, fini) => {
         if (paire.classement) {
           zone.appendChild(el("p", "cas", "Classez ces événements du plus ancien au plus récent."));
-          classementInteractif(zone, paire.evenements, e => e.nom, ordre => {
+          classementInteractif(zone, paire.evenements, e => T(e.nom), ordre => {
             const bon = [...paire.evenements].sort((a, b) => momentEvenement(a) - momentEvenement(b));
             const retour = el("div", "retour-quiz");
-            const part = corrigerClassement(retour, ordre, bon, e => e.nom, dateEvenement);
+            const part = corrigerClassement(retour, ordre, bon, e => T(e.nom), dateEvenement);
             zone.appendChild(retour);
             fini(part, retour);
           });
@@ -444,11 +451,11 @@ const JEUX = [
             else if (e === choix) x.classList.add("faux");
           });
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Non : ") + premier.nom.charAt(0).toLowerCase() + premier.nom.slice(1) + "."));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? T("Juste : ") : T("Non : ")) + (LANGUE === "en" ? T(premier.nom).replace(/^[A-Z](?![A-Z])/, c => c.toLowerCase()) : premier.nom.charAt(0).toLowerCase() + premier.nom.slice(1)) + "."));
           retour.appendChild(frise(a, b));
           // Il n'y a pas d'an 0 : de 30 av. J.-C. (−30) à 79, il s'écoule 108 ans, et non 109
           const ecart = Math.abs(a.annee - b.annee) - (a.annee * b.annee < 0 ? 1 : 0);
-          retour.appendChild(paragraphe(ecart === 0 ? "Les deux ont eu lieu la même année." : (a.vers || b.vers ? "Environ " : "") + pluriel(ecart, "an") + " d'écart."));
+          retour.appendChild(paragraphe(ecart === 0 ? T("Les deux ont eu lieu la même année.") : T(a.vers || b.vers ? "Environ {0} d'écart." : "{0} d'écart.", pluriel(ecart, "an"))));
           if (paire.note) retour.appendChild(paragraphe(paire.note));
           zone.appendChild(retour);
           fini(juste, retour);
@@ -459,7 +466,7 @@ const JEUX = [
         ajouterExplication(zone, "Notre sens du temps", [
           "Nous rangeons les événements dans des cases apprises séparément : « l'Antiquité », « la révolution industrielle », « le Japon des samouraïs ». Des faits classés dans des chapitres différents semblent appartenir à des mondes éloignés, alors qu'ils sont parfois contemporains.",
           "À l'inverse, une même étiquette regroupe des périodes immenses : l'Égypte des pharaons a duré environ 3 000 ans, et Cléopâtre est plus proche de nous que des bâtisseurs de la grande pyramide.",
-          "Le jeu propose d'abord des paires célèbres pour leur effet de surprise (" + PAIRES_CELEBRES.length + "), puis des paires tirées au hasard parmi " + EVENEMENTS.length + " événements datés."
+          T("Le jeu propose d'abord des paires célèbres pour leur effet de surprise ({0}), puis des paires tirées au hasard parmi {1} événements datés.", PAIRES_CELEBRES.length, EVENEMENTS.length)
         ]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "chronologie").lancer(zone));
       });
@@ -522,9 +529,9 @@ const JEUX = [
           reponses[a.vrai ? 0 : 1].classList.add("juste");
           if (!juste) reponses[valeur ? 0 : 1].classList.add("faux");
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Bonne réponse : c'est " : "Erreur : c'est ") + (a.vrai ? "vrai" : "faux") + ". " + signe(points) + " points"));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), T("{0}. {1} points", T(juste ? (a.vrai ? "Bonne réponse : c'est vrai" : "Bonne réponse : c'est faux") : (a.vrai ? "Erreur : c'est vrai" : "Erreur : c'est faux")), signe(points))));
           retour.appendChild(paragraphe(a.explication));
-          retour.appendChild(paragraphe("Source : " + a.source + ".", "source"));
+          retour.appendChild(paragraphe(T("Source : {0}.", T(a.source)), "source"));
           zone.appendChild(retour);
           fini({ juste, niveau, points }, retour);
         }
@@ -532,16 +539,16 @@ const JEUX = [
         const bonnes = resultats.filter(r => r.juste).length;
         const points = resultats.reduce((s, r) => s + r.points, 0);
         afficherScore(zone, "vrai-faux", bonnes, resultats.length);
-        zone.appendChild(el("p", "verdict", "Points : " + signe(points)));
+        zone.appendChild(el("p", "verdict", T("Points : {0}", signe(points))));
         // Espérance de points quand on croit avoir 70 % de chances, selon la certitude annoncée
         const esperance = annonce => 0.7 * pointsConfiance(annonce, true) + 0.3 * pointsConfiance(annonce, false);
         zone.appendChild(calculEnDetail([
           "Chaque réponse rapporte un nombre de points qui dépend de la certitude p annoncée :",
           "= juste : 100 × (1 + log₂ p) ; fausse : 100 × (1 + log₂ (1 − p))",
-          "= " + NIVEAUX_CONFIANCE.map(c => c + " % : " + signe(pointsConfiance(c, true)) + " ou " + signe(pointsConfiance(c, false))).join(" ; "),
+          "= " + NIVEAUX_CONFIANCE.map(c => T("{0} % : {1} ou {2}", c, signe(pointsConfiance(c, true)), signe(pointsConfiance(c, false)))).join(" ; "),
           "Ce barème est une règle de score « propre » : on gagne le plus, en moyenne, en annonçant sa vraie probabilité d'avoir raison. Par exemple, si vous pensez avoir 70 % de chances :",
-          "= annoncer 70 % rapporte en moyenne " + signe(Math.round(esperance(70))) + " ; annoncer 90 %, " + signe(Math.round(esperance(90))) + " ; annoncer 99 %, " + signe(Math.round(esperance(99))),
-          "Exagérer sa certitude coûte donc des points, comme la sous-estimer. Votre total de la partie : " + signe(points) + "."
+          T("= annoncer 70 % rapporte en moyenne {0} ; annoncer 90 %, {1} ; annoncer 99 %, {2}", signe(Math.round(esperance(70))), signe(Math.round(esperance(90))), signe(Math.round(esperance(99)))),
+          T("Exagérer sa certitude coûte donc des points, comme la sous-estimer. Votre total de la partie : {0}.", signe(points))
         ]));
         zone.appendChild(paragraphe("Chaque réponse rapporte d'autant plus de points que vous étiez sûr… et en coûte beaucoup plus si vous vous trompiez : +85 ou −232 points à 90 %, +99 ou −564 à 99 %. Avec ce barème (une « règle de score propre »), on a intérêt à annoncer exactement sa certitude réelle.", "source"));
 
@@ -558,14 +565,14 @@ const JEUX = [
         const lignes = el("ul", "liste-simple");
         NIVEAUX_CONFIANCE.forEach(niveau => {
           const [n, j] = cumul[niveau] || [0, 0];
-          if (n) lignes.appendChild(el("li", null, "Sûr à " + niveau + " % : juste " + j + " fois sur " + n + " (" + Math.round(100 * j / n) + " %)."));
+          if (n) lignes.appendChild(el("li", null, T("Sûr à {0} % : juste {1} fois sur {2} ({3} %).", niveau, j, n, Math.round(100 * j / n))));
         });
         zone.appendChild(lignes);
 
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Être bien étalonné, c'est avoir raison 9 fois sur 10 quand on se dit sûr à 90 %. Pour les questions de culture générale, la plupart des gens sont trop sûrs d'eux : dans les expériences de Fischhoff, Slovic et Lichtenstein (1977), les réponses données avec 90 % de certitude n'étaient justes qu'environ 75 % du temps.",
           "L'étalonnage s'améliore avec un retour fréquent et précis. Les prévisionnistes météo, qui confrontent chaque jour leurs probabilités aux faits, sont réputés très bien étalonnés (Murphy et Winkler, 1977).",
-          "Vos réponses s'accumulent d'une partie à l'autre : après quelques parties, la courbe devient fiable. Les " + VRAI_FAUX.length + " affirmations sont proposées sans répétition tant que vous ne les avez pas toutes vues."
+          T("Vos réponses s'accumulent d'une partie à l'autre : après quelques parties, la courbe devient fiable. Les {0} affirmations sont proposées sans répétition tant que vous ne les avez pas toutes vues.", VRAI_FAUX.length)
         ], [["#biais/surprecision", "Excès de précision"], ["#biais/dunning-kruger", "Effet Dunning-Kruger"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "vrai-faux").lancer(zone));
       });
@@ -596,7 +603,7 @@ const JEUX = [
 
       const champs = questions.map((q, k) => {
         const bloc = el("div", "question-test");
-        bloc.appendChild(paragraphe((k + 1) + ". " + q.q + (q.unite ? " (" + q.unite + ")" : "")));
+        bloc.appendChild(paragraphe((k + 1) + ". " + T(q.q) + (q.unite ? " (" + T(q.unite) + ")" : "")));
         const paire = etiquette => {
           const ligne = el("div", "ligne");
           const bas = el("input", "champ");
@@ -604,8 +611,8 @@ const JEUX = [
           [bas, haut].forEach(c => { c.inputMode = "decimal"; c.style.width = "7em"; });
           bas.placeholder = "au moins";
           haut.placeholder = "au plus";
-          bas.setAttribute("aria-label", "Valeur basse" + (etiquette ? ", " + etiquette : ""));
-          haut.setAttribute("aria-label", "Valeur haute" + (etiquette ? ", " + etiquette : ""));
+          bas.setAttribute("aria-label", T("Valeur basse") + (etiquette ? ", " + T(etiquette) : ""));
+          haut.setAttribute("aria-label", T("Valeur haute") + (etiquette ? ", " + T(etiquette) : ""));
           if (etiquette) ligne.appendChild(el("span", "source etiquette-fourchette", etiquette));
           ligne.append(bas, el("span", "source", "à"), haut);
           bloc.appendChild(ligne);
@@ -630,7 +637,7 @@ const JEUX = [
         const cinquante = double ? champs.map(c => lirePaire(c[0], c[1])) : null;
         const vides = champs.flat().filter(c => isNaN(lireNombre(c.value))).length;
         if (vides) {
-          valider.textContent = "Il manque " + pluriel(vides, "valeur") + " à remplir";
+          valider.textContent = T("Il manque {0} à remplir", pluriel(vides, "valeur"));
           champs.flat().find(c => isNaN(lireNombre(c.value))).focus();
           return;
         }
@@ -657,20 +664,20 @@ const JEUX = [
         zone.appendChild(paragraphe(dedans >= 8
           ? "Votre étalonnage est bon : vos fourchettes reflètent correctement votre incertitude."
           : "Vos fourchettes étaient trop étroites : vous étiez plus sûr de vous que vos connaissances ne le justifiaient."));
-        zone.appendChild(el("p", "verdict", "Score de fourchette : " + fr(Number(moyenneCout.toFixed(2))) + " (plus il est bas, mieux c'est)"));
+        zone.appendChild(el("p", "verdict", T("Score de fourchette : {0} (plus il est bas, mieux c'est)", fr(Number(moyenneCout.toFixed(2))))));
         zone.appendChild(paragraphe("Une fourchette étroite et juste vaut mieux qu'une fourchette large ; une fourchette fausse coûte cher. Une fourchette juste, d'un facteur 4 de large, coûte environ 0,6 ; manquer la vraie valeur d'un facteur 10 coûte 20 de plus.", "source"));
-        if (double) zone.appendChild(paragraphe("Fourchettes à 50 % justes : " + dedans50 + " sur 10 (objectif : environ 5). Fourchettes à 90 % justes : " + dedans + " sur 10 (objectif : environ 9)." + (dedans50 > 7 ? " Vos fourchettes à 50 % sont trop larges : vous pouvez les resserrer." : dedans50 < 3 ? " Vos fourchettes à 50 % sont trop étroites." : "")));
+        if (double) zone.appendChild(paragraphe(T("Fourchettes à 50 % justes : {0} sur 10 (objectif : environ 5). Fourchettes à 90 % justes : {1} sur 10 (objectif : environ 9).", dedans50, dedans) + (dedans50 > 7 ? " " + T("Vos fourchettes à 50 % sont trop larges : vous pouvez les resserrer.") : dedans50 < 3 ? " " + T("Vos fourchettes à 50 % sont trop étroites.") : "")));
         const pire = couts.indexOf(Math.max(...couts));
         zone.appendChild(calculEnDetail([
           "Pour une fourchette [b, h] donnée au niveau de confiance 1 − α, et une vraie valeur v :",
           "= coût = (h − b) + (2/α) × (b − v) si v est en dessous ; + (2/α) × (v − h) si v est au-dessus",
           "À 90 %, α = 0,1, donc 2/α = 20 : sortir de la fourchette coûte vingt fois plus cher que de l'élargir. À 50 %, 2/α = 4. Le score est une règle propre (Gneiting et Raftery, 2007) : on obtient le meilleur score moyen en donnant des fourchettes qui reflètent exactement son incertitude.",
           "Les écarts se mesurent en ordres de grandeur (log₁₀ : un facteur 10 vaut 1) ; les années, en siècles.",
-          "= Votre fourchette la plus coûteuse : « " + questions[pire].q + " », de " + fr(reponses[pire][0]) + " à " + fr(reponses[pire][1]) + " pour " + fr(questions[pire].v) + " : coût " + fr(Number(couts[pire].toFixed(2))),
-          double ? "= Score moyen à 50 % : " + fr(Number((couts50.reduce((a, b) => a + b, 0) / 10).toFixed(2))) + " ; à 90 % : " + fr(Number(moyenneCout.toFixed(2))) : "= Score moyen : " + fr(Number(moyenneCout.toFixed(2))) + " sur " + questions.length + " fourchettes"
+          T("= Votre fourchette la plus coûteuse : « {0} », de {1} à {2} pour {3} : coût {4}", T(questions[pire].q), fr(reponses[pire][0]), fr(reponses[pire][1]), fr(questions[pire].v), fr(Number(couts[pire].toFixed(2)))),
+          double ? T("= Score moyen à 50 % : {0} ; à 90 % : {1}", fr(Number((couts50.reduce((a, b) => a + b, 0) / 10).toFixed(2))), fr(Number(moyenneCout.toFixed(2)))) : T("= Score moyen : {0} sur {1} fourchettes", fr(Number(moyenneCout.toFixed(2))), questions.length)
         ]));
         const [total, reussies] = lire("fourchettes", [0, 0]);
-        if (total > questions.length) zone.appendChild(paragraphe("Toutes parties confondues : " + reussies + " fourchettes justes sur " + total + ", soit " + Math.round(100 * reussies / total) + " % (objectif : 90 %).", "source"));
+        if (total > questions.length) zone.appendChild(paragraphe(T("Toutes parties confondues : {0} fourchettes justes sur {1}, soit {2} % (objectif : 90 %).", reussies, total, Math.round(100 * reussies / total)), "source"));
         zone.appendChild(liste);
         zone.appendChild(legende([["var(--c-fort)", "votre fourchette"], ["var(--vert)", "vraie valeur, dans la fourchette"], ["var(--rouge)", "vraie valeur, hors de la fourchette"]]));
 
@@ -714,7 +721,7 @@ const JEUX = [
         const roue = el("div", "tirage");
         roue.append(el("span", "tirage-libelle", "Nombre tiré au hasard"), el("span", "tirage-nombre", fr(t.ancre)));
         zone.appendChild(roue);
-        zone.appendChild(el("p", "cas", t.q.q + " : plus ou moins de " + fr(t.ancre) + (t.q.unite ? " " + t.q.unite : "") + " ?"));
+        zone.appendChild(el("p", "cas", T("{0} : plus ou moins de {1} ?", T(t.q.q), fr(t.ancre) + (t.q.unite ? " " + T(t.q.unite) : ""))));
         const actions = el("div", "actions");
         ["Moins", "Plus"].forEach(libelle => {
           const b = el("button", "bouton secondaire", libelle);
@@ -762,7 +769,7 @@ const JEUX = [
         [["Après un nombre élevé", mh], ["Après un nombre faible", mb]].forEach(([libelle, m]) => {
           const ligne = el("div", "barre-ligne");
           const pct = Math.round((m - 1) * 100);
-          ligne.appendChild(el("div", "barre-nom", libelle + " : " + signe(pct) + " % par rapport à la vraie valeur"));
+          ligne.appendChild(el("div", "barre-nom", T("{0} : {1} % par rapport à la vraie valeur", T(libelle), signe(pct))));
           const fond = el("div", "barre-fond centre");
           const barre = el("div", "barre");
           const largeur = Math.min(50, Math.abs(Math.log2(m)) * 25);
@@ -788,7 +795,7 @@ const JEUX = [
         });
         zone.appendChild(tableau);
         const notes = tours.filter(t => t.q.note).map(t => t.q.q + " : " + t.q.note);
-        if (notes.length) zone.appendChild(paragraphe("Sources et précisions. " + notes.join(". ") + ".", "source"));
+        if (notes.length) zone.appendChild(paragraphe(T("Sources et précisions. {0}.", notes.map(n => T(n)).join(". ")), "source"));
 
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Un nombre que l'on sait arbitraire suffit à tirer les estimations vers lui. Tversky et Kahneman (1974) utilisaient une roue de loterie truquée ; d'autres études ont utilisé les deux derniers chiffres du numéro de sécurité sociale des participants (Ariely, Loewenstein et Prelec, 2003).",
@@ -871,43 +878,43 @@ function tirerDuelsCauses(n, options = {}) {
 const THEMES_PAYS = [["tout", "Tout"], ["population", "Population et territoire"], ["economie", "Économie et environnement"], ["geopolitique", "Géopolitique"]];
 
 // Milliards ou milliers de milliards de dollars, en clair
-const dollars = v => v >= 1e10 ? fr(Math.round(v / 1e9)) + " milliards de dollars" : fr(Number((v / 1e9).toFixed(1))) + " milliard" + (v >= 2e9 ? "s" : "") + " de dollars";
+const dollars = v => LANGUE === "en" ? (v >= 1e12 ? "$" + fr(Number((v / 1e12).toFixed(1))) + " trillion" : "$" + fr(Number((v / 1e9).toFixed(v >= 1e10 ? 0 : 1))) + " billion") : v >= 1e10 ? fr(Math.round(v / 1e9)) + " milliards de dollars" : fr(Number((v / 1e9).toFixed(1))) + " milliard" + (v >= 2e9 ? "s" : "") + " de dollars"; // fr-seulement
 
 const INDICATEURS_PAYS = {
-  pop: { theme: "population", poids: 3, question: "Quel pays compte le plus d'habitants ?", format: v => v >= 1e9 ? fr(Number((v / 1e9).toFixed(2))) + " milliard d'habitants" : v >= 1e6 ? fr(Number((v / 1e6).toFixed(1))) + " millions d'habitants" : fr(Math.round(v / 1000) * 1000) + " habitants" },
+  pop: { theme: "population", poids: 3, question: "Quel pays compte le plus d'habitants ?", format: v => v >= 1e9 ? T("{0} milliard d'habitants", fr(Number((v / 1e9).toFixed(2)))) : v >= 1e6 ? T("{0} millions d'habitants", fr(Number((v / 1e6).toFixed(1)))) : T("{0} habitants", fr(Math.round(v / 1000) * 1000)) },
   surf: { theme: "population", poids: 3, question: "Quel pays est le plus vaste ?", format: v => fr(v >= 100000 ? Math.round(v / 1000) * 1000 : v) + " km²",
     note: "Superficie totale, eaux intérieures comprises, selon la FAO." },
-  dens: { theme: "population", poids: 1, question: "Quel pays est le plus densément peuplé ?", format: v => fr(v >= 10 ? Math.round(v) : v) + " habitants par km²" },
-  croissance: { theme: "population", poids: 2, question: "Quelle population augmente le plus vite ?", format: v => signe(v) + " % par an", barres: false,
+  dens: { theme: "population", poids: 1, question: "Quel pays est le plus densément peuplé ?", format: v => T("{0} habitants par km²", fr(v >= 10 ? Math.round(v) : v)) },
+  croissance: { theme: "population", poids: 2, question: "Quelle population augmente le plus vite ?", format: v => T("{0} % par an", signe(v)), barres: false,
     note: "Évolution annuelle de la population : naissances moins décès, plus le solde des migrations." },
-  ev: { theme: "population", poids: 3, question: "Dans quel pays l'espérance de vie à la naissance est-elle la plus longue ?", format: v => fr(v) + " ans" },
-  fec: { theme: "population", poids: 3, question: "Dans quel pays les femmes ont-elles le plus d'enfants, en moyenne ?", format: v => fr(v) + " enfants par femme",
+  ev: { theme: "population", poids: 3, question: "Dans quel pays l'espérance de vie à la naissance est-elle la plus longue ?", format: v => T("{0} ans", fr(v)) },
+  fec: { theme: "population", poids: 3, question: "Dans quel pays les femmes ont-elles le plus d'enfants, en moyenne ?", format: v => T("{0} enfants par femme", fr(v)),
     note: "Il faut environ 2,1 enfants par femme pour qu'une population se renouvelle à long terme, sans immigration." },
-  age65: { theme: "population", poids: 2, question: "Dans quel pays la part des 65 ans et plus est-elle la plus forte ?", format: v => fr(v) + " % de la population" },
-  mi: { theme: "population", poids: 2, question: "Dans quel pays la mortalité infantile est-elle la plus élevée ?", format: v => fr(v) + " décès avant 1 an pour 1 000 naissances" },
-  foret: { theme: "population", poids: 2, question: "Dans quel pays les forêts couvrent-elles la plus grande part du territoire ?", format: v => fr(Math.round(v)) + " % du territoire" },
-  pib: { theme: "economie", poids: 2, question: "Dans quel pays le revenu moyen par habitant est-il le plus élevé ?", format: v => fr(Math.round(v / 100) * 100) + " $ par habitant",
+  age65: { theme: "population", poids: 2, question: "Dans quel pays la part des 65 ans et plus est-elle la plus forte ?", format: v => T("{0} % de la population", fr(v)) },
+  mi: { theme: "population", poids: 2, question: "Dans quel pays la mortalité infantile est-elle la plus élevée ?", format: v => T("{0} décès avant 1 an pour 1 000 naissances", fr(v)) },
+  foret: { theme: "population", poids: 2, question: "Dans quel pays les forêts couvrent-elles la plus grande part du territoire ?", format: v => T("{0} % du territoire", fr(Math.round(v))) },
+  pib: { theme: "economie", poids: 2, question: "Dans quel pays le revenu moyen par habitant est-il le plus élevé ?", format: v => T("{0} $ par habitant", fr(Math.round(v / 100) * 100)),
     note: "PIB par habitant en parité de pouvoir d'achat : les montants tiennent compte des différences de prix entre pays." },
   pibtotal: { theme: "economie", poids: 2, question: "Quel pays a l'économie la plus importante (PIB total) ?", format: dollars,
     note: "PIB en dollars courants, aux taux de change du marché : il mesure le poids économique d'un pays, pas le niveau de vie de ses habitants." },
-  chomage: { theme: "economie", poids: 2, question: "Dans quel pays le taux de chômage est-il le plus élevé ?", format: v => fr(v) + " % de la population active", source: "OIT, via la Banque mondiale",
+  chomage: { theme: "economie", poids: 2, question: "Dans quel pays le taux de chômage est-il le plus élevé ?", format: v => T("{0} % de la population active", fr(v)), source: "OIT, via la Banque mondiale",
     note: "Estimations harmonisées de l'Organisation internationale du travail : les chiffres nationaux officiels peuvent différer." },
-  transferts: { theme: "economie", poids: 2, question: "Dans quel pays l'argent envoyé par les émigrés pèse-t-il le plus dans l'économie ?", format: v => fr(v) + " % du PIB",
+  transferts: { theme: "economie", poids: 2, question: "Dans quel pays l'argent envoyé par les émigrés pèse-t-il le plus dans l'économie ?", format: v => T("{0} % du PIB", fr(v)),
     note: "Sommes envoyées à leur famille par les personnes parties travailler à l'étranger, rapportées au PIB du pays qui les reçoit." },
-  net: { theme: "economie", poids: 2, question: "Dans quel pays la part de la population qui utilise Internet est-elle la plus forte ?", format: v => fr(Math.round(v)) + " % de la population" },
-  co2: { theme: "economie", poids: 2, question: "Quel pays émet le plus de CO₂ par habitant ?", format: v => fr(v) + " t de CO₂ par habitant et par an",
+  net: { theme: "economie", poids: 2, question: "Dans quel pays la part de la population qui utilise Internet est-elle la plus forte ?", format: v => T("{0} % de la population", fr(Math.round(v))) },
+  co2: { theme: "economie", poids: 2, question: "Quel pays émet le plus de CO₂ par habitant ?", format: v => T("{0} t de CO₂ par habitant et par an", fr(v)),
     note: "Émissions de CO₂ hors changements d'usage des terres (déforestation…), sans compter les biens importés." },
-  armee: { theme: "geopolitique", poids: 2, question: "Quel pays consacre la plus grande part de sa richesse (PIB) à ses armées ?", format: v => fr(v) + " % du PIB", source: "SIPRI, via la Banque mondiale",
+  armee: { theme: "geopolitique", poids: 2, question: "Quel pays consacre la plus grande part de sa richesse (PIB) à ses armées ?", format: v => T("{0} % du PIB", fr(v)), source: "SIPRI, via la Banque mondiale",
     note: "Dépenses militaires estimées par l'Institut international de recherche sur la paix de Stockholm (SIPRI)." },
   armeeusd: { theme: "geopolitique", poids: 2, question: "Quel pays dépense le plus pour ses armées, en dollars ?", format: dollars, source: "SIPRI, via la Banque mondiale",
     note: "Dépenses militaires estimées par le SIPRI, en dollars courants." },
-  refugies: { theme: "geopolitique", poids: 2, question: "Quel pays accueille le plus de réfugiés ?", format: v => fr(v) + " personnes réfugiées", source: "HCR, fin 2024",
+  refugies: { theme: "geopolitique", poids: 2, question: "Quel pays accueille le plus de réfugiés ?", format: v => T("{0} personnes réfugiées", fr(v)), source: "HCR, fin 2024",
     note: "Réfugiés et autres personnes ayant besoin d'une protection internationale, selon le HCR (les réfugiés palestiniens pris en charge par l'UNRWA ne sont pas comptés). Près des trois quarts d'entre eux vivent dans des pays à revenu faible ou intermédiaire." },
-  refugieshab: { theme: "geopolitique", poids: 2, question: "Quel pays accueille le plus de réfugiés par rapport à sa population ?", format: v => fr(v) + " réfugiés pour 1 000 habitants", source: "HCR, fin 2024",
+  refugieshab: { theme: "geopolitique", poids: 2, question: "Quel pays accueille le plus de réfugiés par rapport à sa population ?", format: v => T("{0} réfugiés pour 1 000 habitants", fr(v)), source: "HCR, fin 2024",
     note: "Réfugiés et autres personnes ayant besoin d'une protection internationale (HCR), rapportés à la population de 2024 (Banque mondiale)." },
-  origine: { theme: "geopolitique", poids: 2, question: "De quel pays sont originaires le plus de réfugiés ?", format: v => fr(v) + " personnes réfugiées à l'étranger", source: "HCR, fin 2024",
+  origine: { theme: "geopolitique", poids: 2, question: "De quel pays sont originaires le plus de réfugiés ?", format: v => T("{0} personnes réfugiées à l'étranger", fr(v)), source: "HCR, fin 2024",
     note: "Personnes ayant fui ce pays et reconnues comme réfugiées ou ayant besoin d'une protection internationale, fin 2024 (HCR)." },
-  femmes: { theme: "geopolitique", poids: 2, question: "Dans quel pays les femmes occupent-elles la plus grande part des sièges au parlement ?", format: v => fr(Math.round(v)) + " % des sièges", source: "Union interparlementaire, via la Banque mondiale" }
+  femmes: { theme: "geopolitique", poids: 2, question: "Dans quel pays les femmes occupent-elles la plus grande part des sièges au parlement ?", format: v => T("{0} % des sièges", fr(Math.round(v))), source: "Union interparlementaire, via la Banque mondiale" }
 };
 
 // options : { niveau, indicateurs (indicateurs déjà posés dans la partie, pour limiter les répétitions) }
@@ -1129,7 +1136,7 @@ function tirerPaireChronologieNiveau(niveau, i, exclus) {
 // « 41,9° N, 12,5° E »
 function coordonnees(v) {
   const [, lat, lon] = VILLES[v];
-  return fr(Math.abs(lat)) + "° " + (lat >= 0 ? "N" : "S") + ", " + fr(Math.abs(lon)) + "° " + (lon >= 0 ? "E" : "O");
+  return fr(Math.abs(lat)) + "° " + (lat >= 0 ? "N" : "S") + ", " + fr(Math.abs(lon)) + "° " + (lon >= 0 ? "E" : (LANGUE === "en" ? "W" : "O"));
 }
 
 // Planisphère schématique : méridiens et parallèles tous les 30°, et les deux villes
@@ -1187,10 +1194,10 @@ function placerEtiquettes(points, obstacles) {
 function dateEvenement(e) {
   if (e.date) {
     const d = new Date(e.date + "T12:00:00");
-    const jour = d.getDate() === 1 ? "1er" : String(d.getDate());
-    return jour + " " + d.toLocaleDateString("fr-FR", { month: "long" }) + " " + d.getFullYear();
+    const jour = d.getDate() === 1 && LANGUE !== "en" ? "1er" : String(d.getDate());
+    return jour + " " + d.toLocaleDateString(LOCALE, { month: "long" }) + " " + d.getFullYear();
   }
-  return (e.vers ? "vers " : "") + (e.annee < 0 ? -e.annee + " av. J.-C." : String(e.annee));
+  return (e.vers ? T("vers ") : "") + (e.annee < 0 ? T("{0} av. J.-C.", -e.annee) : String(e.annee));
 }
 
 // Frise : deux événements placés à leur date, le plus ancien à gauche
@@ -1208,7 +1215,7 @@ function frise(a, b) {
   });
   bloc.appendChild(s);
   const liste = el("ol", "frise-liste");
-  [p, q].forEach(e => liste.appendChild(el("li", null, dateEvenement(e) + " — " + e.nom)));
+  [p, q].forEach(e => liste.appendChild(el("li", null, dateEvenement(e) + " — " + T(e.nom))));
   bloc.appendChild(liste);
   return bloc;
 }
@@ -1219,13 +1226,13 @@ function afficherFermi(f, zone, fini) {
   const q = GRANDEURS.find(g => g.id === f.id);
   zone.appendChild(el("p", "consigne", "Méthode de Fermi : décomposez avant d'estimer"));
   zone.appendChild(el("p", "cas", q.q));
-  zone.appendChild(paragraphe("Estimez chaque facteur ; le site fera le calcul." + (f.facteurs.some(x => x[3]) ? " Les facteurs marqués « ÷ » divisent le résultat." : ""), "source"));
+  zone.appendChild(paragraphe(T("Estimez chaque facteur ; le site fera le calcul.") + (f.facteurs.some(x => x[3]) ? " " + T("Les facteurs marqués « ÷ » divisent le résultat.") : ""), "source"));
   const champs = f.facteurs.map(([libelle, , , diviser]) => {
     const ligne = el("div", "ligne ligne-fermi");
     const champ = el("input", "champ");
     champ.inputMode = "decimal";
     champ.setAttribute("aria-label", libelle);
-    ligne.append(el("span", "facteur-fermi", (diviser ? "÷ " : "× ") + libelle), champ);
+    ligne.append(el("span", "facteur-fermi", (diviser ? "÷ " : "× ") + T(libelle)), champ);
     zone.appendChild(ligne);
     return champ;
   });
@@ -1242,9 +1249,9 @@ function afficherFermi(f, zone, fini) {
     const ecart = Math.abs(Math.log10(produit) - Math.log10(q.v));
     const points = ecart <= Math.log10(2) ? 3 : ecart <= Math.log10(3) ? 2 : ecart <= 1 ? 1 : 0;
     const retour = el("div", "retour-quiz");
-    retour.appendChild(el("p", "verdict " + (points >= 2 ? "juste" : "faux"), "Votre produit : environ " + enClair(produit, 2) + " ; la réponse : environ " + enClair(q.v, 3) + "."));
+    retour.appendChild(el("p", "verdict " + (points >= 2 ? "juste" : "faux"), T("Votre produit : environ {0} ; la réponse : environ {1}.", enClair(produit, 2), enClair(q.v, 3))));
     const liste = el("ul", "liste-simple");
-    f.facteurs.forEach(([libelle, vrai, source], k) => liste.appendChild(el("li", null, libelle + " : vous, " + fr(Number(valeurs[k].toPrecision(3))) + " ; en réalité, " + fr(vrai) + " (" + source + ")")));
+    f.facteurs.forEach(([libelle, vrai, source], k) => liste.appendChild(el("li", null, T("{0} : vous, {1} ; en réalité, {2} ({3})", T(libelle), fr(Number(valeurs[k].toPrecision(3))), fr(vrai), T(source)))));
     retour.append(el("p", "consigne", "Facteur par facteur"), liste);
     retour.appendChild(paragraphe(points === 3 ? "3 points : moins d'un facteur 2 d'écart." : points === 2 ? "2 points : moins d'un facteur 3." : points === 1 ? "1 point : moins d'un facteur 10." : "Aucun point : plus d'un facteur 10 d'écart.", "source"));
     retour.appendChild(paragraphe("Décomposer une grandeur inconnue en facteurs que l'on connaît mieux limite les erreurs : celles des facteurs se compensent souvent. Enrico Fermi était célèbre pour ces estimations rapides.", "source"));
@@ -1288,11 +1295,11 @@ function courbeEtalonnage(cumul, partie) {
   s.appendChild(svg("rect", { x: 46, y: 20, width: 250, height: 180, class: "graphe-fond" }));
   [0, 25, 50, 75, 100].forEach(r => {
     s.appendChild(svg("line", { x1: 46, y1: y(r), x2: 296, y2: y(r), class: "graphe-grille" }));
-    s.appendChild(texteSvg(40, y(r) + 3, r + " %", { class: "graphe-texte", "text-anchor": "end" }));
+    s.appendChild(texteSvg(40, y(r) + 3, r + PC, { class: "graphe-texte", "text-anchor": "end" }));
   });
   NIVEAUX_CONFIANCE.forEach(c => {
     s.appendChild(svg("line", { x1: x(c), y1: 20, x2: x(c), y2: 200, class: "graphe-grille" }));
-    s.appendChild(texteSvg(x(c), 214, c + " %", { class: "graphe-texte", "text-anchor": "middle" }));
+    s.appendChild(texteSvg(x(c), 214, c + PC, { class: "graphe-texte", "text-anchor": "middle" }));
   });
   s.appendChild(svg("line", { x1: x(50), y1: y(50), x2: x(100), y2: y(100), class: "graphe-diagonale" }));
   s.appendChild(texteSvg(171, 228, "Certitude annoncée", { class: "graphe-texte", "text-anchor": "middle" }));
@@ -1323,7 +1330,7 @@ function scoreFourchette(q, bas, haut, alpha) {
 
 function ligneIntervalle(q, bas, haut, ok) {
   const ligne = el("div", "barre-ligne");
-  ligne.appendChild(el("div", "barre-nom", q.q + " : " + fr(q.v) + (q.unite ? " " + q.unite : "") + (q.note ? " (" + q.note + ")" : "")));
+  ligne.appendChild(el("div", "barre-nom", T(q.q) + " : " + fr(q.v) + (q.unite ? " " + T(q.unite) : "") + (q.note ? " (" + T(q.note) + ")" : "")));
   const min = Math.min(bas, q.v), max = Math.max(haut, q.v);
   const marge = (max - min) * 0.15 || Math.abs(q.v) * 0.1 || 1;
   const debut = min - marge, fin = max + marge;
@@ -1336,7 +1343,7 @@ function ligneIntervalle(q, bas, haut, ok) {
   point.style.left = pos(q.v) + "%";
   fond.append(plage, point);
   ligne.appendChild(fond);
-  ligne.appendChild(el("div", "barre-source", "Votre fourchette : " + fr(bas) + " à " + fr(haut)));
+  ligne.appendChild(el("div", "barre-source", T("Votre fourchette : {0} à {1}", fr(bas), fr(haut))));
   return ligne;
 }
 
@@ -1417,8 +1424,8 @@ function partiePoints(zone, avecRepere) {
     delete PARTIES_EN_COURS.points;
     noterPartie("points");
     zone.appendChild(el("p", "consigne", "Résultat"));
-    zone.appendChild(el("p", "grand-score", (pct >= 0 ? "+" : "") + pct + " %"));
-    zone.appendChild(paragraphe("En moyenne, vos estimations étaient " + (Math.abs(pct) < 5 ? "très proches des vraies valeurs." : pct < 0 ? "inférieures de " + (-pct) + " % aux vraies valeurs." : "supérieures de " + pct + " % aux vraies valeurs.")));
+    zone.appendChild(el("p", "grand-score", (pct >= 0 ? "+" : "") + pct + PC));
+    zone.appendChild(paragraphe(Math.abs(pct) < 5 ? T("En moyenne, vos estimations étaient très proches des vraies valeurs.") : pct < 0 ? T("En moyenne, vos estimations étaient inférieures de {0} % aux vraies valeurs.", -pct) : T("En moyenne, vos estimations étaient supérieures de {0} % aux vraies valeurs.", pct)));
 
     // Nuage de points (échelle logarithmique) : vraie valeur en abscisse, estimation en ordonnée
     const s = svg("svg", { viewBox: "0 0 320 320", class: "graphe", role: "img", "aria-label": "Vos estimations comparées aux vraies valeurs" });

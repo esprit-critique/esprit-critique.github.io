@@ -3,6 +3,12 @@
 // Syllogismes, élèves pilotes, études et sujets sont fictifs ; les études de référence citées dans
 // les bilans sont réelles.
 
+// Première lettre en minuscule (« Tous les… » -> « tous les… »)
+const minuscule1 = t => t.charAt(0).toLowerCase() + t.slice(1);
+const majuscule1 = t => t.charAt(0).toUpperCase() + t.slice(1);
+// Écart en points : « 2 points » / « 1 point » (en français, le pluriel commence à 2 ; en anglais, tout sauf 1)
+const pointsAsym = (v, brut) => fr(Number(v.toFixed(1))) + " " + (LANGUE === "en" ? T(Number(v.toFixed(1)) === 1 ? "point" : "points") : (brut >= 2 ? "points" : "point"));
+
 // ===================== Logique contre croyance =====================
 // 16 syllogismes : 4 dans chaque case (valide ou non, conclusion crédible ou non).
 // « justifications » : pour quatre d'entre eux, trois explications, dont une seule correcte.
@@ -50,7 +56,7 @@ const SYLLOGISMES = [
 function blocSyllogisme(s) {
   const bloc = el("div", "syllogisme");
   s.p.forEach(p => bloc.appendChild(el("p", null, p)));
-  bloc.appendChild(el("p", "conclusion-syllogisme", "Donc " + s.c.charAt(0).toLowerCase() + s.c.slice(1)));
+  bloc.appendChild(el("p", "conclusion-syllogisme", T("Donc {0}", minuscule1(T(s.c)))));
   return bloc;
 }
 
@@ -164,9 +170,9 @@ function courbeCarnet(resolues) {
   s.appendChild(svg("rect", { x: 46, y: 20, width: 250, height: 180, class: "graphe-fond" }));
   [0, 25, 50, 75, 100].forEach(r => {
     s.appendChild(svg("line", { x1: 46, y1: y(r), x2: 296, y2: y(r), class: "graphe-grille" }));
-    s.appendChild(texteSvg(40, y(r) + 3, r + " %", { class: "graphe-texte", "text-anchor": "end" }));
+    s.appendChild(texteSvg(40, y(r) + 3, r + PC, { class: "graphe-texte", "text-anchor": "end" }));
   });
-  [50, 60, 70, 80, 90, 100].forEach(c => s.appendChild(texteSvg(x(c), 214, c + " %", { class: "graphe-texte", "text-anchor": "middle" })));
+  [50, 60, 70, 80, 90, 100].forEach(c => s.appendChild(texteSvg(x(c), 214, c + PC, { class: "graphe-texte", "text-anchor": "middle" })));
   s.appendChild(svg("line", { x1: x(50), y1: y(50), x2: x(100), y2: y(100), class: "graphe-diagonale" }));
   s.appendChild(texteSvg(171, 230, "Probabilité annoncée", { class: "graphe-texte", "text-anchor": "middle" }));
   const tranches = {};
@@ -252,7 +258,7 @@ EXPERIENCES.push(
         derouler(zone, cinq, (x, zone, fini) => {
           zone.appendChild(el("p", "consigne", "Le raisonnement d'un autre joueur"));
           zone.appendChild(blocSyllogisme(x.s));
-          zone.appendChild(el("p", "replique-qui", prenoms[cinq.indexOf(x)] + " explique :"));
+          zone.appendChild(el("p", "replique-qui", T("{0} explique :", T(prenoms[cinq.indexOf(x)]))));
           zone.appendChild(el("p", "cas", "« " + x.texte + " »"));
           zone.appendChild(el("p", "consigne", "Ce raisonnement est-il correct ?"));
           const choix = [boutonChoix("Correct", 0), boutonChoix("Incorrect", 1)];
@@ -283,14 +289,16 @@ EXPERIENCES.push(
         ecrire("logique", historique.slice(-30));
         afficherScore(zone, "logique", justes, SYLLOGISMES.length);
 
-        zone.appendChild(el("p", "consigne", "Le raisonnement n° " + rang + " était le vôtre"));
-        zone.appendChild(paragraphe("Vous l'aviez choisi mot pour mot pour le syllogisme « " + propre.x.s.c.charAt(0).toLowerCase() + propre.x.s.c.slice(1, -1) + " ». Présenté comme celui d'un autre, vous l'avez jugé " + (propre.accepte ? "correct" : "incorrect") + ". Il était en fait " + (propre.x.correcte ? "correct." : "incorrect.") +
-          (propre.accepte === propre.x.correcte ? "" : propre.x.correcte ? " Vous avez rejeté un raisonnement juste : le vôtre." : " Vous avez su le rejeter chez un autre alors que vous l'aviez adopté vous-même.")));
+        zone.appendChild(el("p", "consigne", T("Le raisonnement n° {0} était le vôtre", rang)));
+        zone.appendChild(paragraphe(T("Vous l'aviez choisi mot pour mot pour le syllogisme « {0} ».", minuscule1(T(propre.x.s.c)).slice(0, -1)) + " " +
+          T(propre.accepte ? "Présenté comme celui d'un autre, vous l'avez jugé correct." : "Présenté comme celui d'un autre, vous l'avez jugé incorrect.") + " " +
+          T(propre.x.correcte ? "Il était en fait correct." : "Il était en fait incorrect.") +
+          (propre.accepte === propre.x.correcte ? "" : " " + T(propre.x.correcte ? "Vous avez rejeté un raisonnement juste : le vôtre." : "Vous avez su le rejeter chez un autre alors que vous l'aviez adopté vous-même."))));
 
         const liste = el("ul", "liste-simple");
         liste.append(
-          el("li", null, "Indice de logique : " + signe(logique) + " (de −4 à +4). Il mesure l'effet de la validité sur vos réponses : (valides acceptés − non valides acceptés) / 2."),
-          el("li", null, "Indice de croyance : " + signe(croyance) + " (de −4 à +4). Il mesure l'effet de la crédibilité de la conclusion : (crédibles acceptés − non crédibles acceptés) / 2.")
+          el("li", null, T("Indice de logique : {0} (de −4 à +4). Il mesure l'effet de la validité sur vos réponses : (valides acceptés − non valides acceptés) / 2.", signe(logique))),
+          el("li", null, T("Indice de croyance : {0} (de −4 à +4). Il mesure l'effet de la crédibilité de la conclusion : (crédibles acceptés − non crédibles acceptés) / 2.", signe(croyance)))
         );
         zone.appendChild(liste);
 
@@ -302,7 +310,7 @@ EXPERIENCES.push(
           const ul = el("ul", "liste-simple");
           SYLLOGISMES.filter(s => s.valide === v && s.credible === c).forEach(s => {
             const ok = reponses[s.id] === s.valide;
-            ul.appendChild(el("li", ok ? null : "erreur-liste", s.p.join(" ") + " Donc " + s.c.charAt(0).toLowerCase() + s.c.slice(1) + (ok ? "" : " (vous : " + (reponses[s.id] ? "valide" : "non valide") + ")")));
+            ul.appendChild(el("li", ok ? null : "erreur-liste", s.p.map(p => T(p)).join(" ") + " " + T("Donc {0}", minuscule1(T(s.c))) + (ok ? "" : " " + T(reponses[s.id] ? "(vous : valide)" : "(vous : non valide)"))));
           });
           correction.appendChild(ul);
         });
@@ -333,12 +341,12 @@ EXPERIENCES.push(
       const vols = [];
       derouler(zone, ordre, (eleve, zone, fini) => {
         const note = Math.round(Math.min(100, Math.max(0, eleve.talent + 12 * gauss())));
-        zone.appendChild(el("p", "consigne", "Atterrissage de " + eleve.nom));
+        zone.appendChild(el("p", "consigne", T("Atterrissage de {0}", eleve.nom)));
         const grand = el("p", "note-vol", note + " / 100");
         zone.appendChild(grand);
         const precedents = vols.filter(v => v.eleve === eleve).map(v => v.note);
-        zone.appendChild(paragraphe(precedents.length ? "Ses atterrissages précédents : " + precedents.join(", ") + "." : "Premier atterrissage de " + eleve.nom + " aujourd'hui.", "source"));
-        zone.appendChild(el("p", "cas", "Que dites-vous à " + eleve.nom + " ?"));
+        zone.appendChild(paragraphe(precedents.length ? T("Ses atterrissages précédents : {0}.", precedents.join(", ")) : T("Premier atterrissage de {0} aujourd'hui.", eleve.nom), "source"));
+        zone.appendChild(el("p", "cas", T("Que dites-vous à {0} ?", eleve.nom)));
         const actions = [["feliciter", "Féliciter"], ["reprimander", "Réprimander"], ["rien", "Ne rien dire"]];
         const boutons = actions.map(([id, texte], k) => {
           const b = boutonChoix(texte, k);
@@ -347,7 +355,7 @@ EXPERIENCES.push(
             b.classList.add("choisi");
             vols.push({ eleve, note, action: id });
             const retour = el("div", "retour-quiz");
-            retour.appendChild(paragraphe(eleve.nom + " repart pour un tour de piste.", "source"));
+            retour.appendChild(paragraphe(T("{0} repart pour un tour de piste.", eleve.nom), "source"));
             zone.appendChild(retour);
             fini(id, retour);
           });
@@ -369,7 +377,7 @@ EXPERIENCES.push(
         const liste = el("ul", "liste-simple");
         [["feliciter", "Après une félicitation"], ["reprimander", "Après une réprimande"], ["rien", "Sans commentaire"]].forEach(([a, libelle]) => {
           const v = variation(a);
-          if (v) liste.appendChild(el("li", null, libelle + ", la note suivante de l'élève a varié de " + signe(Math.round(v.moy)) + " points en moyenne (" + pluriel(v.n, "cas", "cas") + ")."));
+          if (v) liste.appendChild(el("li", null, T("{0}, la note suivante de l'élève a varié de {1} points en moyenne ({2}).", T(libelle), signe(Math.round(v.moy)), pluriel(v.n, "cas", "cas"))));
         });
         zone.appendChild(liste);
         zone.appendChild(el("p", "verdict", "Révélation : vos retours n'avaient aucun effet."));
@@ -422,7 +430,7 @@ EXPERIENCES.push(
           terminer();
         } else {
           zone.appendChild(el("p", "consigne", e.tour === "avant" ? "Une étude (fictive)" : "Une étude (fictive), à revoir"));
-          zone.appendChild(el("p", "cas", e.s.methode + " " + e.s[e.sens]));
+          zone.appendChild(el("p", "cas", T(e.s.methode) + " " + T(e.s[e.sens])));
           zone.appendChild(el("p", "consigne", "Qualité de cette étude, de 1 à 7 ?"));
           zone.appendChild(echelleSept("Très faible", "Excellente", n => { notes[e.tour][e.s.id + ":" + e.sens] = n; terminer(); }));
         }
@@ -444,7 +452,7 @@ EXPERIENCES.push(
           zone.appendChild(paragraphe("Vous étiez neutre (4 sur 7) sur les trois questions : l'asymétrie ne peut pas se calculer. Rejouez en prenant position."));
         } else {
           zone.appendChild(el("p", "grand-score", signe(Number(avant.toFixed(1)))));
-          zone.appendChild(paragraphe("Indice d'asymétrie : en moyenne, vous avez noté les études favorables à votre avis " + (avant > 0 ? fr(Number(avant.toFixed(1))) + " point" + (Math.abs(avant) >= 2 ? "s" : "") + " plus haut" : avant < 0 ? fr(Number((-avant).toFixed(1))) + " point" + (Math.abs(avant) >= 2 ? "s" : "") + " plus bas" : "exactement comme") + " que les défavorables, alors que leur méthode était identique. Après la consigne « envisagez l'inverse », l'écart est de " + signe(Number(apres.toFixed(1))) + "."));
+          zone.appendChild(paragraphe(T("Indice d'asymétrie : en moyenne, vous avez noté les études favorables à votre avis {0} que les défavorables, alors que leur méthode était identique. Après la consigne « envisagez l'inverse », l'écart est de {1}.", avant > 0 ? T("{0} plus haut", pointsAsym(avant, Math.abs(avant))) : avant < 0 ? T("{0} plus bas", pointsAsym(-avant, Math.abs(avant))) : T("exactement comme"), signe(Number(apres.toFixed(1))))));
           zone.appendChild(paragraphe("Attention : trois questions et six notes font une mesure très bruitée. Un écart d'un point peut venir du hasard ; seule une tendance sur plusieurs parties dit quelque chose.", "source"));
         }
         ajouterExplication(zone, "Juger la méthode, pas le résultat", [
@@ -473,8 +481,8 @@ EXPERIENCES.push(
       const grille = el("div", "grille-joueurs");
       const champs = [0, 1, 2, 3, 4, 5].map(k => {
         const c = el("input", "champ");
-        c.placeholder = "Joueur " + (k + 1);
-        c.setAttribute("aria-label", "Prénom du joueur " + (k + 1) + (k < 2 ? "" : ", facultatif"));
+        c.placeholder = T("Joueur {0}", k + 1);
+        c.setAttribute("aria-label", T(k < 2 ? "Prénom du joueur {0}" : "Prénom du joueur {0}, facultatif", k + 1));
         grille.appendChild(c);
         return c;
       });
@@ -483,7 +491,7 @@ EXPERIENCES.push(
       const modes = [boutonChoix("Six problèmes de logique", 0), boutonChoix("Six estimations", 1)];
       modes.forEach((b, k) => {
         b.addEventListener("click", () => {
-          const joueurs = champs.map((c, i) => c.value.trim() || (i < 2 ? "Joueur " + (i + 1) : "")).filter(Boolean);
+          const joueurs = champs.map((c, i) => c.value.trim() || (i < 2 ? T("Joueur {0}", i + 1) : "")).filter(Boolean);
           if (k === 0) problemes(joueurs); else estimations(joueurs);
         });
         zone.appendChild(b);
@@ -496,9 +504,9 @@ EXPERIENCES.push(
           zone.innerHTML = "";
           if (k >= joueurs.length) return quandTousOntRepondu();
           const nom = joueurs[k];
-          zone.appendChild(el("p", "consigne", "Passez le téléphone à " + nom));
+          zone.appendChild(el("p", "consigne", T("Passez le téléphone à {0}", nom)));
           zone.appendChild(paragraphe("Les autres ne regardent pas l'écran.", "source"));
-          const pret = el("button", "bouton large", "Je suis " + nom);
+          const pret = el("button", "bouton large", T("Je suis {0}", nom));
           pret.dataset.suivant = "1";
           pret.addEventListener("click", () => {
             zone.innerHTML = "";
@@ -544,7 +552,7 @@ EXPERIENCES.push(
           const individuelles = [];
           tourDeTable(joueurs, (k, nom, ok) => {
             entete(zone, i + 1, PROBLEMES_GROUPE.length, "Problème");
-            zone.appendChild(el("p", "consigne", nom + ", répondez seul"));
+            zone.appendChild(el("p", "consigne", T("{0}, répondez seul", nom)));
             zone.appendChild(el("p", "cas", p.enonce));
             p.options.forEach((o, j) => {
               const b = boutonChoix(o, j);
@@ -556,7 +564,7 @@ EXPERIENCES.push(
             zone.appendChild(el("p", "cas", p.enonce));
             zone.appendChild(el("p", "consigne", "Vos réponses individuelles"));
             const liste = el("ul", "liste-simple");
-            p.options.forEach((o, j) => liste.appendChild(el("li", null, o + " : " + pluriel(individuelles.filter(x => x === j).length, "joueur"))));
+            p.options.forEach((o, j) => liste.appendChild(el("li", null, T(o) + " : " + pluriel(individuelles.filter(x => x === j).length, "joueur"))));
             zone.appendChild(liste);
             zone.appendChild(paragraphe("Discutez : chacun explique son raisonnement, puis mettez-vous d'accord sur une réponse commune.", "source"));
             discussion(zone, 180, () => {
@@ -572,7 +580,7 @@ EXPERIENCES.push(
                   if (j !== p.juste) b.classList.add("faux");
                   resultats.push({ individuels: individuelles.filter(x => x === p.juste).length / individuelles.length, groupe: j === p.juste });
                   const retour = el("div", "retour-quiz");
-                  retour.appendChild(el("p", "verdict " + (j === p.juste ? "juste" : "faux"), (j === p.juste ? "Juste : " : "Réponse : ") + p.options[p.juste] + "."));
+                  retour.appendChild(el("p", "verdict " + (j === p.juste ? "juste" : "faux"), (j === p.juste ? T("Juste : ") : T("Réponse : ")) + T(p.options[p.juste]) + "."));
                   retour.appendChild(paragraphe(p.explication));
                   retour.appendChild(boutonSuivant(i === PROBLEMES_GROUPE.length - 1 ? "Voir le bilan" : "Problème suivant", () => { i++; probleme(); }));
                   zone.appendChild(retour);
@@ -589,7 +597,7 @@ EXPERIENCES.push(
           const indiv = Math.round(100 * resultats.reduce((t, r) => t + r.individuels, 0) / resultats.length);
           const groupe = resultats.filter(r => r.groupe).length;
           afficherScore(zone, "plusieurs", groupe, resultats.length);
-          zone.appendChild(paragraphe("Réponses individuelles justes : " + indiv + " % ; réponses du groupe justes : " + groupe + " sur " + resultats.length + "."));
+          zone.appendChild(paragraphe(T("Réponses individuelles justes : {0} % ; réponses du groupe justes : {1} sur {2}.", indiv, groupe, resultats.length)));
           ajouterExplication(zone, "Raisonner ensemble", [
             "Sur la tâche de sélection de Wason, Moshman et Geil (1998) ont observé 9 % de réussite chez des étudiants seuls, et 75 % chez des groupes de cinq ou six qui en discutaient. Quand quelqu'un a trouvé, il peut le démontrer, et le groupe se range à son argument plutôt qu'à la majorité.",
             "Cet avantage suppose une vraie discussion des raisons. Un groupe qui suit l'avis le plus assuré ou le plus fréquent, sans l'examiner, perd cet avantage."
@@ -610,9 +618,9 @@ EXPERIENCES.push(
           const valeurs = [];
           tourDeTable(joueurs, (k, nom, ok) => {
             entete(zone, i + 1, 6, "Estimation");
-            zone.appendChild(el("p", "consigne", "Manche " + manche + (manche === 1 ? " : sans voir les autres" : " : en voyant les réponses précédentes")));
-            zone.appendChild(el("p", "cas", q.q + (q.unite ? " (en " + q.unite + ")" : "") + " ?"));
-            if (manche === 2 && valeurs.length) zone.appendChild(paragraphe("Réponses des joueurs précédents : " + valeurs.map(v => fr(v)).join(" ; ") + ".", "source"));
+            zone.appendChild(el("p", "consigne", T(manche === 1 ? "Manche {0} : sans voir les autres" : "Manche {0} : en voyant les réponses précédentes", manche)));
+            zone.appendChild(el("p", "cas", T("{0} ?", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : ""))));
+            if (manche === 2 && valeurs.length) zone.appendChild(paragraphe(T("Réponses des joueurs précédents : {0}.", valeurs.map(v => fr(v)).join(" ; ")), "source"));
             const champ = el("input", "champ");
             champ.inputMode = "decimal";
             champ.setAttribute("aria-label", "Votre estimation");
@@ -630,13 +638,13 @@ EXPERIENCES.push(
           }, () => {
             resultats.push({ manche, q, valeurs });
             entete(zone, i + 1, 6, "Estimation");
-            zone.appendChild(el("p", "cas", q.q + " ?"));
+            zone.appendChild(el("p", "cas", T("{0} ?", T(q.q))));
             const moyenne = valeurs.reduce((a, b) => a + b, 0) / valeurs.length;
             const ecart = v => Math.abs(v - q.v) / q.v;
             const mieux = valeurs.filter(v => ecart(v) < ecart(moyenne)).length;
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict", "Réponse : " + fr(q.v) + (q.unite ? " " + q.unite : "") + "."));
-            retour.appendChild(paragraphe("Vos estimations : " + valeurs.map(v => fr(v)).join(" ; ") + ". Moyenne du groupe : " + fr(Number(moyenne.toPrecision(3))) + ", à " + Math.round(100 * ecart(moyenne)) + " % de la réponse. " + (mieux ? pluriel(mieux, "joueur a", "joueurs ont") + " fait mieux que la moyenne." : "Personne n'a fait mieux que la moyenne du groupe.")));
+            retour.appendChild(el("p", "verdict", T("Réponse : {0}.", fr(q.v) + (q.unite ? " " + T(q.unite) : ""))));
+            retour.appendChild(paragraphe(T("Vos estimations : {0}. Moyenne du groupe : {1}, à {2} % de la réponse.", valeurs.map(v => fr(v)).join(" ; "), fr(Number(moyenne.toPrecision(3))), Math.round(100 * ecart(moyenne))) + " " + (mieux ? T(mieux > 1 ? "{0} joueurs ont fait mieux que la moyenne." : "{0} joueur a fait mieux que la moyenne.", mieux) : T("Personne n'a fait mieux que la moyenne du groupe."))));
             retour.appendChild(boutonSuivant(i === 5 ? "Voir le bilan" : i === 2 ? "Manche 2" : "Estimation suivante", () => { i++; question(); }));
             zone.appendChild(retour);
           });
@@ -655,8 +663,8 @@ EXPERIENCES.push(
           };
           const d1 = diversite(1), d2 = diversite(2);
           zone.appendChild(el("p", "consigne", "Bilan"));
-          zone.appendChild(paragraphe("Dispersion de vos estimations (écart-type des logarithmes) : " + fr(Number(d1.toFixed(2))) + " dans la manche 1, " + fr(Number(d2.toFixed(2))) + " dans la manche 2. " +
-            (d2 < d1 ? "Voir les réponses des autres a resserré vos estimations." : "Voir les réponses des autres n'a pas resserré vos estimations, cette fois.")));
+          zone.appendChild(paragraphe(T("Dispersion de vos estimations (écart-type des logarithmes) : {0} dans la manche 1, {1} dans la manche 2.", fr(Number(d1.toFixed(2))), fr(Number(d2.toFixed(2)))) + " " +
+            T(d2 < d1 ? "Voir les réponses des autres a resserré vos estimations." : "Voir les réponses des autres n'a pas resserré vos estimations, cette fois.")));
           zone.appendChild(paragraphe("Les questions n'étant pas les mêmes d'une manche à l'autre, la comparaison reste indicative.", "source"));
           ajouterExplication(zone, "La sagesse des foules, et sa fragilité", [
             "La moyenne d'estimations indépendantes est souvent plus juste que la plupart des estimations individuelles : les erreurs dans un sens compensent les erreurs dans l'autre.",
@@ -683,7 +691,7 @@ JEUX.push({
     const previsions = () => lire("previsions", []);
     const enregistrer = l => ecrire("previsions", l);
     const auj = aujourdHui();
-    const dateDe = jour => new Date(jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+    const dateDe = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
     zone.innerHTML = "";
 
     // Formulaire
@@ -704,7 +712,7 @@ JEUX.push({
     proba.type = "range"; proba.min = 5; proba.max = 95; proba.step = 5; proba.value = 70;
     proba.setAttribute("aria-label", "Probabilité");
     const affichage = el("p", "valeur-curseur");
-    const maj = () => { affichage.textContent = typo("Probabilité : " + proba.value + " %"); };
+    const maj = () => { affichage.textContent = typo(T("Probabilité : {0} %", proba.value)); };
     proba.addEventListener("input", maj);
     maj();
     const echeance = el("input", "champ");
@@ -737,7 +745,7 @@ JEUX.push({
       zone.appendChild(el("h3", "titre-carnet", "À résoudre"));
       aResoudre.forEach(x => {
         const bloc = el("div", "prevision a-resoudre");
-        bloc.append(el("p", "cas", x.texte), el("p", "source", "Échéance : " + dateDe(x.echeance)));
+        bloc.append(el("p", "cas", x.texte), el("p", "source", T("Échéance : {0}", dateDe(x.echeance))));
         const issues = [["oui", "Arrivé"], ["non", "Pas arrivé"], ["annulee", "Annulée"]];
         const boutons = issues.map(([id, libelle]) => {
           const b = el("button", "bouton secondaire", libelle);
@@ -750,7 +758,7 @@ JEUX.push({
             souvenir.type = "range"; souvenir.min = 5; souvenir.max = 95; souvenir.step = 5; souvenir.value = 50;
             souvenir.setAttribute("aria-label", "Probabilité dont vous vous souvenez");
             const aff = el("p", "valeur-curseur");
-            const m = () => { aff.textContent = typo(souvenir.value + " %"); };
+            const m = () => { aff.textContent = typo(souvenir.value + PC); };
             souvenir.addEventListener("input", m);
             m();
             const ok = el("button", "bouton", "Révéler");
@@ -775,7 +783,7 @@ JEUX.push({
       enregistrer(tous);
       noterPartie("carnet");
       JEUX.find(j => j.id === "carnet").lancer(zone);
-      if (issue !== "annulee") annoncer("Vous aviez annoncé " + x.p + " % ; vous vous souveniez de " + souvenir + " %.");
+      if (issue !== "annulee") annoncer(T("Vous aviez annoncé {0} % ; vous vous souveniez de {1} %.", x.p, souvenir));
     };
 
     // Bilan
@@ -787,8 +795,8 @@ JEUX.push({
       const glissement = glissements.length ? glissements.reduce((a, b) => a + b, 0) / glissements.length : 0;
       const liste = el("ul", "liste-simple");
       liste.append(
-        el("li", null, "Score de Brier moyen : " + fr(Number(brier.toFixed(3))) + " sur " + pluriel(resolues.length, "prévision") + " (0 : parfait ; 0,25 : toujours répondre 50 %)."),
-        el("li", null, "Mémoire : en moyenne, vous vous êtes souvenu d'une probabilité " + (Math.abs(glissement) < 2.5 ? "à peu près exacte" : fr(Math.round(Math.abs(glissement))) + " points " + (glissement > 0 ? "plus proche" : "plus éloignée") + " de ce qui s'est produit") + ".")
+        el("li", null, T("Score de Brier moyen : {0} sur {1} (0 : parfait ; 0,25 : toujours répondre 50 %).", fr(Number(brier.toFixed(3))), pluriel(resolues.length, "prévision"))),
+        el("li", null, T("Mémoire : en moyenne, vous vous êtes souvenu d'une probabilité {0}.", Math.abs(glissement) < 2.5 ? T("à peu près exacte") : T(glissement > 0 ? "{0} points plus proche de ce qui s'est produit" : "{0} points plus éloignée de ce qui s'est produit", fr(Math.round(Math.abs(glissement))))))
       );
       zone.appendChild(liste);
       zone.appendChild(courbeCarnet(resolues));
@@ -799,13 +807,13 @@ JEUX.push({
     if (enCours.length) {
       zone.appendChild(el("h3", "titre-carnet", "En cours"));
       const ul = el("ul", "liste-simple");
-      enCours.forEach(x => ul.appendChild(el("li", null, x.texte + " — " + x.p + " %, échéance le " + dateDe(x.echeance))));
+      enCours.forEach(x => ul.appendChild(el("li", null, x.texte + " — " + T("{0} %, échéance le {1}", x.p, dateDe(x.echeance)))));
       zone.appendChild(ul);
       const agenda = el("button", "bouton secondaire", "Ajouter les échéances à mon agenda");
       agenda.addEventListener("click", () => fichierAgenda("previsions-esprit-critique.ics", enCours.map(x => ({
-        jour: x.echeance, titre: "Prévision à résoudre : " + x.texte,
-        description: "Ouvrez votre carnet pour indiquer l'issue : https://esprit-critique.github.io/#chiffres/carnet",
-        url: "https://esprit-critique.github.io/#chiffres/carnet"
+        jour: x.echeance, titre: T("Prévision à résoudre : {0}", x.texte),
+        description: T("Ouvrez votre carnet pour indiquer l'issue : {0}", URL_SITE + "#chiffres/carnet"),
+        url: URL_SITE + "#chiffres/carnet"
       }))));
       zone.appendChild(agenda);
     }

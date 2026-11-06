@@ -60,12 +60,12 @@ function normale(alea) {
 // Diagramme « si P alors Q » : P inclus dans Q, un point dans Q hors de P
 function implication(description, libP, libQ, libPoint) {
   const svg = toile(320, 196, description);
-  ecrireTexte(svg, 160, 16, "Q : " + libQ, "sch-texte sch-gras", "middle");
+  ecrireTexte(svg, 160, 16, T("Q : {0}", T(libQ)), "sch-texte sch-gras", "middle");
   svg.appendChild(S("circle", { cx: 160, cy: 108, r: 80, class: "sch-clair" }));
   svg.appendChild(S("circle", { cx: 160, cy: 108, r: 80, class: "sch-c-trait" }));
   svg.appendChild(S("circle", { cx: 130, cy: 114, r: 42, class: "sch-carte" }));
   svg.appendChild(S("circle", { cx: 130, cy: 114, r: 42, class: "sch-c-trait" }));
-  ecrireTexte(svg, 130, 118, "P : " + libP, "sch-texte sch-gras", "middle");
+  ecrireTexte(svg, 130, 118, T("P : {0}", T(libP)), "sch-texte sch-gras", "middle");
   svg.appendChild(S("circle", { cx: 204, cy: 108, r: 6, class: "sch-rouge" }));
   ecrireTexte(svg, 204, 128, libPoint, "sch-petit", "middle");
   return svg;
@@ -193,7 +193,7 @@ const SCHEMAS = {
     ecrireTexte(svg, x2, 16, "2e mesure", "sch-texte sch-gras", "middle");
     ecrireTexte(svg, 8, y(moy(hauts.map(p => p.m1))), "5 meilleurs", "sch-petit");
     ecrireTexte(svg, 8, y(moy(bas.map(p => p.m1))), "5 moins bons", "sch-petit");
-    ecrireTexte(svg, 160, 224, "moyennes : " + Math.round(moy(hauts.map(p => p.m1))) + " → " + Math.round(moy(hauts.map(p => p.m2))) + " et " + Math.round(moy(bas.map(p => p.m1))) + " → " + Math.round(moy(bas.map(p => p.m2))), "sch-petit", "middle");
+    ecrireTexte(svg, 160, 224, T("moyennes : {0} → {1} et {2} → {3}", Math.round(moy(hauts.map(p => p.m1))), Math.round(moy(hauts.map(p => p.m2))), Math.round(moy(bas.map(p => p.m1))), Math.round(moy(bas.map(p => p.m2)))), "sch-petit", "middle");
     return {
       svg,
       legende: "Données simulées : chaque score combine un niveau réel et une part de hasard. Sans aucune intervention, les cinq meilleurs de la première mesure baissent en moyenne à la seconde, et les cinq moins bons progressent."
@@ -211,7 +211,7 @@ const SCHEMAS = {
         ecrireTexte(svg, 8, yb + 12, lettre, "sch-petit");
         svg.appendChild(S("rect", { x: 22, y: yb, width: 200, height: 15, class: "sch-fond" }));
         svg.appendChild(S("rect", { x: 22, y: yb, width: 2 * v, height: 15, class: classe }));
-        ecrireTexte(svg, 22 + 2 * v + 6, yb + 12, v + " % (" + f + ")", "sch-petit");
+        ecrireTexte(svg, 22 + 2 * v + 6, yb + 12, v + PC + " (" + f + ")", "sch-petit");
       });
     });
     ecrireTexte(svg, 8, 206, "A : chirurgie ouverte · B : néphrolithotomie percutanée", "sch-petit");
@@ -257,12 +257,12 @@ const SCHEMAS = {
     const x = v => 20 + v * 4;
     [["Roue arrêtée sur 10", 10, 25], ["Roue arrêtée sur 65", 65, 45]].forEach(([libelle, ancre, estimation], i) => {
       const y = 10 + i * 60;
-      ecrireTexte(svg, 20, y + 10, libelle + " : estimation médiane", "sch-texte");
+      ecrireTexte(svg, 20, y + 10, T("{0} : estimation médiane", T(libelle)), "sch-texte");
       svg.appendChild(S("rect", { x: 20, y: y + 16, width: 280, height: 18, class: "sch-fond" }));
       svg.appendChild(S("rect", { x: 20, y: y + 16, width: x(estimation) - 20, height: 18, class: "sch-c" }));
-      ecrireTexte(svg, x(estimation) - 6, y + 29, estimation + " %", "sch-sur-c", "end");
+      ecrireTexte(svg, x(estimation) - 6, y + 29, estimation + PC, "sch-sur-c", "end");
       svg.appendChild(S("line", { x1: x(ancre), y1: y + 12, x2: x(ancre), y2: y + 38, class: "sch-rouge-trait" }));
-      ecrireTexte(svg, x(ancre), y + 50, "ancre : " + ancre, "sch-petit", "middle");
+      ecrireTexte(svg, x(ancre), y + 50, T("ancre : {0}", ancre), "sch-petit", "middle");
     });
     return {
       svg,
@@ -288,7 +288,7 @@ const SCHEMAS = {
     let d = "";
     for (let x = -100; x <= 100; x += 2) d += (x === -100 ? "M" : "L") + (ox + x * ex).toFixed(1) + " " + (oy - v(x) * ey).toFixed(1) + " ";
     svg.appendChild(S("path", { d, class: "sch-c-trait", "stroke-width": 3 }));
-    [[100, "gagner 100 € : +" + Math.round(v(100))], [-100, "perdre 100 € : −" + Math.round(-v(-100))]].forEach(([x, libelle]) => {
+    [[100, T("gagner 100 € : +{0}", Math.round(v(100)))], [-100, T("perdre 100 € : −{0}", Math.round(-v(-100)))]].forEach(([x, libelle]) => {
       const px = ox + x * ex, py = oy - v(x) * ey;
       svg.appendChild(S("line", { x1: px, y1: oy, x2: px, y2: py, class: "sch-pointille" }));
       svg.appendChild(S("circle", { cx: px, cy: py, r: 4, class: "sch-c" }));
@@ -398,7 +398,7 @@ const SCHEMAS = {
     ecrireTexte(svg, 160, 83, "ou", "sch-texte", "middle");
     [[10, 8, "C"], [120, 4, "D"], [236, 10, "E"], [70, 118, "F"], [180, 120, "G"]].forEach(([x, y, t]) => {
       svg.appendChild(S("rect", { x, y, width: 70, height: 32, rx: 3, class: "sch-pointille" }));
-      ecrireTexte(svg, x + 35, y + 21, "Option " + t, "sch-petit", "middle");
+      ecrireTexte(svg, x + 35, y + 21, T("Option {0}", t), "sch-petit", "middle");
     });
     return { svg, legende: "Le faux dilemme ne présente que deux options, souvent une inacceptable et celle qu'on veut imposer. Les autres possibilités (en pointillé) sont passées sous silence." };
   },

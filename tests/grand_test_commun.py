@@ -35,7 +35,8 @@ def executer(pilote, fichiers=("grand-test.js",), essai=True):
     code = "\n".join(lire(f) for f in fichiers)
     if essai:
         code = code.replace("const GRAND_TEST_ESSAI = false;", "const GRAND_TEST_ESSAI = true;")
-    code = outils() + "\n" + code + "\n" + pilote
+    # langue.js lit le document, absent ici : seules les constantes que le moteur emploie sont reprises, en français
+    code = 'const LANGUE = "fr", LOCALE = "fr-FR", PC = " %";\n' + outils() + "\n" + code + "\n" + pilote
     with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
         f.write(code)
     try:

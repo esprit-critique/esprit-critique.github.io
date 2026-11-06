@@ -52,7 +52,7 @@ function effacerGrandTest() {
 function blocProblemeStockage(zone, charge) {
   const bloc = el("div", "section gt-probleme");
   bloc.appendChild(el("h2", "titre-section", "Vos résultats du Grand test ne peuvent pas être lus"));
-  bloc.appendChild(paragraphe("Raison : " + charge.probleme + ". Rien n'a été effacé ni modifié. Le test reste en lecture seule tant que ce contenu est là."));
+  bloc.appendChild(paragraphe(T("Raison : {0}. Rien n'a été effacé ni modifié. Le test reste en lecture seule tant que ce contenu est là.", T(charge.probleme))));
   if (charge.brut !== null && charge.brut !== undefined) {
     bloc.appendChild(paragraphe("Pour ne rien perdre, enregistrez d'abord ce contenu dans un fichier. Vous pourrez le transmettre ou le réimporter plus tard, avec une version du site qui le reconnaît."));
     const exporter = el("button", "bouton", "Enregistrer le contenu brut dans un fichier");
@@ -188,7 +188,7 @@ function sauver(etat) {
   if (GT.lectureSeule) return false;
   const r = enregistrerGrandTest(etat);
   if (r.erreur) {
-    annoncer("Vos réponses n'ont pas pu être enregistrées (" + r.erreur + "). Exportez votre progression avant de fermer la page.");
+    annoncer(T("Vos réponses n'ont pas pu être enregistrées ({0}). Exportez votre progression avant de fermer la page.", T(r.erreur)));
     return false;
   }
   return true;
@@ -234,19 +234,19 @@ function barreProgression(t, ecran) {
   const a = avancement(t);
   const bloc = el("div", "gt-progression");
   const etape = ecran.etape !== undefined ? ETAPES_GT[ecran.etape] : null;
-  bloc.appendChild(el("p", "surtitre", "Test " + t.mode + (etape ? " · étape " + ecran.etape + " : " + etape.titre : " · résultats")));
+  bloc.appendChild(el("p", "surtitre", etape ? T("Test {0} · étape {1} : {2}", nomModeTitre(t.mode), ecran.etape, T(etape.titre)) : T("Test {0} · résultats", nomModeTitre(t.mode))));
   const jauge = el("div", "jauge");
   jauge.setAttribute("role", "progressbar");
   jauge.setAttribute("aria-label", "Avancement du test");
   jauge.setAttribute("aria-valuemin", "0");
   jauge.setAttribute("aria-valuemax", String(a.total));
   jauge.setAttribute("aria-valuenow", String(a.faits));
-  jauge.setAttribute("aria-valuetext", a.faits + " écrans sur " + a.total + (a.minutes ? ", environ " + a.minutes + " minutes restantes" : ""));
+  jauge.setAttribute("aria-valuetext", a.minutes ? T("{0} écrans sur {1}, environ {2} minutes restantes", a.faits, a.total, a.minutes) : T("{0} écrans sur {1}", a.faits, a.total));
   const rempli = el("div");
   rempli.style.width = (100 * a.faits / a.total) + "%";
   jauge.appendChild(rempli);
   bloc.appendChild(jauge);
-  if (a.minutes) bloc.appendChild(el("p", "source", "Environ " + a.minutes + " minutes restantes. Vous pouvez fermer la page : le test reprendra ici."));
+  if (a.minutes) bloc.appendChild(el("p", "source", T("Environ {0} minutes restantes. Vous pouvez fermer la page : le test reprendra ici.", a.minutes)));
   return bloc;
 }
 
@@ -270,7 +270,7 @@ function accueilGrandTest(zone) {
     .forEach(([mode, titre, texte]) => {
       const carte = el("div", "gt-mode");
       carte.append(el("h2", "titre-section", titre), el("p", "etiquette", DUREES_ANNONCEES[mode]), paragraphe(texte));
-      const b = el("button", "bouton", "Commencer le test " + mode);
+      const b = el("button", "bouton", T("Commencer le test {0}", nomMode(mode)));
       b.addEventListener("click", () => commencerTest(mode));
       carte.appendChild(b);
       choix.appendChild(carte);
@@ -321,9 +321,9 @@ const itemsNotesEtape = (t, e) => t.instances.filter(x => x.valeurs.etape === e)
 
 function ecranIntro(zone, t, ecran) {
   const e = ETAPES_GT[ecran.etape];
-  zone.appendChild(el("h2", "titre-section", "Étape " + ecran.etape + " : " + e.titre));
-  zone.appendChild(el("p", "etiquette", "Environ " + (e.duree[t.mode] || 1) + " minute" + ((e.duree[t.mode] || 1) > 1 ? "s" : "")));
-  zone.appendChild(paragraphe("Pourquoi cette étape : " + e.pourquoi.charAt(0).toLowerCase() + e.pourquoi.slice(1)));
+  zone.appendChild(el("h2", "titre-section", T("Étape {0} : {1}", ecran.etape, T(e.titre))));
+  zone.appendChild(el("p", "etiquette", T((e.duree[t.mode] || 1) > 1 ? "Environ {0} minutes" : "Environ {0} minute", e.duree[t.mode] || 1)));
+  zone.appendChild(paragraphe(T("Pourquoi cette étape : {0}", minuscule1(T(e.pourquoi)))));
   zone.appendChild(paragraphe(e.avertissement, "consigne-longue"));
   if (ecran.etape === 1 && t.mode === "complet") zone.appendChild(paragraphe("Les corrections de cette étape viendront à la fin de l'étape, pas après chaque affirmation : les voir trop tôt modifierait votre façon de répondre aux suivantes."));
   if (ecran.etape === 2 && t.mode === "complet") zone.appendChild(paragraphe("Les raisonnements « valide ou non valide » seront corrigés à la fin de l'étape ; les autres questions, aussitôt."));
@@ -333,7 +333,7 @@ function ecranIntro(zone, t, ecran) {
     const champ = el("input", "champ");
     champ.type = "number"; champ.min = "0"; champ.max = String(notes.length); champ.inputMode = "numeric";
     champ.id = "gt-estimation";
-    const etiquette = el("label", null, "Avant de commencer : sur " + notes.length + " questions notées, combien pensez-vous en réussir ? (facultatif)");
+    const etiquette = el("label", null, T("Avant de commencer : sur {0} questions notées, combien pensez-vous en réussir ? (facultatif)", notes.length));
     etiquette.htmlFor = "gt-estimation";
     const ligne = el("div", "ligne");
     ligne.append(champ);
@@ -349,15 +349,15 @@ function ecranIntro(zone, t, ecran) {
 
 function ecranFin(zone, t, ecran) {
   const e = ecran.etape;
-  zone.appendChild(el("h2", "titre-section", "Fin de l'étape " + e + " : " + ETAPES_GT[e].titre));
+  zone.appendChild(el("h2", "titre-section", T("Fin de l'étape {0} : {1}", e, T(ETAPES_GT[e].titre))));
   const etapeDe = id => t.instances.find(x => x.itemId === id).valeurs.etape;
   const lignes = lignesPassation(t).filter(l => etapeDe(l.reponse.itemId) === e);
   const notees = lignes.filter(l => l.juste !== null);
   if (notees.length) {
     const justes = notees.filter(l => l.juste).length;
     const estimation = (t.estimationsEtape[e + "-intro"] || {}).estimation;
-    zone.appendChild(paragraphe(justes + " réponse" + (justes > 1 ? "s" : "") + " juste" + (justes > 1 ? "s" : "") + " sur " + notees.length + "."
-      + (typeof estimation === "number" ? " Vous en aviez prévu " + estimation + "." : "")));
+    zone.appendChild(paragraphe(T(justes > 1 ? "{0} réponses justes sur {1}." : "{0} réponse juste sur {1}.", justes, notees.length)
+      + (typeof estimation === "number" ? " " + T("Vous en aviez prévu {0}.", estimation) : "")));
   }
   // Corrections différées, annoncées au début de l'étape
   const differees = lignes.filter(l => (l.item.type === "vf" || l.item.type === "binaire") && t.mode === "complet");
@@ -398,7 +398,7 @@ function groupeChoix(legende, options, classe, surChoix) {
 function groupeCertitude(type, surChoix) {
   const niveaux = NIVEAUX_CERTITUDE_GT[type];
   const libelles = LIBELLES_CERTITUDE_GT[type] || {};
-  const g = groupeChoix("Votre certitude d'avoir juste", niveaux.map(n => libelles[n] || n + " %"), "gt-certitude", () => surChoix());
+  const g = groupeChoix("Votre certitude d'avoir juste", niveaux.map(n => libelles[n] || n + PC), "gt-certitude", () => surChoix());
   g.niveau = () => g.valeur() === null ? null : niveaux[g.valeur()];
   return g;
 }
@@ -420,7 +420,7 @@ function liensItem(item) {
   });
   (item.ateliers || []).forEach(adresse => {
     const a = tousLesAteliers().find(x => x.adresse === adresse);
-    if (a) liens.appendChild(lienVers(adresse, "Atelier : " + a.atelier.titre));
+    if (a) liens.appendChild(lienVers(adresse, T("Atelier : {0}", T(a.atelier.titre))));
   });
   return liens.childNodes.length ? liens : null;
 }
@@ -428,9 +428,9 @@ function liensItem(item) {
 // Texte de la réponse attendue
 function texteAttendu(item) {
   if (item.type === "qcm") return item.choixAffiches[item.justeAffiche];
-  if (item.type === "calcul") return nombreGT(item.juste) + (item.unite ? " " + item.unite : "");
-  if (item.type === "binaire") return item.juste ? "le raisonnement est valide" : "le raisonnement n'est pas valide";
-  if (item.type === "vf") return item.juste ? "vrai" : "faux";
+  if (item.type === "calcul") return LANGUE === "en" && item.unite === "€" ? "€" + nombreGT(item.juste) : nombreGT(item.juste) + (item.unite ? " " + T(item.unite) : "");
+  if (item.type === "binaire") return item.juste ? T("le raisonnement est valide") : T("le raisonnement n'est pas valide");
+  if (item.type === "vf") return item.juste ? T("vrai") : T("faux");
   return "";
 }
 
@@ -439,11 +439,11 @@ function correction(item, valeur, certitude) {
   const juste = reponseJuste(item, valeur);
   const retour = el("div", "retour-quiz");
   retour.setAttribute("role", "status");
-  retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), juste ? "Juste." : (valeur === null ? "Sans réponse. " : "") + "Réponse attendue : " + texteAttendu(item) + "."));
+  retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), juste ? T("Juste.") : (valeur === null ? T("Sans réponse.") + " " : "") + T("Réponse attendue : {0}.", texteAttendu(item))));
   if (!juste && reponseLeurre(item, valeur)) retour.appendChild(paragraphe("C'est la réponse qui vient spontanément : la question est construite pour la suggérer."));
   retour.appendChild(paragraphe(item.explication));
   if (item.surCorrection) retour.appendChild(paragraphe(MESSAGE_SUR_CORRECTION));
-  if (item.source) retour.appendChild(el("p", "source", "Source : " + item.source));
+  if (item.source) retour.appendChild(el("p", "source", T("Source : {0}", item.source)));
   const liens = liensItem(item);
   if (liens) retour.appendChild(liens);
   // Auto-explication facultative, après une erreur commise avec assurance : rien n'est enregistré
@@ -462,10 +462,10 @@ function correction(item, valeur, certitude) {
 function correctionCourte(l) {
   const bloc = el("div", "question-test");
   const juste = l.juste;
-  bloc.appendChild(el("p", "cas", l.item.type === "vf" ? "« " + l.item.texte + " »" : l.item.texte));
+  bloc.appendChild(el("p", "cas", l.item.type === "vf" ? T("« {0} »", l.item.texte) : l.item.texte));
   bloc.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Réponse attendue : ") + texteAttendu(l.item) + "."));
   bloc.appendChild(paragraphe(l.item.explication));
-  if (l.item.source) bloc.appendChild(el("p", "source", "Source : " + l.item.source));
+  if (l.item.source) bloc.appendChild(el("p", "source", T("Source : {0}", l.item.source)));
   const liens = liensItem(l.item);
   if (liens) bloc.appendChild(liens);
   return bloc;
@@ -482,7 +482,7 @@ function ecranItem(zone, t, ecran) {
   // Titre de l'écran : numéro de la question dans son étape
   const memeEtape = t.instances.filter(x => x.valeurs.etape === inst.valeurs.etape);
   if (!["drm", "recit", "source"].includes(item.type))
-    carte.appendChild(el("h2", "gt-numero", "Question " + (memeEtape.indexOf(inst) + 1) + " sur " + memeEtape.length));
+    carte.appendChild(el("h2", "gt-numero", T("Question {0} sur {1}", memeEtape.indexOf(inst) + 1, memeEtape.length)));
   rendus[item.type](carte, t, item, inst);
 }
 
@@ -490,7 +490,7 @@ function ecranItem(zone, t, ecran) {
 const correctionDifferee = (t, item) => t.mode === "complet" && (item.type === "vf" || item.type === "binaire");
 
 function itemChoix(carte, t, item) {
-  if (item.texte) carte.appendChild(el("p", item.type === "vf" ? "cas" : null, item.type === "vf" ? "« " + item.texte + " »" : item.texte));
+  if (item.texte) carte.appendChild(el("p", item.type === "vf" ? "cas" : null, item.type === "vf" ? T("« {0} »", item.texte) : item.texte));
   const question = item.type === "vf" ? "Cette affirmation est-elle vraie ou fausse ?" : item.question;
   const options = item.type === "qcm" ? item.choixAffiches : item.type === "vf" ? ["Vrai", "Faux"] : item.choix;
   const valider = boutonValider();
@@ -583,17 +583,17 @@ function correctionFourchette(q, b, e, h) {
   const dedans = b <= q.v && q.v <= h;
   const retour = el("div", "retour-quiz");
   retour.setAttribute("role", "status");
-  retour.appendChild(el("p", "verdict " + (dedans ? "juste" : "faux"), (dedans ? "Dans votre fourchette. " : "Hors de votre fourchette. ") + "Vraie valeur : " + nombreGT(q.v) + " " + q.unite + "."));
+  retour.appendChild(el("p", "verdict " + (dedans ? "juste" : "faux"), (dedans ? T("Dans votre fourchette.") : T("Hors de votre fourchette.")) + " " + T("Vraie valeur : {0} {1}.", nombreGT(q.v), T(q.unite))));
   retour.appendChild(ligneIntervalle({ q: q.q, v: q.v, unite: q.unite }, b, h, dedans));
-  retour.appendChild(el("p", "source", "Votre estimation : " + nombreGT(e) + " " + q.unite + ". Source : " + q.source + "."));
+  retour.appendChild(el("p", "source", T("Votre estimation : {0} {1}. Source : {2}.", nombreGT(e), T(q.unite), q.source)));
   return retour;
 }
 
 function itemRappel(carte, t, item) {
-  carte.appendChild(paragraphe("Retour sur une estimation de l'étape 3 : « " + item.q.q + " ». Quelle était votre estimation, au plus près de votre souvenir ?"));
+  carte.appendChild(paragraphe(T("Retour sur une estimation de l'étape 3 : « {0} ». Quelle était votre estimation, au plus près de votre souvenir ?", item.q.q)));
   const champ = el("input", "champ");
   champ.id = "gt-rappel"; champ.inputMode = "decimal"; champ.autocomplete = "off";
-  const lab = el("label", "consigne", "Votre estimation d'alors (en " + item.q.unite + ")");
+  const lab = el("label", "consigne", T("Votre estimation d'alors (en {0})", T(item.q.unite)));
   lab.htmlFor = "gt-rappel";
   const ligne = el("div", "ligne");
   ligne.append(champ, el("span", "source", item.q.unite));
@@ -648,7 +648,7 @@ function itemSociete(carte, t, item) {
   carte.appendChild(g.element);
   item.arguments.forEach((a, k) => {
     const fs = el("fieldset", "gt-groupe");
-    fs.appendChild(el("legend", "consigne", "Argument " + (k + 1) + " — à quel point est-il solide ?"));
+    fs.appendChild(el("legend", "consigne", T("Argument {0} — à quel point est-il solide ?", k + 1)));
     fs.appendChild(el("p", "cas", "« " + a.texte + " »"));
     fs.appendChild(echelleSept("Très faible", "Très solide", n => { notes[k] = n; verifier(); }));
     carte.appendChild(fs);
@@ -660,7 +660,7 @@ function itemSociete(carte, t, item) {
     valider.remove();
     const retour = el("div", "retour-quiz");
     retour.appendChild(el("p", "verdict juste", "Ce que montrent ces arguments"));
-    item.arguments.forEach(a => retour.appendChild(paragraphe((a.camp === "pour" ? "Pour, " : "Contre, ") + (a.qualite === "solide" ? "solide : il donne une raison qui se discute sur le fond." : "faible : " + (ficheSophismeNom(a.sophisme) || "un sophisme") + ".") + " « " + a.texte + " »")));
+    item.arguments.forEach(a => retour.appendChild(paragraphe(T(a.camp === "pour" ? "Pour," : "Contre,") + " " + (a.qualite === "solide" ? T("solide : il donne une raison qui se discute sur le fond.") : T("faible : {0}.", ficheSophismeNom(a.sophisme) || T("un sophisme"))) + " " + T("« {0} »", T(a.texte)))));
     retour.appendChild(paragraphe("Pour aller plus loin : quelle observation vous ferait changer d'avis sur cette question ?", "consigne-longue"));
     carte.appendChild(retour);
     carte.appendChild(boutonSuivant("Suivant", () => rafraichir()));
@@ -708,7 +708,7 @@ function ecranSourceLecture(zone, t, ecran) {
   zone.appendChild(el("h2", "titre-section", "Des informations et leur source"));
   zone.appendChild(paragraphe("Voici six informations sur un village imaginaire, chacune avec sa source. Vous devrez retrouver plus tard qui a dit quoi."));
   const ul = el("ul", "liste-simple");
-  demo.lues.forEach(x => ul.appendChild(el("li", null, "Selon " + x.source + " : " + x.texte)));
+  demo.lues.forEach(x => ul.appendChild(el("li", null, T("Selon {0} : {1}", x.source, x.texte))));
   zone.appendChild(ul);
   zone.appendChild(boutonSuivant("J'ai lu les informations", () => marquer(ecran.cle)));
 }
@@ -727,7 +727,7 @@ function itemDrmReconnaissance(carte, t, demo) {
   const reponses = demo.test.map(() => null);
   const valider = boutonValider();
   demo.test.forEach((x, k) => {
-    const g = groupeChoix("« " + x.mot + " » était-il dans la liste ?", ["Oui", "Non"], null, j => { reponses[k] = j === 0; valider.disabled = reponses.some(r => r === null); });
+    const g = groupeChoix(T("« {0} » était-il dans la liste ?", x.mot), [T("Oui"), T("Non")], null, j => { reponses[k] = j === 0; valider.disabled = reponses.some(r => r === null); });
     carte.appendChild(g.element);
   });
   carte.appendChild(valider);
@@ -748,7 +748,7 @@ function itemSourceTest(carte, t, demo) {
   const reponses = demo.test.map(() => undefined);
   const valider = boutonValider();
   demo.test.forEach((x, k) => {
-    const g = groupeChoix("« " + x.texte + " » — d'où venait cette information ?", [demo.sources[0], demo.sources[1], "Je ne sais plus"], null, j => {
+    const g = groupeChoix(T("« {0} » — d'où venait cette information ?", x.texte), [demo.sources[0], demo.sources[1], T("Je ne sais plus")], null, j => {
       reponses[k] = j === 2 ? null : demo.sources[j]; valider.disabled = reponses.some(r => r === undefined);
     });
     carte.appendChild(g.element);
@@ -768,9 +768,9 @@ function bilanMemoire(t) {
   if (notes.length) {
     const v = veriteIllusoire(notes);
     bloc.appendChild(el("h3", null, "Les affirmations déjà lues"));
-    bloc.appendChild(paragraphe("Huit des affirmations à noter avaient été lues au début du test, sans que vous ayez à les juger. "
-      + (v.toutes === null ? "" : "Vous les avez notées en moyenne " + (v.toutes > 0 ? nombreGT(Math.round(v.toutes * 10) / 10) + " point plus vraies" : v.toutes < 0 ? nombreGT(Math.round(-v.toutes * 10) / 10) + " point moins vraies" : "comme les autres") + " que les nouvelles, sur une échelle de 1 à 6. ")
-      + "Chez beaucoup de gens, une phrase déjà lue paraît un peu plus vraie : c'est l'effet de vérité illusoire. Sur seize phrases, ce résultat est une illustration, pas une mesure."));
+    bloc.appendChild(paragraphe(T("Huit des affirmations à noter avaient été lues au début du test, sans que vous ayez à les juger.") + " "
+      + (v.toutes === null ? "" : T("Vous les avez notées en moyenne {0} que les nouvelles, sur une échelle de 1 à 6.", v.toutes > 0 ? T("{0} point plus vraies", nombreGT(Math.round(v.toutes * 10) / 10)) : v.toutes < 0 ? T("{0} point moins vraies", nombreGT(Math.round(-v.toutes * 10) / 10)) : T("comme les autres")) + " ")
+      + T("Chez beaucoup de gens, une phrase déjà lue paraît un peu plus vraie : c'est l'effet de vérité illusoire. Sur seize phrases, ce résultat est une illustration, pas une mesure.")));
     const ul = el("ul", "liste-simple");
     lignes.filter(l => l.item.type === "exposition-note").forEach(l => ul.appendChild(el("li", null, (l.item.vrai ? "Vraie : " : "Fausse : ") + l.item.texte)));
     bloc.appendChild(ul);
@@ -785,9 +785,9 @@ function bilanMemoire(t) {
     bloc.appendChild(el("h3", null, "Vos souvenirs d'estimation"));
     const moy = c => { const s = r.filter(x => x.correction === c).map(x => x.s); return s.length ? moyenneGT(s) : null; };
     const vues = moy("immediate"), nonVues = moy("differee");
-    bloc.appendChild(paragraphe("Pour trois estimations, vous aviez vu la vraie valeur ; pour trois autres, non. "
-      + (vues !== null && nonVues !== null ? "Vos souvenirs se sont rapprochés de la vraie valeur de " + Math.round(100 * vues) + " % en moyenne quand vous l'aviez vue, contre " + Math.round(100 * nonVues) + " % sinon. " : "")
-      + "Connaître la réponse tend à déplacer le souvenir de ce que l'on pensait : c'est le biais rétrospectif. Sur six estimations, ce n'est qu'une illustration."));
+    bloc.appendChild(paragraphe(T("Pour trois estimations, vous aviez vu la vraie valeur ; pour trois autres, non.") + " "
+      + (vues !== null && nonVues !== null ? T("Vos souvenirs se sont rapprochés de la vraie valeur de {0} % en moyenne quand vous l'aviez vue, contre {1} % sinon.", Math.round(100 * vues), Math.round(100 * nonVues)) + " " : "")
+      + T("Connaître la réponse tend à déplacer le souvenir de ce que l'on pensait : c'est le biais rétrospectif. Sur six estimations, ce n'est qu'une illustration.")));
     lignes.filter(l => l.item.type === "fourchette" && l.item.correction === "differee" && Array.isArray(l.reponse.valeur))
       .forEach(l => bloc.appendChild(correctionFourchette(l.item.q, ...[l.reponse.valeur[0], l.reponse.valeur[1], l.reponse.valeur[2]])));
   }
@@ -795,7 +795,7 @@ function bilanMemoire(t) {
   if (drm && Array.isArray(drm.reponse.valeur)) {
     const b = bilanDRM(drm.item, drm.reponse.valeur);
     bloc.appendChild(el("h3", null, "La liste de mots"));
-    bloc.appendChild(paragraphe((b.critiqueReconnu ? "Vous avez reconnu « " + drm.item.critique + " », qui n'était pas dans la liste. " : "Vous n'avez pas reconnu « " + drm.item.critique + " », qui n'était pas dans la liste. ") + drm.item.explication));
+    bloc.appendChild(paragraphe((b.critiqueReconnu ? T("Vous avez reconnu « {0} », qui n'était pas dans la liste.", drm.item.critique) : T("Vous n'avez pas reconnu « {0} », qui n'était pas dans la liste.", drm.item.critique)) + " " + drm.item.explication));
   }
   const recit = de("recit");
   if (recit && Array.isArray(recit.reponse.valeur)) {
@@ -807,7 +807,7 @@ function bilanMemoire(t) {
   if (source && Array.isArray(source.reponse.valeur)) {
     const b = bilanSource(source.item, source.reponse.valeur.map(x => x === "" ? null : x));
     bloc.appendChild(el("h3", null, "Qui a dit quoi"));
-    bloc.appendChild(paragraphe("Source retrouvée pour " + b.justes + " information" + (b.justes > 1 ? "s" : "") + " sur " + b.n + ". " + source.item.explication));
+    bloc.appendChild(paragraphe(T(b.justes > 1 ? "Source retrouvée pour {0} informations sur {1}." : "Source retrouvée pour {0} information sur {1}.", b.justes, b.n) + " " + source.item.explication));
   }
   return bloc;
 }
@@ -838,15 +838,19 @@ const AXES_GT = {
   E: { nom: "Étalonnage", mesure: "Votre certitude correspond-elle à votre taux de réussite ?" },
   F: { nom: "Impartialité (indicateur exploratoire)", mesure: "Juger la force d'un argument sans favoriser son propre camp." }
 };
-const pourcentArrondi = x => Math.round(100 * x) + " %";
+const pourcentArrondi = x => Math.round(100 * x) + PC;
+// « complet » / « express » : le mode d'un test, dit dans la langue de la page
+const nomMode = mode => T(mode === "express" ? "express" : "complet");
+// (en tête de phrase, en anglais : « Full test », « Express test »)
+const nomModeTitre = mode => LANGUE === "en" ? majuscule(nomMode(mode)) : nomMode(mode);
 
 // Ligne de résultat d'un axe de réussite (A, B, C)
 function resumeProportion(axe, s, hasard) {
   if (!s || !s.n) return "Non mesuré dans ce test.";
-  if (s.n < ITEMS_MIN_PLAGE) return s.n + " item" + (s.n > 1 ? "s" : "") + " seulement : trop peu pour estimer.";
+  if (s.n < ITEMS_MIN_PLAGE) return T(s.n > 1 ? "{0} items seulement : trop peu pour estimer." : "{0} item seulement : trop peu pour estimer.", s.n);
   const r = { n: s.n, bas: s.plage.bas, haut: s.plage.haut };
-  return pourcentArrondi(s.valeur) + " de réponses justes sur " + s.n + " items. Plage plausible : de " + pourcentArrondi(s.plage.bas) + " à " + pourcentArrondi(s.plage.haut)
-    + ". " + majuscule(interpreterProportion(r, hasard)) + (hasard !== null ? " (hasard : " + pourcentArrondi(hasard) + ")" : "") + "."
+  return T("{0} de réponses justes sur {1} items. Plage plausible : de {2} à {3}.", pourcentArrondi(s.valeur), s.n, pourcentArrondi(s.plage.bas), pourcentArrondi(s.plage.haut))
+    + " " + majuscule(T(interpreterProportion(r, hasard))) + (hasard !== null ? " " + T("(hasard : {0})", pourcentArrondi(hasard)) : "") + "."
     + (precisionDe(s.n) === "faible" ? " Précision faible : peu d'items." : "");
 }
 
@@ -856,7 +860,7 @@ function afficherProfil(zone, runId) {
   const scores = calculerScores(t);
   const lignes = lignesPassation(t);
   zone.appendChild(el("h2", "titre-section", "Vos résultats"));
-  zone.appendChild(el("p", "etiquette", "Test " + t.mode + (t.dateFin ? ", terminé le " + new Date(t.dateFin).toLocaleDateString("fr-FR") : "")));
+  zone.appendChild(el("p", "etiquette", t.dateFin ? T("Test {0}, terminé le {1}", nomModeTitre(t.mode), new Date(t.dateFin).toLocaleDateString(LOCALE)) : T("Test {0}", nomModeTitre(t.mode))));
   zone.appendChild(paragraphe("Il n'y a pas de score global : chaque axe se lit séparément, avec sa marge d'incertitude. Ces résultats décrivent vos réponses à ce test, pas votre valeur."));
 
   const axes = el("div", "gt-axes");
@@ -867,11 +871,11 @@ function afficherProfil(zone, runId) {
     bloc.appendChild(paragraphe(resumeProportion(a, scores[a], hasard)));
     if (a === "A") {
       const part = partLeurre(lignes.filter(l => l.item.axe === "A" && l.juste !== null).map(l => ({ juste: l.juste, leurre: l.leurre })));
-      if (part !== null) bloc.appendChild(paragraphe("Parmi vos erreurs, " + pourcentArrondi(part) + " correspondaient exactement à la réponse intuitive que la question suggérait.", "source"));
+      if (part !== null) bloc.appendChild(paragraphe(T("Parmi vos erreurs, {0} correspondaient exactement à la réponse intuitive que la question suggérait.", pourcentArrondi(part)), "source"));
       if (a === "A" && t.mode === "complet") {
         const syl = lignes.filter(l => l.item.type === "binaire" && l.reponse.valeur !== null).map(l => ({ credible: l.item.credible, repondValide: l.reponse.valeur === true }));
         const b = biaisCroyance(syl);
-        if (b !== null) bloc.appendChild(paragraphe("Indicateur exploratoire : vous avez jugé « valides » " + (b > 0 ? pourcentArrondi(b) + " de raisonnements de plus quand leur conclusion était crédible" : b < 0 ? pourcentArrondi(-b) + " de raisonnements de moins quand leur conclusion était crédible" : "autant de raisonnements à conclusion crédible que non crédible") + ", sur " + syl.length + " raisonnements. Seule la forme aurait dû compter.", "source"));
+        if (b !== null) bloc.appendChild(paragraphe(T("Indicateur exploratoire : vous avez jugé « valides » {0}, sur {1} raisonnements. Seule la forme aurait dû compter.", b > 0 ? T("{0} de raisonnements de plus quand leur conclusion était crédible", pourcentArrondi(b)) : b < 0 ? T("{0} de raisonnements de moins quand leur conclusion était crédible", pourcentArrondi(-b)) : T("autant de raisonnements à conclusion crédible que non crédible"), syl.length), "source"));
       }
     }
     axes.appendChild(bloc);
@@ -879,37 +883,34 @@ function afficherProfil(zone, runId) {
   // D
   const d = blocAxe("D");
   if (scores.D.valeur !== null) {
-    d.appendChild(paragraphe("Discernement (d′) : " + nombreGT(Math.round(scores.D.valeur * 100) / 100) + (scores.D.plage ? ", plage plausible de " + nombreGT(Math.round(scores.D.plage.bas * 100) / 100) + " à " + nombreGT(Math.round(scores.D.plage.haut * 100) / 100) : "")
-      + ". Zéro correspond au hasard, 3,54 au maximum possible avec 12 affirmations vraies et 12 fausses."));
+    d.appendChild(paragraphe(T("Discernement (d′) : {0}{1}. Zéro correspond au hasard, 3,54 au maximum possible avec 12 affirmations vraies et 12 fausses.", nombreGT(Math.round(scores.D.valeur * 100) / 100), scores.D.plage ? T(", plage plausible de {0} à {1}", nombreGT(Math.round(scores.D.plage.bas * 100) / 100), nombreGT(Math.round(scores.D.plage.haut * 100) / 100)) : "")));
     const c = scores.D.c;
-    d.appendChild(paragraphe("Tendance de réponse (c) : " + nombreGT(Math.round(c * 100) / 100) + (c > 0.2 ? ", une tendance à répondre « faux »." : c < -0.2 ? ", une tendance à répondre « vrai »." : ", sans tendance marquée.") + " Discerner et avoir une tendance sont deux choses différentes.", "source"));
+    d.appendChild(paragraphe(T("Tendance de réponse (c) : {0}{1} Discerner et avoir une tendance sont deux choses différentes.", nombreGT(Math.round(c * 100) / 100), c > 0.2 ? T(", une tendance à répondre « faux ».") : c < -0.2 ? T(", une tendance à répondre « vrai ».") : T(", sans tendance marquée.")), "source"));
   } else {
     const vf = lignes.filter(l => l.item.type === "vf" && l.juste !== null);
-    d.appendChild(paragraphe(vf.length ? vf.filter(l => l.juste).length + " affirmations jugées correctement sur " + vf.length + ". Démonstration seulement : le test express compte trop peu d'affirmations pour estimer le discernement." : "Non mesuré dans ce test."));
+    d.appendChild(paragraphe(vf.length ? T("{0} affirmations jugées correctement sur {1}. Démonstration seulement : le test express compte trop peu d'affirmations pour estimer le discernement.", vf.filter(l => l.juste).length, vf.length) : T("Non mesuré dans ce test.")));
   }
   axes.appendChild(d);
   // E
   const e = blocAxe("E");
   if (scores.E.valeur !== null) {
     const sc = scores.E.valeur;
-    e.appendChild(paragraphe("Écart entre certitude moyenne et réussite : " + (sc >= 0 ? "+" : "−") + Math.abs(Math.round(100 * sc)) + " points"
-      + (scores.E.plage ? " (plage plausible de " + Math.round(100 * scores.E.plage.bas) + " à " + Math.round(100 * scores.E.plage.haut) + ")" : "") + ", sur " + scores.E.n + " réponses. "
-      + (scores.E.plage && scores.E.plage.bas > 0 ? "Votre certitude a dépassé votre réussite." : scores.E.plage && scores.E.plage.haut < 0 ? "Vous avez été moins sûr que vous auriez pu l'être." : "Pas d'écart net entre certitude et réussite.")));
+    e.appendChild(paragraphe(T("Écart entre certitude moyenne et réussite : {0} points{1}, sur {2} réponses.", (sc >= 0 ? "+" : "−") + Math.abs(Math.round(100 * sc)), scores.E.plage ? " " + T("(plage plausible de {0} à {1})", Math.round(100 * scores.E.plage.bas), Math.round(100 * scores.E.plage.haut)) : "", scores.E.n) + " "
+      + (scores.E.plage && scores.E.plage.bas > 0 ? T("Votre certitude a dépassé votre réussite.") : scores.E.plage && scores.E.plage.haut < 0 ? T("Vous avez été moins sûr que vous auriez pu l'être.") : T("Pas d'écart net entre certitude et réussite."))));
     const reponses = lignes.filter(l => l.juste !== null && l.reponse.certitude !== null).map(l => ({ p: l.reponse.certitude / 100, o: l.juste ? 1 : 0 }));
     const b = brier(reponses), m = murphy(reponses);
-    if (b && m) e.appendChild(paragraphe("Score de Brier : " + nombreGT(Math.round(b.score * 1000) / 1000) + " (0 est parfait). Il se décompose en fiabilité " + nombreGT(Math.round(m.fiabilite * 1000) / 1000)
-      + ", moins résolution " + nombreGT(Math.round(m.resolution * 1000) / 1000) + ", plus incertitude " + nombreGT(Math.round(m.incertitude * 1000) / 1000) + ".", "source"));
+    if (b && m) e.appendChild(paragraphe(T("Score de Brier : {0} (0 est parfait). Il se décompose en fiabilité {1}, moins résolution {2}, plus incertitude {3}.", nombreGT(Math.round(b.score * 1000) / 1000), nombreGT(Math.round(m.fiabilite * 1000) / 1000), nombreGT(Math.round(m.resolution * 1000) / 1000), nombreGT(Math.round(m.incertitude * 1000) / 1000)), "source"));
   } else e.appendChild(paragraphe("Trop peu de réponses avec certitude pour estimer."));
   const fourchettes = lignes.filter(l => l.item.type === "fourchette" && Array.isArray(l.reponse.valeur))
     .map(l => ({ q: { v: l.item.q.v, unite: l.item.q.unite }, bas: l.reponse.valeur[0], haut: l.reponse.valeur[2] }));
   const bf = bilanFourchettes(fourchettes);
-  if (bf) e.appendChild(paragraphe("Fourchettes « à 90 % » : " + bf.k + " sur " + bf.n + " contenaient la vraie valeur." + (bf.n < 8 ? " Trop peu de fourchettes pour en tirer une tendance." : "")));
+  if (bf) e.appendChild(paragraphe(T("Fourchettes « à 90 % » : {0} sur {1} contenaient la vraie valeur.", bf.k, bf.n) + (bf.n < 8 ? " " + T("Trop peu de fourchettes pour en tirer une tendance.") : "")));
   axes.appendChild(e);
   // F
   const f = blocAxe("F");
   if (t.mode !== "complet") f.appendChild(paragraphe("Non mesuré dans le test express."));
   else if (scores.F.valeur === null) f.appendChild(paragraphe("Non calculé : il faut avoir pris position sur au moins une question, et noter les huit arguments."));
-  else f.appendChild(paragraphe("En moyenne, vous avez noté les arguments de votre camp " + (Math.abs(scores.F.valeur) < 0.05 ? "comme ceux du camp opposé" : nombreGT(Math.round(Math.abs(scores.F.valeur) * 10) / 10) + " point " + (scores.F.valeur > 0 ? "plus" : "moins") + " solides que ceux du camp opposé") + ", sur une échelle de 1 à 7. Indicateur exploratoire, fondé sur " + scores.F.n + " notes : ce n'est pas un score stable."));
+  else f.appendChild(paragraphe(T("En moyenne, vous avez noté les arguments de votre camp {0}, sur une échelle de 1 à 7. Indicateur exploratoire, fondé sur {1} notes : ce n'est pas un score stable.", Math.abs(scores.F.valeur) < 0.05 ? T("comme ceux du camp opposé") : T(scores.F.valeur > 0 ? "{0} point plus solides que ceux du camp opposé" : "{0} point moins solides que ceux du camp opposé", nombreGT(Math.round(Math.abs(scores.F.valeur) * 10) / 10)), scores.F.n)));
   axes.appendChild(f);
   zone.appendChild(axes);
   const hasards = { A: hasardConventionnel(lignes.filter(l => l.item.axe === "A" && l.juste !== null).map(l => l.item.chance)), B: 0.25, C: 0.25 };
@@ -930,11 +931,11 @@ function afficherProfil(zone, runId) {
 
   // Sur-correction, répétitions, réponses très rapides
   const sur = indiceSurCorrection(lignes.filter(l => l.juste !== null).map(l => Object.assign({ reponse: l.reponse.valeur }, l.item)));
-  if (sur && sur.indice > 0) zone.appendChild(paragraphe("Sur " + sur.n + " situations où la preuve permettait de conclure, " + Math.round(sur.indice * sur.n) + " réponse" + (sur.indice * sur.n > 1.5 ? "s ont" : " a") + " rejeté la conclusion par principe. " + MESSAGE_SUR_CORRECTION));
+  if (sur && sur.indice > 0) zone.appendChild(paragraphe(T(sur.indice * sur.n > 1.5 ? "Sur {0} situations où la preuve permettait de conclure, {1} réponses ont rejeté la conclusion par principe." : "Sur {0} situations où la preuve permettait de conclure, {1} réponse a rejeté la conclusion par principe.", sur.n, Math.round(sur.indice * sur.n)) + " " + T(MESSAGE_SUR_CORRECTION)));
   const dejaVus = t.instances.filter(x => x.dejaVu).length;
-  if (dejaVus) zone.appendChild(paragraphe(dejaVus + " item" + (dejaVus > 1 ? "s" : "") + " sur " + t.instances.length + " (" + pourcentArrondi(dejaVus / t.instances.length) + ") avai" + (dejaVus > 1 ? "ent" : "t") + " déjà été vu" + (dejaVus > 1 ? "s" : "") + " lors d'un test précédent.", "source"));
+  if (dejaVus) zone.appendChild(paragraphe(T(dejaVus > 1 ? "{0} items sur {1} ({2}) avaient déjà été vus lors d'un test précédent." : "{0} item sur {1} ({2}) avait déjà été vu lors d'un test précédent.", dejaVus, t.instances.length, pourcentArrondi(dejaVus / t.instances.length)), "source"));
   const rapides = t.reponses.filter(r => r.dureeMs !== null && r.dureeMs < 2000 && r.certitude !== null).length;
-  if (rapides) zone.appendChild(paragraphe(rapides + " réponse" + (rapides > 1 ? "s" : "") + " très rapide" + (rapides > 1 ? "s" : "") + " (moins de deux secondes) : à interpréter avec prudence.", "source"));
+  if (rapides) zone.appendChild(paragraphe(T(rapides > 1 ? "{0} réponses très rapides (moins de deux secondes) : à interpréter avec prudence." : "{0} réponse très rapide (moins de deux secondes) : à interpréter avec prudence.", rapides), "source"));
 
   zone.appendChild(blocCeQueLeTestNeMesurePas("h3"));
   const retour = el("button", "bouton secondaire", "Retour à l'accueil du test");
@@ -987,11 +988,11 @@ function grapheAxes(scores, hasards) {
   if (!axes.length) return null;
   const x = v => 34 + 270 * v, h = 30 + 40 * axes.length;
   const s = svgAccessible("0 0 320 " + h, "Réussite par axe, avec plage plausible",
-    axes.map(a => a + " : " + pourcentArrondi(scores[a].valeur) + ", plage de " + pourcentArrondi(scores[a].plage.bas) + " à " + pourcentArrondi(scores[a].plage.haut) + ", hasard " + pourcentArrondi(hasards[a])).join(" ; ") + ".");
+    axes.map(a => T("{0} : {1}, plage de {2} à {3}, hasard {4}", a, pourcentArrondi(scores[a].valeur), pourcentArrondi(scores[a].plage.bas), pourcentArrondi(scores[a].plage.haut), pourcentArrondi(hasards[a]))).join(" ; ") + ".");
   s.appendChild(svg("rect", { x: 34, y: 8, width: 270, height: h - 34, class: "graphe-fond" }));
   [0, 0.25, 0.5, 0.75, 1].forEach(v => {
     s.appendChild(svg("line", { x1: x(v), y1: 8, x2: x(v), y2: h - 26, class: "graphe-grille" }));
-    s.appendChild(texteSvg(x(v), h - 12, Math.round(100 * v) + " %", { class: "graphe-texte", "text-anchor": "middle" }));
+    s.appendChild(texteSvg(x(v), h - 12, Math.round(100 * v) + PC, { class: "graphe-texte", "text-anchor": "middle" }));
   });
   axes.forEach((a, k) => {
     const y = 30 + 40 * k, sc = scores[a];
@@ -1014,7 +1015,7 @@ function blocEtalonnage(lignes) {
   graphe.setAttribute("aria-label", "Courbe d'étalonnage : réussite observée selon la certitude annoncée ; la diagonale correspond à un étalonnage parfait");
   bloc.appendChild(graphe);
   bloc.appendChild(tableauEquivalent("Réussite selon la certitude annoncée", ["Certitude", "Réponses", "Justes", "Réussite"],
-    Object.keys(cumul).map(Number).sort((a, b) => a - b).map(c => [c + " %" + (c === 25 ? " (hors du graphique)" : ""), String(cumul[c][0]), String(cumul[c][1]), pourcentArrondi(cumul[c][1] / cumul[c][0])])));
+    Object.keys(cumul).map(Number).sort((a, b) => a - b).map(c => [c + PC + (c === 25 ? " (hors du graphique)" : ""), String(cumul[c][0]), String(cumul[c][1]), pourcentArrondi(cumul[c][1] / cumul[c][0])])));
   return bloc;
 }
 
@@ -1029,12 +1030,12 @@ function grapheProgression(tests, axe) {
   const pts = tests.map((t, k) => ({ k, mode: t.mode, s: (t.scores && t.scores[axe] && t.scores[axe].n >= ITEMS_MIN_PLAGE) ? t.scores[axe] : null })).filter(p => p.s);
   if (!pts.length) return null;
   const n = tests.length, x = k => 40 + (n === 1 ? 125 : 250 * k / (n - 1)), y = v => 150 - 130 * v;
-  const s = svgAccessible("0 0 320 190", "Progression de l'axe " + axe + " : " + AXES_GT[axe].nom,
-    pts.map(p => "test " + (p.k + 1) + " (" + p.mode + ") : " + pourcentArrondi(p.s.valeur)).join(" ; ") + ". Les tests express et complets ne sont pas reliés.");
+  const s = svgAccessible("0 0 320 190", T("Progression de l'axe {0} : {1}", axe, T(AXES_GT[axe].nom)),
+    pts.map(p => T("test {0} ({1}) : {2}", p.k + 1, nomMode(p.mode), pourcentArrondi(p.s.valeur))).join(" ; ") + ". " + T("Les tests express et complets ne sont pas reliés."));
   s.appendChild(svg("rect", { x: 40, y: 20, width: 250, height: 130, class: "graphe-fond" }));
   [0, 0.5, 1].forEach(v => {
     s.appendChild(svg("line", { x1: 40, y1: y(v), x2: 290, y2: y(v), class: "graphe-grille" }));
-    s.appendChild(texteSvg(34, y(v) + 3, Math.round(100 * v) + " %", { class: "graphe-texte", "text-anchor": "end" }));
+    s.appendChild(texteSvg(34, y(v) + 3, Math.round(100 * v) + PC, { class: "graphe-texte", "text-anchor": "end" }));
   });
   const pasEtiquettes = Math.ceil(n / 8);
   tests.forEach((t, k) => { if (k % pasEtiquettes === 0 || k === n - 1) s.appendChild(texteSvg(x(k), 168, String(k + 1), { class: "graphe-texte", "text-anchor": "middle" })); });
@@ -1063,11 +1064,11 @@ function blocProgression(etat) {
     bloc.appendChild(g);
     const complets = tests.filter(t => t.mode === "complet");
     const tdc = tendance(seriesAxe(complets, a), graineDe(a + complets.map(t => t.id).join()));
-    bloc.appendChild(paragraphe("Tests complets : " + tdc.verdict + "." + (complets.length >= 3 ? "" : " Une tendance ne s'annonce qu'à partir de trois tests comparables."), "source"));
+    bloc.appendChild(paragraphe(T("Tests complets : {0}.", T(tdc.verdict)) + (complets.length >= 3 ? "" : " " + T("Une tendance ne s'annonce qu'à partir de trois tests comparables.")), "source"));
   });
-  bloc.appendChild(paragraphe("Point plein : test complet ; point creux : test express. " + AVERTISSEMENT_PROGRESSION, "source"));
+  bloc.appendChild(paragraphe(T("Point plein : test complet ; point creux : test express.") + " " + T(AVERTISSEMENT_PROGRESSION), "source"));
   bloc.appendChild(tableauEquivalent("Vos tests terminés", ["Test", "Mode", "Date", "A", "B", "C", "Idées fausses corrigées"],
-    tests.map((t, k) => [String(k + 1), t.mode, new Date(t.dateFin).toLocaleDateString("fr-FR"),
+    tests.map((t, k) => [String(k + 1), t.mode, new Date(t.dateFin).toLocaleDateString(LOCALE),
       ...["A", "B", "C"].map(a => t.scores && t.scores[a] && t.scores[a].plage ? pourcentArrondi(t.scores[a].valeur) + " (" + pourcentArrondi(t.scores[a].plage.bas) + "–" + pourcentArrondi(t.scores[a].plage.haut) + ")" : "—"),
       String((t.ideesFaussesCorrigees || []).length)])));
   return bloc;
@@ -1091,7 +1092,7 @@ function ateliersConseilles(t) {
     const famille = familleGT(l.item.famille);
     adresses.forEach(ad => {
       poids[ad] = (poids[ad] || 0) + w;
-      if (!raisons[ad] || w > raisons[ad].w) raisons[ad] = { w, texte: famille ? famille.construit : "une affirmation sur « " + (l.item.texte || "").slice(0, 60) + "… »" };
+      if (!raisons[ad] || w > raisons[ad].w) raisons[ad] = { w, texte: famille ? famille.construit : T("une affirmation sur « {0}… »", (l.item.texte || "").slice(0, 60)) };
     });
   });
   const tous = tousLesAteliers();
@@ -1101,7 +1102,7 @@ function ateliersConseilles(t) {
   const choisis = [], sections = new Set();
   ordre.forEach(a => { if (choisis.length < 3 && !sections.has(a.atelier.section)) { choisis.push(a); sections.add(a.atelier.section); } });
   ordre.forEach(a => { if (choisis.length < 3 && !choisis.includes(a)) choisis.push(a); });
-  return choisis.map(a => ({ atelier: a, raison: "Pourquoi celui-ci : plusieurs de vos réponses à revoir portaient sur ce point — " + raisons[a.adresse].texte.charAt(0).toLowerCase() + raisons[a.adresse].texte.slice(1) + "." }));
+  return choisis.map(a => ({ atelier: a, raison: T("Pourquoi celui-ci : plusieurs de vos réponses à revoir portaient sur ce point — {0}.", minuscule1(raisons[a.adresse].texte)) }));
 }
 
 function blocAteliersConseilles(t) {
@@ -1131,14 +1132,14 @@ function atelierFauxSouvenirs(zone) {
     zone.innerHTML = "";
     const reponses = demo.test.map(() => null);
     const valider = boutonValider();
-    demo.test.forEach((x, k) => zone.appendChild(groupeChoix("« " + x.mot + " » était-il dans la liste ?", ["Oui", "Non"], null, j => { reponses[k] = j === 0; valider.disabled = reponses.some(r => r === null); }).element));
+    demo.test.forEach((x, k) => zone.appendChild(groupeChoix(T("« {0} » était-il dans la liste ?", x.mot), [T("Oui"), T("Non")], null, j => { reponses[k] = j === 0; valider.disabled = reponses.some(r => r === null); }).element));
     zone.appendChild(valider);
     valider.addEventListener("click", () => {
       const b = bilanDRM(demo, reponses);
       zone.querySelectorAll("button").forEach(x => { x.disabled = true; });
       valider.remove();
       noterPartie("faux-souvenirs", b.critiqueReconnu ? 0 : 1, 1);
-      ajouterExplication(zone, "Ce que montre cet atelier", [(b.critiqueReconnu ? "Vous avez reconnu « " + demo.critique + " », absent de la liste. " : "« " + demo.critique + " » n'était pas dans la liste, et vous l'avez écarté. ") + demo.explication,
+      ajouterExplication(zone, "Ce que montre cet atelier", [(b.critiqueReconnu ? T("Vous avez reconnu « {0} », absent de la liste.", demo.critique) : T("« {0} » n'était pas dans la liste, et vous l'avez écarté.", demo.critique)) + " " + demo.explication,
         "Paradigme de Roediger et McDermott (1995). Ces listes françaises sont originales et non normées : c'est une démonstration, pas une mesure."], [["#biais/faux-souvenirs", "Fiche : faux souvenirs"]]);
       boutonRejouer(zone, () => atelierFauxSouvenirs(zone));
     });
@@ -1179,7 +1180,7 @@ const TRAITS_ENTITE = {
   fleche: '<path d="M18 40h14m-4-4 4 4-4 4"/>', vague: '<path d="M10 8c4-4 8 4 12 0s8 4 12 0"/>', croix: '<path d="M36 6l6 6M42 6l-6 6"/>'
 };
 function dessinEntite(e, fiche) {
-  const s = svg("svg", { viewBox: "0 0 48 48", class: "picto", role: "img", "aria-label": e[1] + " : métaphore du mécanisme « " + fiche.nom + " »" });
+  const s = svg("svg", { viewBox: "0 0 48 48", class: "picto", role: "img", "aria-label": T("{0} : métaphore du mécanisme « {1} »", e[1], fiche.nom) });
   s.innerHTML = '<path d="M10 24h28"/>' + e[2].map(t => TRAITS_ENTITE[t]).join("");   // dessins fixes, aucune donnée extérieure
   return s;
 }
@@ -1202,10 +1203,10 @@ function blocEntitesRencontrees(t, visible = PERSONNAGES_VISIBLES) {
     const carte = el("div", "gt-entite");
     carte.style.setProperty("--c", COULEURS[f.fiche.categorie] || "");
     const texte = el("div");
-    texte.append(el("p", "consigne", e[1]), paragraphe("Mécanisme : " + f.fiche.definition), paragraphe("Parade : " + premierePhrase(f.fiche.parade)));
+    texte.append(el("p", "consigne", e[1]), paragraphe(T("Mécanisme : {0}", f.fiche.definition)), paragraphe(T("Parade : {0}", premierePhrase(f.fiche.parade))));
     const liens = el("div", "voir-aussi");
-    liens.appendChild(lienVers("#" + f.type + "/" + f.id, "Fiche : " + f.fiche.nom));
-    ateliersDeLaFiche(cle).slice(0, 1).forEach(a => liens.appendChild(lienVers(a.adresse, "Atelier : " + a.atelier.titre)));
+    liens.appendChild(lienVers("#" + f.type + "/" + f.id, T("Fiche : {0}", f.fiche.nom)));
+    ateliersDeLaFiche(cle).slice(0, 1).forEach(a => liens.appendChild(lienVers(a.adresse, T("Atelier : {0}", T(a.atelier.titre)))));
     texte.appendChild(liens);
     carte.append(dessinEntite(e, f.fiche), texte);
     bloc.appendChild(carte);
@@ -1221,7 +1222,7 @@ function blocNiveau(etat, visible = PERSONNAGES_VISIBLES) {
   if (n.id === null) bloc.appendChild(paragraphe("À mesurer : il faut au moins un test complet."));
   else {
     const [titre, personnage, saitFaire] = NIVEAUX_GT[n.id - 1];
-    bloc.append(el("p", "consigne", "Niveau " + n.id + " : " + titre), paragraphe(personnage + " — " + saitFaire));
+    bloc.append(el("p", "consigne", T("Niveau {0} : {1}", n.id, T(titre))), paragraphe(T("{0} — {1}", T(personnage), T(saitFaire))));
   }
   bloc.appendChild(paragraphe(TEXTE_NIVEAU_GT, "source"));
   bloc.appendChild(paragraphe("Monter d'un niveau demande une réussite répétée dans deux tests complets espacés d'au moins sept jours, en tenant compte de l'incertitude ; un niveau qui ne se confirme plus redescend.", "source"));
@@ -1241,7 +1242,7 @@ function carteSensibilisation(t, cle) {
   const bloc = el("aside", "gt-carte");
   bloc.setAttribute("aria-label", "Le saviez-vous ?");
   bloc.append(el("p", "surtitre", "Le saviez-vous ?"), paragraphe(c.texte),
-    el("p", "source", "Source : " + c.source + (c.date !== "—" ? " (" + c.date + ")" : "") + ". Statut : " + c.statut + "." + (c.limite && c.limite !== "—" ? " Limite : " + c.limite : "")));
+    el("p", "source", T("Source : {0}. Statut : {1}.", c.source + (c.date !== "—" ? " (" + c.date + ")" : ""), T(c.statut)) + (c.limite && c.limite !== "—" ? " " + T("Limite : {0}", c.limite) : "")));
   return bloc;
 }
 
@@ -1270,27 +1271,27 @@ function blocRevision(t) {
     erreurs.slice(0, 5).forEach(l => ul.appendChild(el("li", null, (l.reponse.certitude >= 90 ? "Avec assurance — " : "") + (l.item.texte || l.item.question || "").slice(0, 140))));
     bloc.appendChild(ul);
   }
-  if (t.rappels.j7) bloc.appendChild(paragraphe("Rappels prévus le " + jourEnClair(t.rappels.j7) + " et le " + jourEnClair(t.rappels.j30) + ".", "source"));
+  if (t.rappels.j7) bloc.appendChild(paragraphe(T("Rappels prévus le {0} et le {1}.", jourEnClair(t.rappels.j7), jourEnClair(t.rappels.j30)), "source"));
   else {
     const b = el("button", "bouton secondaire", "Programmer les rappels (J+7 et J+30)");
     b.addEventListener("click", () => {
       const j7 = aujourdHui() + 7, j30 = aujourdHui() + 30;
       const desc = "Revoir les erreurs de votre dernier Grand test sur Esprit critique. Rien n'est envoyé : ce rappel est local.";
-      fichierAgenda("esprit-critique-rappels.ics", [{ jour: j7, titre: "Esprit critique : révision du Grand test", description: desc, url: "https://esprit-critique.github.io/" },
-        { jour: j30, titre: "Esprit critique : révision du Grand test", description: desc, url: "https://esprit-critique.github.io/" }]);
+      fichierAgenda("esprit-critique-rappels.ics", [{ jour: j7, titre: "Esprit critique : révision du Grand test", description: desc, url: URL_SITE },
+        { jour: j30, titre: "Esprit critique : révision du Grand test", description: desc, url: URL_SITE }]);
       const e = copieProfonde(GT.etat), te = e.historiqueTests.find(x => x.id === t.id);
       te.rappels = { j7, j30 };
       e.rappelsEnAttente = e.rappelsEnAttente.filter(r => r.runId !== t.id).concat([{ runId: t.id, type: "j7", jour: j7 }, { runId: t.id, type: "j30", jour: j30 }]).slice(-20);
       sauver(e);
       annoncer("Fichier d'agenda créé. Le site vous rappellera aussi ces révisions à votre prochaine visite.");
-      b.replaceWith(paragraphe("Rappels prévus le " + jourEnClair(j7) + " et le " + jourEnClair(j30) + ".", "source"));
+      b.replaceWith(paragraphe(T("Rappels prévus le {0} et le {1}.", jourEnClair(j7), jourEnClair(j30)), "source"));
     });
     bloc.appendChild(b);
     bloc.appendChild(paragraphe("Le fichier s'ouvre dans votre agenda. Il ne contient aucune de vos réponses.", "source"));
   }
   return bloc;
 }
-const jourEnClair = jour => new Date(jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
+const jourEnClair = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", timeZone: "UTC" });
 
 // Rappels échus, affichés sur l'accueil du test
 function blocRappelsEchus() {
@@ -1303,7 +1304,7 @@ function blocRappelsEchus() {
   if (t) {
     const ul = el("ul", "liste-simple");
     erreursAReviser(t).slice(0, 5).forEach(l => {
-      const li = el("li", null, (l.item.texte || l.item.question || "").slice(0, 140) + " — réponse attendue : " + texteAttendu(l.item) + ".");
+      const li = el("li", null, T("{0} — réponse attendue : {1}.", (l.item.texte || l.item.question || "").slice(0, 140), texteAttendu(l.item)));
       ul.appendChild(li);
     });
     bloc.appendChild(ul);
@@ -1328,7 +1329,7 @@ function resumePortraitGrandTest() {
   const t = tests[tests.length - 1];
   const axes = ["A", "B", "C"].filter(a => t.scores && t.scores[a] && t.scores[a].plage)
     .map(a => AXES_GT[a].nom + " : " + pourcentArrondi(t.scores[a].valeur) + " (plage " + pourcentArrondi(t.scores[a].plage.bas) + " – " + pourcentArrondi(t.scores[a].plage.haut) + ")");
-  return paragraphe("Dernier test " + t.mode + ", le " + new Date(t.dateFin).toLocaleDateString("fr-FR") + ". " + (axes.length ? axes.join(" ; ") + ". " : "") + "Pas de score global : voir le détail de chaque axe dans vos résultats.");
+  return paragraphe(T("Dernier test {0}, le {1}.", nomMode(t.mode), new Date(t.dateFin).toLocaleDateString(LOCALE)) + " " + (axes.length ? axes.join(" ; ") + ". " : "") + T("Pas de score global : voir le détail de chaque axe dans vos résultats."));
 }
 
 // Carte mise en avant (accueil, page des ateliers) : un atelier à part. Toute la carte est un lien ; son libellé
@@ -1345,8 +1346,8 @@ function carteGrandTest() {
   const corps = el("div", "atelier-corps");
   corps.append(el("p", "surtitre", "Le Grand test"), el("h2", null, "Cinq façons de raisonner, mesurées séparément"),
     el("p", null, "Sans score global ni classement, et tout reste dans votre navigateur. Express : 12 à 15 minutes. Complet : environ 45 à 60 minutes, en une ou plusieurs fois."));
-  if (faits.length && !enCours) corps.appendChild(el("p", "source", "Dernier test terminé le " + new Date(faits[faits.length - 1].dateFin).toLocaleDateString("fr-FR") + "."));
-  corps.appendChild(el("span", "bouton", enCours ? "Reprendre le test " + enCours.mode : faits.length ? "Refaire le test" : "Commencer"));
+  if (faits.length && !enCours) corps.appendChild(el("p", "source", T("Dernier test terminé le {0}.", new Date(faits[faits.length - 1].dateFin).toLocaleDateString(LOCALE))));
+  corps.appendChild(el("span", "bouton", enCours ? T("Reprendre le test {0}", nomMode(enCours.mode)) : faits.length ? T("Refaire le test") : T("Commencer")));
   carte.append(cadre, corps);
   return carte;
 }

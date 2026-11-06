@@ -573,18 +573,20 @@ function entiteAffaiblie(avant, apres, graine) {
 function nombreGT(x, decimales) {
   const d = decimales === undefined ? (Number.isInteger(x) ? 0 : 1) : decimales;
   const [entier, frac] = Math.abs(x).toFixed(d).split(".");
-  const groupes = entier.length > 3 ? entier.replace(/\B(?=(\d{3})+(?!\d))/g, " ") : entier;
-  return (x < 0 ? "−" : "") + groupes + (frac && Number(frac) !== 0 ? "," + frac.replace(/0+$/, "") : "");
+  const groupes = entier.length > 3 ? entier.replace(/\B(?=(\d{3})+(?!\d))/g, LANGUE === "en" ? "," : " ") : entier;
+  return (x < 0 ? "−" : "") + groupes + (frac && Number(frac) !== 0 ? (LANGUE === "en" ? "." : ",") + frac.replace(/0+$/, "") : "");
 }
-const pourcentGT = x => nombreGT(x) + " %";
+const pourcentGT = x => nombreGT(x) + (LANGUE === "en" ? "%" : " %");
 const majuscule = t => t.charAt(0).toUpperCase() + t.slice(1);
 const elision = (mot, suite) => /^[aeiouyhâéèêîôœ]/i.test(suite) ? mot.slice(0, -1) + "'" + suite : mot + " " + suite;
 // Élisions oubliées par l'assemblage des gabarits : « que une » → « qu'une », « de Adam » → « d'Adam »
-const elisions = t => t.replace(/\b([Qq]u|[Dd])e (?=[aeiouàâéèêëîïôûœAEIOUÉÈÎ])/g, "$1'");
+// (en anglais, les phrases viennent de GENERATEURS_GT_EN, static/en/grand-test.js : rien à élider)
+const elisions = t => LANGUE === "en" ? t : t.replace(/\b([Qq]u|[Dd])e (?=[aeiouàâéèêëîïôûœAEIOUÉÈÎ])/g, "$1'");
 
 // Prénom d'une instance, décalé selon la famille pour varier les surfaces
 const prenomGT = (i, decalage) => PRENOMS_GT[(i * 7 + (decalage || 0)) % PRENOMS_GT.length];
 
+// fr-seulement-debut : accords français
 // Accords d'un texte selon le genre de la personne : {p} prénom, {Il} {il} {lui}, {e}, {er} (-er/-ère), {ne}, {r} (-r/-se)
 function accorder(texte, prenom, genre) {
   const f = genre === "f";
@@ -593,6 +595,7 @@ function accorder(texte, prenom, genre) {
     .replace(/\{ne\}/g, f ? "ne" : "").replace(/\{r\}/g, f ? "se" : "r").replace(/\{son\}/g, "son");
 }
 
+// fr-seulement-fin
 // Remplace {cle} par la valeur du champ ; {Cle} par la même valeur avec une majuscule
 function remplir(texte, valeurs) {
   return texte.replace(/\{([A-Za-z0-9]+)\}/g, (m, cle) => {
@@ -625,9 +628,12 @@ function tailleFamille(f) {
   return surfacesDe(f).length;
 }
 
+// fr-seulement-debut : articles français
 const tous = ([nom, fem]) => (fem ? "Toutes les " : "Tous les ") + nom;
 const certains = ([nom, fem]) => (fem ? "Certaines " : "Certains ") + nom;
+// fr-seulement-fin
 
+// fr-seulement-debut : générateurs français (la version anglaise a les siens : static/en/grand-test.js)
 const GENERATEURS_GT = {
   // ---------- Axe A ----------
   vitesseMoyenne(f, i) {
@@ -917,10 +923,11 @@ const GENERATEURS_GT = {
     };
   }
 };
+// fr-seulement-fin
 
 // Instance d'une famille, avec l'ordre de ses choix tiré par la graine de la passation (rangs « affichés »)
 function instanceGT(f, i, graine) {
-  const item = GENERATEURS_GT[f.generer](f, i);
+  const item = (LANGUE === "en" && typeof GENERATEURS_GT_EN !== "undefined" && GENERATEURS_GT_EN[f.generer] || GENERATEURS_GT[f.generer])(f, i);
   ["texte", "question", "explication"].forEach(k => { item[k] = elisions(item[k]); });
   if (item.choix) item.choix = item.choix.map(elisions);
   const instanceId = f.id + "@" + i;
@@ -1140,6 +1147,8 @@ function grandeurGT(id) {
   if (!p || p[k] === undefined) return null;
   const annee = (p.annees && p.annees[k]) || ANNEES_PAYS[k];
   const v = Math.round(p[k] * ind.facteur * 10 ** ind.decimales) / 10 ** ind.decimales;
+  if (LANGUE === "en") return { id, q: p.nom + ": " + ind.libelle + " in " + annee, v, unite: ind.unite, annee,
+    source: "World Bank, World Development Indicators (" + annee + "), site data (pays.js)" };
   return { id, q: p.nom + " : " + ind.libelle + " en " + annee, v, unite: ind.unite, annee,
     source: "Banque mondiale, World Development Indicators (" + annee + "), données du site (pays.js)" };
 }
@@ -1149,11 +1158,13 @@ function grandeurGT(id) {
 // désinformation (une question glisse une couleur fausse), mémoire de la source (qui a dit quoi). Elles ne comptent
 // dans aucun axe. Chacune est annoncée avant, et suivie d'une correction complète.
 
+// fr-seulement-debut : démonstrations françaises (l'anglais : static/en/grand-test.js)
 const FEMININS_RECITS_GT = new Set(["enveloppe", "laisse", "voiture", "valise", "écharpe", "couverture"]);
 
 // Liste de mots associés : la liste à apprendre, puis six mots à reconnaître (trois appris, le mot critique jamais
 // présenté, deux sans rapport), dans un ordre tiré par la graine
 function demonstrationDRM(i, graine) {
+  if (LANGUE === "en") return demonstrationDRM_EN(i, graine);
   const [critique, mots, sansRapport] = LISTES_DRM_GT[i];
   const appris = [mots[1], mots[5], mots[8]];
   const test = melanger([...appris.map(m => ({ mot: m, present: true, critique: false })), { mot: critique, present: false, critique: true },
@@ -1164,6 +1175,7 @@ function demonstrationDRM(i, graine) {
 
 // Récit et question trompeuse : la question présuppose une couleur fausse ; la reconnaissance vient plus tard
 function demonstrationRecit(i, graine) {
+  if (LANGUE === "en") return demonstrationRecit_EN(i, graine);
   const [scene, objet, vue, suggeree, autres] = RECITS_GT[i];
   const [prenom, genre] = prenomGT(i, 9);
   const fem = FEMININS_RECITS_GT.has(objet);
@@ -1181,6 +1193,7 @@ function demonstrationRecit(i, graine) {
 // Mémoire de la source : six informations, chacune attribuée à l'une de deux sources ; il faut ensuite retrouver
 // la source de chacune
 function demonstrationSource(i, graine) {
+  if (LANGUE === "en") return demonstrationSource_EN(i, graine);
   const [sourceA, sourceB, infos] = SOURCES_GT[i % SOURCES_GT.length];
   const combinaison = COMBINAISONS_SOURCE_GT[Math.floor(i / SOURCES_GT.length) % COMBINAISONS_SOURCE_GT.length];
   const lues = infos.map((t, k) => ({ texte: t, source: combinaison >> k & 1 ? sourceA : sourceB }));
@@ -1188,6 +1201,8 @@ function demonstrationSource(i, graine) {
     test: melanger(lues, generateur(graineDe("source@" + i + ":" + graine))),
     explication: "On retient souvent une information sans se rappeler d'où elle vient. Le contenu et sa source sont mémorisés en partie séparément, et la source s'efface plus vite. Avant de répéter une information, demandez-vous où vous l'avez lue." };
 }
+
+// fr-seulement-fin
 
 // Bilans des démonstrations (fonctions pures, à partir des réponses)
 // DRM : reponses = tableau de booléens (« était dans la liste ») dans l'ordre du test

@@ -2,7 +2,7 @@
 // Par défaut, le niveau s'ajuste tout seul (mode « auto ») ; on peut aussi le choisir à la main.
 // Stockage : niveaux[idAtelier] = { niveau, mode: "auto" | "choisi", parties, serie }.
 
-const NOMS_NIVEAUX = { 1: "découverte", 2: "confirmé", 3: "expert" };
+const NOMS_NIVEAUX = { 1: T("découverte"), 2: T("confirmé"), 3: T("expert") };
 
 function niveauAtelier(id) {
   const n = lire("niveaux", {})[id] || {};
@@ -83,7 +83,7 @@ function choixNiveau(id, relancer) {
     const actif = valeur === "auto" ? actuel.mode === "auto" : actuel.mode === "choisi" && actuel.niveau === valeur;
     const b = el("button", "puce" + (actif ? " active" : ""), texte);
     b.setAttribute("aria-pressed", String(actif));
-    if (valeur !== "auto") b.setAttribute("aria-label", "Niveau " + valeur + " : " + NOMS_NIVEAUX[valeur]);
+    if (valeur !== "auto") b.setAttribute("aria-label", T("Niveau {0} : {1}", valeur, NOMS_NIVEAUX[valeur]));
     else b.setAttribute("aria-label", "Niveau automatique");
     b.addEventListener("click", () => {
       enregistrerNiveau(id, valeur === "auto" ? { mode: "auto", serie: 0 } : { mode: "choisi", niveau: valeur, serie: 0 });
@@ -94,7 +94,7 @@ function choixNiveau(id, relancer) {
   });
   bloc.append(puces, el("p", "source", actuel.mode === "auto"
     ? "Auto adapte la difficulté à vos réponses."
-    : "Niveau " + actuel.niveau + " (" + NOMS_NIVEAUX[actuel.niveau] + ") choisi : il reste fixe."));
+    : T("Niveau {0} ({1}) choisi : il reste fixe.", actuel.niveau, NOMS_NIVEAUX[actuel.niveau])));
   return bloc;
 }
 
@@ -150,12 +150,12 @@ function bilanNiveaux(id) {
   if (!p) return null;
   const bloc = el("div", "bilan-niveaux");
   const n = niveauDePartie(p.niveaux), max = Math.max(...p.niveaux);
-  bloc.appendChild(el("p", null, "Partie jouée au niveau " + n + " (" + NOMS_NIVEAUX[n] + ")" + (max > n ? ", jusqu'au niveau " + max : "") + "."));
+  bloc.appendChild(el("p", null, (max > n ? T("Partie jouée au niveau {0} ({1}), jusqu'au niveau {2}.", n, NOMS_NIVEAUX[n], max) : T("Partie jouée au niveau {0} ({1}).", n, NOMS_NIVEAUX[n]))));
   const lignes = [1, 2, 3].map(niv => {
     const poses = p.niveaux.map((x, k) => [x, p.justes[k]]).filter(([x]) => x === niv);
-    return poses.length ? "niveau " + niv + " : " + poses.filter(([, j]) => j).length + " / " + poses.length : null;
+    return poses.length ? T("niveau {0} : {1} / {2}", niv, poses.filter(([, j]) => j).length, poses.length) : null;
   }).filter(Boolean);
-  bloc.appendChild(el("p", "source", "Réponses justes par niveau — " + lignes.join(" ; ") + "."));
+  bloc.appendChild(el("p", "source", T("Réponses justes par niveau — {0}.", lignes.join(" ; "))));
   return bloc;
 }
 
@@ -190,11 +190,11 @@ function partieChrono(zone, options) {
   const verdict = el("p", "chrono-verdict");
   verdict.setAttribute("aria-live", "polite");
   const zoneQ = el("div");
-  zone.append(el("p", "consigne", options.titre + " : 60 secondes"), tete);
+  zone.append(el("p", "consigne", T("{0} : 60 secondes", T(options.titre))), tete);
   if (jauge) zone.appendChild(jauge);
   zone.append(verdict, zoneQ);
   const maj = () => {
-    temps.textContent = "Reste : " + reste + " s";
+    temps.textContent = T("Reste : {0} s", reste);
     points.textContent = typo(signe(score) + " points");
     if (jauge) jauge.firstChild.style.width = (100 * reste / 60) + "%";
   };
@@ -207,7 +207,7 @@ function partieChrono(zone, options) {
       b.addEventListener("click", () => {
         if (termine) return;
         if (k === q.juste) { score++; bonnes++; verdict.textContent = "Juste."; verdict.className = "chrono-verdict juste-texte"; }
-        else { score -= 2; erreurs++; verdict.textContent = typo("Erreur : c'était « " + q.options[q.juste] + " »."); verdict.className = "chrono-verdict faux-texte"; }
+        else { score -= 2; erreurs++; verdict.textContent = typo(T("Erreur : c'était « {0} ».", T(q.options[q.juste]))); verdict.className = "chrono-verdict faux-texte"; }
         maj();
         question();
       });
@@ -224,8 +224,8 @@ function partieChrono(zone, options) {
     noterActivite();
     zone.innerHTML = "";
     zone.append(el("p", "consigne", "Temps écoulé"), el("p", "grand-score", typo(signe(score) + " points")),
-      paragraphe(pluriel(bonnes, "bonne réponse", "bonnes réponses") + ", " + pluriel(erreurs, "erreur") + " (chaque erreur retire 2 points)."),
-      el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", ancien === undefined ? "Premier record enregistré." : nouveau ? "Nouveau record ! L'ancien était de " + signe(ancien) + " points." : "Votre record : " + signe(ancien) + " points."));
+      paragraphe(T("{0}, {1} (chaque erreur retire 2 points).", pluriel(bonnes, "bonne réponse", "bonnes réponses"), pluriel(erreurs, "erreur"))),
+      el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", ancien === undefined ? "Premier record enregistré." : nouveau ? T("Nouveau record ! L'ancien était de {0} points.", signe(ancien)) : T("Votre record : {0} points.", signe(ancien))));
     boutonRejouer(zone, options.relancer, "Revenir à l'atelier");
   };
   // Le temps restant se lit sur l'horloge : un navigateur ralentit les minuteurs d'un onglet en arrière-plan
@@ -257,8 +257,8 @@ function classementInteractif(zone, elements, libelle, surValidation) {
     ordre.forEach((e, k) => {
       const li = el("li");
       const haut = el("button", "bouton-pas", "↑"), bas = el("button", "bouton-pas", "↓");
-      haut.setAttribute("aria-label", "Monter " + libelle(e));
-      bas.setAttribute("aria-label", "Descendre " + libelle(e));
+      haut.setAttribute("aria-label", T("Monter {0}", libelle(e)));
+      bas.setAttribute("aria-label", T("Descendre {0}", libelle(e)));
       haut.disabled = k === 0;
       bas.disabled = k === ordre.length - 1;
       const deplacer = (vers, sens) => {
@@ -310,10 +310,10 @@ const justeOuPresque = r => r === true || (typeof r === "number" && r >= 0.8);
 function corrigerClassement(retour, ordre, bonOrdre, libelle, detail) {
   const p = pairesConcordantes(ordre, e => bonOrdre.indexOf(e));
   retour.appendChild(el("p", "verdict " + (p.part === 1 ? "juste" : p.part >= 0.8 ? "" : "faux"),
-    p.part === 1 ? "Classement exact." : p.justes + " paires sur " + p.total + " dans le bon ordre."));
+    p.part === 1 ? T("Classement exact.") : T("{0} paires sur {1} dans le bon ordre.", p.justes, p.total)));
   const ol = el("ol", "liste-simple");
   bonOrdre.forEach(e => ol.appendChild(el("li", null, libelle(e) + " : " + detail(e))));
   retour.append(el("p", "consigne", "Le bon ordre"), ol);
-  if (p.inversees.length) retour.appendChild(paragraphe("Paires inversées, dans le bon ordre : " + p.inversees.map(([a, b]) => libelle(a) + " avant " + libelle(b)).join(" ; ") + ".", "source"));
+  if (p.inversees.length) retour.appendChild(paragraphe(T("Paires inversées, dans le bon ordre : {0}.", p.inversees.map(([a, b]) => T("{0} avant {1}", libelle(a), libelle(b))).join(" ; ")), "source"));
   return Number(p.part.toFixed(2));
 }

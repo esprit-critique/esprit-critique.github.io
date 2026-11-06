@@ -19,7 +19,7 @@ function correlationDe(points) {
 }
 
 const signe = x => (x > 0 ? "+" : x < 0 ? "−" : "") + fr(Math.abs(x));
-const pourcent = x => signe(Math.round(x * 100)) + " %";
+const pourcent = x => signe(Math.round(x * 100)) + PC;
 
 // Plus longue série de valeurs identiques, et nombre de changements, dans une suite de 0 et de 1
 function series(suite) {
@@ -121,7 +121,7 @@ JEUX.push(
           ecarts.push(ecart);
           const retour = el("div", "retour-quiz");
           retour.appendChild(el("p", "verdict " + (Math.abs(ecart) < 0.04 ? "juste" : "faux"),
-            Math.abs(ecart) < 0.04 ? "Presque parfait : " + pourcent(ecart) + "." : "Écart : " + pourcent(ecart) + " par rapport à l'égalité réelle."));
+            Math.abs(ecart) < 0.04 ? T("Presque parfait : {0}.", pourcent(ecart)) : T("Écart : {0} par rapport à l'égalité réelle.", pourcent(ecart))));
           retour.appendChild(paragraphe(explicationIllusion(e, ecart)));
           if (e.averti) {
             const avant = Math.abs(ecarts[0]), apres = Math.abs(ecart);
@@ -182,7 +182,7 @@ JEUX.push(
         const [a, b] = m.gauche ? [vrai, faux] : [faux, vrai];
         zone.appendChild(el("p", "cas", m.type === "points"
           ? "L'un de ces nuages a été tiré au hasard (chaque point placé indépendamment des autres). Lequel ?"
-          : "L'une de ces suites vient de " + m.p.suite + " lancers d'une vraie pièce. Laquelle ?"));
+          : T("L'une de ces suites vient de {0} lancers d'une vraie pièce. Laquelle ?", m.p.suite)));
         const duo = el("div", m.type === "points" ? "duo" : "duo-suites");
         const panneaux = [a, b].map((donnees, k) => {
           const fig = el("figure", "panneau");
@@ -208,15 +208,15 @@ JEUX.push(
           });
           panneaux[bon].classList.add("vrai-hasard");
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Non : ") + (bon === 0 ? "A" : "B") + " est le vrai hasard."));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? T("Juste : ") : T("Non : ")) + T("{0} est le vrai hasard.", bon === 0 ? "A" : "B")));
           if (m.type === "points") {
             [a, b].forEach((donnees, j) => quadriller(panneaux[j].querySelector("svg"), donnees));
             const sv = statsNuage(vrai), sf = statsNuage(faux);
-            retour.appendChild(paragraphe("Sur une grille de 16 cases, le vrai hasard laisse " + pluriel(sv.vides, "case vide", "cases vides") + " et forme " + pluriel(sv.grappes, "grappe") + " de 5 points ou plus ; l'autre nuage : " + sf.vides + " et " + sf.grappes + ". L'autre nuage a été fabriqué en interdisant aux points de trop se rapprocher, comme on le fait en imaginant le hasard."));
+            retour.appendChild(paragraphe(T("Sur une grille de 16 cases, le vrai hasard laisse {0} et forme {1} de 5 points ou plus ; l'autre nuage : {2} et {3}. L'autre nuage a été fabriqué en interdisant aux points de trop se rapprocher, comme on le fait en imaginant le hasard.", pluriel(sv.vides, "case vide", "cases vides"), pluriel(sv.grappes, "grappe"), sf.vides, sf.grappes)));
           } else {
             panneaux.forEach((p, j) => { p.replaceChild(casesSuite([a, b][j], 4), p.lastChild); });
             const sv = series(vrai), sf = series(faux);
-            retour.appendChild(paragraphe("Vraie pièce : plus longue série de " + sv.plusLongue + ", " + sv.changements + " changements sur " + (m.p.suite - 1) + ". L'autre suite : plus longue série de " + sf.plusLongue + ", " + sf.changements + " changements. Elle a été fabriquée en changeant de face 2 fois sur 3, comme le font spontanément la plupart des gens. Les séries de 4 ou plus sont encadrées."));
+            retour.appendChild(paragraphe(T("Vraie pièce : plus longue série de {0}, {1} changements sur {2}. L'autre suite : plus longue série de {3}, {4} changements. Elle a été fabriquée en changeant de face 2 fois sur 3, comme le font spontanément la plupart des gens. Les séries de 4 ou plus sont encadrées.", sv.plusLongue, sv.changements, m.p.suite - 1, sf.plusLongue, sf.changements)));
           }
           zone.appendChild(retour);
           fini(juste, retour);
@@ -228,7 +228,7 @@ JEUX.push(
         const taux = [1, 2, 3].map(n => [n, tauxObservateur(PARAMETRES_HASARD[n], "suite", 400), tauxObservateur(PARAMETRES_HASARD[n], "points", 150)]);
         zone.appendChild(calculEnDetail([
           "Un observateur qui applique une règle simple fait mieux que le hasard (50 %) à chaque niveau. Pour les suites, il choisit celle qui change le moins souvent de face ; pour les nuages, celui dont les deux points les plus proches le sont le plus, car le vrai hasard forme des grappes.",
-          ...taux.map(([n, ts, tp]) => "= Niveau " + n + " (" + PARAMETRES_HASARD[n].suite + " lancers, " + PARAMETRES_HASARD[n].points + " points) : suites " + Math.round(100 * ts) + " %, nuages " + Math.round(100 * tp) + " %"),
+          ...taux.map(([n, ts, tp]) => T("= Niveau {0} ({1} lancers, {2} points) : suites {3} %, nuages {4} %", n, PARAMETRES_HASARD[n].suite, PARAMETRES_HASARD[n].points, Math.round(100 * ts), Math.round(100 * tp))),
           "Ces taux sont estimés par simulation à chaque bilan : ils peuvent varier de quelques points d'une fois à l'autre."
         ]));
         ajouterExplication(zone, "Ce que montre ce jeu", [
@@ -269,7 +269,7 @@ JEUX.push(
       zone.appendChild(paragraphe("Raccourcis : touches P et F, ou 1 et 2.", "source"));
 
       function maj() {
-        compteur.textContent = typo("Lancer " + Math.min(suite.length + 1, N) + " / " + N);
+        compteur.textContent = typo(T("Lancer {0} / {1}", Math.min(suite.length + 1, N), N));
         affichage.innerHTML = "";
         suite.forEach(v => affichage.appendChild(el("span", v ? "pile" : "face", v ? "P" : "F")));
         annuler.disabled = suite.length === 0;
@@ -282,8 +282,8 @@ JEUX.push(
       const clavier = e => {
         if (!document.body.contains(zone) || suite.length >= N) { document.removeEventListener("keydown", clavier); return; }
         if (e.metaKey || e.ctrlKey || e.altKey) return;
-        if (e.key === "p" || e.key === "P") { e.preventDefault(); ajouter(1); }
-        if (e.key === "f" || e.key === "F") { e.preventDefault(); ajouter(0); }
+        if (LANGUE === "en" ? (e.key === "h" || e.key === "H") : (e.key === "p" || e.key === "P")) { e.preventDefault(); ajouter(1); }
+        if (LANGUE === "en" ? (e.key === "t" || e.key === "T") : (e.key === "f" || e.key === "F")) { e.preventDefault(); ajouter(0); }
         if (e.key === "Backspace") { e.preventDefault(); suite.pop(); maj(); }
       };
       document.addEventListener("keydown", clavier);
@@ -312,18 +312,18 @@ JEUX.push(
         zone.appendChild(paragraphe("Les séries de 5 identiques ou plus sont encadrées.", "source"));
 
         const constats = el("ul", "liste-simple");
-        const frequence = p => p < 0.01 ? "moins de 1 % des cas" : Math.round(100 * p) + " % des cas";
-        constats.appendChild(el("li", null, "Changements de face : " + changements + " sur 49. Une vraie pièce en fait 24,5 en moyenne ; elle en fait " + (changements >= 25 ? "au moins " : "au plus ") + changements + " dans " + frequence(pChangements) + "."));
-        constats.appendChild(el("li", null, "Plus longue série : " + plusLongue + ". Une vraie pièce fait une série d'au moins 5 identiques dans " + Math.round(100 * pSerie5) + " % des cas."));
-        constats.appendChild(el("li", null, "Piles : " + piles + " sur 50."));
+        const frequence = p => p < 0.01 ? T("moins de 1 % des cas") : T("{0} % des cas", Math.round(100 * p));
+        constats.appendChild(el("li", null, T(changements >= 25 ? "Changements de face : {0} sur 49. Une vraie pièce en fait 24,5 en moyenne ; elle en fait au moins {0} dans {1}." : "Changements de face : {0} sur 49. Une vraie pièce en fait 24,5 en moyenne ; elle en fait au plus {0} dans {1}.", changements, frequence(pChangements))));
+        constats.appendChild(el("li", null, T("Plus longue série : {0}. Une vraie pièce fait une série d'au moins 5 identiques dans {1} % des cas.", plusLongue, Math.round(100 * pSerie5))));
+        constats.appendChild(el("li", null, T("Piles : {0} sur 50.", piles)));
         zone.appendChild(constats);
         zone.appendChild(calculEnDetail([
           "Entre deux lancers successifs d'une vraie pièce, la face change avec une probabilité 1/2, indépendamment des autres lancers. Sur 50 lancers, il y a 49 transitions : le nombre de changements suit une loi binomiale.",
           "= Changements ~ B(49 ; 1/2) : moyenne 49 × 1/2 = 24,5 ; écart-type √(49 × 1/2 × 1/2) = 3,5",
-          "Votre suite en compte " + changements + ". Une vraie pièce en fait " + (changements >= 25 ? "au moins " : "au plus ") + changements + " dans " + frequence(pChangements) + " : la somme des probabilités binomiales correspondantes.",
+          T(changements >= 25 ? "Votre suite en compte {0}. Une vraie pièce en fait au moins {0} dans {1} : la somme des probabilités binomiales correspondantes." : "Votre suite en compte {0}. Une vraie pièce en fait au plus {0} dans {1} : la somme des probabilités binomiales correspondantes.", changements, frequence(pChangements)),
           "Pour la plus longue série, on compte les suites de 50 lancers dont aucune série ne dépasse une longueur donnée (par récurrence sur la position et la longueur de la série en cours) :",
-          "= P(plus longue série ≤ 4 sur 50 lancers) = " + fr(Number(probaSeriesAuPlus(N, 4).toFixed(3))) + ", donc P(au moins une série de 5) = " + fr(Number(pSerie5.toFixed(3))),
-          "= P(plus longue série ≤ " + plusLongue + ") = " + fr(Number(pSerie.toFixed(3))) + " : votre plus longue série, " + plusLongue + ", " + (pSerie < 0.2 ? "est plus courte que ce qu'une vraie pièce produit dans plus de 80 % des cas." : "est plausible.")
+          T("= P(plus longue série ≤ 4 sur 50 lancers) = {0}, donc P(au moins une série de 5) = {1}", fr(Number(probaSeriesAuPlus(N, 4).toFixed(3))), fr(Number(pSerie5.toFixed(3)))),
+          T(pSerie < 0.2 ? "= P(plus longue série ≤ {0}) = {1} : votre plus longue série, {0}, est plus courte que ce qu'une vraie pièce produit dans plus de 80 % des cas." : "= P(plus longue série ≤ {0}) = {1} : votre plus longue série, {0}, est plausible.", plusLongue, fr(Number(pSerie.toFixed(3))))
         ]));
 
         let verdict;
@@ -382,7 +382,7 @@ JEUX.push(
         curseur.value = 0;
         curseur.setAttribute("aria-label", "Coefficient de corrélation estimé");
         const lire = () => curseur.value / 100;
-        const maj = () => { affichage.textContent = typo("Votre estimation : r = " + signe(Number(lire().toFixed(2)))); };
+        const maj = () => { affichage.textContent = typo(T("Votre estimation : r = {0}", signe(Number(lire().toFixed(2))))); };
         curseur.addEventListener("input", maj);
         maj();
         const reperes = el("div", "reperes-curseur");
@@ -397,9 +397,9 @@ JEUX.push(
           const points3 = erreur <= 0.1 ? 2 : erreur <= 0.2 ? 1 : 0;
           tracerDroite(graphe, points);
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (points3 ? "juste" : "faux"), "Corrélation réelle : r = " + signe(Number(r.toFixed(2))) + "."));
-          retour.appendChild(paragraphe("Écart : " + fr(Number(erreur.toFixed(2))) + ". " + ["Plus de 0,2 d'écart : aucun point.", "Moins de 0,2 d'écart : 1 point.", "Moins de 0,1 d'écart : 2 points."][points3] +
-            " La droite tracée est celle qui résume le mieux le nuage (moindres carrés)." + (Math.abs(r) < 0.5 ? " Avec r = " + signe(Number(r.toFixed(2))) + ", la droite n'explique que " + Math.round(100 * r * r) + " % de la dispersion." : "")));
+          retour.appendChild(el("p", "verdict " + (points3 ? "juste" : "faux"), T("Corrélation réelle : r = {0}.", signe(Number(r.toFixed(2))))));
+          retour.appendChild(paragraphe(T("Écart : {0}.", fr(Number(erreur.toFixed(2)))) + " " + T(["Plus de 0,2 d'écart : aucun point.", "Moins de 0,2 d'écart : 1 point.", "Moins de 0,1 d'écart : 2 points."][points3]) +
+            " " + T("La droite tracée est celle qui résume le mieux le nuage (moindres carrés).") + (Math.abs(r) < 0.5 ? " " + T("Avec r = {0}, la droite n'explique que {1} % de la dispersion.", signe(Number(r.toFixed(2))), Math.round(100 * r * r)) : "")));
           zone.appendChild(retour);
           fini({ estime: lire(), reel: r, points: points3 }, retour);
         });
@@ -407,7 +407,7 @@ JEUX.push(
         const total = resultats.reduce((s, x) => s + x.points, 0);
         afficherScore(zone, "correlation", total, resultats.length * 2);
         const erreurMoyenne = resultats.reduce((s, x) => s + Math.abs(x.estime - x.reel), 0) / resultats.length;
-        zone.appendChild(paragraphe("Écart moyen : " + fr(Number(erreurMoyenne.toFixed(2))) + "."));
+        zone.appendChild(paragraphe(T("Écart moyen : {0}.", fr(Number(erreurMoyenne.toFixed(2))))));
         zone.appendChild(grapheEstimations(resultats));
         zone.appendChild(paragraphe("Chaque point est un nuage : en abscisse la vraie corrélation, en ordonnée votre estimation. Sur la diagonale, l'estimation est exacte.", "source"));
         ajouterExplication(zone, "Ce que montre ce jeu", [
@@ -453,7 +453,7 @@ JEUX.push(
             boutons[p.juste].classList.add("juste");
             if (k !== p.juste) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
-            retour.appendChild(el("p", "verdict " + (k === p.juste ? "juste" : "faux"), (k === p.juste ? "Juste. " : "Non. ") + p.piege));
+            retour.appendChild(el("p", "verdict " + (k === p.juste ? "juste" : "faux"), T(k === p.juste ? "Juste." : "Non.") + " " + T(p.piege)));
             if (p.honnete) {
               const f = el("figure", "figure-piege honnete");
               f.appendChild(p.honnete());
@@ -490,7 +490,7 @@ function consigneIllusion(e) {
 }
 
 function explicationIllusion(e, ecart) {
-  if (e.figure === "muller") return "Les deux traits horizontaux " + (Math.abs(ecart) < 0.04 ? "sont" : "auraient dû être") + " de même longueur : les pointes tournées vers l'extérieur allongent le trait, celles tournées vers l'intérieur le raccourcissent. C'est l'illusion de Müller-Lyer (1889).";
+  if (e.figure === "muller") return Math.abs(ecart) < 0.04 ? T("Les deux traits horizontaux sont de même longueur : les pointes tournées vers l'extérieur allongent le trait, celles tournées vers l'intérieur le raccourcissent. C'est l'illusion de Müller-Lyer (1889).") : T("Les deux traits horizontaux auraient dû être de même longueur : les pointes tournées vers l'extérieur allongent le trait, celles tournées vers l'intérieur le raccourcissent. C'est l'illusion de Müller-Lyer (1889).");
   if (e.figure === "ebbinghaus") return "Entouré de grands cercles, un cercle paraît plus petit ; entouré de petits, il paraît plus grand. C'est l'illusion d'Ebbinghaus : notre perception des tailles est relative à l'entourage.";
   return "Un trait vertical paraît plus long qu'un trait horizontal de même longueur, surtout quand il coupe celui-ci en son milieu. C'est l'illusion verticale-horizontale.";
 }
@@ -836,13 +836,13 @@ const PIEGES_GRAPHIQUES = [
       const min = Math.floor(v1) - 1, max = Math.ceil(v2) + 0.5;
       return {
         titre: "Taux de satisfaction des clients",
-        trompeur: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], min, max, { unite: " %", tronque: true, pas: (max - min) / 4 }),
-        honnete: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], 0, 100, { unite: " %", pas: 25 }),
+        trompeur: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], min, max, { unite: PC, tronque: true, pas: (max - min) / 4 }),
+        honnete: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], 0, 100, { unite: PC, pas: 25 }),
         question: "D'après ce graphique, comment la satisfaction a-t-elle évolué ?",
-        options: ["Elle a environ triplé", "Elle a progressé de " + fr(Number((v2 - v1).toFixed(1))) + " points, soit environ " + hausse + " %", "Elle a doublé"],
+        options: ["Elle a environ triplé", T("Elle a progressé de {0} points, soit environ {1} %", fr(Number((v2 - v1).toFixed(1))), hausse), "Elle a doublé"],
         juste: 1,
-        piege: "L'axe vertical commence à " + fr(min) + " %, et non à zéro.",
-        explication: "Un axe qui ne commence pas à zéro grossit les écarts : la barre de 2025 paraît plusieurs fois plus haute alors que la valeur n'a augmenté que de " + hausse + " %. Pour des barres, dont on compare les longueurs, l'axe doit partir de zéro."
+        piege: T("L'axe vertical commence à {0} %, et non à zéro.", fr(min)),
+        explication: T("Un axe qui ne commence pas à zéro grossit les écarts : la barre de 2025 paraît plusieurs fois plus haute alors que la valeur n'a augmenté que de {0} %. Pour des barres, dont on compare les longueurs, l'axe doit partir de zéro.", hausse)
       };
     }
   },
@@ -930,13 +930,13 @@ const PIEGES_GRAPHIQUES = [
       const relatif = Math.round(100 * (t2 - t1) / t1);
       return {
         titre: "Taux de chômage dans une région",
-        trompeur: () => grapheBarres([{ libelle: "2024", valeur: t1 }, { libelle: "2025", valeur: t2, forte: true }], 0, 10, { unite: " %", pas: 2.5 }),
+        trompeur: () => grapheBarres([{ libelle: "2024", valeur: t1 }, { libelle: "2025", valeur: t2, forte: true }], 0, 10, { unite: PC, pas: 2.5 }),
         honnete: null,
-        question: "Le taux passe de " + t1 + " % à " + t2 + " %. De combien a-t-il augmenté ?",
-        options: ["De " + (t2 - t1) + " %", "De " + (t2 - t1) + " point" + (t2 - t1 > 1 ? "s" : "") + ", soit +" + relatif + " %", "De " + relatif + " points"],
+        question: T("Le taux passe de {0} % à {1} %. De combien a-t-il augmenté ?", t1, t2),
+        options: [T("De {0} %", t2 - t1), t2 - t1 > 1 ? T("De {0} points, soit +{1} %", t2 - t1, relatif) : T("De {0} point, soit +{1} %", t2 - t1, relatif), T("De {0} points", relatif)],
         juste: 1,
         piege: "Il faut distinguer points de pourcentage et pourcentage.",
-        explication: "L'écart entre deux taux se mesure en points (" + (t2 - t1) + "), la variation relative en pourcentage (+" + relatif + " %). Selon l'effet recherché, on choisira l'un ou l'autre : « +" + (t2 - t1) + " point » paraît anodin, « +" + relatif + " % » alarmant."
+        explication: T("L'écart entre deux taux se mesure en points ({0}), la variation relative en pourcentage (+{1} %). Selon l'effet recherché, on choisira l'un ou l'autre : « +{0} point » paraît anodin, « +{1} % » alarmant.", t2 - t1, relatif)
       };
     }
   },
@@ -955,11 +955,11 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheBarres(classes.map(([a, b], k) => ({ libelle: k === 4 ? "> 10 k" : fr(a / 1000) + "-" + fr(b / 1000) + " k", valeur: effectifs[k], forte: k === 4 })), 0, 20, { pas: 5 }),
         honnete: null,
         legende: "Nombre de salariés par tranche de salaire. Données fictives.",
-        question: "L'entreprise annonce un salaire moyen de " + fr(moyenne) + " €. Combien gagne un salarié typique ?",
-        options: ["Environ " + fr(moyenne) + " €", "Environ " + fr(mediane) + " €", "Environ " + fr(Math.round(patron / 1000) * 1000) + " €"],
+        question: T("L'entreprise annonce un salaire moyen de {0} €. Combien gagne un salarié typique ?", fr(moyenne)),
+        options: [T("Environ {0} €", fr(moyenne)), T("Environ {0} €", fr(mediane)), T("Environ {0} €", fr(Math.round(patron / 1000) * 1000))],
         juste: 1,
         piege: "La moyenne est tirée vers le haut par un seul salaire très élevé.",
-        explication: "La moitié des salariés gagne moins de " + fr(mediane) + " € (c'est la médiane). La moyenne, " + fr(moyenne) + " €, dépasse le salaire de 19 salariés sur 20 à cause du salaire du dirigeant. Pour des revenus, la médiane décrit mieux la situation typique."
+        explication: T("La moitié des salariés gagne moins de {0} € (c'est la médiane). La moyenne, {1} €, dépasse le salaire de 19 salariés sur 20 à cause du salaire du dirigeant. Pour des revenus, la médiane décrit mieux la situation typique.", fr(mediane), fr(moyenne))
       };
     }
   },
@@ -991,11 +991,11 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheBarres([{ libelle: "Sans", valeur: 1 }, { libelle: "Avec", valeur: 2, forte: true }], 0, 2, { pas: 0.5 }),
         honnete: () => grilleRisque(base, base * 2),
         legende: "Risque relatif (base 1 sans le médicament). Données fictives.",
-        question: "Le risque passe de " + base + " à " + base * 2 + " cas pour 10 000 personnes traitées pendant un an. Sur 10 000 personnes traitées, combien de cas supplémentaires ?",
+        question: T("Le risque passe de {0} à {1} cas pour 10 000 personnes traitées pendant un an. Sur 10 000 personnes traitées, combien de cas supplémentaires ?", base, base * 2),
         options: [String(base), String(base * 100), "5 000"],
         juste: 0,
         piege: "« Doubler » un risque très faible le laisse très faible.",
-        explication: "Le risque relatif (×2) impressionne ; le risque absolu (+" + base + " pour 10 000) permet de décider. En 1995, l'annonce au Royaume-Uni d'un risque de thrombose « doublé » avec certaines pilules contraceptives a conduit de nombreuses femmes à arrêter leur contraception, suivie d'une hausse des grossesses non désirées et des avortements."
+        explication: T("Le risque relatif (×2) impressionne ; le risque absolu (+{0} pour 10 000) permet de décider. En 1995, l'annonce au Royaume-Uni d'un risque de thrombose « doublé » avec certaines pilules contraceptives a conduit de nombreuses femmes à arrêter leur contraception, suivie d'une hausse des grossesses non désirées et des avortements.", base)
       };
     }
   },
@@ -1007,7 +1007,7 @@ const PIEGES_GRAPHIQUES = [
         titre: "Production de lait d'une coopérative (millions de litres)",
         trompeur: () => grapheBidons(v1, true),
         honnete: () => grapheBidons(v1, false),
-        legende: "À gauche : " + v1 + " millions de litres. À droite : " + 2 * v1 + " millions. Données fictives.",
+        legende: T("À gauche : {0} millions de litres. À droite : {1} millions. Données fictives.", v1, 2 * v1),
         question: "Ce dessin représente-t-il fidèlement le rapport entre les deux productions ?",
         options: ["Oui", "Non : il l'exagère", "Non : il le minimise"],
         juste: 1,
@@ -1046,7 +1046,7 @@ function grilleRisque(avant, apres) {
   const bloc = el("div", "risque-duo");
   [["Sans le médicament", avant], ["Avec le médicament", apres]].forEach(([titre, n]) => {
     const fig = el("figure", "panneau");
-    fig.appendChild(el("figcaption", null, titre + " : " + n + " sur 10 000"));
+    fig.appendChild(el("figcaption", null, T("{0} : {1} sur 10 000", T(titre), n)));
     const s = svg("svg", { viewBox: "0 0 100 100", class: "grille-10000", role: "img", "aria-label": titre });
     s.appendChild(svg("rect", { x: 0, y: 0, width: 100, height: 100, class: "grille-fond" }));
     // Positions dispersées mais toujours dans le cadre (pas de 37 et 23 modulo 80 et 76)
