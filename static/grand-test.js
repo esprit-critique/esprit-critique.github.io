@@ -1141,6 +1141,8 @@ function grandeurGT(id) {
   if (!p || p[k] === undefined) return null;
   const annee = (p.annees && p.annees[k]) || ANNEES_PAYS[k];
   const v = Math.round(p[k] * ind.facteur * 10 ** ind.decimales) / 10 ** ind.decimales;
+  if (LANGUE === "en") return { id, q: p.nom + ": " + ind.libelle + " in " + annee, v, unite: ind.unite, annee,
+    source: "World Bank, World Development Indicators (" + annee + "), site data (pays.js)" };
   return { id, q: p.nom + " : " + ind.libelle + " en " + annee, v, unite: ind.unite, annee,
     source: "Banque mondiale, World Development Indicators (" + annee + "), données du site (pays.js)" };
 }
@@ -1155,6 +1157,7 @@ const FEMININS_RECITS_GT = new Set(["enveloppe", "laisse", "voiture", "valise", 
 // Liste de mots associés : la liste à apprendre, puis six mots à reconnaître (trois appris, le mot critique jamais
 // présenté, deux sans rapport), dans un ordre tiré par la graine
 function demonstrationDRM(i, graine) {
+  if (LANGUE === "en") return demonstrationDRM_EN(i, graine);
   const [critique, mots, sansRapport] = LISTES_DRM_GT[i];
   const appris = [mots[1], mots[5], mots[8]];
   const test = melanger([...appris.map(m => ({ mot: m, present: true, critique: false })), { mot: critique, present: false, critique: true },
@@ -1165,6 +1168,7 @@ function demonstrationDRM(i, graine) {
 
 // Récit et question trompeuse : la question présuppose une couleur fausse ; la reconnaissance vient plus tard
 function demonstrationRecit(i, graine) {
+  if (LANGUE === "en") return demonstrationRecit_EN(i, graine);
   const [scene, objet, vue, suggeree, autres] = RECITS_GT[i];
   const [prenom, genre] = prenomGT(i, 9);
   const fem = FEMININS_RECITS_GT.has(objet);
@@ -1182,6 +1186,7 @@ function demonstrationRecit(i, graine) {
 // Mémoire de la source : six informations, chacune attribuée à l'une de deux sources ; il faut ensuite retrouver
 // la source de chacune
 function demonstrationSource(i, graine) {
+  if (LANGUE === "en") return demonstrationSource_EN(i, graine);
   const [sourceA, sourceB, infos] = SOURCES_GT[i % SOURCES_GT.length];
   const combinaison = COMBINAISONS_SOURCE_GT[Math.floor(i / SOURCES_GT.length) % COMBINAISONS_SOURCE_GT.length];
   const lues = infos.map((t, k) => ({ texte: t, source: combinaison >> k & 1 ? sourceA : sourceB }));

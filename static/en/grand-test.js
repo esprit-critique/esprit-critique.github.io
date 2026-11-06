@@ -285,3 +285,35 @@ const GENERATEURS_GT_EN = {
     };
   },
 };
+
+// ---------- Démonstrations de mémoire, en anglais (appelées par demonstrationDRM, demonstrationRecit et demonstrationSource) ----------
+function demonstrationDRM_EN(i, graine) {
+  const [critique, mots, sansRapport] = LISTES_DRM_GT[i];
+  const appris = [mots[1], mots[5], mots[8]];
+  const test = melanger([...appris.map(m => ({ mot: m, present: true, critique: false })), { mot: critique, present: false, critique: true },
+    ...sansRapport.map(m => ({ mot: m, present: false, critique: false }))], generateur(graineDe("drm@" + i + ":" + graine)));
+  return { instanceId: "drm@" + i, type: "drm", liste: mots, critique, test,
+    explication: "“" + critique + "” was not in the list: all the words you learned were associated with it. Memory retains the general meaning, then fills in; the word that sums up the list then seems familiar. This false memory is often accompanied by real certainty." };
+}
+
+function demonstrationRecit_EN(i, graine) {
+  const [scene, objet, vue, suggeree, autres] = RECITS_GT[i];
+  const [prenom, genre] = prenomGT(i, 9);
+  const choix = melanger([vue, suggeree, ...autres], generateur(graineDe("recit@" + i + ":" + graine)));
+  return { instanceId: "recit@" + i, type: "recit",
+    recit: accorderEN(scene.replace("{c}", vue), prenom, genre),
+    questionTrompeuse: "Was " + prenom + "’s " + suggeree + " " + objet + " rather new or rather worn?",
+    reponsesTrompeuse: ["Rather new", "Rather worn", "I don’t know"],
+    reconnaissance: "In the story, what colour was the " + objet + "?",
+    choix, vue, suggeree,
+    explication: "In the story, the " + objet + " was " + vue + ". The next question spoke of the " + suggeree + " " + objet + ": information slipped in afterwards can blend with the memory. This is the misinformation effect, studied notably by Elizabeth Loftus." };
+}
+
+function demonstrationSource_EN(i, graine) {
+  const [sourceA, sourceB, infos] = SOURCES_GT[i % SOURCES_GT.length];
+  const combinaison = COMBINAISONS_SOURCE_GT[Math.floor(i / SOURCES_GT.length) % COMBINAISONS_SOURCE_GT.length];
+  const lues = infos.map((t, k) => ({ texte: t, source: combinaison >> k & 1 ? sourceA : sourceB }));
+  return { instanceId: "source@" + i, type: "source", sources: [sourceA, sourceB], lues,
+    test: melanger(lues, generateur(graineDe("source@" + i + ":" + graine))),
+    explication: "We often remember a piece of information without recalling where it came from. The content and its source are stored partly separately, and the source fades faster. Before repeating a piece of information, ask yourself where you read it." };
+}
