@@ -64,7 +64,7 @@ JEUX.push({
   picto: "cartes",
   couleur: "#1d4f91",
   duree: "1 min",
-  titre: "Question au hasard",
+  titre: "Sans filet",
   resume: "Une question à la fois, tirée au hasard dans les jeux les plus rapides. Vous ne savez pas à l'avance quel jeu viendra.",
   lancer(zone) {
     zone.innerHTML = "";
