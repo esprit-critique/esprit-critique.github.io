@@ -23,12 +23,15 @@ function tousLesAteliers() {
 
 // ===================== Outils communs =====================
 
-// Nombre à la française : virgule décimale, espace fine entre les milliers (y compris pour 1 000 à 9 999)
-const fr = n => Number(n).toLocaleString("fr-FR").replace(/^(-?\d)(\d{3})(?=,|$)/, "$1\u202f$2");
+// Nombre à la française (en anglais : point décimal et virgule entre les milliers) : virgule décimale, espace fine entre les milliers (y compris pour 1 000 à 9 999)
+const fr = n => LANGUE === "en" ? Number(n).toLocaleString(LOCALE) : Number(n).toLocaleString(LOCALE).replace(/^(-?\d)(\d{3})(?=,|$)/, "$1\u202f$2");
 
 // Convertit une saisie (« 0,05 », « 5 ct », « 12 000 »…) en nombre, ou NaN
 function lireNombre(texte) {
-  return parseFloat(String(texte).replace(/\s/g, "").replace(",", ".").replace(/[^\d.\-]/g, ""));
+  let t = String(texte).replace(/\s/g, "");
+  // Anglais : « 12,000 » est un nombre à milliers ; « 0,05 » (habitude française) reste une décimale
+  t = LANGUE === "en" && /^-?\d{1,3}(,\d{3})+(\.|$)/.test(t) ? t.replace(/,/g, "") : t.replace(",", ".");
+  return parseFloat(t.replace(/[^\d.\-]/g, ""));
 }
 
 function paragraphe(texte, classe) { return el("p", classe, texte); }

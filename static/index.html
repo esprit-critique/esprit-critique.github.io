@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <!-- Politique de sécurité : le site ne charge que ses propres fichiers. Le seul script en ligne (thème, plus bas)
        est autorisé par son empreinte : si on le modifie, recalculer l'empreinte (tests/lancer.sh csp le signale). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2kIPIJtJiIOEXZ5gvBoTdS5n/bpjKQu/dPA8rQHusQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <!-- Adapte la page à la largeur de l'écran du téléphone -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <!-- Réglages pour l'ajout à l'écran d'accueil de l'iPhone -->
@@ -26,6 +26,9 @@
   <meta property="og:image:alt" content="Esprit critique : biais cognitifs et sophismes. 90 fiches sourcées, un quiz, 48 ateliers.">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://esprit-critique.github.io/">
+  <link rel="alternate" hreflang="fr" href="https://esprit-critique.github.io/">
+  <link rel="alternate" hreflang="en" href="https://esprit-critique.github.io/en/">
+  <link rel="alternate" hreflang="x-default" href="https://esprit-critique.github.io/">
   <!-- Icônes : l'emblème de l'en-tête. « ?v=3 » oblige le navigateur à oublier les anciennes. -->
   <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="icone-32.png?v=3" sizes="32x32" type="image/png">
@@ -35,7 +38,7 @@
   <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
   <title>Esprit critique</title>
   <!-- Thème choisi à la main (clair ou sombre), appliqué avant l'affichage pour éviter un éclair de la mauvaise couleur -->
-  <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; if (JSON.parse(localStorage.getItem("langue")) === "en") location.replace("en/" + location.hash); } catch (e) {}</script>
   <link rel="preload" href="polices/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -320,9 +323,14 @@
         <button type="button" data-theme-choix="light">Clair</button>
         <button type="button" data-theme-choix="dark">Sombre</button>
       </p>
+      <p class="choix-langue" role="group" aria-label="Langue">Langue :
+        <a href="./" lang="fr" aria-current="true" data-langue="fr">Français</a>
+        <a href="en/" lang="en" hreflang="en" data-langue="en">English</a>
+      </p>
     </footer>
   </div>
 
+  <script src="langue.js"></script>
   <script src="donnees.js"></script>
   <script src="schemas.js"></script>
   <script src="pays.js"></script>

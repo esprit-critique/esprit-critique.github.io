@@ -1188,7 +1188,7 @@ function dateEvenement(e) {
   if (e.date) {
     const d = new Date(e.date + "T12:00:00");
     const jour = d.getDate() === 1 ? "1er" : String(d.getDate());
-    return jour + " " + d.toLocaleDateString("fr-FR", { month: "long" }) + " " + d.getFullYear();
+    return jour + " " + d.toLocaleDateString(LOCALE, { month: "long" }) + " " + d.getFullYear();
   }
   return (e.vers ? "vers " : "") + (e.annee < 0 ? -e.annee + " av. J.-C." : String(e.annee));
 }

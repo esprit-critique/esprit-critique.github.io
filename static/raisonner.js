@@ -683,7 +683,7 @@ JEUX.push({
     const previsions = () => lire("previsions", []);
     const enregistrer = l => ecrire("previsions", l);
     const auj = aujourdHui();
-    const dateDe = jour => new Date(jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+    const dateDe = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
     zone.innerHTML = "";
 
     // Formulaire

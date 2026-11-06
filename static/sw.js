@@ -1,11 +1,13 @@
 // sw.js : mode hors ligne. Stratégie « réseau d'abord » : en ligne, on sert toujours la version publiée (et l'on met
 // le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Aucune donnée n'est envoyée nulle part.
 // À chaque nouveau fichier du site : l'ajouter à FICHIERS et changer le numéro de version du cache.
-const CACHE = "esprit-critique-v12";
+const CACHE = "esprit-critique-v13";
 const FICHIERS = [
   "./", "index.html", "style.css", "manifest.webmanifest?v=3", "favicon.svg?v=3", "icone-32.png?v=3", "icone.png?v=3", "icone-512.png?v=3",
-  "donnees.js", "schemas.js", "pays.js", "jeux-donnees.js", "ateliers.js", "niveaux.js", "experiences.js", "chiffres.js",
+  "langue.js", "donnees.js", "schemas.js", "pays.js", "jeux-donnees.js", "ateliers.js", "niveaux.js", "experiences.js", "chiffres.js",
   "perception.js", "debattre.js", "raisonner.js", "pratiques.js", "indices.js", "grand-test-donnees.js", "grand-test.js", "grand-test-interface.js", "app.js",
+  // Version anglaise : la page et ses dictionnaires (liste complète : python3 tests/en/controle.py)
+  "en/index.html", "en/fiches.js",
   "polices/newsreader-latin-opsz-normal.woff2", "polices/newsreader-latin-wght-italic.woff2", "polices/OFL.txt"
 ];
 
@@ -29,6 +31,6 @@ self.addEventListener("fetch", e => {
         return reponse;
       })
       // Hors ligne : la copie enregistrée ; à défaut, la page d'accueil, mais seulement pour une navigation (jamais à la place d'un script)
-      .catch(() => caches.match(e.request, { ignoreSearch: false }).then(r => r || (e.request.mode === "navigate" ? caches.match("index.html") : Response.error())))
+      .catch(() => caches.match(e.request, { ignoreSearch: false }).then(r => r || (e.request.mode === "navigate" ? caches.match(url.pathname.includes("/en/") ? "en/index.html" : "index.html") : Response.error())))
   );
 });

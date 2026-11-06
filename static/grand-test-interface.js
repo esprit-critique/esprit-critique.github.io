@@ -856,7 +856,7 @@ function afficherProfil(zone, runId) {
   const scores = calculerScores(t);
   const lignes = lignesPassation(t);
   zone.appendChild(el("h2", "titre-section", "Vos résultats"));
-  zone.appendChild(el("p", "etiquette", "Test " + t.mode + (t.dateFin ? ", terminé le " + new Date(t.dateFin).toLocaleDateString("fr-FR") : "")));
+  zone.appendChild(el("p", "etiquette", "Test " + t.mode + (t.dateFin ? ", terminé le " + new Date(t.dateFin).toLocaleDateString(LOCALE) : "")));
   zone.appendChild(paragraphe("Il n'y a pas de score global : chaque axe se lit séparément, avec sa marge d'incertitude. Ces résultats décrivent vos réponses à ce test, pas votre valeur."));
 
   const axes = el("div", "gt-axes");
@@ -1067,7 +1067,7 @@ function blocProgression(etat) {
   });
   bloc.appendChild(paragraphe("Point plein : test complet ; point creux : test express. " + AVERTISSEMENT_PROGRESSION, "source"));
   bloc.appendChild(tableauEquivalent("Vos tests terminés", ["Test", "Mode", "Date", "A", "B", "C", "Idées fausses corrigées"],
-    tests.map((t, k) => [String(k + 1), t.mode, new Date(t.dateFin).toLocaleDateString("fr-FR"),
+    tests.map((t, k) => [String(k + 1), t.mode, new Date(t.dateFin).toLocaleDateString(LOCALE),
       ...["A", "B", "C"].map(a => t.scores && t.scores[a] && t.scores[a].plage ? pourcentArrondi(t.scores[a].valeur) + " (" + pourcentArrondi(t.scores[a].plage.bas) + "–" + pourcentArrondi(t.scores[a].plage.haut) + ")" : "—"),
       String((t.ideesFaussesCorrigees || []).length)])));
   return bloc;
@@ -1290,7 +1290,7 @@ function blocRevision(t) {
   }
   return bloc;
 }
-const jourEnClair = jour => new Date(jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
+const jourEnClair = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", timeZone: "UTC" });
 
 // Rappels échus, affichés sur l'accueil du test
 function blocRappelsEchus() {
@@ -1328,7 +1328,7 @@ function resumePortraitGrandTest() {
   const t = tests[tests.length - 1];
   const axes = ["A", "B", "C"].filter(a => t.scores && t.scores[a] && t.scores[a].plage)
     .map(a => AXES_GT[a].nom + " : " + pourcentArrondi(t.scores[a].valeur) + " (plage " + pourcentArrondi(t.scores[a].plage.bas) + " – " + pourcentArrondi(t.scores[a].plage.haut) + ")");
-  return paragraphe("Dernier test " + t.mode + ", le " + new Date(t.dateFin).toLocaleDateString("fr-FR") + ". " + (axes.length ? axes.join(" ; ") + ". " : "") + "Pas de score global : voir le détail de chaque axe dans vos résultats.");
+  return paragraphe("Dernier test " + t.mode + ", le " + new Date(t.dateFin).toLocaleDateString(LOCALE) + ". " + (axes.length ? axes.join(" ; ") + ". " : "") + "Pas de score global : voir le détail de chaque axe dans vos résultats.");
 }
 
 // Carte mise en avant (accueil, page des ateliers) : un atelier à part. Toute la carte est un lien ; son libellé
@@ -1345,7 +1345,7 @@ function carteGrandTest() {
   const corps = el("div", "atelier-corps");
   corps.append(el("p", "surtitre", "Le Grand test"), el("h2", null, "Cinq façons de raisonner, mesurées séparément"),
     el("p", null, "Sans score global ni classement, et tout reste dans votre navigateur. Express : 12 à 15 minutes. Complet : environ 45 à 60 minutes, en une ou plusieurs fois."));
-  if (faits.length && !enCours) corps.appendChild(el("p", "source", "Dernier test terminé le " + new Date(faits[faits.length - 1].dateFin).toLocaleDateString("fr-FR") + "."));
+  if (faits.length && !enCours) corps.appendChild(el("p", "source", "Dernier test terminé le " + new Date(faits[faits.length - 1].dateFin).toLocaleDateString(LOCALE) + "."));
   corps.appendChild(el("span", "bouton", enCours ? "Reprendre le test " + enCours.mode : faits.length ? "Refaire le test" : "Commencer"));
   carte.append(cadre, corps);
   return carte;

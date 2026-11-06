@@ -94,9 +94,10 @@ INDEX.forEach(({ fiche }, cle) => {
 
 const $ = id => document.getElementById(id);
 
-// Typographie française : espace fine insécable avant ; : ! ? % » et après «,
+// Typographie française (pas appliquée à la page anglaise) : espace fine insécable avant ; : ! ? % » et après «,
 // pour que la ponctuation ne se retrouve jamais seule en début de ligne
 function typo(texte) {
+  if (LANGUE === "en") return String(texte); // anglais : ponctuation sans espace fine, milliers avec virgule
   return String(texte).replace(/ ([;:!?%»])/g, " $1").replace(/« /g, "« ").replace(/(\d) (?=\d{3}\b)/g, "$1 ");
 }
 
@@ -483,7 +484,7 @@ function journalReperage(cle) {
     bloc.append(el("p", "consigne", "Dans la vie courante"), ligne);
     if (miens.length) {
       const dernier = miens[miens.length - 1];
-      const date = new Date(dernier.j * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
+      const date = new Date(dernier.j * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", timeZone: "UTC" });
       bloc.appendChild(el("p", "source", "Repéré " + pluriel(miens.length, "fois", "fois") + ", la dernière fois le " + date + (dernier.note ? " : « " + dernier.note + " »" : "") + "."));
     }
   };
@@ -633,7 +634,7 @@ function carteDefiDuJour() {
   const jour = aujourdHui();
   const carte = el("article", "carte defi-jour");
   carte.style.setProperty("--c", "#a8432e");
-  const date = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  const date = new Date().toLocaleDateString(LOCALE, { day: "numeric", month: "long" });
   const texteDePartage = score => "Défi Esprit critique du " + date + " : " + score + " / 10. " + location.origin + location.pathname;
   const memo = lire("defiJour", null);
 
@@ -727,7 +728,7 @@ function ouverture() {
 function afficherAccueil() {
   const zone = $("vue-accueil");
   zone.innerHTML = "";
-  const date = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  const date = new Date().toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
   zone.append(el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1)), el("h1", "page-titre", "Aujourd'hui"));
   zone.appendChild(el("p", "page-intro", BIAIS.length + " biais et " + SOPHISMES.length + " sophismes, un quiz qui revient sur vos erreurs, et " + tousLesAteliers().length + " ateliers : données réelles, perception, expériences classiques et philosophie."));
 
@@ -1627,7 +1628,7 @@ function afficherSauvegardesAuto() {
   const ul = el("ul", "liste-simple");
   liste.slice().reverse().forEach(s => {
     const li = el("li");
-    const date = new Date(s.jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
+    const date = new Date(s.jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", timeZone: "UTC" });
     li.appendChild(texteNoeud(date + (s.heure ? ", " + s.heure : "") + " (" + ({ quotidienne: "copie du jour", "avant import": "avant un import", "avant restauration": "avant une restauration" }[s.motif] || "copie") + ") "));
     const b = el("button", "lien", "Restaurer");
     b.setAttribute("aria-label", "Restaurer la sauvegarde du " + date);
@@ -1685,7 +1686,7 @@ $("fichier-import").addEventListener("change", e => {
     const valides = Object.entries(donnees.cles).filter(([cle, valeur]) => CLES_SAUVEGARDE.includes(cle) && formeValide(cle, valeur));
     const ecartees = Object.keys(donnees.cles).length - valides.length;
     const date = new Date(donnees.date);
-    if (!confirm("Remplacer votre progression actuelle par celle du fichier" + (isNaN(date) ? "" : " (" + date.toLocaleDateString("fr-FR") + ")") + " ?"
+    if (!confirm("Remplacer votre progression actuelle par celle du fichier" + (isNaN(date) ? "" : " (" + date.toLocaleDateString(LOCALE) + ")") + " ?"
       + (ecartees ? " " + ecartees + " élément(s) illisible(s) seront ignorés." : ""))) return;
     sauvegarderAuto("avant import");
     remplacerProgression(Object.fromEntries(valides));
@@ -1739,10 +1740,22 @@ document.querySelectorAll("[data-theme-choix]").forEach(b => b.addEventListener(
 }));
 appliquerTheme(lire("theme", "auto"));
 
+// Langue : la page française (/) et la page anglaise (/en/) ont les mêmes adresses après le « # ».
+// Le choix est mémorisé : la page française renvoie vers l'anglaise (script de l'en-tête) si l'on a choisi l'anglais.
+function majLiensLangue() {
+  document.querySelectorAll("[data-langue]").forEach(a => {
+    const racine = a.dataset.langue === LANGUE ? "./" : (LANGUE === "en" ? "../" : "en/");
+    a.href = racine + location.hash;
+  });
+}
+document.querySelectorAll("[data-langue]").forEach(a => a.addEventListener("click", () => ecrire("langue", a.dataset.langue)));
+window.addEventListener("hashchange", majLiensLangue);
+majLiensLangue();
+
 // Mode hors ligne : le service worker garde une copie du site (sw.js). Seulement en HTTPS ou en local.
 // Seulement pour la page elle-même, pas dans un cadre (les bancs d'essai chargent le site dans un cadre)
 if ("serviceWorker" in navigator && window.top === window && (location.protocol === "https:" || location.hostname === "localhost")) {
-  navigator.serviceWorker.register("sw.js").catch(() => { /* hors ligne indisponible : le site fonctionne normalement */ });
+  navigator.serviceWorker.register(LANGUE === "en" ? "../sw.js" : "sw.js").catch(() => { /* hors ligne indisponible : le site fonctionne normalement */ });
 }
 
 // Verdicts longs (plus d'une ligne environ) : italique en 17 px au lieu de 19, moins fatigant à lire

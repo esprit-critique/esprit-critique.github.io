@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- English version of ../index.html. Same structure, same ids, same scripts: only the text differs.
+       Content security policy: the site only loads its own files. The only inline script (theme, below) is allowed
+       by its hash: if you change it, recompute the hash (tests/lancer.sh csp reports it). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Esprit critique">
+  <meta name="description" content="Cognitive biases and fallacies: 90 sourced entries, a spaced-repetition quiz and 48 workshops built on real data and classic experiments.">
+  <!-- Preview when the page is shared -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:site_name" content="Esprit critique">
+  <meta property="og:title" content="Esprit critique · Cognitive biases and fallacies">
+  <meta property="og:description" content="Cognitive biases and fallacies: 90 sourced entries, a spaced-repetition quiz and 48 workshops.">
+  <meta property="og:url" content="https://esprit-critique.github.io/en/">
+  <meta property="og:image" content="https://esprit-critique.github.io/apercu-en.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Esprit critique: cognitive biases and fallacies. 90 sourced entries, a quiz, 48 workshops.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://esprit-critique.github.io/en/">
+  <link rel="alternate" hreflang="fr" href="https://esprit-critique.github.io/">
+  <link rel="alternate" hreflang="en" href="https://esprit-critique.github.io/en/">
+  <link rel="alternate" hreflang="x-default" href="https://esprit-critique.github.io/">
+  <link rel="icon" href="../favicon.svg?v=3" type="image/svg+xml">
+  <link rel="icon" href="../icone-32.png?v=3" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../icone.png?v=3">
+  <link rel="manifest" href="../manifest.webmanifest?v=3">
+  <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+  <title>Esprit critique · Cognitive biases and fallacies</title>
+  <!-- Theme chosen by hand (light or dark), applied before the first paint to avoid a flash of the wrong colour -->
+  <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <link rel="preload" href="../polices/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <noscript><p class="sans-script">This site needs JavaScript to work: please turn it on in your browser settings. No data is sent anywhere.</p></noscript>
+  <div class="conteneur">
+    <header class="entete">
+      <a class="marque" href="#accueil" title="The two lines are the same length">
+        <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
+          <path class="embleme-guide" d="M10 2v24M30 2v24"/>
+          <path class="embleme-trait" d="M10 8h20M10 20h20"/>
+          <path class="embleme-ailette" d="M10 8 5 3M10 8l-5 5M30 8l5-5M30 8l5 5M10 20l5-5M10 20l5 5M30 20l-5-5M30 20l-5 5"/>
+        </svg>
+        <span>Esprit critique</span>
+      </a>
+
+      <!-- Navigation: at the bottom of the screen on a phone, at the top on a computer -->
+      <nav class="navigation" aria-label="Main navigation">
+        <a class="onglet" href="#accueil" data-onglet="accueil">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>
+          <span>Home</span>
+        </a>
+        <a class="onglet" href="#biais" data-onglet="fiches">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h10.5a2 2 0 0 1 2 2V20H7a2 2 0 0 1-2-2z"/><path d="M5 18a2 2 0 0 1 2-2h10.5"/><path d="M9 8.5h5M9 11.5h5"/></svg>
+          <span>Entries</span>
+        </a>
+        <a class="onglet" href="#quiz" data-onglet="quiz">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.7"/><path d="M12 17h.01"/></svg>
+          <span>Quiz</span>
+        </a>
+        <a class="onglet" href="#ateliers" data-onglet="ateliers">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 3.5h5M10.5 3.5v5.2L5 18.2A1.5 1.5 0 0 0 6.3 20.5h11.4a1.5 1.5 0 0 0 1.3-2.3l-5.5-9.5V3.5"/><path d="M7.4 14.5h9.2"/></svg>
+          <span>Workshops</span>
+        </a>
+        <a class="onglet" href="#guide" data-onglet="guide">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+          <span>Guide</span>
+        </a>
+      </nav>
+
+    </header>
+
+    <div id="annonce" class="annonce" role="status" aria-live="polite" hidden></div>
+
+    <!-- The views: only one is visible at a time, depending on the address (#accueil, #biais, #quiz…) -->
+    <main>
+      <section id="vue-accueil" class="vue" hidden></section>
+
+      <section id="vue-fiches" class="vue" hidden>
+        <div id="outils-liste">
+          <h1 class="page-titre">Entries</h1>
+          <nav class="segment" id="segment-type" aria-label="Type of entry"></nav>
+          <label class="invisible" for="recherche">Search</label>
+          <input id="recherche" class="recherche" type="search" placeholder="Search…" autocomplete="off">
+          <div id="filtres" class="puces"></div>
+          <div class="barre-outils">
+            <div class="progression">
+              <span id="texte-progression"></span>
+              <div class="jauge"><div id="jauge"></div></div>
+            </div>
+            <button id="btn-hasard" class="bouton secondaire">Random</button>
+          </div>
+        </div>
+        <div id="liste"></div>
+      </section>
+
+      <section id="vue-quiz" class="vue" hidden>
+        <h1 class="page-titre">Quiz</h1>
+        <p class="page-intro">Ten situations: your job is to identify the bias or the fallacy. The ones you miss come back under “To review”, at growing intervals.</p>
+        <div id="filtres-quiz" class="puces"></div>
+        <div id="zone-quiz" aria-live="polite"></div>
+      </section>
+
+      <section id="vue-ateliers" class="vue" hidden></section>
+      <section id="vue-chiffres" class="vue" hidden></section>
+      <section id="vue-tests" class="vue" hidden></section>
+      <section id="vue-portrait" class="vue" hidden></section>
+
+      <!-- Guide: fixed text -->
+      <section id="vue-guide" class="vue guide" hidden>
+        <h1 class="page-titre">Guide</h1>
+        <p class="page-intro">The basic notions, a method for examining a claim, and a few tools for debating.</p>
+
+        <nav class="carte" aria-label="Guide contents">
+          <ul class="sommaire">
+            <li><a href="#guide/difference">Bias or fallacy?</a></li>
+            <li><a href="#guide/systemes">Two modes of thinking</a></li>
+            <li><a href="#guide/origine">Why biases exist</a></li>
+            <li><a href="#guide/logique">Valid, true, sound</a></li>
+            <li><a href="#guide/methode">Examining a claim</a></li>
+            <li><a href="#guide/debattre">Debating honestly</a></li>
+            <li><a href="#guide/philosophie">Philosophical tools</a></li>
+            <li><a href="#guide/decision">Before a decision</a></li>
+            <li><a href="#guide/recherche">The state of the research</a></li>
+            <li><a href="#guide/lexique">Glossary</a></li>
+            <li><a href="#guide/lectures">Further reading</a></li>
+            <li><a href="#guide/donnees">Your data</a></li>
+          </ul>
+        </nav>
+
+        <article class="carte" id="g-difference">
+          <h2>Bias or fallacy?</h2>
+          <p>A <strong>cognitive bias</strong> is a systematic deviation of judgement from a norm (logic, probability, well-understood self-interest). It concerns the person who is reasoning: it is involuntary, and it affects those who know about it too.</p>
+          <p>A <strong>fallacy</strong> concerns an argument: its structure or its content cannot establish the conclusion, even though it looks as if it does. French tradition distinguishes the <em>paralogism</em>, committed in good faith, from the <em>sophism</em> in the strict sense, used to deceive.</p>
+          <figure class="schema figure-guide">
+            <svg viewBox="0 0 320 120" role="img" aria-label="Müller-Lyer illusion: two lines of the same length that look unequal">
+              <path class="sch-c-trait" d="M90 34h140M90 86h140"/>
+              <path class="sch-trait" d="M90 34 72 20M90 34 72 48M230 34l18-14M230 34l18 14M90 86l18-14M90 86l18 14M230 86l-18-14M230 86l-18 14"/>
+              <path class="sch-pointille" d="M90 12v96M230 12v96"/>
+            </svg>
+            <figcaption>The two lines are exactly the same length, and knowing it changes nothing about what you see. Biases work the same way: knowing about them is not enough to protect you from them. <a href="#chiffres/illusion">Measure this illusion →</a></figcaption>
+          </figure>
+          <p>The two are linked: a bias often makes a fallacy convincing. The argument from authority works because we are inclined to <a href="#biais/autorite">defer to authority</a>; the appeal to popularity, because we tend towards <a href="#biais/conformisme">conformity</a>.</p>
+        </article>
+
+        <article class="carte" id="g-systemes">
+          <h2>Two modes of thinking</h2>
+          <p>A common description distinguishes two ways of processing information:</p>
+          <ul>
+            <li><strong>System 1</strong>: fast, automatic, effortless, associative. It recognises a face, or answers “10 cents” to the bat-and-ball question.</li>
+            <li><strong>System 2</strong>: slow, deliberate, demanding of attention. It carries out a calculation or checks a piece of reasoning.</li>
+          </ul>
+          <p>Most biases appear when a System 1 answer is accepted without being checked by System 2. The terms come from Stanovich and West (2000) and were popularised by Daniel Kahneman (<em>Thinking, Fast and Slow</em>, 2011). It is a simplifying model, not a description of two regions of the brain.</p>
+          <p><a href="#tests/crt">Try it with three questions →</a></p>
+        </article>
+
+        <article class="carte" id="g-origine">
+          <h2>Why biases exist</h2>
+          <p>Biases are the flip side of heuristics, shortcuts that quickly give an answer that is often right. Gerd Gigerenzer stresses the point: in their usual environment, these shortcuts are often more efficient than a full calculation.</p>
+          <p>Buster Benson (2016) sorts about 180 biases by the four problems they answer:</p>
+          <ol>
+            <li><strong>Too much information</strong>: we filter, keeping what is recent, repeated, surprising or in line with our expectations.</li>
+            <li><strong>Not enough meaning</strong>: we fill the gaps with patterns, stereotypes and assumptions.</li>
+            <li><strong>The need to act fast</strong>: we cut through, favouring confidence, the status quo and the short term.</li>
+            <li><strong>Limited memory</strong>: we simplify and generalise, at the cost of forgetting and reconstructing.</li>
+          </ol>
+          <p>John Manoogian III drew a widely shared illustration from this classification, the <em>Cognitive Bias Codex</em>.</p>
+        </article>
+
+        <article class="carte" id="g-logique">
+          <h2>Valid, true, sound</h2>
+          <p>An argument is <strong>valid</strong> if its conclusion follows necessarily from its premises. Truth belongs to statements; validity belongs to the link between them. A valid argument whose premises are true is called <strong>sound</strong>.</p>
+          <ul>
+            <li>“All cats fly; Felix is a cat; therefore Felix flies” is valid, but not sound.</li>
+            <li>“If it rains, the road is wet; the road is wet; therefore it rained” is not valid, even though its conclusion may be true.</li>
+          </ul>
+          <p><strong>Formal fallacies</strong> are errors of structure, which you can spot by replacing the terms with letters (see <a href="#sophismes/affirmation-consequent">affirming the consequent</a>). <strong>Informal fallacies</strong> are errors of content or relevance: the form may be correct, but a premise is false, irrelevant, or assumes the conclusion.</p>
+        </article>
+
+        <article class="carte" id="g-methode">
+          <h2>Examining a claim in six questions</h2>
+          <ol>
+            <li><strong>What exactly does it say?</strong> Restate it, pin down the terms, ask for the absolute numbers behind the percentages. <small>(<a href="#sophismes/equivoque">equivocation</a>, <a href="#biais/cadrage">framing</a>)</small></li>
+            <li><strong>Who says so, and on what basis?</strong> Expertise in this particular field, interests at stake, original source. <small>(<a href="#sophismes/autorite">appeal to authority</a>, <a href="#sophismes/hors-contexte">quoting out of context</a>)</small></li>
+            <li><strong>What evidence?</strong> An anecdote, one study, several studies? On how many cases, against what comparison group? <small>(<a href="#sophismes/generalisation-hative">hasty generalisation</a>, <a href="#biais/taille-echantillon">sample size</a>)</small></li>
+            <li><strong>Compared with what?</strong> What is the base rate, the full period, the whole data set? <small>(<a href="#biais/taux-de-base">base rate</a>, <a href="#sophismes/cherry-picking">cherry-picking</a>)</small></li>
+            <li><strong>What other explanations?</strong> Chance, a common factor, reverse causation, regression to the mean. <small>(<a href="#sophismes/correlation">correlation</a>, <a href="#biais/regression-moyenne">regression</a>)</small></li>
+            <li><strong>What would change my mind?</strong> If nothing could, the problem may lie with me. <small>(<a href="#biais/raisonnement-motive">motivated reasoning</a>, <a href="#biais/confirmation">confirmation</a>)</small></li>
+          </ol>
+        </article>
+
+        <article class="carte" id="g-debattre">
+          <h2>Debating honestly</h2>
+          <p><strong>The principle of charity</strong> (Neil Wilson, 1959; Donald Davidson) means interpreting what the other person says in its most coherent version before criticising it. It is the best antidote to the <a href="#sophismes/homme-de-paille">straw man</a>.</p>
+          <p><strong>The steel man</strong> goes further: restate the opposing position in its strongest version, then answer that.</p>
+          <p><strong>Rapoport’s rules</strong>, reported by Daniel Dennett (<em>Intuition Pumps</em>, 2013), for criticising a position:</p>
+          <ol>
+            <li>re-express it so clearly, vividly and fairly that its author says, “Thanks, I wish I’d thought of putting it that way”;</li>
+            <li>list the points of agreement;</li>
+            <li>mention anything you have learned from it;</li>
+            <li>only then, say what you want to criticise.</li>
+          </ol>
+          <p>Finally, naming a fallacy is not enough: a badly built argument can defend a true conclusion (the <a href="#sophismes/sophisme-sophisme">fallacy fallacy</a>).</p>
+          <p><strong>Ask rather than guess.</strong> In 25 experiments, making an effort to take another person’s perspective did not make people’s guesses about that person’s thoughts and preferences any more accurate; asking them did (Eyal, Steffel and Epley, <em>Journal of Personality and Social Psychology</em>, 2018).</p>
+          <p><strong>Correcting is still worthwhile.</strong> There was a fear that a correction would strengthen the belief it targets: the “backfire effect”. Across 52 topics and more than 10,100 participants, Wood and Porter (<em>Political Behavior</em>, 2019) find none; neither do the three large experiments by Guess and Coppock (<em>British Journal of Political Science</em>, online in 2018), when participants were shown information running against their opinion.</p>
+          <p><strong>Tone is not the argument.</strong> Paul Graham ranks the ways of expressing disagreement, from name-calling to refuting the central point (“How to Disagree”, 2008). It is an essay, not a study; his ranking is a reminder that a polite reply can dodge the substance, and that a sharp one can address it.</p>
+          <p>To practise: the workshops in the <a href="#ateliers">Debate</a> section.</p>
+        </article>
+
+        <article class="carte" id="g-philosophie">
+          <h2>Philosophical tools</h2>
+          <p>A few principles, forged by philosophers, that are useful every day for sorting claims.</p>
+          <dl class="lexique">
+            <dt>Ockham’s razor</dt>
+            <dd>Between two explanations that account equally well for the facts, prefer the one that assumes the least. The principle is attributed to William of Ockham (14th century), who never actually wrote the famous formula “entities must not be multiplied beyond necessity”. It is a rule of prudence, not a proof: the simplest explanation can be wrong.</dd>
+            <dt>The burden of proof</dt>
+            <dd>The one who makes a claim has to supply the evidence; it is not for others to prove them wrong. Bertrand Russell illustrated this with an invisible teapot orbiting the Sun (1952); Christopher Hitchens put it this way: “What can be asserted without evidence can also be dismissed without evidence.”</dd>
+            <dt>Evidence proportionate to the claim</dt>
+            <dd>“Extraordinary claims require extraordinary evidence” (Carl Sagan, 1979). The idea is already in Laplace in 1814: the more a claim contradicts what we know, the stronger the evidence has to be.</dd>
+            <dt>Falsifiability</dt>
+            <dd>For Karl Popper (1934), a scientific theory must be open to contradiction by a possible observation. A theory that everything confirms, whatever happens, teaches nothing: that is a defect, not a strength.</dd>
+            <dt>The problem of induction</dt>
+            <dd>David Hume (1739): no amount of past observation logically guarantees the next one. We generalise all the same, and reasonably so; but a regularity remains a hypothesis, not a certainty.</dd>
+            <dt>Methodical doubt</dt>
+            <dd>René Descartes (<em>Discourse on the Method</em>, 1637): hold as true only what cannot be doubted. In small doses, this is the heart of critical thinking; pushed to the extreme, it leaves nothing to believe. The realistic goal is not certainty but confidence proportioned to the evidence.</dd>
+            <dt>Knowing what you do not know</dt>
+            <dd>The line “I know that I know nothing” does not appear as such in Plato. In the <em>Apology</em>, Socrates says rather that he is wiser than another man in this one respect: he does not think he knows what he does not know. Knowing the limits of your knowledge is a starting point.</dd>
+          </dl>
+          <p><a href="#tests/pensee">Test your intuitions: thought experiments →</a></p>
+        </article>
+
+        <article class="carte" id="g-decision">
+          <h2>Before an important decision</h2>
+          <p>Eight checks to make before a choice that is costly or hard to undo.</p>
+          <ul class="verif" id="verif">
+            <li><label><input type="checkbox"> <span>I have actively looked for arguments against my choice. <small>(<a href="#biais/confirmation">confirmation</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>I know how often this kind of situation usually occurs. <small>(<a href="#biais/taux-de-base">base rate</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>I made my own estimate before hearing the first figure. <small>(<a href="#biais/ancrage">anchoring</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>I am not carrying on only because of what I have already invested. <small>(<a href="#biais/couts-irrecuperables">sunk costs</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>I have rephrased the options in another way, and my preference has not changed. <small>(<a href="#biais/cadrage">framing</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>I have estimated the timescale from comparable projects, not from my ideal plan. <small>(<a href="#biais/planification">planning fallacy</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>I have gathered independent opinions before any group discussion. <small>(<a href="#biais/pensee-groupe">groupthink</a>)</small></span></label></li>
+            <li><label><input type="checkbox"> <span>I have written down what I expect, so that I can judge the decision and not only its outcome. <small>(<a href="#biais/resultat">outcome bias</a>)</small></span></label></li>
+          </ul>
+          <button class="lien" id="btn-verif">Untick all</button>
+        </article>
+
+        <article class="carte" id="g-recherche">
+          <h2>The state of the research</h2>
+          <p>Since the 2010s, psychology has been going through a “replication crisis”. In 2015, the Open Science Collaboration tried to reproduce 100 published studies: only about a third gave a comparable significant result.</p>
+          <p>Some widely publicised effects, such as social priming or “ego depletion”, are now strongly contested and are not included here. The entries kept are about well-established effects; when a result is disputed (the Dunning-Kruger effect, the Hofling experiment, the illusion of control, omission bias…), the entry says so.</p>
+        </article>
+
+        <article class="carte" id="g-lexique">
+          <h2>Glossary</h2>
+          <dl class="lexique">
+            <dt>Heuristic</dt><dd>A simple, fast rule of judgement, often effective, but a source of systematic errors in certain situations.</dd>
+            <dt>Premise, conclusion</dt><dd>The premises are the statements an argument starts from; the conclusion is what it claims to establish.</dd>
+            <dt>Base rate</dt><dd>How frequent a phenomenon is in the population, before any particular information about the case at hand.</dd>
+            <dt>Conditional probability</dt><dd>P(A | B): the probability of A given B. It is generally different from P(B | A).</dd>
+            <dt>Correlation</dt><dd>A statistical link between two variables that vary together. It is not enough to establish a cause-and-effect relationship.</dd>
+            <dt>Confounder</dt><dd>A variable that influences both the supposed cause and the observed effect, creating an apparent link between them.</dd>
+            <dt>Control group</dt><dd>A group comparable to the one receiving an intervention, but which does not receive it, to measure what would have happened without it.</dd>
+            <dt>Randomised trial</dt><dd>A study in which the intervention is assigned by lot, which spreads confounders evenly between the groups.</dd>
+            <dt>Representative sample</dt><dd>A subset whose make-up reflects that of the population being studied.</dd>
+            <dt>Statistical significance</dt><dd>A result is called significant when a difference at least that large would be unlikely to be observed if the effect did not exist. It says nothing about the size or importance of the effect.</dd>
+            <dt>Replication</dt><dd>Reproduction of a study by other researchers, to check that the result holds.</dd>
+            <dt>Meta-analysis</dt><dd>A statistical synthesis of many studies on the same question.</dd>
+            <dt>Publication bias</dt><dd>The tendency to publish positive results more readily than null ones, which distorts the overall picture.</dd>
+            <dt>Falsifiability</dt><dd>A criterion proposed by Karl Popper (1934): a scientific claim must be open to contradiction by an observation.</dd>
+            <dt>Burden of proof</dt><dd>The obligation, for whoever puts forward a claim, to justify it.</dd>
+            <dt>Ockham’s razor</dt><dd>A principle attributed to William of Ockham (14th century): between two explanations that account for the facts, prefer the one that makes the fewest assumptions.</dd>
+          </dl>
+        </article>
+
+        <article class="carte" id="g-lectures">
+          <h2>Further reading</h2>
+          <ul>
+            <li>Daniel Kahneman, <em>Thinking, Fast and Slow</em>, Farrar, Straus and Giroux, 2011.</li>
+            <li>Daniel Kahneman, Olivier Sibony and Cass Sunstein, <em>Noise: A Flaw in Human Judgment</em>, Little, Brown Spark, 2021.</li>
+            <li>Hans Rosling, <em>Factfulness</em>, Flatiron Books, 2018.</li>
+            <li>Normand Baillargeon, <em>A Short Course in Intellectual Self-Defense</em>, Seven Stories Press, 2007.</li>
+            <li>Arthur Schopenhauer, <em>The Art of Being Right</em> (published 1864), various editions.</li>
+            <li>Gérald Bronner, <em>La Démocratie des crédules</em>, PUF, 2013 (in French).</li>
+            <li>Gerd Gigerenzer, <em>Gut Feelings: The Intelligence of the Unconscious</em>, Viking, 2007.</li>
+            <li>Annie Duke, <em>Thinking in Bets</em>, Portfolio, 2018.</li>
+          </ul>
+        </article>
+
+        <article class="carte" id="g-donnees">
+          <h2>Your data</h2>
+          <p>Your progress (entries marked as learned, quiz answers, reviews, workshop results) is saved only in your browser. It is not sent anywhere: the site has no account, no database and no audience tracking. A copy is made every day, in this same browser (see below). Details: <a href="privacy.html">privacy policy</a>. The site is hosted by GitHub Pages, which, like any host, receives requests for pages, but never your answers.</p>
+          <p class="source">Titles set in Newsreader (Production Type), under the SIL OFL licence.</p>
+          <p>If you clear your browsing data, your progress disappears. To keep it, or to carry it over to another device (from computer to phone, for instance), save it to a file, then open that file from the other device.</p>
+          <div class="actions actions-donnees">
+            <button class="bouton secondaire" id="btn-exporter">Save to a file</button>
+            <label class="bouton secondaire" for="fichier-import">Restore from a file</label>
+            <input type="file" id="fichier-import" accept="application/json,.json" hidden>
+          </div>
+          <div id="sauvegardes-auto"></div>
+          <button class="bouton secondaire bouton-danger" id="btn-effacer">Erase my progress</button>
+        </article>
+      </section>
+    </main>
+
+    <footer class="pied">
+      <p>Esprit critique · sourced content · your progress stays in your browser</p>
+      <p><button class="lien" id="btn-partager">Share the site</button> · <a href="https://github.com/esprit-critique/esprit-critique.github.io">Source code</a> · <a href="#guide/donnees">Your data</a></p>
+      <p><a href="legal-notice.html">Legal notice</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms of use</a></p>
+      <p class="choix-theme" role="group" aria-label="Display theme">Theme:
+        <button type="button" data-theme-choix="auto">Auto</button>
+        <button type="button" data-theme-choix="light">Light</button>
+        <button type="button" data-theme-choix="dark">Dark</button>
+      </p>
+      <p class="choix-langue" role="group" aria-label="Language">Language:
+        <a href="../" lang="fr" hreflang="fr" data-langue="fr">Français</a>
+        <a href="./" lang="en" aria-current="true" data-langue="en">English</a>
+      </p>
+    </footer>
+  </div>
+
+  <script src="../langue.js"></script>
+  <script src="../donnees.js"></script>
+  <script src="../schemas.js"></script>
+  <script src="../pays.js"></script>
+  <script src="../jeux-donnees.js"></script>
+  <script src="../ateliers.js"></script>
+  <script src="../niveaux.js"></script>
+  <script src="../experiences.js"></script>
+  <script src="../chiffres.js"></script>
+  <script src="../perception.js"></script>
+  <script src="../debattre.js"></script>
+  <script src="../raisonner.js"></script>
+  <script src="../pratiques.js"></script>
+  <script src="../indices.js"></script>
+  <script src="../grand-test-donnees.js"></script>
+  <script src="../grand-test.js"></script>
+  <script src="../grand-test-interface.js"></script>
+  <script src="fiches.js"></script>
+  <script src="../app.js"></script>
+</body>
+</html>

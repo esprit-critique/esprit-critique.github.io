@@ -1168,6 +1168,10 @@ h3.titre-bloc {
 .choix-theme { display: inline-flex; gap: 4px; align-items: center; }
 .choix-theme button { background: none; border: 1px solid var(--trait); border-radius: var(--rayon); padding: 2px 8px; font-size: 13px; color: var(--discret); cursor: pointer; }
 .choix-theme button[aria-pressed="true"] { color: var(--texte); border-color: var(--texte); font-weight: 600; }
+/* Choix de la langue (pied de page) : même allure que le choix du thème */
+.choix-langue { display: inline-flex; gap: 4px; align-items: center; margin-left: 16px; }
+.choix-langue a { border: 1px solid var(--trait); border-radius: var(--rayon); padding: 2px 8px; font-size: 13px; font-weight: 400; color: var(--discret); text-decoration: none; }
+.choix-langue a[aria-current="true"] { color: var(--texte); border-color: var(--texte); font-weight: 600; }
 /* Journal des repérages, sous chaque fiche */
 .reperage { border-top: 1px solid var(--trait-doux); margin-top: 14px; padding-top: 10px; }
 .reperage .ligne { display: flex; gap: 8px; }

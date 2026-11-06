@@ -648,7 +648,7 @@ EXPERIENCES.push(
     lancer(zone) {
       const decisions = () => lire("decisions", []);
       const auj = aujourdHui();
-      const dateDe = jour => new Date(jour * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+      const dateDe = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
       const relancer = () => EXPERIENCES.find(x => x.id === "decision").lancer(zone);
       zone.innerHTML = "";
       // Bilans arrivés à échéance : on sépare la qualité de la décision de celle du résultat
@@ -1189,7 +1189,7 @@ EXPERIENCES.push(
     lancer(zone) {
       const passe = lire("bilanFormes", {});
       zone.innerHTML = "";
-      const dateDe = j => new Date(j * 86400000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+      const dateDe = j => new Date(j * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric" });
       zone.appendChild(paragraphe("La forme A se passe au début ; la forme B, sur les mêmes vingt notions avec d'autres situations, après quelques semaines de pratique. Ces deux formes n'ont pas été validées : rien ne garantit qu'elles soient de même difficulté, et un écart de quelques points peut tenir au hasard.", "consigne-longue"));
       ["A", "B"].forEach(f => {
         if (passe[f]) zone.appendChild(paragraphe("Forme " + f + " : " + passe[f].score + " / 20, le " + dateDe(passe[f].jour) + ".", "source"));
