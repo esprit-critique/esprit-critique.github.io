@@ -143,6 +143,31 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
 .embleme.revele .embleme-ailette { opacity: 0.12; }
 .embleme.revele .embleme-guide { opacity: 1; }
 
+/* Bouton de langue : propose l'autre langue (EN / FR). Même trait fin et mêmes coins que les autres boutons,
+   capitales du caractère de titre comme les étiquettes ; pas de drapeau (un drapeau désigne un pays, pas une langue).
+   Toujours en haut à droite, face à la marque (l'en-tête est le repère de position). */
+.entete { position: relative; }
+.langue-entete {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16px);
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  font-family: var(--titre);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  color: var(--discret);
+  text-decoration: none;
+}
+.langue-entete svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.langue-entete:hover, .langue-entete:focus-visible { color: var(--texte); border-color: var(--texte); }
+
 /* Téléphone : barre d'onglets fixée en bas de l'écran, comme une application */
 .navigation {
   position: fixed;
@@ -218,6 +243,9 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
   }
   .onglet svg { width: 18px; height: 18px; }
   .onglet.actif { border-bottom-color: var(--c, var(--texte)); }
+  /* La marque et la navigation remplissent déjà la ligne : le bouton prend le coin haut droit, la navigation passe dessous */
+  .langue-entete { top: 14px; right: 16px; }
+  .navigation { order: 3; flex-basis: 100%; margin-top: 6px; }
 }
 
 /* ===================== Titres de page ===================== */
