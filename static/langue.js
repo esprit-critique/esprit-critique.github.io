@@ -10,6 +10,9 @@ const LANGUE = document.documentElement.lang === "en" ? "en" : "fr";
 // Format des dates et des nombres (« 6 novembre » / « 6 November », « 1 200,5 » / « 1,200.5 »)
 const LOCALE = LANGUE === "en" ? "en-GB" : "fr-FR";
 
+// Pourcentage : « 75 % » en français (espace avant le signe), « 75% » en anglais
+const PC = LANGUE === "en" ? "%" : " %";
+
 // Clé d'un texte : espaces insécables et suites d'espaces ramenés à une espace, pour que la typographie
 // française (espace fine avant « : », « ? »…) ne change pas la clé
 const cleTexte = t => String(t).replace(/[  \s]+/g, " ").trim();

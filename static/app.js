@@ -30,7 +30,7 @@
   if (!manquants.length) return;
   const main = document.querySelector("main");
   main.innerHTML = '<section class="vue"><article class="carte"><h2>Chargement incomplet</h2>' +
-    '<p>Une partie de l\'application n\'a pas pu être chargée (' + manquants.join(", ") + '). Vérifiez votre connexion à Internet, puis rechargez la page.</p>' +
+    '<p>' + T("Une partie de l'application n'a pas pu être chargée ({0}). Vérifiez votre connexion à Internet, puis rechargez la page.", manquants.join(", ")) + '</p>' +
     '<button class="bouton" onclick="location.reload()">Recharger</button></article></section>';
   throw new Error("Fichiers manquants : " + manquants.join(", "));
 })();
@@ -41,20 +41,20 @@ const TYPES = {
   biais: {
     fiches: BIAIS,
     categories: CATEGORIES_BIAIS,
-    singulier: "biais",
-    pluriel: "Biais",
-    titreMecanisme: "Mécanisme",
-    titreParade: "Comment s'en prémunir",
-    consigneQuiz: "Quel biais est à l'œuvre ?"
+    singulier: T("biais"),
+    pluriel: T("Biais"),
+    titreMecanisme: T("Mécanisme"),
+    titreParade: T("Comment s'en prémunir"),
+    consigneQuiz: T("Quel biais est à l'œuvre ?")
   },
   sophismes: {
     fiches: SOPHISMES,
     categories: CATEGORIES_SOPHISMES,
-    singulier: "sophisme",
-    pluriel: "Sophismes",
-    titreMecanisme: "Pourquoi l'argument est invalide",
-    titreParade: "Comment répondre",
-    consigneQuiz: "Quel sophisme est commis ?"
+    singulier: T("sophisme"),
+    pluriel: T("Sophismes"),
+    titreMecanisme: T("Pourquoi l'argument est invalide"),
+    titreParade: T("Comment répondre"),
+    consigneQuiz: T("Quel sophisme est commis ?")
   }
 };
 
@@ -150,7 +150,10 @@ function aujourdHui() {
   return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
 }
 
-const pluriel = (n, mot, motPluriel) => n + " " + (n > 1 ? (motPluriel || mot + "s") : mot);
+// Le mot et son pluriel (« notion » / « notions ») sont cherchés dans le dictionnaire en anglais : 0 prend le pluriel en anglais
+const pluriel = (n, mot, motPluriel) => LANGUE === "en"
+  ? n + " " + T(n === 1 ? mot : (motPluriel || mot + "s"))
+  : n + " " + (n > 1 ? (motPluriel || mot + "s") : mot);
 
 // ===================== Sauvegarde locale =====================
 // localStorage peut être indisponible (navigation privée) : chaque accès est protégé.
@@ -248,7 +251,7 @@ function exporterRevisions() {
   });
   const evenements = Object.keys(parJour).map(Number).sort((a, b) => a - b).map(jour => ({
     jour,
-    titre: "Esprit critique : " + pluriel(parJour[jour], "notion") + " à réviser",
+    titre: T("Esprit critique : {0} à réviser", pluriel(parJour[jour], "notion")),
     description: "Révisions du quiz : https://esprit-critique.github.io/#quiz/reviser",
     url: "https://esprit-critique.github.io/#quiz"
   }));
@@ -377,10 +380,10 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
     });
     const retour = el("div", "retour-quiz");
     retour.append(
-      el("p", "verdict " + (juste ? "juste" : "faux"), juste ? "Bonne réponse : " + q.fiche.nom + "." : "Réponse attendue : " + q.fiche.nom + "."),
+      el("p", "verdict " + (juste ? "juste" : "faux"), juste ? T("Bonne réponse : {0}.", q.fiche.nom) : T("Réponse attendue : {0}.", q.fiche.nom)),
       el("p", null, q.fiche.definition)
     );
-    if (!juste) retour.appendChild(el("p", "source", "Votre réponse, « " + option.nom + " », désigne autre chose : " + option.definition));
+    if (!juste) retour.appendChild(el("p", "source", T("Votre réponse, « {0} », désigne autre chose : {1}", option.nom, option.definition)));
     // Duel entre notions proches : ce qui les distingue, et les deux fiches
     if (q.voisine) {
       const p = el("p", "distinction");
@@ -425,7 +428,7 @@ function boutonIndice(carte, q) {
     let courant = "";
     for (let i = 0; i < texte.length; i++) {
       courant += texte[i];
-      if (/\s/.test(texte[i]) && /[,;:.!?»]/.test(texte[i - 1] || "") && i + 1 < texte.length && !/[»!?;:]/.test(texte[i + 1])) {
+      if (/\s/.test(texte[i]) && /[,;:.!?»”]/.test(texte[i - 1] || "") && i + 1 < texte.length && !/[»”!?;:]/.test(texte[i + 1])) {
         morceaux.push(courant);
         courant = "";
       }
@@ -485,7 +488,7 @@ function journalReperage(cle) {
     if (miens.length) {
       const dernier = miens[miens.length - 1];
       const date = new Date(dernier.j * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", timeZone: "UTC" });
-      bloc.appendChild(el("p", "source", "Repéré " + pluriel(miens.length, "fois", "fois") + ", la dernière fois le " + date + (dernier.note ? " : « " + dernier.note + " »" : "") + "."));
+      bloc.appendChild(el("p", "source", (miens.length === 1 ? T("Repéré 1 fois, la dernière fois le {0}", date) : T("Repéré {0} fois, la dernière fois le {1}", miens.length, date)) + (dernier.note ? " : « " + dernier.note + " »" : "") + "."));
     }
   };
   dessiner();
@@ -599,12 +602,12 @@ function rendreQuestionLibre(carte, q, reponseDejaDonnee, surReponse, actions) {
     carte.style.setProperty("--c", COULEURS[q.fiche.categorie]);
     const retour = el("div", "retour-quiz");
     retour.append(
-      el("p", "verdict " + (juste ? "juste" : "faux"), juste ? "Bonne réponse : " + q.fiche.nom + "." : "Réponse attendue : " + q.fiche.nom + "."),
+      el("p", "verdict " + (juste ? "juste" : "faux"), juste ? T("Bonne réponse : {0}.", q.fiche.nom) : T("Réponse attendue : {0}.", q.fiche.nom)),
       el("p", null, q.fiche.definition)
     );
     if (!juste) retour.appendChild(el("p", "source", reponse.definition
-      ? "Votre réponse, « " + reponse.nom + " », désigne autre chose : " + reponse.definition
-      : "« " + reponse.nom + " » ne correspond à aucune fiche. Les noms anglais et les autres appellations sont aussi acceptés."));
+      ? T("Votre réponse, « {0} », désigne autre chose : {1}", reponse.nom, reponse.definition)
+      : T("« {0} » ne correspond à aucune fiche. Les noms anglais et les autres appellations sont aussi acceptés.", reponse.nom)));
     const zoneActions = el("div", "actions");
     actions(zoneActions);
     retour.appendChild(zoneActions);
@@ -622,7 +625,7 @@ function questionsDuDefi(jour) {
   const statuts = [["authentique", "Authentique"], ["deformee", "Déformée"], ["apocryphe", "Inventée ou mal attribuée"]];
   const monde = melanger(difficiles(MONDE), alea).slice(0, 3).map(m => ({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }));
   const vf = melanger(difficiles(VRAI_FAUX), alea).slice(0, 3).map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
-  const citations = melanger(difficiles(CITATIONS), alea).slice(0, 2).map(c => ({ texte: "« " + c.texte + " » — attribuée à " + c.auteur, options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
+  const citations = melanger(difficiles(CITATIONS), alea).slice(0, 2).map(c => ({ texte: T("« {0} » — attribuée à {1}", T(c.texte), c.auteur), options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
   const chrono = melanger(PAIRES_CELEBRES, alea).slice(0, 2).map(p => {
     const [a, b] = melanger([evenement(p.a), evenement(p.b)], alea);
     return { texte: "Lequel a eu lieu en premier ?", options: [a.nom, b.nom], juste: momentEvenement(a) < momentEvenement(b) ? 0 : 1, explication: p.note };
@@ -635,7 +638,7 @@ function carteDefiDuJour() {
   const carte = el("article", "carte defi-jour");
   carte.style.setProperty("--c", "#a8432e");
   const date = new Date().toLocaleDateString(LOCALE, { day: "numeric", month: "long" });
-  const texteDePartage = score => "Défi Esprit critique du " + date + " : " + score + " / 10. " + location.origin + location.pathname;
+  const texteDePartage = score => T("Défi Esprit critique du {0} : {1} / 10.", date, score) + " " + location.origin + location.pathname;
   const memo = lire("defiJour", null);
 
   const resultat = score => {
@@ -648,7 +651,7 @@ function carteDefiDuJour() {
       try {
         if (navigator.share) { await navigator.share({ text: texte }); return; }
         await navigator.clipboard.writeText(texte);
-        annoncer("Résultat copié : " + texte);
+        annoncer(T("Résultat copié : {0}", texte));
       } catch (erreur) {
         if (erreur && erreur.name === "AbortError") return;
         annoncer(texte);
@@ -674,7 +677,7 @@ function carteDefiDuJour() {
           boutons[q.juste].classList.add("juste");
           if (k !== q.juste) b.classList.add("faux");
           const retour = el("div", "retour-quiz");
-          retour.append(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? "Juste." : "Réponse : " + q.options[q.juste] + "."), paragraphe(q.explication));
+          retour.append(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? T("Juste.") : T("Réponse : {0}.", T(q.options[q.juste]))), paragraphe(q.explication));
           zone.appendChild(retour);
           fini(k === q.juste, retour);
         });
@@ -730,7 +733,7 @@ function afficherAccueil() {
   zone.innerHTML = "";
   const date = new Date().toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
   zone.append(el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1)), el("h1", "page-titre", "Aujourd'hui"));
-  zone.appendChild(el("p", "page-intro", BIAIS.length + " biais et " + SOPHISMES.length + " sophismes, un quiz qui revient sur vos erreurs, et " + tousLesAteliers().length + " ateliers : données réelles, perception, expériences classiques et philosophie."));
+  zone.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
 
   // Ouverture : pour un nouveau visiteur (aucune activité, aucun atelier), l'emblème en grand, première leçon du site
   const resultats = lire("resultatsAteliers", {});
@@ -740,9 +743,9 @@ function afficherAccueil() {
   const nbAReviser = clesAReviser().length;
   const appel = el("div", "appel-action");
   appel.appendChild(nbAReviser
-    ? lienVers("#quiz/reviser", "Réviser les notions dues (" + nbAReviser + ")", "bouton")
+    ? lienVers("#quiz/reviser", T("Réviser les notions dues ({0})", nbAReviser), "bouton")
     : lienVers("#quiz", Object.keys(memoire).length ? "Continuer le quiz" : "Commencer le quiz : 10 situations", "bouton"));
-  appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), "Parcourir les " + (BIAIS.length + SOPHISMES.length) + " fiches", "bouton secondaire"));
+  appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), T("Parcourir les {0} fiches", BIAIS.length + SOPHISMES.length), "bouton secondaire"));
   zone.appendChild(appel);
   // Le Grand test, mis en avant (grand-test-interface.js), s'il est publié
   if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
@@ -772,7 +775,7 @@ function afficherAccueil() {
   carteRevision.style.setProperty("--c", "#2a8a5c");
   carteRevision.appendChild(el("p", "surtitre", "Révisions"));
   if (dues > 0) {
-    carteRevision.appendChild(el("h2", null, pluriel(dues, "notion") + " à revoir aujourd'hui"));
+    carteRevision.appendChild(el("h2", null, T("{0} à revoir aujourd'hui", pluriel(dues, "notion"))));
     carteRevision.appendChild(el("p", "source", "Les notions reviennent après 1, 3, 7, 14 puis 30 jours, tant que vous y répondez correctement."));
     const b = el("button", "bouton", "Réviser maintenant");
     b.addEventListener("click", () => lancerQuiz("reviser"));
@@ -786,7 +789,7 @@ function afficherAccueil() {
   } else {
     const prochaine = prochaineRevision() - aujourdHui();
     carteRevision.appendChild(el("h2", null, "Aucune révision aujourd'hui"));
-    carteRevision.appendChild(el("p", "source", prochaine === 1 ? "Prochaine révision demain." : "Prochaine révision dans " + prochaine + " jours."));
+    carteRevision.appendChild(el("p", "source", prochaine === 1 ? T("Prochaine révision demain.") : T("Prochaine révision dans {0} jours.", prochaine)));
     const b = el("button", "bouton secondaire", "Une série de découverte");
     b.addEventListener("click", () => lancerQuiz("tout"));
     carteRevision.appendChild(b);
@@ -808,8 +811,8 @@ function afficherAccueil() {
   const tuiles = el("div", "tuiles");
   [
     [acquis.size + " / " + INDEX.size, "fiches acquises"],
-    [stats.n ? Math.round(100 * stats.justes / stats.n) + " %" : "—", stats.n ? "de réussite sur " + pluriel(stats.n, "réponse") : "de réussite au quiz"],
-    [String(serieDeJours()), "jour" + (serieDeJours() > 1 ? "s" : "") + " d'affilée"]
+    [stats.n ? Math.round(100 * stats.justes / stats.n) + PC : "—", stats.n ? T("de réussite sur {0}", pluriel(stats.n, "réponse")) : T("de réussite au quiz")],
+    [String(serieDeJours()), serieDeJours() > 1 ? T("jours d'affilée") : T("jour d'affilée")]
   ].forEach(([nombre, libelle]) => {
     const t = el("div", "tuile");
     t.append(el("span", "tuile-nombre", nombre), el("span", "tuile-libelle", libelle));
@@ -825,7 +828,7 @@ function afficherAccueil() {
     categories.slice(0, 4).forEach(([nom, s]) => {
       const ligne = el("div", "barre-ligne");
       ligne.style.setProperty("--c", COULEURS[nom]);
-      ligne.appendChild(el("div", "barre-nom", nom + " (" + TYPES[s.type].singulier + ") : " + Math.round(100 * s.j / s.n) + " % de réussite"));
+      ligne.appendChild(el("div", "barre-nom", T("{0} ({1}) : {2} % de réussite", nom, TYPES[s.type].singulier, Math.round(100 * s.j / s.n))));
       const fond = el("div", "barre-fond");
       const barre = el("div", "barre");
       barre.style.width = Math.max(2, 100 * s.j / s.n) + "%";
@@ -888,8 +891,8 @@ function carteVraiFauxDuJour() {
     boutons[a.vrai ? 0 : 1].classList.add("juste");
     if (!juste) boutons[valeur ? 0 : 1].classList.add("faux");
     const retour = el("div", "retour-quiz");
-    retour.append(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Bonne réponse : c'est " : "Eh non : c'est ") + (a.vrai ? "vrai." : "faux.")),
-      el("p", null, a.explication), el("p", "source", "Source : " + a.source + "."));
+    retour.append(el("p", "verdict " + (juste ? "juste" : "faux"), juste ? (a.vrai ? T("Bonne réponse : c'est vrai.") : T("Bonne réponse : c'est faux.")) : (a.vrai ? T("Eh non : c'est vrai.") : T("Eh non : c'est faux."))),
+      el("p", null, a.explication), el("p", "source", T("Source : {0}.", T(a.source))));
     const actions = el("div", "actions");
     actions.appendChild(lienVers("#chiffres/vrai-faux", "Douze autres, avec votre degré de certitude", "bouton secondaire"));
     retour.appendChild(actions);
@@ -912,7 +915,7 @@ if (!TYPES[etat.type]) etat.type = "biais";
 // Numéro de catalogue : « B 10 » à l'écran, « Biais numéro 10 » pour les lecteurs d'écran
 function numeroFiche(type, f, classe) {
   const n = el("span", classe);
-  n.append(el("span", null, (type === "biais" ? "B" : "S") + "\u00a0" + f.num), el("span", "invisible", (type === "biais" ? "Biais" : "Sophisme") + " numéro " + f.num + ", "));
+  n.append(el("span", null, (type === "biais" ? "B" : "S") + "\u00a0" + f.num), el("span", "invisible", type === "biais" ? T("Biais numéro {0}, ", f.num) : T("Sophisme numéro {0}, ", f.num)));
   n.firstChild.setAttribute("aria-hidden", "true");
   return n;
 }
@@ -986,7 +989,7 @@ function afficherListe(type) {
       : "Aucune fiche ne correspond."));
     if (ailleurs) {
       const p = el("p", "vide");
-      const lien = lienVers("#" + autre, pluriel(ailleurs, "résultat") + " parmi les " + TYPES[autre].pluriel.toLowerCase() + " →");
+      const lien = lienVers("#" + autre, T("{0} parmi les {1} →", pluriel(ailleurs, "résultat"), TYPES[autre].pluriel.toLowerCase()));
       lien.addEventListener("click", () => { etat.garderRecherche = true; });
       p.appendChild(lien);
       zone.appendChild(p);
@@ -1028,14 +1031,14 @@ function majProgression(type) {
 }
 
 // Le schéma d'un argument, composé comme en logique : les prémisses l'une sous l'autre, un trait, puis la conclusion
-// (ligne qui commence par « Donc » ou « Alors »). Les lettres majuscules isolées, avec une éventuelle apostrophe
+// (ligne qui commence par « Donc » ou « Alors » ; « So », « Then » ou « Therefore » en anglais). Les lettres majuscules isolées, avec une éventuelle apostrophe
 // (P'), sont les variables, en italique (<var>).
 function schemaArgument(lignes) {
   const bloc = el("div", "forme");
   let conclusion = false;
   lignes.forEach(ligne => {
     const p = el("p");
-    if (!conclusion && /^(Donc|Alors)\b/.test(ligne)) { p.className = "conclusion"; conclusion = true; }
+    if (!conclusion && (LANGUE === "en" ? /^(So|Then|Therefore)\b/ : /^(Donc|Alors)\b/).test(ligne)) { p.className = "conclusion"; conclusion = true; }
     // Sans recherche arrière dans l'expression régulière (absente de Safari avant la version 16.4)
     const texte = typo(ligne);
     let pos = 0;
@@ -1168,10 +1171,10 @@ function afficherFiche(type, fiche) {
   pied.appendChild(bouton);
   const m = memoire[cle];
   if (m) {
-    const info = el("span", "memoire-fiche", "Quiz : " + m.j + " / " + m.n + " · mémorisation");
+    const info = el("span", "memoire-fiche", T("Quiz : {0} / {1}", m.j, m.n) + " · " + T("mémorisation"));
     info.appendChild(niveauMemoire(m.b));
     const ecart = m.d - aujourdHui();
-    info.appendChild(texteNoeud(ecart <= 0 ? " · à revoir aujourd'hui" : " · à revoir dans " + pluriel(ecart, "jour")));
+    info.appendChild(texteNoeud(" · " + (ecart <= 0 ? T("à revoir aujourd'hui") : T("à revoir dans {0}", pluriel(ecart, "jour")))));
     pied.appendChild(info);
   }
   carte.appendChild(pied);
@@ -1344,7 +1347,7 @@ function afficherQuiz() {
       const prochaine = prochaineRevision();
       carte.appendChild(el("p", null, prochaine === null
         ? "Les notions rencontrées au quiz reviendront ici au bon moment : le lendemain en cas d'erreur, puis après 3, 7, 14 et 30 jours."
-        : "Prochaine révision " + (prochaine - aujourdHui() === 1 ? "demain." : "dans " + (prochaine - aujourdHui()) + " jours.")));
+        : (prochaine - aujourdHui() === 1 ? T("Prochaine révision demain.") : T("Prochaine révision dans {0} jours.", prochaine - aujourdHui()))));
       const b = el("button", "bouton", "Une série de découverte");
       b.addEventListener("click", () => lancerQuiz("tout"));
       carte.appendChild(b);
@@ -1363,7 +1366,7 @@ function afficherQuiz() {
   const q = quiz.serie[quiz.index];
   const entete = el("div", "quiz-entete");
   entete.append(
-    el("span", null, "Question " + (quiz.index + 1) + " / " + quiz.serie.length),
+    el("span", null, T("Question {0} / {1}", quiz.index + 1, quiz.serie.length)),
     el("span", null, pluriel(quiz.bonnes, "bonne réponse", "bonnes réponses"))
   );
   const jauge = el("div", "jauge");
@@ -1425,7 +1428,7 @@ function afficherBilan(zone) {
   else message = "Les fiches ci-dessous méritent une relecture.";
   carte.appendChild(el("p", null, message));
   if (quiz.mode !== "reviser" && ancien !== undefined) {
-    carte.appendChild(el("p", "source", "Meilleur score précédent dans ce mode : " + ancien + " / " + TAILLE_SERIE + "."));
+    carte.appendChild(el("p", "source", T("Meilleur score précédent dans ce mode : {0} / {1}.", ancien, TAILLE_SERIE)));
   }
   if (ratees.length > 0) {
     carte.appendChild(el("p", "consigne", quiz.mode === "proches" ? "Paires à revoir" : "Reviendront demain"));
@@ -1452,7 +1455,7 @@ function afficherBilan(zone) {
   actions.appendChild(encore);
   const dues = clesAReviser().length;
   if (dues > 0 && quiz.mode !== "reviser") {
-    const revoir = el("button", "bouton secondaire", "Réviser (" + dues + ")");
+    const revoir = el("button", "bouton secondaire", T("Réviser ({0})", dues));
     revoir.addEventListener("click", () => lancerQuiz("reviser"));
     actions.appendChild(revoir);
   }
@@ -1559,7 +1562,7 @@ function afficherPage() {
     }
   }
 
-  document.title = (titre ? titre + " · " : "") + "Esprit critique";
+  document.title = (titre ? T(titre) + " · " : "") + "Esprit critique";
   precedent = { vue, id };
   if (defilement !== null) window.scrollTo(0, defilement);
 }
@@ -1631,9 +1634,9 @@ function afficherSauvegardesAuto() {
     const date = new Date(s.jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", timeZone: "UTC" });
     li.appendChild(texteNoeud(date + (s.heure ? ", " + s.heure : "") + " (" + ({ quotidienne: "copie du jour", "avant import": "avant un import", "avant restauration": "avant une restauration" }[s.motif] || "copie") + ") "));
     const b = el("button", "lien", "Restaurer");
-    b.setAttribute("aria-label", "Restaurer la sauvegarde du " + date);
+    b.setAttribute("aria-label", T("Restaurer la sauvegarde du {0}", date));
     b.addEventListener("click", () => {
-      if (!confirm("Remplacer votre progression actuelle par la sauvegarde du " + date + " ?")) return;
+      if (!confirm(T("Remplacer votre progression actuelle par la sauvegarde du {0} ?", date))) return;
       sauvegarderAuto("avant restauration");
       remplacerProgression(s.cles);
       location.hash = "accueil";
@@ -1686,8 +1689,8 @@ $("fichier-import").addEventListener("change", e => {
     const valides = Object.entries(donnees.cles).filter(([cle, valeur]) => CLES_SAUVEGARDE.includes(cle) && formeValide(cle, valeur));
     const ecartees = Object.keys(donnees.cles).length - valides.length;
     const date = new Date(donnees.date);
-    if (!confirm("Remplacer votre progression actuelle par celle du fichier" + (isNaN(date) ? "" : " (" + date.toLocaleDateString(LOCALE) + ")") + " ?"
-      + (ecartees ? " " + ecartees + " élément(s) illisible(s) seront ignorés." : ""))) return;
+    if (!confirm(T("Remplacer votre progression actuelle par celle du fichier{0} ?", isNaN(date) ? "" : " (" + date.toLocaleDateString(LOCALE) + ")")
+      + (ecartees ? " " + T("{0} élément(s) illisible(s) seront ignorés.", ecartees) : ""))) return;
     sauvegarderAuto("avant import");
     remplacerProgression(Object.fromEntries(valides));
     location.hash = "accueil";
@@ -1717,10 +1720,10 @@ $("btn-partager").addEventListener("click", async () => {
   try {
     if (navigator.share) { await navigator.share(donnees); return; }
     await navigator.clipboard.writeText(adresse);
-    annoncer("Lien copié : " + adresse);
+    annoncer(T("Lien copié : {0}", adresse));
   } catch (erreur) {
     if (erreur && erreur.name === "AbortError") return;   // partage annulé par l'utilisateur
-    annoncer("Lien du site : " + adresse);
+    annoncer(T("Lien du site : {0}", adresse));
   }
 });
 
