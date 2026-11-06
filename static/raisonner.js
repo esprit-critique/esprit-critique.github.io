@@ -430,7 +430,7 @@ EXPERIENCES.push(
           terminer();
         } else {
           zone.appendChild(el("p", "consigne", e.tour === "avant" ? "Une étude (fictive)" : "Une étude (fictive), à revoir"));
-          zone.appendChild(el("p", "cas", e.s.methode + " " + e.s[e.sens]));
+          zone.appendChild(el("p", "cas", T(e.s.methode) + " " + T(e.s[e.sens])));
           zone.appendChild(el("p", "consigne", "Qualité de cette étude, de 1 à 7 ?"));
           zone.appendChild(echelleSept("Très faible", "Excellente", n => { notes[e.tour][e.s.id + ":" + e.sens] = n; terminer(); }));
         }
@@ -619,7 +619,7 @@ EXPERIENCES.push(
           tourDeTable(joueurs, (k, nom, ok) => {
             entete(zone, i + 1, 6, "Estimation");
             zone.appendChild(el("p", "consigne", T(manche === 1 ? "Manche {0} : sans voir les autres" : "Manche {0} : en voyant les réponses précédentes", manche)));
-            zone.appendChild(el("p", "cas", q.q + (q.unite ? " (en " + q.unite + ")" : "") + " ?"));
+            zone.appendChild(el("p", "cas", T("{0} ?", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : ""))));
             if (manche === 2 && valeurs.length) zone.appendChild(paragraphe(T("Réponses des joueurs précédents : {0}.", valeurs.map(v => fr(v)).join(" ; ")), "source"));
             const champ = el("input", "champ");
             champ.inputMode = "decimal";
@@ -638,7 +638,7 @@ EXPERIENCES.push(
           }, () => {
             resultats.push({ manche, q, valeurs });
             entete(zone, i + 1, 6, "Estimation");
-            zone.appendChild(el("p", "cas", q.q + " ?"));
+            zone.appendChild(el("p", "cas", T("{0} ?", T(q.q))));
             const moyenne = valeurs.reduce((a, b) => a + b, 0) / valeurs.length;
             const ecart = v => Math.abs(v - q.v) / q.v;
             const mieux = valeurs.filter(v => ecart(v) < ecart(moyenne)).length;

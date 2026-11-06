@@ -978,7 +978,7 @@ const EXPERIENCES = [
         if (niveau === 1) {
           zone.appendChild(el("p", "cas", T("Sur {0} personnes testées : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Une personne a un résultat positif.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs))));
         } else {
-          zone.appendChild(el("p", "cas", s.contexte + (deuxTests ? " Elle passe ensuite un second test, indépendant du premier et aussi fiable, qui est lui aussi positif." : "")));
+          zone.appendChild(el("p", "cas", T(s.contexte) + (deuxTests ? " " + T("Elle passe ensuite un second test, indépendant du premier et aussi fiable, qui est lui aussi positif.") : "")));
         }
         zone.appendChild(paragraphe(s.question));
         const ligne = el("div", "ligne");

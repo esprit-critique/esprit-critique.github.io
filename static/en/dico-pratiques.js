@@ -427,5 +427,6 @@ EN_AJOUTER([
   ["Repasser le même test mesure surtout le souvenir des réponses. Deux formes parallèles évitent cet écueil, à condition d'être aussi difficiles l'une que l'autre, ce qui se vérifie d'ordinaire en les faisant passer à de nombreuses personnes. Ces deux formes-ci ne l'ont pas été : prenez l'écart comme une indication, pas comme une mesure.", "Retaking the same test mainly measures memory of the answers. Two parallel forms avoid this pitfall, provided they are equally difficult, which is usually checked by giving them to many people. These two forms have not been: take the gap as an indication, not a measurement."],
   ["Retour au bilan", "Back to the assessment"],
   ["l'humeur", "mood"],
-  ["{0} : {1} sur 7", "{0}: {1} out of 7"]
+  ["{0} : {1} sur 7", "{0}: {1} out of 7"],
+  ["« {0} »", "“{0}”"]
 ]);

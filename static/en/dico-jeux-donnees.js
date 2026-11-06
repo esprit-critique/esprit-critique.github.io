@@ -1142,5 +1142,6 @@ EN_AJOUTER([
   ["« Traité de la nature humaine » (1739-1740), livre II : pour Hume, la raison éclaire les moyens, mais ce sont les désirs qui fixent les fins.", "“A Treatise of Human Nature” (1739-1740), book II: for Hume, reason lights up the means, but it is desires that set the ends."],
   ["Le hasard ne favorise que les esprits préparés.", "“Chance favours only the prepared mind.”"],
   ["Louis Pasteur", "Louis Pasteur"],
-  ["Leçon inaugurale à l'université de Lille, en 1854 : « Dans les champs de l'observation, le hasard ne favorise que les esprits préparés. »", "Inaugural lecture at the University of Lille, in 1854: “In the fields of observation, chance favours only the prepared mind.”"]
+  ["Leçon inaugurale à l'université de Lille, en 1854 : « Dans les champs de l'observation, le hasard ne favorise que les esprits préparés. »", "Inaugural lecture at the University of Lille, in 1854: “In the fields of observation, chance favours only the prepared mind.”"],
+  ["Longueur totale de la Grande Muraille de Chine, toutes sections comprises", "Total length of the Great Wall of China, all sections included"]
 ]);

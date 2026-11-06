@@ -53,15 +53,22 @@ def main():
         if s != "langue.js" and ("../" + s) not in scripts_en and s not in scripts_en:
             problemes.append("en/index.html ne charge pas ../%s (chargé par index.html)" % s)
 
+    partout = collections.defaultdict(dict)
     for d in sorted(glob.glob(os.path.join(STATIC, "en", "dico-*.js"))):
         src = open(d, encoding="utf-8").read()
         paires = json.loads(src[src.index("EN_AJOUTER(") + len("EN_AJOUTER("):src.rindex(");")])
         vus = collections.defaultdict(set)
         for fr, en in paires:
-            vus[re.sub(r"\s+", " ", fr).strip()].add(en)
+            cle = re.sub(r"\s+", " ", fr).strip()
+            vus[cle].add(en)
+            partout[cle].setdefault(en, set()).add(os.path.basename(d))
         for fr, ens in vus.items():
             if len(ens) > 1:
                 problemes.append("%s : « %s » a %d traductions" % (os.path.basename(d), fr[:50], len(ens)))
+    # Le même français dans deux dictionnaires : une seule traduction (le dernier chargé l'emporterait)
+    for fr, versions in partout.items():
+        if len(versions) > 1:
+            problemes.append("« %s » traduit de %d façons selon les dictionnaires : %s" % (fr[:40], len(versions), " / ".join(repr(e[:30]) for e in versions)))
 
     r = subprocess.run([sys.executable, os.path.join(ICI, "extraire.py"), "--manquants"], capture_output=True, text=True)
     manquants = [l for l in r.stdout.splitlines() if l.strip()]

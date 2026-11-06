@@ -462,7 +462,7 @@ function correction(item, valeur, certitude) {
 function correctionCourte(l) {
   const bloc = el("div", "question-test");
   const juste = l.juste;
-  bloc.appendChild(el("p", "cas", l.item.type === "vf" ? "« " + l.item.texte + " »" : l.item.texte));
+  bloc.appendChild(el("p", "cas", l.item.type === "vf" ? T("« {0} »", l.item.texte) : l.item.texte));
   bloc.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? "Juste : " : "Réponse attendue : ") + texteAttendu(l.item) + "."));
   bloc.appendChild(paragraphe(l.item.explication));
   if (l.item.source) bloc.appendChild(el("p", "source", T("Source : {0}", l.item.source)));
@@ -490,7 +490,7 @@ function ecranItem(zone, t, ecran) {
 const correctionDifferee = (t, item) => t.mode === "complet" && (item.type === "vf" || item.type === "binaire");
 
 function itemChoix(carte, t, item) {
-  if (item.texte) carte.appendChild(el("p", item.type === "vf" ? "cas" : null, item.type === "vf" ? "« " + item.texte + " »" : item.texte));
+  if (item.texte) carte.appendChild(el("p", item.type === "vf" ? "cas" : null, item.type === "vf" ? T("« {0} »", item.texte) : item.texte));
   const question = item.type === "vf" ? "Cette affirmation est-elle vraie ou fausse ?" : item.question;
   const options = item.type === "qcm" ? item.choixAffiches : item.type === "vf" ? ["Vrai", "Faux"] : item.choix;
   const valider = boutonValider();

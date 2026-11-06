@@ -287,7 +287,7 @@ EXPERIENCES.push(
       const etapes = [...questions.map(q => ({ q, tour: 1 })), ...questions.map(q => ({ q, tour: 2 }))];
       derouler(zone, etapes, (e, zone, fini) => {
         const q = e.q;
-        zone.appendChild(el("p", "cas", q.q + (q.unite ? " (en " + q.unite + ")" : "") + " ?"));
+        zone.appendChild(el("p", "cas", T("{0} ?", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : ""))));
         if (e.tour === 2) {
           const p1 = premieres[questions.indexOf(q)];
           zone.appendChild(paragraphe(T("Votre première estimation : {0}. Supposez qu'elle soit fausse. Pourquoi le serait-elle ? Était-elle plutôt trop haute ou trop basse ? Faites une seconde estimation, différente, à partir de cette nouvelle hypothèse.", fr(p1)), "consigne-longue"));
@@ -348,7 +348,7 @@ EXPERIENCES.push(
       const dejaFait = lire("ceciteFaite", false);
       const reponses = [];
       const commencer = () => derouler(zone, AFFIRMATIONS_CECITE, (a, zone, fini) => {
-        zone.appendChild(el("p", "cas", "« " + a + " »"));
+        zone.appendChild(el("p", "cas", T("« {0} »", T(a))));
         zone.appendChild(echelleNeuf(n => { reponses.push(n); const r = el("div", "retour-quiz"); zone.appendChild(r); fini(n, r); }));
       }, () => justifier(), "Affirmation");
       if (dejaFait) {

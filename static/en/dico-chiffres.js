@@ -14,7 +14,7 @@ EN_AJOUTER([
   ["Dix duels entre causes de décès dans le monde, d'après l'OMS et l'ONU. Les risques spectaculaires sont rarement les plus meurtriers.", "Ten duels between causes of death worldwide, according to WHO and the UN. Spectacular risks are rarely the deadliest."],
   ["Duel", "Duel"],
   ["Chaque année, dans le monde, qu'est-ce qui cause le plus de décès ?", "Each year, worldwide, what causes the most deaths?"],
-  ["Juste : ", "Right: "],
+  ["Juste : ", "Correct: "],
   ["Non : ", "No: "],
   [", environ {0} fois plus.", ", about {0} times more."],
   ["Un facteur de risque (tabac, alcool, pollution) n'est pas une maladie : on compte les décès qui lui sont attribuables, toutes maladies confondues.", "A risk factor (tobacco, alcohol, pollution) is not a disease: we count the deaths attributable to it, across all diseases."],
@@ -249,6 +249,7 @@ EN_AJOUTER([
   ["Sans repère, la plupart des adultes sous-estiment les quantités de points qu'ils voient : leurs estimations augmentent avec le nombre réel, mais restent en dessous (Izard et Dehaene, 2008, et les études qu'ils citent).", "Without a reference, most adults underestimate the numbers of dots they see: their estimates increase with the actual number, but stay below it (Izard and Dehaene, 2008, and the studies they cite)."],
   ["Dans leur expérience, il suffisait de montrer une seule fois un nuage en annonçant « 30 points » pour corriger les estimations sur toute la gamme des quantités. Notre perception des quantités est relative : elle a besoin d'un étalon.", "In their experiment, showing a cloud just once while announcing “30 dots” was enough to correct estimates across the whole range of quantities. Our perception of quantities is relative: it needs a standard."],
   ["C'est l'une des raisons pour lesquelles les grands nombres (foules, budgets, victimes) sont si mal perçus sans point de comparaison.", "That is one reason why large numbers (crowds, budgets, victims) are so poorly perceived without a point of comparison."],
-  ["Recommencer", "Start again"],
-  ["Avec un repère", "With a reference"]
+  ["Recommencer", "Start over"],
+  ["Avec un repère", "With a reference"],
+  ["Réponse : ", "Answer: "]
 ]);

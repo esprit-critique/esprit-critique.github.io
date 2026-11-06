@@ -1308,7 +1308,7 @@ function afficherFiltresQuiz() {
   zone.innerHTML = "";
   document.querySelectorAll(".option-certitude").forEach(o => o.remove());
   MODES_QUIZ.forEach(([mode, libelle]) => {
-    const texte = mode === "reviser" ? libelle + " (" + clesAReviser().length + ")" : libelle;
+    const texte = mode === "reviser" ? T("{0} ({1})", T(libelle), clesAReviser().length) : libelle;
     const puce = el("button", "puce" + (quiz.mode === mode ? " active" : ""), texte);
     puce.addEventListener("click", () => lancerQuiz(mode));
     zone.appendChild(puce);

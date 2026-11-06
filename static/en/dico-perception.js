@@ -35,7 +35,7 @@ EN_AJOUTER([
   ["Manche", "Round"],
   ["L'un de ces nuages a été tiré au hasard (chaque point placé indépendamment des autres). Lequel ?", "One of these clouds was drawn at random (each point placed independently of the others). Which one?"],
   ["L'une de ces suites vient de {0} lancers d'une vraie pièce. Laquelle ?", "One of these sequences comes from {0} tosses of a real coin. Which one?"],
-  ["Juste : ", "Right: "],
+  ["Juste : ", "Correct: "],
   ["Non : ", "No: "],
   ["{0} est le vrai hasard.", "{0} is the truly random one."],
   ["Sur une grille de 16 cases, le vrai hasard laisse {0} et forme {1} de 5 points ou plus ; l'autre nuage : {2} et {3}. L'autre nuage a été fabriqué en interdisant aux points de trop se rapprocher, comme on le fait en imaginant le hasard.", "On a grid of 16 squares, true randomness leaves {0} and forms {1} of 5 points or more; the other cloud: {2} and {3}. The other cloud was made by forbidding points from getting too close, as we do when imagining randomness."],
@@ -84,7 +84,7 @@ EN_AJOUTER([
   ["C'est la même intuition qui fait croire qu'après cinq « pile », « face » est plus probable : l'erreur du joueur. Une pièce n'a pas de mémoire.", "It is the same intuition that makes people believe that after five “heads”, “tails” is more likely: the gambler’s fallacy. A coin has no memory."],
   ["Ce défaut est utilisé pour repérer des données inventées : des suites trop régulières sont un indice de fraude.", "This flaw is used to spot invented data: sequences that are too regular are a sign of fraud."],
   ["Atelier : le vrai hasard", "Workshop: true randomness"],
-  ["Recommencer", "Start again"],
+  ["Recommencer", "Start over"],
   ["Corrélation à l'œil", "Eyeballing correlation"],
   ["Huit nuages de points : estimez le coefficient de corrélation, de −1 à +1. À quoi ressemble une corrélation de 0,3 ?", "Eight dot clouds: estimate the correlation coefficient, from −1 to +1. What does a correlation of 0.3 look like?"],
   ["Nuage", "Cloud"],
@@ -218,5 +218,6 @@ EN_AJOUTER([
   ["cases vides", "empty squares"],
   ["grappe", "cluster"],
   ["grappes", "clusters"],
-  ["{0} : {1} sur 10 000", "{0}: {1} in 10,000"]
+  ["{0} : {1} sur 10 000", "{0}: {1} in 10,000"],
+  ["Réponse : ", "Answer: "]
 ]);
