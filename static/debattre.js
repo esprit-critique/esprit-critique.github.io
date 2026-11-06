@@ -757,7 +757,7 @@ const lienSophisme = id => lienVers("#sophismes/" + id, ficheSophisme(id).nom);
 
 // Sophismes d'une réplique, toujours sous forme de liste (une réplique de niveau 3 peut en contenir deux)
 const sophismesDe = r => !r.sophisme ? [] : Array.isArray(r.sophisme) ? r.sophisme : [r.sophisme];
-const nomsSophismes = ids => ids.map(id => ficheSophisme(id).nom).join(" et ");
+const nomsSophismes = ids => ids.map(id => ficheSophisme(id).nom).join(LANGUE === "en" ? " and " : " et ");
 
 // Réciproque de la fonction de répartition de la loi normale centrée réduite (Φ⁻¹),
 // par l'approximation rationnelle de Peter Acklam (erreur relative inférieure à 1,15 × 10⁻⁹) :
@@ -809,7 +809,7 @@ function corrigerReplique(retour, r, verdict, juste) {
 function nommerParmiCategories(zone, attendus, conclure) {
   const categories = [...new Set(attendus.map(id => ficheSophisme(id).categorie))];
   const candidats = SOPHISMES.filter(f => categories.includes(f.categorie));
-  zone.appendChild(el("p", "consigne", attendus.length > 1 ? "Cette réplique en contient deux : lesquels ?" : "Lequel ? (catégorie « " + categories[0] + " »)"));
+  zone.appendChild(el("p", "consigne", attendus.length > 1 ? T("Cette réplique en contient deux : lesquels ?") : T("Lequel ? (catégorie « {0} »)", T(categories[0]))));
   const choisis = new Set();
   const valider = el("button", "bouton large", "Valider");
   valider.dataset.valider = "1";
@@ -837,7 +837,7 @@ function nommerParmiCategories(zone, attendus, conclure) {
       else if (choisis.has(candidats[j].id)) b.classList.add("faux");
     });
     const nomme = attendus.every(id => choisis.has(id));
-    conclure(nomme, nomme ? "Juste : " + nomsSophismes(attendus) + "." : "Sophisme repéré, mais il s'agit de : " + nomsSophismes(attendus) + ".");
+    conclure(nomme, nomme ? T("Juste : {0}.", nomsSophismes(attendus)) : T("Sophisme repéré, mais il s'agit de : {0}.", nomsSophismes(attendus)));
   });
 }
 
@@ -864,7 +864,7 @@ EXPERIENCES.push(
     couleur: "#a8432e",
     duree: "6 min",
     titre: "Le débat truqué",
-    resume: "Un débat fictif, réplique par réplique : recevable ou sophisme ? Et lequel ? Attention aux fausses alertes : un ton vif ou une autorité compétente ne font pas un sophisme. " + DEBATS.length + " débats.",
+    resume: T("Un débat fictif, réplique par réplique : recevable ou sophisme ? Et lequel ? Attention aux fausses alertes : un ton vif ou une autorité compétente ne font pas un sophisme. {0} débats.", DEBATS.length),
     lancer(zone) {
       // Le débat est tiré au niveau du joueur ; le niveau s'ajuste d'une partie à l'autre
       const niveau = niveauAtelier("debat-truque").niveau;
@@ -878,7 +878,7 @@ EXPERIENCES.push(
           chrono.addEventListener("click", () => chronoDebat(zone, relancer));
           zone.insertBefore(chrono, zone.children[1]);
         }
-        zone.appendChild(el("p", "consigne", debat.titre + " · niveau " + debat.niveau));
+        zone.appendChild(el("p", "consigne", T("{0} · niveau {1}", T(debat.titre), debat.niveau)));
         zone.appendChild(paragraphe(debat.contexte, "source"));
         // Les deux répliques précédentes, pour suivre l'échange
         const k = debat.repliques.indexOf(r);
@@ -897,7 +897,7 @@ EXPERIENCES.push(
           choix[0].classList.add(r.sophisme ? "faux" : "juste");
           if (r.sophisme) choix[1].classList.add("juste");
           terminer({ sophisme: !!r.sophisme, alerte: false, nomme: false },
-            r.sophisme ? "Sophisme manqué : " + nomsSophismes(sophismesDe(r)) + "." : "Juste : réplique recevable.", !r.sophisme);
+            r.sophisme ? T("Sophisme manqué : {0}.", nomsSophismes(sophismesDe(r))) : T("Juste : réplique recevable."), !r.sophisme);
         });
         choix[1].addEventListener("click", () => {
           choix.forEach(b => { b.disabled = true; });
@@ -920,7 +920,7 @@ EXPERIENCES.push(
               const nomme = o.cle === cleSophisme(r.sophisme);
               boutons[options.findIndex(x => x.cle === cleSophisme(r.sophisme))].classList.add("juste");
               if (!nomme) b.classList.add("faux");
-              terminer({ sophisme: true, alerte: true, nomme }, nomme ? "Juste : " + ficheSophisme(r.sophisme).nom + "." : "Sophisme repéré, mais il s'agit de : " + ficheSophisme(r.sophisme).nom + ".", nomme);
+              terminer({ sophisme: true, alerte: true, nomme }, nomme ? T("Juste : {0}.", ficheSophisme(r.sophisme).nom) : T("Sophisme repéré, mais il s'agit de : {0}.", ficheSophisme(r.sophisme).nom), nomme);
             });
             zone.appendChild(b);
             return b;
@@ -939,19 +939,19 @@ EXPERIENCES.push(
         ecrire("debats", historique.slice(-30));
         afficherScore(zone, "debat-truque", justes, resultats.length);
         const liste = el("ul", "liste-simple");
-        liste.append(el("li", null, "Sophismes repérés : " + detections + " sur " + sophismes + (detections ? ", dont " + nommes + " bien nommé" + (nommes > 1 ? "s" : "") : "")),
-          el("li", null, "Fausses alertes : " + fausses + " sur " + recevables + " répliques recevables"),
-          el("li", null, "Sensibilité d′ = " + fr(Number(d.toFixed(2)))));
+        liste.append(el("li", null, T("Sophismes repérés : {0} sur {1}", detections, sophismes) + (detections ? T(nommes > 1 ? ", dont {0} bien nommés" : ", dont {0} bien nommé", nommes) : "")),
+          el("li", null, T("Fausses alertes : {0} sur {1} répliques recevables", fausses, recevables)),
+          el("li", null, T("Sensibilité d′ = {0}", fr(Number(d.toFixed(2))))));
         zone.appendChild(liste);
         zone.appendChild(paragraphe("Le d′ mesure votre capacité à distinguer les sophismes des répliques recevables, indépendamment de votre tendance à crier au sophisme : 0 correspond au hasard, 1 à une distinction nette, 2 ou plus à une très bonne distinction. Avec douze répliques, la mesure reste approximative.", "source"));
         const { h, f } = dPrime(detections, sophismes, fausses, recevables);
         const z = x => fr(Number(x.toFixed(2)));
         zone.appendChild(calculEnDetail([
           "Taux de détection H et taux de fausses alertes F, avec une correction de 0,5 qui évite les taux de 0 ou de 1 :",
-          "= H = (détections + 0,5) / (sophismes + 1) = (" + detections + " + 0,5) / (" + sophismes + " + 1) = " + z(h),
-          "= F = (fausses alertes + 0,5) / (recevables + 1) = (" + fausses + " + 0,5) / (" + recevables + " + 1) = " + z(f),
+          T("= H = (détections + 0,5) / (sophismes + 1) = ({0} + 0,5) / ({1} + 1) = {2}", detections, sophismes, z(h)),
+          T("= F = (fausses alertes + 0,5) / (recevables + 1) = ({0} + 0,5) / ({1} + 1) = {2}", fausses, recevables, z(f)),
           "On convertit chaque taux en écart à la moyenne d'une loi normale (Φ⁻¹, la réciproque de sa fonction de répartition), puis on fait la différence :",
-          "= d′ = Φ⁻¹(H) − Φ⁻¹(F) = " + z(phiInverse(h)) + " − (" + z(phiInverse(f)) + ") = " + z(d),
+          T("= d′ = Φ⁻¹(H) − Φ⁻¹(F) = {0} − ({1}) = {2}", z(phiInverse(h)), z(phiInverse(f)), z(d)),
           "Répondre « sophisme » à tout ferait monter H, mais aussi F : le d′ ne bougerait guère. Seule une meilleure distinction le fait monter."
         ]));
         ajouterExplication(zone, "Repérer sans tout soupçonner", [
@@ -971,7 +971,7 @@ EXPERIENCES.push(
     couleur: "#3d6b4f",
     duree: "5 min",
     titre: "Réparer l'argument",
-    resume: "Dénoncer un sophisme ne suffit pas. Parmi quatre réécritures, trouvez celle qui garde la conclusion et corrige le raisonnement. " + REPARATIONS.length + " arguments, dix par partie.",
+    resume: T("Dénoncer un sophisme ne suffit pas. Parmi quatre réécritures, trouvez celle qui garde la conclusion et corrige le raisonnement. {0} arguments, dix par partie.", REPARATIONS.length),
     lancer(zone) {
       const LIBELLES = {
         rep: "Réparation",
@@ -988,7 +988,7 @@ EXPERIENCES.push(
           ? Object.assign({ premisse: true }, tirerSelonNiveau("reparer:3", REPARATIONS.filter(x => PREMISSES[x.s] && !x.id), 1, 3, x => x.s, () => 3)[0])
           : tirerSelonNiveau("reparer", REPARATIONS, 1, niveau, x => x.id || x.s, niveauDe)[0]
       }, (x, zone, fini) => {
-        zone.appendChild(el("p", "consigne", "Cet argument commet un sophisme : " + ficheSophisme(x.s).nom.toLowerCase()));
+        zone.appendChild(el("p", "consigne", T("Cet argument commet un sophisme : {0}", ficheSophisme(x.s).nom.toLowerCase())));
         zone.appendChild(el("p", "cas", x.arg));
         // Niveau 3 : la prémisse cachée d'abord ; elle compte pour moitié
         let pointsPremisse = null;
@@ -1005,7 +1005,7 @@ EXPERIENCES.push(
             retour.appendChild(el("p", "verdict " + (type === "rep" ? "juste" : "faux"), type === "rep" ? "Juste." : "Ce n'est pas une réparation."));
             const explications = {
               rep: x.rep[1],
-              autre: "Garde la conclusion, mais commet un autre sophisme : " + ficheSophisme(x.autre[1]).nom.toLowerCase() + ". " + ficheSophisme(x.autre[1]).definition,
+              autre: T("Garde la conclusion, mais commet un autre sophisme : {0}.", ficheSophisme(x.autre[1]).nom.toLowerCase()) + " " + ficheSophisme(x.autre[1]).definition,
               acc: "Dénoncer le sophisme ne fournit aucune raison, ni pour la conclusion ni contre elle : l'argument n'est pas réparé.",
               concl: "Évite le défaut en renonçant à ce que l'argument voulait établir : ce n'est plus le même argument."
             };
@@ -1038,7 +1038,7 @@ EXPERIENCES.push(
             if (!bonne) b.classList.add("faux");
             pointsPremisse = bonne ? 1 : 0;
             const retourP = el("div", "retour-quiz");
-            retourP.append(el("p", "verdict " + (bonne ? "juste" : "faux"), bonne ? "Juste." : "La prémisse cachée est : « " + PREMISSES[x.s][0] + " »"),
+            retourP.append(el("p", "verdict " + (bonne ? "juste" : "faux"), bonne ? T("Juste.") : T("La prémisse cachée est : « {0} »", T(PREMISSES[x.s][0]))),
               paragraphe("C'est elle qui, une fois écrite, montre la faille : elle est fausse ou au moins discutable. Les autres propositions peuvent être vraies, mais l'argument n'en a pas besoin."));
             zone.appendChild(retourP);
             const suite = el("button", "bouton", "Réparer l'argument");
@@ -1069,7 +1069,7 @@ EXPERIENCES.push(
     couleur: "#2f6db5",
     duree: "5 min",
     titre: "Reformuler sans trahir",
-    resume: "Avant de critiquer une position, savoir la redire : trouvez la reformulation fidèle, puis la version la plus forte que son auteur accepterait encore. " + REFORMULATIONS.length + " positions.",
+    resume: T("Avant de critiquer une position, savoir la redire : trouvez la reformulation fidèle, puis la version la plus forte que son auteur accepterait encore. {0} positions.", REFORMULATIONS.length),
     lancer(zone) {
       const TYPES_REFORMULATION = {
         fidele: ["Fidèle", "Elle dit ce que l'auteur a dit, ni plus ni moins."],
@@ -1094,7 +1094,7 @@ EXPERIENCES.push(
               const retour = el("div", "retour-quiz");
               retour.appendChild(el("p", "verdict " + (t === attendu ? "juste" : "faux"), (t === attendu ? "Juste : " : "Réponse : ") + TYPES_REFORMULATION[attendu][0].toLowerCase() + "."));
               retour.appendChild(paragraphe(TYPES_REFORMULATION[attendu][1]));
-              if (t !== attendu) retour.appendChild(paragraphe("Votre choix : " + TYPES_REFORMULATION[t][0].toLowerCase() + ". " + TYPES_REFORMULATION[t][1], "source"));
+              if (t !== attendu) retour.appendChild(paragraphe(T("Votre choix : {0}.", T(TYPES_REFORMULATION[t][0]).toLowerCase()) + " " + T(TYPES_REFORMULATION[t][1]), "source"));
               zone.appendChild(retour);
               suite(retour);
             });
@@ -1140,8 +1140,8 @@ EXPERIENCES.push(
       const ligne = el("div", "ligne");
       const noms = ["A", "B"].map(lettre => {
         const champ = el("input", "champ");
-        champ.placeholder = "Prénom de " + lettre;
-        champ.setAttribute("aria-label", "Prénom de la personne " + lettre);
+        champ.placeholder = T("Prénom de {0}", lettre);
+        champ.setAttribute("aria-label", T("Prénom de la personne {0}", lettre));
         ligne.appendChild(champ);
         return champ;
       });
@@ -1159,12 +1159,12 @@ EXPERIENCES.push(
         const [pourA, pourB] = Math.random() < 0.5 ? [campA, campB] : [campB, campA];
         const a = noms[0].value.trim() || "A", b = noms[1].value.trim() || "B";
         const etapes = [
-          [a + " défend sa position", 90, a + " défend « " + pourA + " ». " + b + " écoute sans interrompre."],
-          [b + " reformule", 0, b + " redit la position de " + a + " avec ses propres mots, jusqu'à ce que " + a + " confirme."],
-          [b + " défend sa position", 90, b + " défend « " + pourB + " ». " + a + " écoute sans interrompre."],
-          [a + " reformule", 0, a + " redit la position de " + b + " avec ses propres mots, jusqu'à ce que " + b + " confirme."],
-          [a + " défend l'autre camp", 60, a + " défend maintenant « " + pourB + " », du mieux possible."],
-          [b + " défend l'autre camp", 60, b + " défend maintenant « " + pourA + " », du mieux possible."],
+          [T("{0} défend sa position", a), 90, T("{0} défend « {1} ». {2} écoute sans interrompre.", a, T(pourA), b)],
+          [T("{0} reformule", b), 0, T("{0} redit la position de {1} avec ses propres mots, jusqu'à ce que {1} confirme.", b, a)],
+          [T("{0} défend sa position", b), 90, T("{0} défend « {1} ». {2} écoute sans interrompre.", b, T(pourB), a)],
+          [T("{0} reformule", a), 0, T("{0} redit la position de {1} avec ses propres mots, jusqu'à ce que {1} confirme.", a, b)],
+          [T("{0} défend l'autre camp", a), 60, T("{0} défend maintenant « {1} », du mieux possible.", a, T(pourB))],
+          [T("{0} défend l'autre camp", b), 60, T("{0} défend maintenant « {1} », du mieux possible.", b, T(pourA))],
           ["Points d'accord", 0, "Ensemble, notez les points sur lesquels vous êtes d'accord."]
         ];
         let i = 0;
@@ -1181,7 +1181,7 @@ EXPERIENCES.push(
           const suivant = el("button", "bouton", i === etapes.length - 1 ? "Terminer" : "Étape suivante");
           suivant.dataset.suivant = "1";
           suivant.addEventListener("click", () => { i++; afficher(); remonter(); });
-          if (duree && avecCartes.checked) zone.appendChild(el("p", "carte-contrainte", "Carte contrainte : " + cartes[i]));
+          if (duree && avecCartes.checked) zone.appendChild(el("p", "carte-contrainte", T("Carte contrainte : {0}", T(cartes[i]))));
           if (duree) {
             let reste = duree, enPause = true;
             const affichage = el("p", "minuteur", "");
@@ -1219,10 +1219,10 @@ EXPERIENCES.push(
             l.append(champ, ajouter);
             zone.append(l, liste, suivant);
           } else {
-            const qui = consigne.split(" redit")[0], auteur = i === 1 ? a : b;
+            const qui = i === 1 ? b : a, auteur = i === 1 ? a : b;
             const oui = el("button", "bouton", "Oui, c'est ça");
-            oui.addEventListener("click", () => { oui.disabled = true; oui.textContent = auteur + " confirme"; zone.appendChild(suivant); });
-            zone.appendChild(paragraphe("Quand " + auteur + " se reconnaît dans la reformulation de " + qui + ", " + auteur + " touche :", "source"));
+            oui.addEventListener("click", () => { oui.disabled = true; oui.textContent = T("{0} confirme", auteur); zone.appendChild(suivant); });
+            zone.appendChild(paragraphe(T("Quand {0} se reconnaît dans la reformulation de {1}, {0} touche :", auteur, qui), "source"));
             zone.appendChild(oui);
           }
           zone.appendChild(paragraphe("Pour comprendre ce que l'autre pense, demandez-le-lui plutôt que de le deviner : dans 25 expériences, se mettre à la place d'autrui n'a pas rendu plus juste le jugement porté sur ses pensées, alors que le lui demander, si (Eyal, Steffel et Epley, 2018).", "source"));
@@ -1275,7 +1275,7 @@ function entrainementFiche(type, fiche) {
   if (repliques.length) {
     const { r, d } = repliques[0];
     const ex = el("div", "exercice");
-    ex.append(el("p", "consigne", "Dans un débat : " + d.titre.toLowerCase()), blocReplique(r, "replique-fiche"));
+    ex.append(el("p", "consigne", T("Dans un débat : {0}", T(d.titre).toLowerCase())), blocReplique(r, "replique-fiche"));
     const choix = [boutonChoix("Recevable", 0), boutonChoix("Sophisme", 1)];
     choix.forEach((b, k) => {
       b.addEventListener("click", () => {
