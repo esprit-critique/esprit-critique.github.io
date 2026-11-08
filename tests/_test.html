@@ -235,7 +235,7 @@ f.onload = async () => {
     ok("thème : retour à l'automatique", !d.documentElement.dataset.theme && w.localStorage.getItem("theme") === null);
     // Hors ligne : sw.js garde en cache tous les scripts de la page, et chaque fichier listé existe
     const sw = await (await fetch("sw.js", { cache: "no-store" })).text();
-    const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1]);
+    const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1].replace(/^\s*\/\/.*$/gm, ""));   // sans les lignes de commentaire
     const scripts = [...d.querySelectorAll("script[src]")].map(s => s.getAttribute("src"));
     const absents = [];
     for (const f of fichiersSW) if (!(await fetch(f, { cache: "no-store" })).ok) absents.push(f);
@@ -382,7 +382,7 @@ f.onload = async () => {
 
     // ---------- Ateliers ----------
     await aller("ateliers");
-    ok("ateliers : 48 cartes", vue().querySelectorAll(".atelier").length === 48);
+    ok("ateliers : 49 cartes", vue().querySelectorAll(".atelier").length === 49);
     ok("onglet Ateliers actif", d.querySelector(".onglet.actif").dataset.onglet === "ateliers");
     await aller("chiffres");
     ok("#chiffres renvoie à la liste", vue().id === "vue-ateliers");
