@@ -95,7 +95,17 @@ function activer(rang) {
     li.setAttribute("aria-selected", String(k === RECHERCHE.actif));
   });
   $("recherche-globale").setAttribute("aria-activedescendant", items[RECHERCHE.actif].id);
-  items[RECHERCHE.actif].scrollIntoView({ block: "nearest" });
+  // Défilement de la liste seule (scrollIntoView ferait aussi défiler la page)
+  const liste = $("resultats-globaux"), li = items[RECHERCHE.actif];
+  if (li.offsetTop < liste.scrollTop) liste.scrollTop = li.offsetTop;
+  else if (li.offsetTop + li.offsetHeight > liste.scrollTop + liste.clientHeight) liste.scrollTop = li.offsetTop + li.offsetHeight - liste.clientHeight;
+}
+
+// Aucune sélection, liste ramenée en haut (nouvelle requête)
+function desactiver() {
+  RECHERCHE.actif = -1;
+  $("resultats-globaux").scrollTop = 0;
+  $("recherche-globale").removeAttribute("aria-activedescendant");
 }
 
 function afficherRecherche() {
@@ -133,7 +143,7 @@ function afficherRecherche() {
     bilan.textContent = pluriel(total, "résultat");
   }
   ouvrirListe(true);
-  activer(-1);
+  desactiver();
 }
 
 function fermerRecherche(effacer) {
@@ -159,7 +169,7 @@ function ouvrirResultat(adresse) {
   champ.addEventListener("keydown", e => {
     const ouverte = !liste.hidden;
     if (e.key === "ArrowDown") { e.preventDefault(); if (!ouverte) afficherRecherche(); activer(RECHERCHE.actif + 1); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); activer(RECHERCHE.actif - 1); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); activer(RECHERCHE.actif < 0 ? -1 : RECHERCHE.actif - 1); }   // sans sélection : le dernier
     else if (e.key === "Enter") {
       const choisi = RECHERCHE.resultats[RECHERCHE.actif >= 0 ? RECHERCHE.actif : 0];
       if (ouverte && choisi) { e.preventDefault(); ouvrirResultat(choisi.adresse); }
