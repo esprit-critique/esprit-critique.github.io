@@ -931,6 +931,12 @@ function correspondRecherche(type, f, q) {
   return n ? n.type === type && f.num === n.num : texteRecherche(f).includes(q);
 }
 
+// La barre de recherche de l'en-tête filtre la liste des fiches quand celle-ci est affichée (pas de menu déroulant) ;
+// ailleurs, elle cherche dans tout le site (recherche.js)
+function rechercheDansFiches() {
+  return !$("vue-fiches").hidden && !$("outils-liste").hidden;
+}
+
 function texteRecherche(f) {
   return normaliser([f.nom, f.autresNoms || "", f.definition, f.categorie, f.source, f.celebre || ""].join(" "));
 }
@@ -1472,6 +1478,7 @@ function afficherBilan(zone) {
 const ONGLET_DE = { accueil: "accueil", biais: "fiches", sophismes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
 const SECTION_DE = { accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
 let precedent = { vue: null, id: null };
+let rechercheEnFiches = false;   // la barre de l'en-tête filtrait-elle la liste à l'affichage précédent ?
 
 function afficherPage() {
   // Une adresse mal formée (« %E0 ») ne doit pas bloquer la page : on garde alors le texte brut
@@ -1508,7 +1515,7 @@ function afficherPage() {
 
   if (vue === "biais" || vue === "sophismes") {
     if (etat.type !== vue) {
-      if (!etat.garderRecherche) { etat.recherche = ""; $("recherche").value = ""; }
+      if (!etat.garderRecherche) etat.recherche = "";
       etat.type = vue;
       ecrire("typeFiches", vue);
     }
@@ -1521,7 +1528,6 @@ function afficherPage() {
       titre = fiche.nom;
     } else {
       titre = TYPES[vue].pluriel;
-      $("recherche").placeholder = vue === "biais" ? "Rechercher un biais, un auteur, un cas…" : "Rechercher un sophisme, un auteur, un cas…";
       afficherSegment(vue);
       afficherFiltres(vue);
       afficherListe(vue);
@@ -1563,6 +1569,23 @@ function afficherPage() {
     }
   }
 
+  // Barre de l'en-tête : filtre de la liste des fiches, ou recherche dans tout le site.
+  // Quitter la page Fiches efface le filtre (ouvrir une fiche puis revenir à la liste le conserve).
+  if (vue !== "biais" && vue !== "sophismes") etat.recherche = "";
+  const champ = $("recherche-globale");
+  const dansFiches = rechercheDansFiches();
+  if (dansFiches) {
+    $("resultats-globaux").hidden = true;   // menu de la recherche globale éventuellement resté ouvert
+    champ.setAttribute("aria-expanded", "false");
+    champ.removeAttribute("aria-activedescendant");
+    champ.value = etat.recherche;
+    champ.placeholder = vue === "biais" ? "Rechercher un biais, un auteur, un cas…" : "Rechercher un sophisme, un auteur, un cas…";
+  } else {
+    if (rechercheEnFiches) champ.value = "";
+    champ.placeholder = "Chercher partout…";
+  }
+  rechercheEnFiches = dansFiches;
+
   document.title = (titre ? T(titre) + " · " : "") + "Esprit critique";
   precedent = { vue, id };
   if (defilement !== null) window.scrollTo(0, defilement);
@@ -1572,7 +1595,8 @@ function afficherPage() {
 
 window.addEventListener("hashchange", afficherPage);
 
-$("recherche").addEventListener("input", e => {
+$("recherche-globale").addEventListener("input", e => {
+  if (!rechercheDansFiches()) return;
   etat.recherche = e.target.value;
   afficherListe(etat.type);
 });
