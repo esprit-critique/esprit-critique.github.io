@@ -66,7 +66,7 @@ f.onload = async () => {
       w.eval("CLES_SAUVEGARDE.includes('grandTest') && FORMES_SAUVEGARDE.objet.includes('grandTest') && !FORMES_SAUVEGARDE.tableau.includes('grandTest')"));
     // Service worker : chaque script chargé par la page est mis en cache, et le cache a changé de version
     const sw = await (await fetch("/sw.js", { cache: "no-store" })).text();
-    const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1]);
+    const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1].replace(/^\s*\/\/.*$/gm, ""));   // sans les lignes de commentaire
     const scripts = [...(await (await fetch("/index.html", { cache: "no-store" })).text()).matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
     ok("service worker : les " + scripts.length + " scripts de la page sont dans FICHIERS", scripts.every(s => fichiersSW.includes(s)), scripts.filter(s => !fichiersSW.includes(s)).join(", "));
     ok("service worker : les trois fichiers du Grand test en cache, version v10 ou plus",
