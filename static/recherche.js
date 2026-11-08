@@ -1,7 +1,8 @@
 // recherche.js : recherche dans tout le site (fiches, ateliers, expériences de pensée, guide, lexique).
 // Dans l'en-tête, sur toutes les pages. Tolérante aux accents, à la casse et à l'ordre des mots ; « B 10 » ou « s7 »
 // ouvre une fiche par son numéro. Au clavier : flèches pour parcourir, Entrée pour ouvrir, Échap pour fermer.
-// Dépend de app.js (normaliser, TYPES, rechercheNumero, texteRecherche, el, lienVers) et de ateliers.js (tousLesAteliers).
+// Sur la liste des fiches, la même barre filtre la liste (app.js, rechercheDansFiches) et n'ouvre pas de menu.
+// Dépend de app.js (normaliser, rechercheDansFiches, TYPES, rechercheNumero, texteRecherche, el, lienVers) et de ateliers.js (tousLesAteliers).
 
 const RECHERCHE = { index: null, resultats: [], actif: -1 };
 const RECHERCHE_MAX = 12;   // résultats affichés au plus ; le reste est signalé
@@ -114,7 +115,8 @@ function afficherRecherche() {
   const bilan = $("bilan-globale");
   const q = champ.value.trim();
   liste.innerHTML = "";
-  if (comparable(q).length < 2 && !rechercheNumero(comparable(q))) {
+  // Sur la liste des fiches, la barre filtre la liste (app.js) : pas de menu déroulant
+  if (rechercheDansFiches() || comparable(q).length < 2 && !rechercheNumero(comparable(q))) {
     RECHERCHE.resultats = [];
     bilan.textContent = "";
     ouvrirListe(false);
@@ -147,7 +149,11 @@ function afficherRecherche() {
 }
 
 function fermerRecherche(effacer) {
-  if (effacer) $("recherche-globale").value = "";
+  const champ = $("recherche-globale");
+  if (effacer && champ.value) {
+    champ.value = "";
+    if (rechercheDansFiches()) champ.dispatchEvent(new Event("input"));   // le filtre des fiches suit
+  }
   RECHERCHE.resultats = [];
   $("bilan-globale").textContent = "";
   ouvrirListe(false);

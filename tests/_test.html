@@ -71,7 +71,7 @@ f.onload = async () => {
     ok("titre de page", d.title === "Biais · Esprit critique");
     await aller("sophismes");
     ok("liste sophismes : 8 groupes, 39 lignes", vue().querySelectorAll(".groupe").length === 8 && vue().querySelectorAll(".ligne-fiche").length === 39);
-    const r = d.getElementById("recherche");
+    const r = d.getElementById("recherche-globale");
     r.value = "kahneman"; r.dispatchEvent(new Event("input"));
     ok("recherche sophismes « kahneman » → suggestion vers les biais", !!vue().querySelector('.vide a[href="#biais"]'));
     vue().querySelector('.vide a[href="#biais"]').click(); await pause(120);
@@ -308,7 +308,7 @@ f.onload = async () => {
     await aller("biais/ancrage");
     ok("numéros : affiché sur la fiche, lu « Biais numéro » par les lecteurs d'écran", /^B\s\d+$/.test(vue().querySelector(".numero-fiche [aria-hidden]").textContent) && /Biais numéro \d+/.test(vue().querySelector(".numero-fiche .invisible").textContent));
     await aller("biais");
-    const champR = d.getElementById("recherche");
+    const champR = d.getElementById("recherche-globale");
     const ancrage = w.eval("trouverFiche")("biais", "ancrage");
     for (const saisie of ["B " + ancrage.num, "b" + ancrage.num]) {
       champR.value = saisie; champR.dispatchEvent(new w.Event("input")); await pause(20);
