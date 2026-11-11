@@ -1041,6 +1041,7 @@ function afficherFiltres(type) {
 function afficherListe(type) {
   const zone = $("liste");
   zone.replaceChildren();
+  $("vue-fiches").classList.remove("large");
   const fiches = fichesFiltrees(type);
 
   if (fiches.length === 0) {
@@ -1149,16 +1150,20 @@ function afficherFiche(type, fiche) {
   const conf = TYPES[type];
   const zone = $("liste");
   zone.replaceChildren();
+  // Sur ordinateur large : la carte (colonne de lecture) et un rail collant à côté
+  $("vue-fiches").classList.add("large");
   zone.appendChild(lienVers("#" + type, "← " + conf.pluriel, "lien retour"));
 
-  const carte = el("article", "carte carte-fiche");
+  const carte = el("article", "carte carte-fiche a-indice");
   carte.style.setProperty("--c", COULEURS[fiche.categorie]);
 
   const entete = el("div", "entete-carte");
   const badge = el("span", "badge", "✓ Acquise");
   const etiquette = el("span", "etiquette-numero");
-  etiquette.append(el("span", "etiquette", conf.singulier + " · " + fiche.categorie), numeroFiche(type, fiche, "numero-fiche"));
-  entete.append(etiquette, badge);
+  // L'indice « B 10 » en coin, comme sur une carte à jouer ; le badge « Acquise » suit l'étiquette
+  etiquette.append(el("span", "etiquette", conf.singulier + " · " + fiche.categorie), badge);
+  entete.appendChild(etiquette);
+  carte.appendChild(numeroFiche(type, fiche, "numero-fiche indice-coin"));
   // En-tête de la fiche, fermé par le trait de Müller-Lyer : la définition en est le chapô
   const enteteFiche = el("div", "entete-fiche");
   enteteFiche.append(entete, el("h1", "fiche-titre", fiche.nom));
@@ -1241,17 +1246,64 @@ function afficherFiche(type, fiche) {
     pied.appendChild(info);
   }
   carte.appendChild(pied);
-  carte.appendChild(journalReperage(cle));
-  zone.appendChild(carte);
+  const reperage = journalReperage(cle);
+  carte.appendChild(reperage);
 
   // Fiches précédente et suivante, dans l'ordre de la liste
   const ordre = ORDRE[type];
   const i = ordre.indexOf(fiche);
+  const suivante = i < ordre.length - 1 ? ordre[i + 1] : null;
   const nav = el("nav", "suivantes");
   nav.setAttribute("aria-label", "Fiches voisines");
   if (i > 0) nav.appendChild(lienVers("#" + type + "/" + ordre[i - 1].id, "← " + ordre[i - 1].nom));
-  if (i < ordre.length - 1) nav.appendChild(lienVers("#" + type + "/" + ordre[i + 1].id, ordre[i + 1].nom + " →"));
-  zone.appendChild(nav);
+  if (suivante) nav.appendChild(lienVers("#" + type + "/" + suivante.id, suivante.nom + " →"));
+
+  // Rail (ordinateur large) : sommaire des groupes, carte suivante, carte au hasard
+  const allerA = cible => () => cible.scrollIntoView({ behavior: animationsReduites() ? "auto" : "smooth", block: "start" });
+  const rail = el("aside", "rail-fiche");
+  rail.setAttribute("aria-label", "Sommaire de la fiche");
+  rail.appendChild(el("p", "surtitre", "Sur cette fiche"));
+  const sommaire = el("ul", "sommaire-fiche");
+  carte.querySelectorAll("h2").forEach(h => {
+    const b = el("button", "lien", h.textContent);
+    b.type = "button";
+    b.addEventListener("click", allerA(h));
+    const li = el("li");
+    li.appendChild(b);
+    sommaire.appendChild(li);
+  });
+  rail.appendChild(sommaire);
+  if (suivante) rail.appendChild(lienVers("#" + type + "/" + suivante.id, T("Carte suivante : {0}", suivante.nom), "bouton secondaire large"));
+  const hasard = el("button", "bouton secondaire large", "Une carte au hasard");
+  hasard.type = "button";
+  hasard.addEventListener("click", tirerAuHasard);
+  rail.appendChild(hasard);
+  const miseEnPage = el("div", "fiche-mise-en-page");
+  const colonne = el("div", "fiche-colonne");
+  colonne.append(carte, nav);
+  miseEnPage.append(colonne, rail);
+  zone.appendChild(miseEnPage);
+
+  // Barre d'actions collante (téléphone) : acquise, « Je l'ai repéré », carte suivante
+  const barre = el("div", "barre-fiche");
+  barre.setAttribute("role", "toolbar");
+  barre.setAttribute("aria-label", "Actions de la fiche");
+  const acquise = el("button", "bouton secondaire");
+  acquise.type = "button";
+  const majAcquise = () => { acquise.textContent = typo(acquis.has(cle) ? T("✓ Acquise") : T("Acquise ?")); acquise.setAttribute("aria-pressed", String(acquis.has(cle))); };
+  acquise.addEventListener("click", () => { bouton.click(); majAcquise(); });
+  bouton.addEventListener("click", majAcquise);
+  majAcquise();
+  const repere = el("button", "bouton secondaire", "Je l'ai repéré");
+  repere.type = "button";
+  repere.addEventListener("click", () => {
+    reperage.scrollIntoView({ behavior: animationsReduites() ? "auto" : "smooth", block: "center" });
+    const champ = reperage.querySelector("input");
+    if (champ) champ.focus({ preventScroll: true });
+  });
+  barre.append(acquise, repere);
+  if (suivante) barre.appendChild(lienVers("#" + type + "/" + suivante.id, T("Suivante →"), "bouton"));
+  colonne.appendChild(barre);
 
   ecrire("derniereFiche", cle);
 }

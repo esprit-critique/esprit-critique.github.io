@@ -1553,3 +1553,21 @@ h3.titre-bloc {
 .illusion-dessin.revele .leurre { opacity: 0.12; }
 .illusion-dessin.revele .repere, .illusion-dessin.revele .repere-forme, .illusion-dessin.revele .repere-plein { opacity: 1; }
 .lien-discret { display: inline-block; margin-top: 10px; font-size: 14px; }
+
+/* Page d'une fiche : indice en coin, rail sur ordinateur large, barre d'actions collante sur téléphone */
+.carte-fiche .entete-carte { padding-right: 48px; }
+.carte-fiche .indice-coin { top: 16px; right: 18px; font-size: 16px; }
+.rail-fiche { display: none; }
+.barre-fiche { position: sticky; bottom: calc(var(--hauteur-nav) + env(safe-area-inset-bottom) + 8px); z-index: 5; display: flex; gap: 6px;
+  margin: 12px -4px 0; padding: 8px; background: var(--carte); border: 1px solid var(--trait); border-radius: var(--rayon-carte); box-shadow: var(--ombre-2); }
+.barre-fiche > * { flex: 1 1 0; min-width: 0; padding-left: 8px; padding-right: 8px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (min-width: 760px) { .barre-fiche { display: none; } }
+@media (min-width: 1040px) {
+  .fiche-mise-en-page { display: grid; grid-template-columns: minmax(0, var(--largeur-lecture)) 260px; gap: 40px; justify-content: center; align-items: start; }
+  .rail-fiche { display: block; position: sticky; top: 110px; }
+  .rail-fiche .bouton { margin-top: 10px; font-size: 14px; }
+  .sommaire-fiche { list-style: none; margin: 0 0 14px; padding: 0 0 0 12px; border-left: 2px solid var(--trait); }
+  .sommaire-fiche li { margin: 0 0 6px; }
+  .sommaire-fiche .lien { font-size: 14px; text-align: left; }
+  #vue-fiches.large .lien.retour { display: inline-block; margin-left: calc((100% - var(--largeur-lecture) - 300px) / 2); }
+}
