@@ -1,0 +1,8 @@
+# Configuration de l'analyse CodeQL (workflow codeql.yml).
+name: Esprit critique
+query-filters:
+  # Règle désactivée à la demande du propriétaire (11 novembre 2026) : faux positif récurrent. Elle prend la clé
+  # « certitudes » (compteurs de certitude du quiz) pour un certificat stocké en clair. localStorage ne contient aucun
+  # secret ; le seul secret du site, le code de synchronisation, est gardé dans IndexedDB (coffre.js, SECURITE.md).
+  - exclude:
+      id: js/clear-text-storage-of-sensitive-data

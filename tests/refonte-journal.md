@@ -205,6 +205,8 @@ donc toujours vide) : `entete()` (ateliers.js) suit la partie quand `MELANGE.act
   `tests/a-verifier.md`. `sw.js` : son en-tête ne dit plus « aucune donnée envoyée » mais « seuls les fichiers du site
   sont mis en cache » (vrai dans les deux cas).
 - Étape manuelle (brief §7, point 2) : compte Cloudflare, puis serveur/README.md.
+- CodeQL : la règle js/clear-text-storage-of-sensitive-data est désactivée (`.github/codeql/codeql-config.yml`), à la
+  demande du propriétaire : faux positif « certitudes » récurrent (il revenait à chaque déplacement de `ecrire()`).
 
 ## État des lieux (lot 0, commit cb90ed8)
 
