@@ -107,6 +107,20 @@ for nom in fichiers_sw - {"./"}:
     if not os.path.exists(os.path.join(STATIC, nom)):
         problemes.append(f"sw.js : « {nom} » listé mais absent de static/")
 
+# ---------- Synchronisation : SYNCHRO_URL (coffre.js) et connect-src concordent ----------
+url = re.search(r'^const SYNCHRO_URL = "([^"]*)";', open(os.path.join(STATIC, "coffre.js"), encoding="utf-8").read(), re.M)
+if not url:
+    problemes.append("coffre.js : déclaration « const SYNCHRO_URL = \"…\"; » introuvable")
+else:
+    origine = re.match(r"https://[^/]+", url.group(1)).group(0) if url.group(1) else None
+    if url.group(1) and not origine:
+        problemes.append("coffre.js : SYNCHRO_URL doit être une adresse https")
+    for page, csp in csps.items():
+        connect = (re.search(r"connect-src ([^;]*)", csp) or [None, ""])[1].split()
+        attendu = ["'self'"] + ([origine] if origine else [])
+        if connect != attendu:
+            problemes.append(f"{page} : connect-src {connect} ≠ {attendu} (SYNCHRO_URL = « {url.group(1)} »)")
+
 # ---------- security.txt (RFC 9116) : en échec 30 jours avant son expiration ----------
 import datetime
 chemin = os.path.join(STATIC, ".well-known", "security.txt")

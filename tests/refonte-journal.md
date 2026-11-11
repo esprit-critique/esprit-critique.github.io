@@ -14,7 +14,8 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | Planche de Galton (demande du propriétaire) | `galton-20` | #10 | fusionné : 20 questions, jauge qui suit la partie |
 | 4 — Maîtrise, grades, points | `refonte/lot-4` | #11 | fusionné (captures : branche `captures`, dossier `lot-4`) |
 | 5 — Parcours | `refonte/lot-5` | #12 | fusionné |
-| 6 à 8 | — | — | à faire |
+| 6 — Synchronisation chiffrée | `refonte/lot-6` | #13 | fusionné, drapeau vide ; mise en service : étape manuelle du propriétaire (serveur/README.md) |
+| 7 et 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
 
@@ -183,6 +184,29 @@ donc toujours vide) : `entete()` (ateliers.js) suit la partie quand `MELANGE.act
 - Points : 10 par étape faite et 50 par parcours terminé, une seule fois, crédités à la visite du parcours
   (une étape faite ailleurs est créditée à la visite suivante de sa page).
 - `avancement` existait (Grand test) : `avancementParcours`.
+
+### Lot 6
+
+- `static/coffre.js` (drapeau `SYNCHRO_URL = ""`), `serveur/` (worker.js, schema.sql, wrangler.toml, README),
+  `serveur/essai.mjs` (17 essais du Worker sur une base D1 simulée), `serveur/serveur-local.mjs`, `tests/synchro.js`
+  (banc « synchro » : drapeau vide sur 18 adresses, deux navigateurs, fusion, contenu altéré d'un bit).
+- Écart : les essais du serveur ne passent pas par `wrangler dev` (il faudrait installer Wrangler) mais appellent
+  directement `traiter()` du Worker avec une base simulée qui ne comprend que ses requêtes ; même couverture (jeton
+  absent ou faux, taille, conflit, origine étrangère, purge, plafond), sans dépendance.
+- Horodatages : `ecrire()` appelle `noterModification()`, qui n'écrit la clé `horodatages` (hors CLES_SAUVEGARDE :
+  métadonnée, non exportée) que si un compte est actif sur l'appareil.
+- Table `REGLES_FUSION` (coffre.js) : union (acquis, activite, fichesLues, distinctions), entrée la plus jouée
+  (memoire, resultatsAteliers avec record maximal), maximum (records, chrono), fusion à trois (confiance, fourchettes,
+  certitudes, duels, lucidite : total, jours, cumuls), maitrise (union des jours, meilleure maximale) ; sinon la
+  version la plus récente.
+- Limitation de débit : syntaxe `[[ratelimits]]` vérifiée dans la documentation (période 10 ou 60 s).
+  `wrangler d1 create … --jurisdiction=eu` vérifié (non modifiable ensuite).
+- Textes « aucune donnée envoyée » : inchangés tant que le drapeau est vide ; proposition à relire dans
+  `tests/a-verifier.md`. `sw.js` : son en-tête ne dit plus « aucune donnée envoyée » mais « seuls les fichiers du site
+  sont mis en cache » (vrai dans les deux cas).
+- Étape manuelle (brief §7, point 2) : compte Cloudflare, puis serveur/README.md.
+- CodeQL : la règle js/clear-text-storage-of-sensitive-data est désactivée (`.github/codeql/codeql-config.yml`), à la
+  demande du propriétaire : faux positif « certitudes » récurrent (il revenait à chaque déplacement de `ecrire()`).
 
 ## État des lieux (lot 0, commit cb90ed8)
 

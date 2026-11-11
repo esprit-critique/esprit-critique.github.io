@@ -12,7 +12,7 @@
 # Code de sortie 1 si un banc échoue (tests/verdict.py), pour l'intégration continue.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire progression"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire progression synchro"}
 export CHROME=${CHROME:-$(python3 tests/navigateur.py)}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
@@ -24,7 +24,8 @@ COPIES="_progression.html _aleatoire.html _affichage.html _ateliers.html _test.h
 mkdir -p tests/rapports
 
 nettoyer() {
-  for f in $COPIES _site.html _site-grand.html _grand-test-essai.js; do rm -f "static/$f"; done
+  for f in $COPIES _site.html _site-grand.html _grand-test-essai.js _site-synchro.html _coffre-essai.js; do rm -f "static/$f"; done
+  [ -n "$SERVEUR_SYNCHRO" ] && kill "$SERVEUR_SYNCHRO" 2>/dev/null
   [ -n "$SERVEUR" ] && kill "$SERVEUR" 2>/dev/null
 }
 trap nettoyer EXIT
@@ -53,6 +54,9 @@ grep -v 'http-equiv="Content-Security-Policy"' static/index.html > static/_site.
 sed -e 's/^const GRAND_TEST_VISIBLE = false;$/const GRAND_TEST_VISIBLE = true;/' -e 's/^const GRAND_TEST_ESSAI = false;$/const GRAND_TEST_ESSAI = true;/' \
   static/grand-test.js > static/_grand-test-essai.js
 sed 's/src="grand-test.js"/src="_grand-test-essai.js"/' static/_site.html > static/_site-grand.html
+# Copie d'essai de la synchronisation : coffre pointé sur le serveur local (serveur/serveur-local.mjs) ; rien n'est modifié dans static/
+sed 's|^const SYNCHRO_URL = "";|const SYNCHRO_URL = "http://localhost:8787";|' static/coffre.js > static/_coffre-essai.js
+sed 's/src="coffre.js"/src="_coffre-essai.js"/' static/_site.html > static/_site-synchro.html
 if ! curl -s -o /dev/null http://localhost:8000/; then
   python3 app.py > /dev/null 2>&1 &
   SERVEUR=$!
@@ -67,12 +71,20 @@ while read -r largeur theme; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
     page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
     [ "$banc" = grand ] && page="_grand-test.html"
-    case $banc in recherche|calculs|familles|banques|aleatoire|progression)
+    case $banc in recherche|calculs|familles|banques|aleatoire|progression|synchro)
       # Bancs indépendants de la taille et du thème : une seule fois, dans la première configuration
       [ "$PREMIERE" = "$largeur-$theme" ] || continue
       rapport="tests/rapports/$banc.txt" ;;
     esac
-    if [ "$banc" = recherche ]; then   # Playwright (npm ci), avec ses propres tailles d'écran
+    if [ "$banc" = synchro ]; then   # Playwright, deux navigateurs et le Worker servi en local sur une base en mémoire
+      node serveur/essai.mjs > "$rapport.serveur" 2>&1 && r1="0 échec" || r1="ÉCHEC"
+      node serveur/serveur-local.mjs 8787 > /dev/null 2>&1 &
+      SERVEUR_SYNCHRO=$!
+      for _ in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null http://localhost:8787/ && break; sleep 0.3; done
+      if node tests/synchro.js > "$rapport.tmp" 2>&1; then r2="0 échec"; else r2="ÉCHEC"; fi
+      kill "$SERVEUR_SYNCHRO" 2>/dev/null; SERVEUR_SYNCHRO=
+      { echo "RÉSUMÉ : serveur $r1 ; navigateurs $r2 ; $(grep -c '^OK' "$rapport.serveur" "$rapport.tmp" | awk -F: '{s+=$2} END {print s}') contrôle(s) réussi(s)"; cat "$rapport.serveur" "$rapport.tmp"; } > "$rapport"; rm -f "$rapport.tmp" "$rapport.serveur"
+    elif [ "$banc" = recherche ]; then   # Playwright (npm ci), avec ses propres tailles d'écran
       if node tests/recherche-melange.js > "$rapport.tmp" 2>&1; then r="0 échec"; else r="ÉCHEC"; fi
       { echo "RÉSUMÉ : $(grep -c '^OK' "$rapport.tmp") contrôle(s) réussi(s) ; $r"; cat "$rapport.tmp"; } > "$rapport"; rm -f "$rapport.tmp"
     elif [ "$banc" = calculs ] || [ "$banc" = familles ] || [ "$banc" = banques ]; then

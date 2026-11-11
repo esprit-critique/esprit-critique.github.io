@@ -1,14 +1,14 @@
 // sw.js : mode hors ligne. Stratégie « réseau d'abord » : en ligne, on sert toujours la version publiée (et l'on met
-// le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Aucune donnée n'est envoyée nulle part.
+// le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Seuls les fichiers du site sont mis en cache.
 // À chaque nouveau fichier du site : l'ajouter à FICHIERS et changer le numéro de version du cache.
-const CACHE = "esprit-critique-v23";
+const CACHE = "esprit-critique-v24";
 // Liste lue en JSON par les bancs (_test, _grand-test, _hors-ligne) : pas de commentaire à l'intérieur. Version anglaise :
 // la page et ses dictionnaires (liste complète : python3 tests/en/controle.py).
 const FICHIERS = [
   "./", "index.html", "style.css", "manifest.webmanifest?v=4", "favicon.svg?v=3", "icone-32.png?v=3", "icone.png?v=3", "icone-512.png?v=3",
   "langue.js", "donnees.js", "schemas.js", "pays.js", "jeux-donnees.js", "ateliers.js", "niveaux.js", "experiences.js", "chiffres.js",
-  "perception.js", "debattre.js", "raisonner.js", "pratiques.js", "melange.js", "indices.js", "grand-test-donnees.js", "grand-test.js", "grand-test-interface.js", "illusions.js", "tirage.js", "progression.js", "graphiques.js", "profil.js", "parcours.js", "sauvegarde.js", "app.js", "recherche.js",
-  "en/dico-app.js", "en/dico-ateliers.js", "en/dico-chiffres.js", "en/dico-debattre.js", "en/dico-experiences.js", "en/dico-grand-test-interface.js", "en/dico-grand-test.js", "en/dico-illusions.js", "en/dico-melange.js", "en/dico-tirage.js", "en/dico-progression.js", "en/dico-graphiques.js", "en/dico-profil.js", "en/dico-parcours.js", "en/dico-jeux-donnees.js", "en/dico-niveaux.js", "en/dico-nombres.js", "en/dico-perception.js", "en/dico-pratiques.js", "en/dico-raisonner.js", "en/dico-schemas.js", "en/fiches.js", "en/grand-test-donnees.js", "en/grand-test.js", "en/index.html", "en/legal-notice.html", "en/pays.js", "en/privacy.html", "en/terms.html",
+  "perception.js", "debattre.js", "raisonner.js", "pratiques.js", "melange.js", "indices.js", "grand-test-donnees.js", "grand-test.js", "grand-test-interface.js", "illusions.js", "tirage.js", "progression.js", "graphiques.js", "profil.js", "parcours.js", "coffre.js", "sauvegarde.js", "app.js", "recherche.js",
+  "en/dico-app.js", "en/dico-ateliers.js", "en/dico-chiffres.js", "en/dico-debattre.js", "en/dico-experiences.js", "en/dico-grand-test-interface.js", "en/dico-grand-test.js", "en/dico-illusions.js", "en/dico-melange.js", "en/dico-tirage.js", "en/dico-progression.js", "en/dico-graphiques.js", "en/dico-profil.js", "en/dico-parcours.js", "en/dico-coffre.js", "en/dico-jeux-donnees.js", "en/dico-niveaux.js", "en/dico-nombres.js", "en/dico-perception.js", "en/dico-pratiques.js", "en/dico-raisonner.js", "en/dico-schemas.js", "en/fiches.js", "en/grand-test-donnees.js", "en/grand-test.js", "en/index.html", "en/legal-notice.html", "en/pays.js", "en/privacy.html", "en/terms.html",
   "polices/newsreader-latin-opsz-normal.woff2", "polices/newsreader-latin-wght-italic.woff2", "polices/OFL.txt"
 ];
 
