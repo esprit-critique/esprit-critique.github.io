@@ -289,13 +289,13 @@ f.onload = async () => {
     const vus0 = JSON.parse(w.localStorage.getItem("vus") || "{}");
     await aller("chiffres/melange");
     await pause(100);
-    let verifiees = 0, fautes = [], passages = 0;
+    let verifiees = 0, fautes = [], passagesGalton = 0;
     for (let k = 0; k < 10; k++) {
       const vusQ = JSON.parse(w.localStorage.getItem("vus") || "{}");
       const ajoutes = Object.entries(vusQ).flatMap(([cle, l]) => l.filter(x => !(vus0[cle] || []).includes(x)).map(x => [cle, x]));
       const jeu = vue().querySelector(".melange-jeu a").textContent;
       vue().querySelector(".melange-passer").click();
-      passages++;
+      passagesGalton++;
       await pause(100);
       const vusN = JSON.parse(w.localStorage.getItem("vus") || "{}");
       const jeuSuivant = vue().querySelector(".melange-jeu a").textContent;
@@ -304,7 +304,7 @@ f.onload = async () => {
       ajoutes.forEach(([cle, x]) => { if ((vusN[cle] || []).includes(x) && jeuSuivant !== jeu) fautes.push(cle + ":" + x); });
     }
     ok("Planche de Galton : passer une question ne la marque pas comme vue, et compte les questions passées",
-      verifiees > 0 && !fautes.length && new RegExp("passées\\s*:\\s*" + passages).test(vue().querySelector(".melange-score").textContent),
+      verifiees > 0 && !fautes.length && new RegExp("passées\\s*:\\s*" + passagesGalton).test(vue().querySelector(".melange-score").textContent),
       verifiees + " question(s) vérifiée(s) ; " + fautes.join(", ") + " | " + vue().querySelector(".melange-score").textContent);
 
     // Mouvement (DESIGN.md) : la révélation de l'illusion du jour se termine dans son état final ; le réglage « Animations :
