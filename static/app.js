@@ -1316,6 +1316,11 @@ function afficherFiche(type, fiche) {
   hasard.type = "button";
   hasard.addEventListener("click", () => tirerCarte(TIRAGE.actif ? undefined : "tout"));
   rail.appendChild(hasard);
+  // Image de la carte, à partager (profil.js)
+  const partage = el("button", "bouton secondaire large", "Partager cette carte");
+  partage.type = "button";
+  partage.addEventListener("click", () => partagerFiche(type, fiche).catch(e => annoncer(e.message)));
+  pied.appendChild(partage);
   const miseEnPage = el("div", "fiche-mise-en-page");
   const colonne = el("div", "fiche-colonne");
   // Arrivée par un tirage au hasard (tirage.js) : bandeau de tirage et retournement ; sinon le tirage s'arrête

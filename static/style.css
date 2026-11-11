@@ -1778,3 +1778,6 @@ h3.titre-bloc {
 .liste-raccourcis { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0 0 14px; }
 .liste-raccourcis dt { font-family: var(--mono); font-weight: 700; }
 .liste-raccourcis dd { margin: 0; }
+
+.bouton-partage { margin: 10px 0 0; display: block; }
+.pied-fiche .bouton.large { margin-top: 10px; }

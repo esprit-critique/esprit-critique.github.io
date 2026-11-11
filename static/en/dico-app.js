@@ -147,6 +147,7 @@ EN_AJOUTER([
   ["Sur cette fiche", "On this card"],
   ["Carte suivante : {0}", "Next card: {0}"],
   ["Une carte au hasard", "A random card"],
+  ["Partager cette carte", "Share this card"],
   ["Actions de la fiche", "Card actions"],
   ["Acquise ?", "Learned?"],
   ["Suivante →", "Next →"],
