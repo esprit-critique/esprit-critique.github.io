@@ -13,3 +13,10 @@ Aucun fait non vérifié n'est affiché sur le site à ce jour.
   celui-ci vient du registre ARIN (contact « GitHub », type bureau), où GitHub déclare lui-même ses coordonnées. Un
   répertoire tiers (datarequests.org) donne +1 877 448 4820, non retenu. L'adresse (88 Colin P. Kelly Jr. Street,
   San Francisco, CA 94107) vient de la déclaration de confidentialité de GitHub.
+
+## Illusion de Ponzo (refonte, lot 2, 11 novembre 2026)
+
+Non retenue pour l'illusion du jour : l'article de Mario Ponzo de 1911 souvent cité porte sur une illusion tactile
+(illusion d'Aristote), et l'origine de l'illusion visuelle qui porte son nom reste incertaine (Ponzo l'aurait employée
+en 1912 pour expliquer l'illusion de la Lune). Piste : Bertamini et Wade (2023), traduction commentée, *Perception*.
+À ajouter seulement avec une source primaire vérifiée.

@@ -27,7 +27,7 @@
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
     [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
-    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"]
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
   // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
@@ -777,7 +777,7 @@ function afficherAccueil() {
   const colonnes = el("div", "deux-colonnes");
   const principal = el("div", "colonne-principale");
   const laterale = el("aside", "colonne-laterale");
-  laterale.setAttribute("aria-label", "Révisions et progression");
+  laterale.setAttribute("aria-label", "L'illusion du jour, révisions et progression");
   colonnes.append(principal, laterale);
   const carteJour = el("article", "carte");
   const carteDefi = carteDefiDuJour(), carteVF = carteVraiFauxDuJour();
@@ -837,7 +837,7 @@ function afficherAccueil() {
     agenda.addEventListener("click", () => exporterRevisions());
     carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
-  laterale.appendChild(carteRevision);
+  laterale.append(carteIllusionDuJour(), carteRevision);
 
   // Progression
   const stats = statistiques();

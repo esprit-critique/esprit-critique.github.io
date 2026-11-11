@@ -1416,7 +1416,7 @@ h3.titre-bloc {
 .numero-fiche { font-family: var(--titre); font-variant-numeric: oldstyle-nums; font-size: 15px; color: var(--discret); }
 .lf-num { font-family: var(--titre); font-variant-numeric: oldstyle-nums; color: var(--discret); font-weight: 400; margin-right: 6px; }
 /* Ouverture de l'accueil (nouveau visiteur) : l'emblème en grand, à toucher */
-.ouverture { border-radius: var(--rayon-carte); display: flex; gap: 16px; align-items: center; margin: 0 0 16px; padding: 12px 14px; background: var(--encadre); border-radius: var(--rayon); }
+.ouverture { display: flex; gap: 16px; align-items: center; margin: 0 0 16px; padding: 12px 14px; background: var(--encadre); border-radius: var(--rayon-carte); }
 .ouverture-dessin { flex: none; padding: 4px; margin: 0; border: 0; background: none; border-radius: var(--rayon); }
 .ouverture .embleme { width: 76px; height: 54px; display: block; }
 .ouverture p { margin: 0; font-family: var(--titre); font-size: 18px; line-height: 1.35; }
@@ -1532,3 +1532,24 @@ h3.titre-bloc {
   .recherche-globale { order: 2; flex: 0 1 300px; margin: 0 0 0 auto; }
   .langue-entete { position: static; order: 3; }
 }
+
+/* L'illusion du jour (illusions.js) : leurres et repères ; « revele » joue la révélation par l'opacité seule */
+.illusion-question { font-family: var(--titre); font-size: 19px; line-height: 1.35; margin: 0 0 6px; }
+.illusion-dessin { display: block; width: 100%; max-width: 420px; height: auto; margin: 4px auto 12px; }
+.illusion-explication { margin: 0 0 4px; }
+.ill-encre { stroke: var(--texte); stroke-width: 2.5; stroke-linecap: round; fill: none; }
+.ill-fin { stroke: var(--texte); stroke-width: 1.4; }
+.ill-fort { stroke: var(--accent); stroke-width: 3.5; stroke-linecap: round; }
+.ill-plein, .ill-carreau { fill: var(--texte); }
+.ill-joint { stroke: var(--discret); stroke-width: 2; }
+.ill-cache { fill: var(--carte); }
+.ill-forme { fill: color-mix(in srgb, var(--accent) 30%, var(--carte)); stroke: var(--texte); stroke-width: 1.5; }
+.ill-fond-sombre { fill: #2b2620; }
+.ill-fond-clair { fill: #ece6da; }
+.ill-gris { fill: #8a8378; }
+.illusion-dessin .leurre { transition: opacity var(--duree-longue) var(--courbe); }
+.repere, .repere-forme, .repere-plein { opacity: 0; transition: opacity var(--duree-longue) var(--courbe) 180ms; }
+.repere, .repere-forme { fill: none; stroke: var(--vert); stroke-width: 2.5; stroke-dasharray: 6 5; }
+.illusion-dessin.revele .leurre { opacity: 0.12; }
+.illusion-dessin.revele .repere, .illusion-dessin.revele .repere-forme, .illusion-dessin.revele .repere-plein { opacity: 1; }
+.lien-discret { display: inline-block; margin-top: 10px; font-size: 14px; }
