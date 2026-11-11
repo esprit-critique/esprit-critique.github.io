@@ -27,7 +27,7 @@
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
     [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
-    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"]
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof gagner, "profil.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
   // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
@@ -195,7 +195,8 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages", "fichesLues"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages", "fichesLues",
+  "maitrise", "lucidite", "distinctions", "objectif", "profil"
 ];
 
 // Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
@@ -204,11 +205,12 @@ const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
     "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions", "fichesLues"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
-    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages"],
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages", "maitrise", "lucidite", "distinctions", "profil"],
+  nombre: ["objectif"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
   booleen: ["certitudeQuiz", "ceciteFaite"]
 };
-const formeDe = v => Array.isArray(v) ? "tableau" : v !== null && typeof v === "object" ? "objet" : typeof v === "string" ? "texte" : typeof v === "boolean" ? "booleen" : "autre";
+const formeDe = v => Array.isArray(v) ? "tableau" : v !== null && typeof v === "object" ? "objet" : typeof v === "string" ? "texte" : typeof v === "boolean" ? "booleen" : typeof v === "number" && isFinite(v) ? "nombre" : "autre";
 // « grandTest » est en plus vérifié en profondeur (grand-test.js) : une version ancienne est acceptée si elle se migre
 const formeValide = (cle, valeur) => (FORMES_SAUVEGARDE[formeDe(valeur)] || []).includes(cle) && (cle !== "grandTest" || grandTestImportable(valeur));
 
@@ -243,6 +245,7 @@ const memoire = lire("memoire", {});
 // monter la notion de boîte ; une erreur commise en étant sûr la ramène en boîte 1, comme toute erreur.
 function enregistrerReponse(cle, juste, certitude) {
   const m = memoire[cle] || { b: 0, d: 0, n: 0, j: 0 };
+  const boiteAvant = m.b, dueAujourdhui = m.n > 0 && m.d === aujourdHui();
   m.n++;
   if (juste) {
     m.j++;
@@ -254,6 +257,11 @@ function enregistrerReponse(cle, juste, certitude) {
   memoire[cle] = m;
   ecrire("memoire", memoire);
   noterActivite();
+  // Points de lucidité (profil.js) : montée de boîte, boîte 5, révision faite le jour prévu, erreur sûre corrigée
+  // Seule une bonne réponse fait monter de boîte (une erreur place une notion nouvelle en boîte 1 : ce n'est pas une montée)
+  if (juste && m.b > boiteAvant) { gagner("boite", m.b, cle + ":" + m.n); if (m.b === 5) gagner("boite-5", 0, cle); }
+  if (juste && dueAujourdhui) { gagner("revision-a-l-heure", 1, cle + ":" + m.n); compter("revisionsALHeure"); }
+  if (juste && lire("erreursSures", []).some(e => e.cle === cle)) compter("leconsRetenues");
 }
 
 // Fichier .ics des révisions prévues sur les 60 prochains jours (les révisions en retard comptent pour aujourd'hui)
@@ -494,6 +502,7 @@ function journalReperage(cle) {
       tous.push({ cle, j: aujourdHui(), note: note.value.trim() });
       ecrire("reperages", tous.slice(-300));
       noterActivite();
+      gagner("reperage", 0);
       annoncer("Repérage noté.");
       dessiner();
     });
@@ -649,6 +658,12 @@ function questionsDuDefi(jour, graine) {
   return melanger([...monde, ...vf, ...citations, ...chrono], alea);
 }
 
+// Les trois cartes du jour faites (situation, défi, vrai ou faux) : un bonus, une fois par jour
+function gagnerTroisCartes() {
+  const j = aujourdHui(), s = lire("jour", null), d = lire("defiJour", null), v = lire("vfJour", null);
+  if (s && s.jour === j && d && d.jour === j && v && v.j === j) gagner("trois-cartes", 0);
+}
+
 // Une question du défi (du jour ou libre) : choix, correction, explication
 function questionDeDefi(q, zone, fini) {
   zone.appendChild(el("p", "cas", q.texte));
@@ -707,6 +722,8 @@ function carteDefiDuJour() {
       const score = resultats.filter(Boolean).length;
       ecrire("defiJour", { jour, score });
       noterActivite();
+      gagner("defi-jour", score);
+      gagnerTroisCartes();
       resultat(score);
       carte.scrollIntoView({ block: "start" });
     });
@@ -798,6 +815,8 @@ function afficherAccueil() {
   rendreQuestion(carteJour, q, dejaRepondu, option => {
     ecrire("jour", { jour: aujourdHui(), choix: option.id });
     enregistrerReponse(cleFiche(q.type, q.fiche), option === q.fiche);
+    gagner("situation-jour", option === q.fiche);
+    gagnerTroisCartes();
   }, actions => {
     actions.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, "Lire la fiche", "bouton secondaire"));
     actions.appendChild(lienVers("#quiz", "Continuer au quiz", "bouton"));
@@ -841,6 +860,7 @@ function afficherAccueil() {
     agenda.addEventListener("click", () => exporterRevisions());
     carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
+  [carteProgressionAccueil(), carteBilanSemaine()].forEach(c => { if (c) laterale.appendChild(c); });
   laterale.append(carteIllusionDuJour(), carteAuHasard(), carteRevision);
 
   // Progression
@@ -942,6 +962,8 @@ function carteVraiFauxDuJour() {
     const b = el("button", "choix", texte);
     b.addEventListener("click", () => {
       ecrire("vfJour", { j: jour, id: a.id, r: valeur });
+      gagner("vf-jour", valeur === a.vrai);
+      gagnerTroisCartes();
       corriger(valeur);
     });
     carte.appendChild(b);
@@ -1396,6 +1418,8 @@ if (!MODES_QUIZ.some(([m]) => m === quiz.mode)) quiz.mode = "tout";
 
 function nouvelleSerie() {
   let choisies;
+  quiz.points = [];
+  quiz.pointsDonnes = false;
   if (quiz.mode === "proches") {
     quiz.serie = serieDeDuels();
     quiz.index = 0;
@@ -1516,6 +1540,9 @@ function afficherQuiz() {
     const juste = option === q.fiche;
     const cle = cleFiche(q.type, q.fiche);
     if (juste) quiz.bonnes++;
+    // Barème des points de lucidité (progression.js) : il paie l'étalonnage ; réponse libre juste : 12
+    quiz.points = quiz.points || [];
+    quiz.points[quiz.index] = q.libre ? (juste ? 12 : 0) : pointsReponse(q.voisine ? BAREME_DUEL : BAREME_QUIZ, certitude || "aucune", juste);
     // Les duels n'entrent pas dans les boîtes de révision : un choix entre deux est trop facile
     if (q.voisine) { noterDuel(cle, juste); noterActivite(); } else enregistrerReponse(cle, juste, certitude);
     if (certitude) noterCertitude(cle, certitude, juste);
@@ -1539,6 +1566,8 @@ function afficherQuiz() {
 
 function afficherBilan(zone) {
   const n = quiz.serie.length;
+  // Une seule fois par série : un réaffichage du bilan ne redonne pas de points
+  if (!quiz.pointsDonnes) { quiz.pointsDonnes = true; gagner("quiz", totalSerie(quiz.points || []), String(Date.now())); }
   const ratees = quiz.serie.filter(q => q.reponse !== q.fiche);
   const records = lire("records", {});
   const ancien = records[quiz.mode];
@@ -1551,6 +1580,8 @@ function afficherBilan(zone) {
   carte.style.setProperty("--c", "#2a8a5c");
   carte.appendChild(el("p", "consigne", quiz.mode === "reviser" ? "Bilan de la révision" : "Bilan de la série"));
   carte.appendChild(el("p", "grand-score", quiz.bonnes + " / " + n));
+  // Votre score face au hasard (pas pour la réponse libre : rien à deviner)
+  if (quiz.mode !== "libre" && !modeSobre()) carte.appendChild(blocFaceAuHasard(quiz.bonnes, n, quiz.mode === "proches" ? 0.5 : 0.25));
 
   const ratio = quiz.bonnes / n;
   let message;
@@ -1600,8 +1631,8 @@ function afficherBilan(zone) {
 // #ateliers, #chiffres/monde, #tests/crt, #guide, #guide/methode…
 // Le bouton « retour » du navigateur fonctionne, et chaque page a son propre lien.
 
-const ONGLET_DE = { accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
-const SECTION_DE = { accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
+const ONGLET_DE = { profil: "profil", accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
+const SECTION_DE = { profil: "vue-profil", accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
 let precedent = { vue: null, id: null };
 let rechercheEnFiches = false;   // la barre de l'en-tête filtrait-elle la liste à l'affichage précédent ?
 
@@ -1675,6 +1706,8 @@ function afficherPage() {
       if (precedent.vue === vue) defilement = etat.defilement[vue];
     }
   }
+
+  if (vue === "profil") { afficherPageProfil(id); titre = T("Profil"); }
 
   if (vue === "cartes") {
     const type = id === "sophismes" ? "sophismes" : "biais";
@@ -2036,6 +2069,7 @@ document.querySelector(".marque").addEventListener("click", () => {
   const embleme = document.querySelector(".embleme");
   if (embleme.classList.contains("revele")) return;
   embleme.classList.add("revele");
+  noterDrapeau("embleme");
   annoncer("Les deux traits de l'emblème ont la même longueur. Le savoir ne change rien à ce que vous voyez.");
   setTimeout(() => embleme.classList.remove("revele"), 3400);
 });
@@ -2098,4 +2132,7 @@ document.addEventListener("keydown", e => {
 // ===================== Premier affichage =====================
 document.querySelector('.onglet[data-onglet="fiches"]').href = "#" + etat.type;
 if (!location.hash) history.replaceState(null, "", "#accueil");
+// Maîtrise et points (profil.js) : la progression passée convertie une fois en points, puis la photographie du jour
+rattraperProgression();
+majMaitrise(false);
 afficherPage();

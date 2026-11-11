@@ -32,6 +32,7 @@ function noterFicheLue(cle) {
   if (!Array.isArray(lues) || lues.includes(cle)) return;
   lues.push(cle);
   ecrire("fichesLues", lues);
+  gagner("fiche-lue", 0, cle);
 }
 
 // ===================== Tirage d'une fiche au hasard =====================
@@ -309,6 +310,7 @@ function afficherDefiLibre(texte) {
     derouler(jeu, questionsDuDefi(0, graine), questionDeDefi, resultats => {
       const score = resultats.filter(Boolean).length;
       noterActivite();
+      gagner("defi-libre", score);
       carte.replaceChildren();
       carte.append(el("p", "surtitre", T("Défi libre n° {0}", graine)), el("p", "grand-score", score + " / 10"), actionsDefi(score));
       carte.scrollIntoView({ block: "start" });

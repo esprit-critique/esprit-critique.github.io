@@ -179,6 +179,7 @@ EN_AJOUTER([
   ["Nouvelle série", "New set"],
   ["Réviser ({0})", "Review ({0})"],
   ["Défi libre", "Free challenge"],
+  ["Profil", "Profile"],
   ["Cartes", "Cards"],
   ["Quiz", "Quiz"],
   ["Ateliers", "Workshops"],

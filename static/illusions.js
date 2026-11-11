@@ -169,7 +169,7 @@ function carteIllusionDuJour() {
       verifier.setAttribute("aria-pressed", String(revele));
       verifier.textContent = typo(revele ? T("Revoir l'illusion") : T("Vérifier"));
       explication.hidden = source.hidden = !revele;
-      if (revele) annoncer(ill.explication);
+      if (revele) { annoncer(ill.explication); noterDrapeau("illusions", ill.id); }
     });
     const autre = el("button", "bouton secondaire", "Une autre illusion");
     autre.type = "button";

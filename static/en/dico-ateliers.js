@@ -1,6 +1,8 @@
 // dico-ateliers.js : traductions anglaises des textes de ateliers.js (français à gauche, anglais à droite).
 // Les {0}, {1}… sont remplacés par les valeurs que passe le code : T("… {0} …", valeur).
 EN_AJOUTER([
+  ["Mélanges", "Mixes"],
+  ["Une question à la fois, tirée au hasard dans les jeux les plus rapides : on ne sait pas à l'avance quel jeu viendra.", "One question at a time, drawn at random from the quickest games: you never know in advance which game comes next."],
   ["Le monde en chiffres", "The world in numbers"],
   ["Des questions fondées sur des données publiques récentes (Banque mondiale, OMS, ONU), avec leurs sources. Nos idées sur le monde datent souvent de l'école.", "Questions based on recent public data (World Bank, WHO, UN), with their sources. Our ideas about the world often date from school."],
   ["Mesurer sa confiance", "Measuring your confidence"],
@@ -26,6 +28,8 @@ EN_AJOUTER([
   ["Vos dernières parties", "Your latest games"],
   ["Rejouer", "Play again"],
   ["record {0}/{1}", "record {0}/{1}"],
+  ["Maîtrise de ce jeu : {0} sur 1 000", "Mastery of this game: {0} out of 1,000"],
+  ["Maîtrise : {0}", "Mastery: {0}"],
   ["{0} : estimer le monde réel, mesurer sa confiance, éprouver sa perception et refaire les expériences classiques. Répondez spontanément : c'est la première réaction qui est intéressante.", "{0}: estimate the real world, measure your confidence, test your perception and redo the classic experiments. Answer spontaneously: your first reaction is the interesting one."],
   ["Votre parcours", "Your journey"],
   ["Par où commencer ?", "Where to start?"],
@@ -39,6 +43,7 @@ EN_AJOUTER([
   ["Suggestion : ", "Suggestion: "],
   ["Pour commencer : ", "To start with: "],
   ["Sections des ateliers", "Workshop sections"],
+  ["{0} / {1} essayés", "{0} / {1} tried"],
   ["← Ateliers", "← Workshops"],
   ["Ce que vos réponses aux ateliers révèlent de votre façon de juger. Chaque mesure s'affine à mesure que vous jouez ; tout reste dans votre navigateur.", "What your answers in the workshops reveal about how you judge. Each measure gets more precise as you play; everything stays in your browser."],
   ["Le Grand test", "The Grand Test"],
@@ -130,12 +135,9 @@ EN_AJOUTER([
   ["fausses alertes", "false alarms"],
   ["repérages", "sightings"],
   ["1 fois", "once"],
-  ["Mélanges", "Mixes"],
-  ["{0} / {1} essayés", "{0} / {1} tried"],
   ["Jeu tiré au hasard", "Game drawn at random"],
   ["Cette session : {0} bonne(s) réponse(s) sur {1}. Les réponses ne sont pas enregistrées.", "This session: {0} correct answer(s) out of {1}. Answers are not recorded."],
   ["Les réponses ne sont pas enregistrées : elles servent à s'entraîner.", "Answers are not recorded: they are for practice."],
   ["Planche de Galton", "Galton board"],
-  ["Une question à la fois, tirée au hasard dans les jeux les plus rapides. Vous ne savez pas à l'avance quel jeu viendra.", "One question at a time, drawn at random from the quickest games. You never know in advance which game comes next."],
-  ["Une question à la fois, tirée au hasard dans les jeux les plus rapides : on ne sait pas à l'avance quel jeu viendra.", "One question at a time, drawn at random from the quickest games: you never know in advance which game comes next."]
+  ["Une question à la fois, tirée au hasard dans les jeux les plus rapides. Vous ne savez pas à l'avance quel jeu viendra.", "One question at a time, drawn at random from the quickest games. You never know in advance which game comes next."]
 ]);

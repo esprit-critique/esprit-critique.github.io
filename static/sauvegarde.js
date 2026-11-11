@@ -63,8 +63,14 @@ const SCHEMAS_SAUVEGARDE = {
   decisions: ["liste", { id: "id", texte: "texte", creee: "jour", bilan: "jour", bilanFait: "jour", issue: "texte", jugement: "texte" }, 200],
   bilanFormes: ["dico", { jour: "jour", score: "nombre" }, 20],
   grandTest: ["dico", "libre", 1000],
-  reglages: { animations: "texte" },
-  fichesLues: ["liste", "fiche", 500]
+  reglages: { animations: "texte", sobre: "booleen" },
+  fichesLues: ["liste", "fiche", 500],
+  maitrise: { jours: ["dico", ["liste", "nombre", 10], 500], meilleure: "nombre", depuis: "jour", grade: "entier" },
+  lucidite: { total: "nombre", jours: ["dico", "nombre", 200], compteurs: ["dico", "libre", 200], uniques: ["dico", "nombre", 2000],
+    journal: ["liste", ["liste", "libre", 3], 60], rattrapage: "nombre", rattrapageVu: "booleen", cumuls: ["dico", "entier", 20] },
+  distinctions: { obtenues: ["liste", "texte", 100], drapeaux: { embleme: "booleen", illusions: ["liste", "texte", 50] } },
+  objectif: "entier",
+  profil: { pseudo: "texte" }
 };
 
 // Identifiants d'ateliers acceptés : ceux de la liste des ateliers (le banc « ateliers » vérifie qu'il n'en manque aucun)

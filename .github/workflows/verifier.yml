@@ -38,7 +38,7 @@ jobs:
         with:
           persist-credentials: false
       - run: npm ci --no-audit --no-fund
-      - run: tests/lancer.sh calculs familles banques recherche aleatoire
+      - run: tests/lancer.sh calculs familles banques recherche aleatoire progression
         env:
           CONFIGS: 390 clair
       - if: failure()

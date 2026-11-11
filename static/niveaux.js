@@ -233,6 +233,7 @@ function partieChrono(zone, options) {
     const nouveau = ancien === undefined || score > ancien;
     if (nouveau) { records[options.cle] = score; ecrire("chrono", records); }
     noterActivite();
+    if (options.cle === "quiz") gagner("chrono", score);
     zone.replaceChildren();
     zone.append(el("p", "consigne", "Temps écoulé"), el("p", "grand-score", typo(signe(score) + " points")),
       paragraphe(T("{0}, {1} (chaque erreur retire 2 points).", pluriel(bonnes, "bonne réponse", "bonnes réponses"), pluriel(erreurs, "erreur"))),

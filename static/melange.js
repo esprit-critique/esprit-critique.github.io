@@ -108,6 +108,7 @@ function bilanMelange(zone) {
   partie.appendChild(bilan);
   boutonRejouer(partie, () => JEUX.find(j => j.id === "melange").lancer(zone.parentNode));
   annoncer(T("Bilan : {0} bonne(s) réponse(s) sur {1}.", melange.juste, melange.total));
+  gagner("galton", melange.juste);
 }
 
 JEUX.push({

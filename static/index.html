@@ -91,6 +91,8 @@
       </nav>
 
       <!-- Langue : le bouton propose l'autre langue (même page, même « # ») -->
+      <!-- Profil : blason, objectif du jour, insigne du grade et maîtrise (profil.js) -->
+      <a class="bouton-profil" href="#profil" aria-label="Profil"></a>
       <a class="langue-entete" href="en/" lang="en" hreflang="en" data-langue="en" title="English" aria-label="Passer le site en anglais"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.4 3.9 5.4 3.9 9s-1.3 6.6-3.9 9c-2.6-2.4-3.9-5.4-3.9-9S9.4 5.4 12 3z"/></svg><span>EN</span></a>
 
     </header>
@@ -100,6 +102,7 @@
     <!-- Les vues : une seule est visible à la fois, selon l'adresse (#accueil, #biais, #quiz…) -->
     <main>
       <section id="vue-accueil" class="vue" hidden></section>
+      <section id="vue-profil" class="vue" hidden></section>
 
       <section id="vue-fiches" class="vue" hidden>
         <div id="outils-liste">
@@ -324,6 +327,26 @@
           <div id="sauvegardes-auto"></div>
           <button class="bouton secondaire bouton-danger" id="btn-effacer">Effacer ma progression</button>
         </article>
+
+        <article class="carte" id="g-maitrise">
+          <h2>Comment votre maîtrise est calculée</h2>
+          <p>La <strong>maîtrise</strong> (de 0 à 1 000) dit à quel point vous réussissez les jeux de ce site. Elle se calcule entièrement à partir des résultats déjà enregistrés dans votre navigateur ; elle peut monter ou baisser, mais jamais parce que vous n'êtes pas venu.</p>
+          <p><strong>Un jeu noté.</strong> Pour chaque niveau joué : la réussite moyenne de vos cinq dernières parties, corrigée du hasard (avec quatre réponses, répondre au hasard donne 25 % : on ne compte que ce qui dépasse), multipliée par la confiance (une seule partie compte pour un tiers, trois parties ou plus en entier), sous un plafond de 500 au niveau 1, 750 au niveau 2 et 1 000 au niveau 3. Le jeu garde la meilleure de ces valeurs. Exemple : 85 % de réussite à quatre réponses, sur trois parties, donne 400 au niveau 1 et 800 au niveau 3.</p>
+          <p><strong>Les mesures particulières.</strong> Étalonnage : l'écart moyen entre votre certitude et votre réussite (0 point d'écart donne 1 000, 30 points ou plus donnent 0). Ancrage : l'écart entre vos estimations après une ancre haute et une ancre basse (aucun écart : 1 000 ; 50 % ou plus : 0). Prévisions : le score de Brier de vos prévisions résolues (0 : 1 000 ; 0,25, soit toujours « 50 % » : 0).</p>
+          <p><strong>Les notions</strong> : 80 % pour les boîtes de révision du quiz (toutes les notions en boîte 5 : 800), 20 % pour les duels entre notions proches.</p>
+          <p><strong>Six domaines</strong> : le monde en chiffres, mesurer sa confiance, percevoir, raisonner (avec philosopher), débattre, et les notions. La maîtrise d'un domaine est la moyenne de ses jeux, <strong>un jeu jamais joué comptant pour zéro</strong> : on ne gonfle pas son score en ne jouant qu'à ce qu'on réussit. Les axes de votre dernier Grand test complet comptent chacun comme un jeu du domaine le plus proche. La maîtrise globale est la moyenne des six domaines ; elle donne le grade, et un grade acquis ne se perd pas.</p>
+          <p><strong>Ses limites.</strong> Elle mesure la réussite dans les jeux de ce site, pas l'intelligence ni l'esprit critique dans la vie. Elle dépend du nombre de jeux joués. Elle ne vous compare à personne : le site n'a les données de personne d'autre. Et un nombre que l'on vise cesse vite d'être une bonne mesure : jouer pour le chiffre plutôt que pour comprendre le ferait monter sans rien vous apprendre.</p>
+        </article>
+
+        <article class="carte" id="g-motivation">
+          <h2>Comment ce site essaie de vous motiver</h2>
+          <p>Ce site apprend à repérer les mécanismes qui nous influencent. Il en emploie lui-même quelques-uns pour vous donner envie de revenir : voici lesquels, et ce qu'il s'interdit.</p>
+          <p><strong>Ce qu'il emploie.</strong> Des points de lucidité, un objectif du jour, une série de jours, des grades et des distinctions. Ils récompensent ce que le site enseigne : dire sa vraie certitude (le barème du quiz rend « Au hasard » plus rentable que « Sûr » quand on doute), réviser au bon moment, repérer une notion dans la vie courante. Un anneau qui se remplit joue sur le gradient de but (on accélère à l'approche d'un objectif : Kivetz, Urminsky et Zheng, 2006) ; les points accordés à la progression passée jouent sur l'effet de progression dotée (une avance donnée au départ augmente l'effort : Nunes et Drèze, 2006). Une série que l'on ne veut pas perdre joue sur <a href="#biais/aversion-perte">l'aversion à la perte</a> ; des points que l'on a accumulés, sur <a href="#biais/dotation">l'effet de dotation</a> et <a href="#biais/couts-irrecuperables">les coûts irrécupérables</a>.</p>
+          <p><strong>Ce que dit la recherche.</strong> Une méta-analyse de 40 expériences trouve des effets positifs mais modestes de la ludification sur l'apprentissage (g = 0,49), la motivation (0,36) et le comportement (0,25) ; ses auteurs la présentent comme un état provisoire de la question (Sailer et Homner, 2020). Une autre montre que des récompenses promises pour une activité déjà intéressante peuvent réduire l'intérêt qu'on lui porte, alors qu'un retour positif l'augmente (Deci, Koestner et Ryan, 1999) ; ce résultat reste discuté.</p>
+          <p><strong>Ce que le site s'interdit.</strong> Aucune notification ni relance. Aucune série punitive : un jour manqué par semaine ne rompt pas la série, et aucun message de reproche. Aucun point pour le temps passé, le partage ou la création d'un compte. Aucun classement entre personnes. Et un <strong>mode sobre</strong>, dans les réglages du profil, cache tout cela : le site redevient tel qu'il était, et tout continue d'être compté au cas où vous changeriez d'avis.</p>
+          <p class="source">Sailer, M. et Homner, L. (2020). The gamification of learning: a meta-analysis. <em>Educational Psychology Review</em>, 32(1), 77-112. Deci, E. L., Koestner, R. et Ryan, R. M. (1999). <em>Psychological Bulletin</em>, 125(6), 627-668. Nunes, J. C. et Drèze, X. (2006). The endowed progress effect. <em>Journal of Consumer Research</em>, 32(4), 504-512. Kivetz, R., Urminsky, O. et Zheng, Y. (2006). The goal-gradient hypothesis resurrected. <em>Journal of Marketing Research</em>, 43(1), 39-58.</p>
+        </article>
+
       </section>
     </main>
 
@@ -367,6 +390,9 @@
   <script src="grand-test-interface.js"></script>
   <script src="illusions.js"></script>
   <script src="tirage.js"></script>
+  <script src="progression.js"></script>
+  <script src="graphiques.js"></script>
+  <script src="profil.js"></script>
   <script src="sauvegarde.js"></script>
   <script src="app.js"></script>
   <script src="recherche.js"></script>
