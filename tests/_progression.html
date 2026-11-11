@@ -241,6 +241,18 @@ f.onload = async () => {
     w.localStorage.clear();
     w.location.hash = "parcours-vide"; w.location.hash = "accueil";
     await pause(200);
+    const bienvenue = d2.querySelector(".carte-bienvenue");
+    ok("accueil du nouveau visiteur : trois écrans, le deuxième fait choisir l'objectif", !!bienvenue && (() => {
+      [...bienvenue.querySelectorAll("button")].find(b => /Suivant/.test(b.textContent)).click();
+      const puce = [...d2.querySelectorAll(".carte-bienvenue .puce")].find(b => /100/.test(b.textContent));
+      if (!puce) return false;
+      puce.click();
+      return JSON.parse(w.localStorage.getItem("objectif")) === 100 && /3 sur 3|3 of 3/.test(d2.querySelector(".carte-bienvenue .surtitre").textContent);
+    })());
+    [...d2.querySelectorAll(".carte-bienvenue button")].find(b => /Passer/.test(b.textContent)).click();
+    w.location.hash = "accueil-b"; w.location.hash = "accueil";
+    await pause(150);
+    ok("accueil du nouveau visiteur : une fois passé, il ne revient pas", !d2.querySelector(".carte-bienvenue") && JSON.parse(w.localStorage.getItem("profil")).accueilFait === true);
     ok("accueil d'un nouveau visiteur : orienté vers « Premiers pas »", [...d2.querySelectorAll("#vue-accueil .appel-action a")].some(a => a.getAttribute("href") === "#parcours/premiers-pas"));
     w.localStorage.setItem("parcours", JSON.stringify({ actif: "hasard" }));
     w.localStorage.setItem("activite", JSON.stringify([1]));

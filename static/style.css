@@ -1781,3 +1781,9 @@ h3.titre-bloc {
 
 .bouton-partage { margin: 10px 0 0; display: block; }
 .pied-fiche .bouton.large { margin-top: 10px; }
+
+/* Accueil du nouveau visiteur (profil.js) */
+.carte-bienvenue { border-left-color: var(--accent); }
+.carte-bienvenue h2:focus { outline: none; }
+.bienvenue-nav { margin-top: 14px; align-items: center; }
+.bienvenue-nav .lien { font-size: 14px; }

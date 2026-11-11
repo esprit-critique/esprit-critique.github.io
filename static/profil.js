@@ -531,3 +531,56 @@ function partagerGrade() {
     ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1200);
   });
 }
+
+// ===================== Accueil du nouveau visiteur (lot 8) =====================
+// Trois écrans, en tête de l'accueil, qu'on peut passer : l'illusion, l'objectif du jour, le premier pas. Jamais
+// bloquant (une carte dans la page, pas une fenêtre) ; une fois fini ou passé, il ne revient plus (profil.accueilFait).
+function carteBienvenue() {
+  if ((lire("profil", {}) || {}).accueilFait) return null;
+  const carte = el("article", "carte carte-bienvenue");
+  carte.setAttribute("aria-label", T("Bienvenue"));
+  const terminer = () => { ecrire("profil", { ...(lire("profil", {}) || {}), accueilFait: true }); carte.remove(); };
+  let ecran = 0;
+  const dessiner = () => {
+    carte.replaceChildren();
+    carte.appendChild(el("p", "surtitre", T("Bienvenue · {0} sur 3", ecran + 1)));
+    if (ecran === 0) {
+      carte.append(el("h2", null, "Un site qui commence par vous tromper"), ouverture());
+    } else if (ecran === 1) {
+      carte.append(el("h2", null, "Combien de temps par jour ?"), el("p", "source", "L'objectif du jour se compte en points de lucidité : une série de quiz bien répondue en rapporte plusieurs dizaines. Vous pourrez le changer dans votre profil."));
+      const puces = el("div", "puces");
+      [[30, "Tranquille : 30 points"], [60, "Régulier : 60 points"], [100, "Intensif : 100 points"]].forEach(([v, texte]) => {
+        const b = el("button", "puce" + (lire("objectif", 60) === v ? " active" : ""), texte);
+        b.type = "button";
+        b.setAttribute("aria-pressed", String(lire("objectif", 60) === v));
+        b.addEventListener("click", () => { ecrire("objectif", v); ecran = 2; dessiner(); });
+        puces.appendChild(b);
+      });
+      carte.appendChild(puces);
+    } else {
+      carte.append(el("h2", null, "Par où commencer ?"), el("p", "source", "« Premiers pas » fait le tour du site en trois quarts d'heure : une illusion, deux fiches, un test de réflexion, un quiz. Rien n'est verrouillé : tout reste ouvert."));
+      const actions = el("div", "actions");
+      const parcours = lienVers("#parcours/premiers-pas", T("Commencer : {0}", T("Premiers pas")), "bouton");
+      parcours.addEventListener("click", () => { ecrire("parcours", { ...lire("parcours", {}), actif: "premiers-pas" }); terminer(); });
+      const quiz = lienVers("#quiz", "Plutôt le quiz", "bouton secondaire");
+      quiz.addEventListener("click", terminer);
+      actions.append(parcours, quiz);
+      carte.appendChild(actions);
+    }
+    const nav = el("div", "actions bienvenue-nav");
+    if (ecran < 2) {
+      const suite = el("button", "bouton secondaire", "Suivant");
+      suite.type = "button";
+      suite.addEventListener("click", () => { ecran++; dessiner(); carte.querySelector("h2").focus(); });
+      nav.appendChild(suite);
+    }
+    const passer = el("button", "lien", "Passer l'accueil");
+    passer.type = "button";
+    passer.addEventListener("click", terminer);
+    nav.appendChild(passer);
+    carte.appendChild(nav);
+    carte.querySelector("h2").tabIndex = -1;
+  };
+  dessiner();
+  return carte;
+}

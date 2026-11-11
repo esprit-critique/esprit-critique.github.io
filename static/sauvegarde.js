@@ -70,7 +70,7 @@ const SCHEMAS_SAUVEGARDE = {
     journal: ["liste", ["liste", "libre", 3], 60], rattrapage: "nombre", rattrapageVu: "booleen", cumuls: ["dico", "entier", 20] },
   distinctions: { obtenues: ["liste", "texte", 100], drapeaux: { embleme: "booleen", illusions: ["liste", "texte", 50] } },
   objectif: "entier",
-  profil: { pseudo: "texte" },
+  profil: { pseudo: "texte", accueilFait: "booleen" },
   parcours: { actif: "texte", quiz: ["dico", "booleen", 50] }
 };
 
