@@ -149,9 +149,10 @@ const MOTS_DE_PASSE = [
 function dureeAttaque(bits) {
   const s = Math.pow(2, bits - 1) / 1e10;
   if (s < 1) return T("moins d'une seconde");
-  const unites = [[31557600e9, "milliard(s) d'années"], [31557600e6, "million(s) d'années"], [31557600, "an(s)"], [86400, "jour(s)"], [3600, "heure(s)"], [60, "minute(s)"], [1, "seconde(s)"]];
-  const [u, nom] = unites.find(([u]) => s >= u);
-  return T("environ {0} {1}", fr(Number((s / u).toPrecision(2))), T(nom));
+  const unites = [[31557600e9, "milliard d'années", "milliards d'années"], [31557600e6, "million d'années", "millions d'années"], [31557600, "an", "ans"], [86400, "jour", "jours"], [3600, "heure", "heures"], [60, "minute", "minutes"], [1, "seconde", "secondes"]];
+  const [u, un, plusieurs] = unites.find(([u]) => s >= u);
+  const valeur = Number((s / u).toPrecision(2));
+  return T("environ {0} {1}", fr(valeur), T(valeur >= 2 ? plusieurs : un));
 }
 function descriptionMotDePasse(m) {
   const bits = Math.round(bitsDe(m));

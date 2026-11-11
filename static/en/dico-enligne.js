@@ -106,8 +106,10 @@ EN_AJOUTER([
   ["k7#Qm2!xZp9&", "k7#Qm2!xZp9&"],
   ["cinq animaux familiers, choisis par une personne parmi quelque 200 : environ 7,6 bits par mot, pas 12,9", "five familiar animals, chosen by a person from about 200: about 7.6 bits per word, not 12.9"],
   ["moins d'une seconde", "less than a second"],
-  ["milliard(s) d'années", "billion years"],
-  ["million(s) d'années", "million years"],
+  ["milliard d'années", "billion years"],
+  ["milliards d'années", "billion years"],
+  ["million d'années", "million years"],
+  ["millions d'années", "million years"],
   ["environ {0} {1}", "about {0} {1}"],
   ["{0} caractères tirés au hasard parmi {1} ({2}) : {0} × log2 {1}", "{0} characters drawn at random from {1} ({2}): {0} × log2 {1}"],
   ["{0} mots tirés au hasard dans une liste de 7 776 : {0} × 12,9 bits", "{0} words drawn at random from a list of 7,776: {0} × 12.9 bits"],
@@ -122,5 +124,11 @@ EN_AJOUTER([
   ["Vrai message ou hameçonnage ?", "Genuine message or phishing?"],
   ["Huit messages fictifs : arnaque ou vrai message ? On compte les tentatives repérées et les fausses alertes, puis on cherche l'indice.", "Eight fictitious messages: scam or genuine? Attempts spotted and false alarms are counted, then you look for the clue."],
   ["Lequel résiste le plus longtemps ?", "Which one holds out longest?"],
-  ["Deux mots de passe : lequel tiendra le plus longtemps face à un attaquant ? Le calcul de l'entropie, avec son hypothèse d'attaque.", "Two passwords: which will last longest against an attacker? The entropy calculation, with its attack assumption."]
+  ["Deux mots de passe : lequel tiendra le plus longtemps face à un attaquant ? Le calcul de l'entropie, avec son hypothèse d'attaque.", "Two passwords: which will last longest against an attacker? The entropy calculation, with its attack assumption."],
+  ["an", "year"],
+  ["heure", "hour"],
+  ["minute", "minute"],
+  ["seconde", "second"],
+  ["milliard(s) d'années", "billion years"],
+  ["million(s) d'années", "million years"]
 ]);
