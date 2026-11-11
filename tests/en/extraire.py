@@ -147,7 +147,7 @@ def analyser(source):
 
 # ------------------------------------------------------------ tri des textes
 # Mots qui ressemblent à du texte mais n'en sont pas (noms de touches, de balises, de types de fichiers…)
-NON_TEXTES = {"@lecture", "@note", "Enter", "Escape", "ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Tab", "Backspace", "Home", "End",
+NON_TEXTES = {"@lecture", "@note", "Enter", "Escape", "ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Tab", "Backspace", "Home", "End", "Space",
               "Esprit critique : affichage dans le cadre d'un autre site refusé", "les deux", "\\n", "PRODID:-//Esprit critique//esprit-critique.github.io//FR", "text/calendar;charset=utf-8"}
 
 ACCENTS = re.compile(r"[àâäçéèêëîïôöùûüœÿÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŒ«»]")
@@ -157,7 +157,7 @@ MOT = re.compile(r"[A-Za-zÀ-ÿŒœ]{2,}")
 def ressemble_a_du_texte(s):
     """Vrai pour un texte lu par une personne ; faux pour un identifiant, une classe CSS, une adresse, une couleur…"""
     t = s.strip()
-    if t in NON_TEXTES or re.search(r"[>\[\]]|\{(?!\d+\})|(?<!\{\d)(?<!\{\d\d)\}|:not\(|prefers-|^cubic-bezier\(|^(translate|rotate|scale)\(|^[#.][\w-]", t) or re.fullmatch(r"[\w#.\-]+( [\w#.\-]+)*, ?.*", t) and re.search(r"\b(input|textarea|button|section|script)\b", t):
+    if t in NON_TEXTES or re.search(r"[>\[\]]|\{(?!\d+\})|(?<!\{\d)(?<!\{\d\d)\}|:not\(|prefers-|^cubic-bezier\(|^(translate|rotate|scale|perspective)\(|^[#.][\w-]", t) or re.fullmatch(r"[\w#.\-]+( [\w#.\-]+)*, ?.*", t) and re.search(r"\b(input|textarea|button|section|script)\b", t):
         return False
     if len(t) < 2 or not re.search(r"[A-Za-zÀ-ÿ]", t):
         return False

@@ -27,7 +27,7 @@
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
     [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
-    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"]
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
   // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
@@ -195,14 +195,14 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages", "fichesLues"
 ];
 
 // Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
 // (un texte à la place d'un tableau…) bloquerait le site au chargement suivant. Elle est donc ignorée.
 const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
-    "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions"],
+    "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions", "fichesLues"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
     "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
@@ -634,8 +634,9 @@ function rendreQuestionLibre(carte, q, reponseDejaDonnee, surReponse, actions) {
 // ===================== Défi du jour =====================
 // Dix questions de niveau 2 et 3, tirées de plusieurs ateliers, les mêmes pour tout le monde ce jour-là
 // (generateur(aujourdHui())). Une seule tentative par jour, enregistrée dans « defiJour ».
-function questionsDuDefi(jour) {
-  const alea = generateur(jour * 7 + 2026);
+// graine (défi libre, tirage.js) : à la place du jour, pour des questions reproductibles et partageables
+function questionsDuDefi(jour, graine) {
+  const alea = generateur(graine !== undefined ? graine : jour * 7 + 2026);
   const difficiles = l => l.filter(x => (x.niveau || 1) >= 2);
   const statuts = [["authentique", "Authentique"], ["deformee", "Déformée"], ["apocryphe", "Inventée ou mal attribuée"]];
   const monde = melanger(difficiles(MONDE), alea).slice(0, 3).map(m => ({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }));
@@ -646,6 +647,25 @@ function questionsDuDefi(jour) {
     return { texte: "Lequel a eu lieu en premier ?", options: [a.nom, b.nom], juste: momentEvenement(a) < momentEvenement(b) ? 0 : 1, explication: p.note };
   });
   return melanger([...monde, ...vf, ...citations, ...chrono], alea);
+}
+
+// Une question du défi (du jour ou libre) : choix, correction, explication
+function questionDeDefi(q, zone, fini) {
+  zone.appendChild(el("p", "cas", q.texte));
+  const boutons = q.options.map((texte, k) => {
+    const b = boutonChoix(texte, k);
+    b.addEventListener("click", () => {
+      boutons.forEach(x => { x.disabled = true; });
+      boutons[q.juste].classList.add("juste");
+      if (k !== q.juste) b.classList.add("faux");
+      const retour = el("div", "retour-quiz");
+      retour.append(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? T("Juste.") : T("Réponse : {0}.", T(q.options[q.juste]))), paragraphe(q.explication));
+      zone.appendChild(retour);
+      fini(k === q.juste, retour);
+    });
+    zone.appendChild(b);
+    return b;
+  });
 }
 
 function carteDefiDuJour() {
@@ -683,23 +703,7 @@ function carteDefiDuJour() {
     const zone = el("div");
     carte.replaceChildren();
     carte.append(el("p", "surtitre", "Défi du jour"), zone);
-    derouler(zone, questionsDuDefi(jour), (q, zone, fini) => {
-      zone.appendChild(el("p", "cas", q.texte));
-      const boutons = q.options.map((texte, k) => {
-        const b = boutonChoix(texte, k);
-        b.addEventListener("click", () => {
-          boutons.forEach(x => { x.disabled = true; });
-          boutons[q.juste].classList.add("juste");
-          if (k !== q.juste) b.classList.add("faux");
-          const retour = el("div", "retour-quiz");
-          retour.append(el("p", "verdict " + (k === q.juste ? "juste" : "faux"), k === q.juste ? T("Juste.") : T("Réponse : {0}.", T(q.options[q.juste]))), paragraphe(q.explication));
-          zone.appendChild(retour);
-          fini(k === q.juste, retour);
-        });
-        zone.appendChild(b);
-        return b;
-      });
-    }, resultats => {
+    derouler(zone, questionsDuDefi(jour), questionDeDefi, resultats => {
       const score = resultats.filter(Boolean).length;
       ecrire("defiJour", { jour, score });
       noterActivite();
@@ -837,7 +841,7 @@ function afficherAccueil() {
     agenda.addEventListener("click", () => exporterRevisions());
     carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
-  laterale.append(carteIllusionDuJour(), carteRevision);
+  laterale.append(carteIllusionDuJour(), carteAuHasard(), carteRevision);
 
   // Progression
   const stats = statistiques();
@@ -1281,11 +1285,20 @@ function afficherFiche(type, fiche) {
   if (suivante) rail.appendChild(lienVers("#" + type + "/" + suivante.id, T("Carte suivante : {0}", suivante.nom), "bouton secondaire large"));
   const hasard = el("button", "bouton secondaire large", "Une carte au hasard");
   hasard.type = "button";
-  hasard.addEventListener("click", tirerAuHasard);
+  hasard.addEventListener("click", () => tirerCarte(TIRAGE.actif ? undefined : "tout"));
   rail.appendChild(hasard);
   const miseEnPage = el("div", "fiche-mise-en-page");
   const colonne = el("div", "fiche-colonne");
+  // Arrivée par un tirage au hasard (tirage.js) : bandeau de tirage et retournement ; sinon le tirage s'arrête
+  const bandeau = bandeauTirage(cle);
+  if (bandeau) colonne.appendChild(bandeau);
   colonne.append(carte, nav);
+  retournerALArrivee(carte);
+  // Fiche lue quand son pied est atteint (fichesLues)
+  if ("IntersectionObserver" in window) {
+    const lecteur = new IntersectionObserver(entrees => { if (entrees.some(e => e.isIntersecting)) { noterFicheLue(cle); lecteur.disconnect(); } });
+    lecteur.observe(pied);
+  }
   miseEnPage.append(colonne, rail);
   zone.appendChild(miseEnPage);
 
@@ -1313,11 +1326,10 @@ function afficherFiche(type, fiche) {
   ecrire("derniereFiche", cle);
 }
 
+// Depuis la liste : tirage parmi les fiches du type affiché (sac de tirage, bandeau sur la fiche : tirage.js)
 function tirerAuHasard() {
-  let candidates = fichesFiltrees(etat.type);
-  if (candidates.length === 0) candidates = TYPES[etat.type].fiches;
-  const f = candidates[Math.floor(Math.random() * candidates.length)];
-  location.hash = etat.type + "/" + f.id;
+  TIRAGE.type = etat.type;
+  tirerCarte("type");
 }
 
 // ===================== Quiz =====================
@@ -1588,8 +1600,8 @@ function afficherBilan(zone) {
 // #ateliers, #chiffres/monde, #tests/crt, #guide, #guide/methode…
 // Le bouton « retour » du navigateur fonctionne, et chaque page a son propre lien.
 
-const ONGLET_DE = { accueil: "accueil", biais: "fiches", sophismes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
-const SECTION_DE = { accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
+const ONGLET_DE = { accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
+const SECTION_DE = { accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
 let precedent = { vue: null, id: null };
 let rechercheEnFiches = false;   // la barre de l'en-tête filtrait-elle la liste à l'affichage précédent ?
 
@@ -1605,6 +1617,7 @@ function afficherPage() {
     return;
   }
   const versDefi = vue === "defi" && !id;
+  const defiLibre = vue === "defi" && id !== undefined ? id : null;
   if (!ONGLET_DE[vue]) vue = "accueil";
   // Sans identifiant, les jeux et les expériences renvoient à la liste des ateliers
   if ((vue === "chiffres" || vue === "tests") && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id)) vue = "ateliers";
@@ -1631,7 +1644,10 @@ function afficherPage() {
   let titre = "";
   let defilement = 0;
 
-  if (vue === "accueil") {
+  if (vue === "accueil" && defiLibre !== null) {
+    afficherDefiLibre(defiLibre);
+    titre = T("Défi libre");
+  } else if (vue === "accueil") {
     afficherAccueil();
     if (versDefi) setTimeout(() => { const c = document.querySelector(".defi-jour"); if (c) c.scrollIntoView({ block: "start" }); }, 0);
   }
@@ -1646,6 +1662,7 @@ function afficherPage() {
     document.querySelector('.onglet[data-onglet="fiches"]').href = "#" + vue;
     const fiche = id ? trouverFiche(vue, id) : null;
     $("outils-liste").hidden = !!fiche;
+    $("lien-cartes").href = "#cartes/" + vue;
     if (fiche) {
       afficherFiche(vue, fiche);
       titre = fiche.nom;
@@ -1657,6 +1674,14 @@ function afficherPage() {
       majProgression(vue);
       if (precedent.vue === vue) defilement = etat.defilement[vue];
     }
+  }
+
+  if (vue === "cartes") {
+    const type = id === "sophismes" ? "sophismes" : "biais";
+    $("outils-liste").hidden = true;
+    document.querySelector('.onglet[data-onglet="fiches"]').href = "#" + type;
+    afficherCartes(type);
+    titre = T("Cartes");
   }
 
   if (vue === "quiz") {
@@ -2049,6 +2074,12 @@ document.addEventListener("keydown", e => {
     const portee = section.querySelector(".defi-jour .choix:not(:disabled)") ? section.querySelector(".defi-jour") : section;
     const choix = portee.querySelectorAll(".choix:not(:disabled)");
     if (choix[Number(e.key) - 1]) { e.preventDefault(); choix[Number(e.key) - 1].click(); }
+  } else if (e.key === "r" || e.key === "R") {
+    const tirer = section.querySelector("[data-tirer]:not(:disabled)");
+    if (tirer) { e.preventDefault(); tirer.click(); }
+  } else if (e.key === " " && !cible.matches("a, button")) {
+    const retourner = section.querySelector("[data-retourner]");
+    if (retourner) { e.preventDefault(); retourner.click(); }
   } else if (e.key === "Enter" || e.key === "ArrowRight") {
     const suite = section.querySelector("[data-suivant]");
     if (suite && !cible.matches("a, button")) { e.preventDefault(); suite.click(); }

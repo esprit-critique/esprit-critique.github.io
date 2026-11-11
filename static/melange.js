@@ -10,7 +10,7 @@ const MELANGE_JEUX = ["monde", "mortalite", "pays", "nord", "chronologie", "vrai
   "graphiques", "classiques", "citations"];
 
 // Session en cours, en mémoire seulement (perdue au rechargement)
-const melange = { dernier: null, juste: 0, total: 0 };
+const melange = { dernier: null, juste: 0, total: 0, passees: 0 };
 
 // Tire un jeu au hasard, différent du précédent
 function jeuAuHasard() {
@@ -31,9 +31,25 @@ function questionMelangee(zone) {
     lienVers(tousLesAteliers().find(a => a.atelier === jeu).adresse, jeu.titre, "lien-texte"));
   const partie = zone.querySelector(".melange-partie");
   partie.replaceChildren();
+  // Le tirage d'une question l'inscrit dans « vus » (tirerSelonNiveau) : passer la question rend « vus » tel qu'il était
+  const vusAvant = lire("vus", {});
   // Le jeu s'affiche dans sa propre zone : il la vide à chaque étape, sans toucher au bandeau
   const jeuZone = el("div", "melange-question");
   partie.appendChild(jeuZone);
+  // « Passer cette question » : avant d'avoir répondu seulement, sans pénalité, avec une nouvelle question d'un autre jeu
+  const passer = el("button", "bouton secondaire melange-passer", "Passer cette question");
+  passer.type = "button";
+  passer.dataset.tirer = "1";
+  passer.addEventListener("click", () => {
+    ecrire("vus", vusAvant);
+    melange.passees += 1;
+    afficherScoreMelange(zone);
+    questionMelangee(zone);
+  });
+  const repondu = () => { passer.disabled = true; };
+  jeuZone.addEventListener("click", e => { if (e.target.closest && e.target.closest("button")) repondu(); }, true);
+  jeuZone.addEventListener("change", repondu, true);
+  partie.appendChild(passer);
   // Pendant le lancement, deroulerNiveaux joue une seule question et rend la main à melangeFin
   MELANGE.fin = (resultat, juste) => {
     if (resultat !== null && resultat !== undefined) {
@@ -53,9 +69,10 @@ function questionMelangee(zone) {
 
 function afficherScoreMelange(zone) {
   const p = zone.querySelector(".melange-score");
-  p.textContent = melange.total
+  const passees = melange.passees ? " " + T("Questions passées : {0}.", melange.passees) : "";
+  p.textContent = typo((melange.total
     ? T("Cette session : {0} bonne(s) réponse(s) sur {1}. Les réponses ne sont pas enregistrées.", melange.juste, melange.total)
-    : T("Les réponses ne sont pas enregistrées : elles servent à s'entraîner.");
+    : T("Les réponses ne sont pas enregistrées : elles servent à s'entraîner.")) + passees);
 }
 
 JEUX.push({
@@ -71,6 +88,7 @@ JEUX.push({
     melange.dernier = null;
     melange.juste = 0;
     melange.total = 0;
+    melange.passees = 0;
     const cadre = el("div", "melange");
     cadre.append(el("p", "melange-jeu"), el("div", "melange-partie"), el("p", "source melange-score"));
     zone.appendChild(cadre);

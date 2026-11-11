@@ -63,7 +63,8 @@ const SCHEMAS_SAUVEGARDE = {
   decisions: ["liste", { id: "id", texte: "texte", creee: "jour", bilan: "jour", bilanFait: "jour", issue: "texte", jugement: "texte" }, 200],
   bilanFormes: ["dico", { jour: "jour", score: "nombre" }, 20],
   grandTest: ["dico", "libre", 1000],
-  reglages: { animations: "texte" }
+  reglages: { animations: "texte" },
+  fichesLues: ["liste", "fiche", 500]
 };
 
 // Identifiants d'ateliers acceptés : ceux de la liste des ateliers (le banc « ateliers » vérifie qu'il n'en manque aucun)

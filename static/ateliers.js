@@ -523,6 +523,7 @@ function afficherAteliers() {
     p.append(texteNoeud(parties ? "Suggestion : " : "Pour commencer : "), lienVers(conseil.adresse, conseil.atelier.titre, "lien-texte"), texteNoeud(" (" + conseil.atelier.duree.replace(" ", "\u00a0") + ")."));
     carte.appendChild(p);
   }
+  carte.appendChild(atelierAuHasard());   // tirage.js : un atelier tiré du sac, avec nouveau tirage
   zone.appendChild(carte);
   // Le Grand test, atelier à part, mis en avant au-dessus des sections (grand-test-interface.js)
   if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
