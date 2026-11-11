@@ -1651,6 +1651,8 @@ function afficherPage() {
     location.replace("#" + r.type + "/" + r.fiche.id);
     return;
   }
+  // Quitter les fiches arrête un tirage au hasard (tirage.js) : revenir ensuite sur la même fiche n'est pas un tirage
+  if (!((vue === "biais" || vue === "sophismes") && id)) TIRAGE.actif = false;
   const versDefi = vue === "defi" && !id;
   const defiLibre = vue === "defi" && id !== undefined ? id : null;
   if (!ONGLET_DE[vue]) vue = "accueil";
