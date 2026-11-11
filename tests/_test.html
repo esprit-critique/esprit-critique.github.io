@@ -239,7 +239,9 @@ f.onload = async () => {
     const illusion = d.querySelector(".illusion-jour");
     const verifier = [...illusion.querySelectorAll("button")].find(b => b.getAttribute("aria-pressed") !== null);
     verifier.click();
-    await pause(1500);
+    await pause(300);
+    // Le temps virtuel n'avance pas toujours les transitions dans le cadre : on les mène à leur fin, puis on lit l'état final
+    d.getAnimations().forEach(a => a.finish());
     const leurre = illusion.querySelector(".leurre"), repere = illusion.querySelector(".repere, .repere-forme, .repere-plein");
     ok("mouvement : la révélation finit dans son état final (leurres effacés, repères visibles)",
       illusion.querySelector(".illusion-dessin").classList.contains("revele") && w.getComputedStyle(leurre).opacity === "0.12" && w.getComputedStyle(repere).opacity === "1",

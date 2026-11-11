@@ -90,7 +90,8 @@ const ok = (libelle, condition, detail = '') => {
   await p.waitForTimeout(300);
   const jeux = [];
   // Chaque jeu demande une ou plusieurs actions (choisir, certitude, valider, saisir) avant « Question suivante »
-  for (let tour = 0, questions = 0; tour < 120 && questions < 12; tour++) {
+  // Jusqu'à dix questions comptées dans le score de session (certains jeux demandent plusieurs gestes par question)
+  for (let tour = 0, questions = 0; tour < 300 && (questions < 12 || await p.evaluate(() => melange.total) < 10); tour++) {
     const suivant = p.locator('.melange-partie button[data-suivant]').first();
     if (await suivant.count()) {
       await suivant.click();
