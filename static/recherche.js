@@ -31,6 +31,11 @@ function indexRecherche() {
     classiques: () => PROBLEMES.map(p => p.titre).join(" "),
     pensee: () => EXPERIENCES_PENSEE.map(e => e.titre + " " + e.auteur).join(" ")
   };
+  // Parcours (parcours.js)
+  PARCOURS.forEach(p => entrees.push({
+    genre: T("Parcours"), titre: T(p.titre), adresse: "#parcours/" + p.id,
+    texte: comparable([T(p.titre), T(p.promesse)].join(" ")), extrait: extrait(T(p.promesse))
+  }));
   tousLesAteliers().forEach(({ atelier, adresse }) => {
     const mots = motsDesAteliers[atelier.id] ? motsDesAteliers[atelier.id]() : "";
     entrees.push({

@@ -242,6 +242,13 @@ f.onload = async () => {
     "profil-notions": async () => { await remplirProgression(); await aller("profil/notions"); await pause(500); },
     "profil-distinctions": async () => { await remplirProgression(); await aller("profil/distinctions"); await pause(500); },
     "accueil-rempli": async () => { await remplirProgression(); await aller("accueil"); await pause(500); },
+    // Lot 5 : un parcours en cours (quelques étapes faites)
+    "parcours-chemin": async () => {
+      w.localStorage.setItem("fichesLues", JSON.stringify(["biais:erreur-du-joueur", "biais:apophenie"]));
+      w.localStorage.setItem("resultatsAteliers", JSON.stringify({ hasard: { n: 1, historique: [] } }));
+      w.localStorage.setItem("parcours", JSON.stringify({ actif: "hasard" }));
+      await aller("parcours/hasard"); await pause(300);
+    },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
     "donnees": async () => { await aller("guide/donnees"); },
     "quiz": async () => { await aller("quiz"); },

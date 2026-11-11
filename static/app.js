@@ -27,7 +27,7 @@
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
     [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
-    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof gagner, "profil.js"]
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof gagner, "profil.js"], [() => typeof PARCOURS, "parcours.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
   // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
@@ -196,7 +196,7 @@ const CLES_SAUVEGARDE = [
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
   "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages", "fichesLues",
-  "maitrise", "lucidite", "distinctions", "objectif", "profil"
+  "maitrise", "lucidite", "distinctions", "objectif", "profil", "parcours"
 ];
 
 // Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
@@ -205,7 +205,7 @@ const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
     "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions", "fichesLues"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
-    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages", "maitrise", "lucidite", "distinctions", "profil"],
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages", "maitrise", "lucidite", "distinctions", "profil", "parcours"],
   nombre: ["objectif"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
   booleen: ["certitudeQuiz", "ceciteFaite"]
@@ -783,10 +783,14 @@ function afficherAccueil() {
   if (nouveau) tete.appendChild(ouverture());
   const nbAReviser = clesAReviser().length;
   const appel = el("div", "appel-action");
-  appel.appendChild(nbAReviser
+  const etape = prochaineEtape();
+  if (nouveau) appel.appendChild(lienVers("#parcours/premiers-pas", T("Commencer : {0}", T("Premiers pas")), "bouton"));
+  else if (etape) appel.appendChild(lienVers(etape.adresse, T("Votre parcours, « {0} » : {1}", T(etape.parcours.titre), etape.texte), "bouton"));
+  else appel.appendChild(nbAReviser
     ? lienVers("#quiz/reviser", T("Réviser les notions dues ({0})", nbAReviser), "bouton")
     : lienVers("#quiz", Object.keys(memoire).length ? "Continuer le quiz" : "Commencer le quiz : 10 situations", "bouton"));
   if (!nouveau) appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), T("Parcourir les {0} fiches", BIAIS.length + SOPHISMES.length), "bouton secondaire"));
+  if (!nouveau && !etape) appel.appendChild(lienVers("#parcours", T("Suivre un parcours"), "bouton secondaire"));
   tete.appendChild(appel);
   zone.appendChild(tete);
 
@@ -1631,8 +1635,8 @@ function afficherBilan(zone) {
 // #ateliers, #chiffres/monde, #tests/crt, #guide, #guide/methode…
 // Le bouton « retour » du navigateur fonctionne, et chaque page a son propre lien.
 
-const ONGLET_DE = { profil: "profil", accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
-const SECTION_DE = { profil: "vue-profil", accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
+const ONGLET_DE = { parcours: "parcours", profil: "profil", accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
+const SECTION_DE = { parcours: "vue-parcours", profil: "vue-profil", accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
 let precedent = { vue: null, id: null };
 let rechercheEnFiches = false;   // la barre de l'en-tête filtrait-elle la liste à l'affichage précédent ?
 
@@ -1647,6 +1651,8 @@ function afficherPage() {
     location.replace("#" + r.type + "/" + r.fiche.id);
     return;
   }
+  // Quitter les fiches arrête un tirage au hasard (tirage.js) : revenir ensuite sur la même fiche n'est pas un tirage
+  if (!((vue === "biais" || vue === "sophismes") && id)) TIRAGE.actif = false;
   const versDefi = vue === "defi" && !id;
   const defiLibre = vue === "defi" && id !== undefined ? id : null;
   if (!ONGLET_DE[vue]) vue = "accueil";
@@ -1708,6 +1714,7 @@ function afficherPage() {
   }
 
   if (vue === "profil") { afficherPageProfil(id); titre = T("Profil"); }
+  if (vue === "parcours") { afficherParcours(id, adresse.split("/")[2]); titre = T("Parcours"); }
 
   if (vue === "cartes") {
     const type = id === "sophismes" ? "sophismes" : "biais";

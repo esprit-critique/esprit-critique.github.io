@@ -1725,3 +1725,19 @@ h3.titre-bloc {
   .bouton-profil .insigne { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
   .entete .bouton-profil { right: 74px; }
 }
+
+/* Parcours (parcours.js) */
+.chemin-parcours { list-style: none; margin: 18px 0; padding: 0 0 0 18px; border-left: 2px solid var(--trait); }
+.chemin-parcours .etape { position: relative; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; margin: 0 0 14px; }
+.chemin-parcours .etape::before { content: ""; position: absolute; left: -25px; top: 6px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--trait); background: var(--fond); }
+.chemin-parcours .etape.faite::before { background: var(--vert); border-color: var(--vert); }
+.chemin-parcours .etape.suivante::before { border-color: var(--accent); background: var(--accent); }
+.etape-etat { flex-basis: 100%; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--discret); }
+.etape.faite .etape-etat { color: var(--vert); }
+.etape.faite .etape-etat::before { content: "✓ "; }
+.conclusion-parcours { text-align: left; }
+.sceau { flex: none; }
+.sceau-cercle { fill: none; stroke: var(--c); stroke-width: 1.8; }
+.sceau-cercle.fin { stroke-width: 0.8; }
+.sceau-trait { fill: none; stroke: var(--c); stroke-width: 1.8; stroke-linecap: round; }
+.carte-parcours .barre-maitrise > div { background: var(--vert); }

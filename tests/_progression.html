@@ -188,6 +188,65 @@ f.onload = async () => {
     w.location.hash = "profil/ensemble";
     await pause(300);
     ok("page Profil : courbe, toile, barres et calendrier dessinés", d2.querySelectorAll("#vue-profil .graphique").length >= 4);
+
+    // ---------- Parcours (parcours.js, lot 5) ----------
+    const PARC = ev("PARCOURS");
+    const inconnues = [];
+    PARC.forEach(p => p.etapes.forEach(e => { try { ev("descriptionEtape")(e, p); } catch (x) { inconnues.push(p.id + " " + e); } }));
+    ok("parcours : " + PARC.length + " parcours, toutes leurs fiches et tous leurs ateliers existent", PARC.length === 8 && !inconnues.length, inconnues.join(", "));
+    ok("parcours : chacun se termine par le quiz ciblé (Premiers pas : puis la première série)", PARC.every(p => p.etapes.includes("q") && (p.etapes[p.etapes.length - 1] === "q" || p.id === "premiers-pas")));
+    // Joueur simulé : chaque étape faite, parcours par parcours
+    const fichesParc = [...new Set(PARC.flatMap(p => p.etapes.filter(e => e.startsWith("f:")).map(e => e.slice(2))))];
+    const ateliersParc = [...new Set(PARC.flatMap(p => p.etapes.filter(e => e.startsWith("a:")).map(e => e.slice(2))))];
+    const dP = { fichesLues: [], resultatsAteliers: {}, memoire: {}, parcours: {} };
+    ok("parcours : rien n'est fait d'avance pour un nouveau visiteur", PARC.every(p => ev("avancementParcours")(p, dP) === 0));
+    dP.fichesLues = fichesParc;
+    ateliersParc.forEach(id => { dP.resultatsAteliers[id] = { n: 1, historique: [] }; });
+    dP.memoire = Object.fromEntries(Array.from({ length: 10 }, (_, k) => ["k" + k, { b: 1 }]));
+    ok("parcours : une étape déjà faite est validée d'emblée (tout sauf le quiz ciblé)", PARC.every(p => ev("avancementParcours")(p, dP) === p.etapes.length - 1));
+    dP.parcours = { quiz: Object.fromEntries(PARC.map(p => [p.id, true])) };
+    ok("parcours : de bout en bout, chaque parcours est terminé", PARC.every(p => ev("avancementParcours")(p, dP) === p.etapes.length));
+    // Dans le site : pages, points une seule fois, quiz ciblé
+    w.localStorage.setItem("fichesLues", JSON.stringify(fichesParc));
+    w.localStorage.setItem("resultatsAteliers", JSON.stringify(dP.resultatsAteliers));
+    w.localStorage.setItem("memoire", JSON.stringify(dP.memoire));
+    w.localStorage.setItem("parcours", JSON.stringify({ actif: "chiffres", quiz: { chiffres: true } }));
+    const luc0 = JSON.parse(w.localStorage.getItem("lucidite")).total;
+    w.location.hash = "parcours/chiffres";
+    await pause(250);
+    const luc1 = JSON.parse(w.localStorage.getItem("lucidite")).total;
+    const etapesChiffres = PARC.find(p => p.id === "chiffres").etapes.length;
+    ok("parcours terminé : conclusion et sceau affichés", !!d2.querySelector(".conclusion-parcours .sceau"));
+    ok("parcours terminé : 10 par étape et 50 pour le parcours (" + (10 * etapesChiffres + 50) + ")", luc1 - luc0 === 10 * etapesChiffres + 50, String(luc1 - luc0));
+    w.location.hash = "parcours"; await pause(150);
+    w.location.hash = "parcours/chiffres"; await pause(250);
+    ok("parcours : revenir ne redonne pas de points", JSON.parse(w.localStorage.getItem("lucidite")).total === luc1);
+    w.location.hash = "parcours";
+    await pause(200);
+    ok("page des parcours : huit cartes", d2.querySelectorAll("#vue-parcours .carte-parcours").length === 8);
+    w.location.hash = "parcours/premiers-pas/quiz";
+    await pause(200);
+    for (let k = 0; k < 5; k++) {
+      const choix = d2.querySelector("#vue-parcours .choix:not(:disabled)");
+      if (choix) choix.click();
+      await pause(40);
+      const suite = d2.querySelector("#vue-parcours [data-suivant]");
+      if (suite) suite.click();
+      await pause(40);
+    }
+    const scoreQuiz = d2.querySelector("#vue-parcours .grand-score");
+    ok("quiz ciblé : cinq questions, puis un score sur 5", !!scoreQuiz && / \/ 5$/.test(scoreQuiz.textContent), scoreQuiz ? scoreQuiz.textContent : "aucun score");
+    const valide = !!(JSON.parse(w.localStorage.getItem("parcours")).quiz || {})["premiers-pas"];
+    ok("quiz ciblé : validé seulement à 4 sur 5", valide === (Number(scoreQuiz.textContent.split(" ")[0]) >= 4));
+    w.localStorage.clear();
+    w.location.hash = "parcours-vide"; w.location.hash = "accueil";
+    await pause(200);
+    ok("accueil d'un nouveau visiteur : orienté vers « Premiers pas »", [...d2.querySelectorAll("#vue-accueil .appel-action a")].some(a => a.getAttribute("href") === "#parcours/premiers-pas"));
+    w.localStorage.setItem("parcours", JSON.stringify({ actif: "hasard" }));
+    w.localStorage.setItem("activite", JSON.stringify([1]));
+    w.location.hash = "accueil-parc"; w.location.hash = "accueil";
+    await pause(200);
+    ok("accueil : la prochaine étape du parcours suivi est l'action principale", /Votre parcours/.test(d2.querySelector("#vue-accueil .appel-action .bouton").textContent));
   } catch (e) {
     lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
   }
