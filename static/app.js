@@ -1067,8 +1067,8 @@ function afficherListe(type) {
     const bloc = el("section", "groupe");
     bloc.style.setProperty("--c", cat.couleur);
     const entete = el("div", "groupe-entete");
-    const nom = el("div", "groupe-nom", cat.nom);
-    nom.appendChild(el("span", "nombre", String(groupe.length)));
+    const nom = el("div", "groupe-nom");
+    nom.append(glypheCategorie(cat), texteNoeud(cat.nom), el("span", "nombre", String(groupe.length)));
     entete.append(nom, el("p", "groupe-description", cat.description));
     const liste = el("div", "groupe-liste");
     groupe.forEach(f => {
@@ -1076,6 +1076,8 @@ function afficherListe(type) {
       const corps = el("span", "lf-corps");
       const nom = el("span", "lf-nom");
       nom.append(numeroFiche(type, f, "lf-num"), texteNoeud(f.nom));
+      // Le titre de la dernière fiche ouverte se prolonge en titre de sa page (et inversement) : même nom de transition
+      if (cleFiche(type, f) === lire("derniereFiche", "")) nom.style.setProperty("view-transition-name", "titre-fiche");
       corps.append(nom, el("span", "lf-def", f.definition));
       const etatFiche = el("span", "lf-etat", acquis.has(cleFiche(type, f)) ? "✓" : "");
       if (acquis.has(cleFiche(type, f))) etatFiche.setAttribute("aria-label", "acquise");
@@ -1166,7 +1168,9 @@ function afficherFiche(type, fiche) {
   carte.appendChild(numeroFiche(type, fiche, "numero-fiche indice-coin"));
   // En-tête de la fiche, fermé par le trait de Müller-Lyer : la définition en est le chapô
   const enteteFiche = el("div", "entete-fiche");
-  enteteFiche.append(entete, el("h1", "fiche-titre", fiche.nom));
+  const titreFiche = el("h1", "fiche-titre", fiche.nom);
+  titreFiche.style.setProperty("view-transition-name", "titre-fiche");
+  enteteFiche.append(entete, titreFiche);
   if (fiche.autresNoms) enteteFiche.appendChild(el("p", "autres-noms", fiche.autresNoms));
   enteteFiche.appendChild(el("p", "fiche-definition", fiche.definition));
   carte.appendChild(enteteFiche);
@@ -1701,7 +1705,8 @@ function afficherPage() {
 
 // ===================== Branchements =====================
 
-window.addEventListener("hashchange", afficherPage);
+// Transition de vue entre deux pages quand le navigateur la connaît (amélioration progressive, DESIGN.md « Mouvement »)
+window.addEventListener("hashchange", () => transitionDeVue(afficherPage));
 
 $("recherche-globale").addEventListener("input", e => {
   if (!rechercheDansFiches()) return;
@@ -1859,6 +1864,30 @@ $("btn-partager").addEventListener("click", async () => {
     annoncer(T("Lien du site : {0}", adresse));
   }
 });
+
+// ===================== Glyphes de catégorie (DESIGN.md) =====================
+// Quatorze glyphes au trait, dans le vocabulaire de l'emblème (lignes, ailettes, points) : en-têtes de catégorie,
+// codex, distinctions. Décoratifs : le nom de la catégorie est toujours écrit à côté. Clé : le champ « glyphe » de la catégorie (donnees.js), stable dans les deux langues.
+const GLYPHES_CATEGORIE = {
+  "probabilites": '<path d="M3 20h18"/><path d="M4 17c4 0 4.5-10 8-10s4 10 8 10"/><path d="M12 7v13" class="pointille"/>',
+  "decision": '<path d="M12 21v-8"/><path d="M12 13 6 7M12 13l6-6"/><path d="M6 7h3.5M6 7v3.5M18 7h-3.5M18 7v3.5"/>',
+  "memoire-et-attention": '<path d="M3 12c3.5-5.5 14.5-5.5 18 0-3.5 5.5-14.5 5.5-18 0z"/><circle cx="12" cy="12" r="2.6"/>',
+  "croyances": '<path d="M4 5.5h16v10h-8l-4.5 3.5v-3.5H4z"/><path d="M8 10.5h8"/>',
+  "social": '<circle cx="6" cy="17" r="2.4"/><circle cx="18" cy="17" r="2.4"/><circle cx="12" cy="6.5" r="2.4"/><path d="M8 15.4l2.6-6.6M16 15.4l-2.6-6.6M8.4 17h7.2"/>',
+  "image-de-soi": '<ellipse cx="12" cy="9.5" rx="6" ry="7"/><path d="M12 16.5V22M9 22h6"/><path d="M9.5 7.5l2 2"/>',
+  "attaque-personnelle": '<path d="M2.5 12h10"/><path d="M9.5 8.5 13 12l-3.5 3.5"/><circle cx="18" cy="12" r="3.5"/>',
+  "appel-illegitime": '<path d="M4 9.5v5h3l7.5 4.5v-14L7 9.5z"/><path d="M18 9c1.3 1.6 1.3 4.4 0 6"/>',
+  "esquive": '<path d="M4 19c7 0 6-13 16-13"/><path d="M16.5 3 20 6l-3.5 3"/><path d="M4 19h4" class="pointille"/>',
+  "fausse-comparaison": '<path d="M12 4v15M7 20h10"/><path d="M4 9.5 20 6"/><path d="M4 9.5l-2 5h4zM20 6l-2 5h4z"/>',
+  "causalite": '<circle cx="5.5" cy="12" r="3"/><circle cx="18.5" cy="12" r="3"/><path d="M9 12h6M12.5 9.5 15 12l-2.5 2.5"/>',
+  "generalisation": '<circle cx="5" cy="12" r="2.2"/><path d="M8 12h12M8 12l11-6.5M8 12l11 6.5"/>',
+  "logique-et-preuve": '<path d="M5 6h14M5 10.5h14"/><path d="M5 14.5h14" class="epais"/><path d="M5 19h9"/>',
+  "langage": '<path d="M6 7c-2 1.5-2 4.5 0 5.5M6 12.5c0 2-1 3.5-2.5 4.5M14 7c-2 1.5-2 4.5 0 5.5M14 12.5c0 2-1 3.5-2.5 4.5"/><path d="M17.5 17h3"/>'
+};
+function glypheCategorie(categorie) {
+  const s = svg("svg", { viewBox: "0 0 24 24", class: "glyphe", "aria-hidden": "true" });
+  return dessinerSvg(s, GLYPHES_CATEGORIE[categorie.glyphe] || "");
+}
 
 // ===================== Réglages et mouvement (DESIGN.md, « Mouvement ») =====================
 // reglages = { animations: "auto" | "reduites" }

@@ -317,6 +317,10 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
 /* ===================== Titres de page ===================== */
 
 .vue { animation: entree 0.18s ease-out; }
+/* Avec les transitions de vue (app.js, transitionDeVue), le navigateur fait déjà le fondu : pas de second mouvement */
+@supports (view-transition-name: none) { :root:not([data-animations="reduites"]) .vue { animation: none; } }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--duree); animation-timing-function: var(--courbe); }
+::view-transition-group(titre-fiche) { animation-duration: var(--duree); animation-timing-function: var(--courbe); }
 @keyframes entree { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
 .page-titre {
@@ -1571,3 +1575,8 @@ h3.titre-bloc {
   .sommaire-fiche .lien { font-size: 14px; text-align: left; }
   #vue-fiches.large .lien.retour { display: inline-block; margin-left: calc((100% - var(--largeur-lecture) - 300px) / 2); }
 }
+
+/* Glyphes de catégorie (app.js, GLYPHES_CATEGORIE) */
+.glyphe { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--c-fort, currentColor); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; margin-right: 7px; }
+.glyphe .pointille { stroke-dasharray: 2 2.5; }
+.glyphe .epais { stroke-width: 3; }
