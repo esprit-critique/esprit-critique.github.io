@@ -29,23 +29,23 @@
 // et le texte, sans oublier la virgule entre deux blocs.
 
 const CATEGORIES_BIAIS = [
-  { nom: "Probabilités", couleur: "#2f6db5", description: "Estimer des chances, des fréquences et des risques." },
-  { nom: "Décision", couleur: "#c0601b", description: "Choisir entre des options, peser gains et pertes." },
-  { nom: "Mémoire et attention", couleur: "#8a3f8f", description: "Ce que l'on remarque, et ce que l'on retient." },
-  { nom: "Croyances", couleur: "#a77a12", description: "Former, tester et défendre ses convictions." },
-  { nom: "Social", couleur: "#1f8a70", description: "Juger les autres et se situer dans un groupe." },
-  { nom: "Image de soi", couleur: "#c23b5a", description: "Évaluer ses propres compétences et perspectives." }
+  { nom: "Probabilités", couleur: "#2f6db5", glyphe: "probabilites", description: "Estimer des chances, des fréquences et des risques." },
+  { nom: "Décision", couleur: "#c0601b", glyphe: "decision", description: "Choisir entre des options, peser gains et pertes." },
+  { nom: "Mémoire et attention", couleur: "#8a3f8f", glyphe: "memoire-et-attention", description: "Ce que l'on remarque, et ce que l'on retient." },
+  { nom: "Croyances", couleur: "#a77a12", glyphe: "croyances", description: "Former, tester et défendre ses convictions." },
+  { nom: "Social", couleur: "#1f8a70", glyphe: "social", description: "Juger les autres et se situer dans un groupe." },
+  { nom: "Image de soi", couleur: "#c23b5a", glyphe: "image-de-soi", description: "Évaluer ses propres compétences et perspectives." }
 ];
 
 const CATEGORIES_SOPHISMES = [
-  { nom: "Attaque personnelle", couleur: "#c2412d", description: "S'en prendre à la personne plutôt qu'à l'argument." },
-  { nom: "Appel illégitime", couleur: "#b8741a", description: "Invoquer ce qui ne prouve rien : nombre, ancienneté, émotion, menace." },
-  { nom: "Esquive", couleur: "#5b5bb5", description: "Éviter la question, déformer ou déplacer le débat." },
-  { nom: "Fausse comparaison", couleur: "#0e7c86", description: "Réduire, égaliser ou rapprocher abusivement des options." },
-  { nom: "Causalité", couleur: "#2b7bb9", description: "Conclure trop vite à une relation de cause à effet." },
-  { nom: "Généralisation", couleur: "#2a8a5c", description: "Passer abusivement de quelques cas à une règle." },
-  { nom: "Logique et preuve", couleur: "#44546a", description: "Erreurs de structure et de charge de la preuve." },
-  { nom: "Langage", couleur: "#9a4f9e", description: "Jouer sur le sens des mots." }
+  { nom: "Attaque personnelle", couleur: "#c2412d", glyphe: "attaque-personnelle", description: "S'en prendre à la personne plutôt qu'à l'argument." },
+  { nom: "Appel illégitime", couleur: "#b8741a", glyphe: "appel-illegitime", description: "Invoquer ce qui ne prouve rien : nombre, ancienneté, émotion, menace." },
+  { nom: "Esquive", couleur: "#5b5bb5", glyphe: "esquive", description: "Éviter la question, déformer ou déplacer le débat." },
+  { nom: "Fausse comparaison", couleur: "#0e7c86", glyphe: "fausse-comparaison", description: "Réduire, égaliser ou rapprocher abusivement des options." },
+  { nom: "Causalité", couleur: "#2b7bb9", glyphe: "causalite", description: "Conclure trop vite à une relation de cause à effet." },
+  { nom: "Généralisation", couleur: "#2a8a5c", glyphe: "generalisation", description: "Passer abusivement de quelques cas à une règle." },
+  { nom: "Logique et preuve", couleur: "#44546a", glyphe: "logique-et-preuve", description: "Erreurs de structure et de charge de la preuve." },
+  { nom: "Langage", couleur: "#9a4f9e", glyphe: "langage", description: "Jouer sur le sens des mots." }
 ];
 
 const BIAIS = [

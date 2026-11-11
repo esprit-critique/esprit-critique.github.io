@@ -1,7 +1,18 @@
-# Charte graphique d'Esprit critique
+# Charte graphique d'Esprit critique (version 2)
 
-Une page de règles, pour que les prochaines modifications gardent l'identité du site. La mise en page (cartes, barre
-de couleur de catégorie à gauche, navigation, espacements) ne change pas : l'identité tient à six touches.
+Une page de règles, pour que les prochaines modifications gardent l'identité du site. Version 2 (refonte de
+novembre 2026, lot 2) : **le cabinet d'illusions**. Le site montre ce qu'il enseigne : on ne peut pas se fier à ce que
+l'on voit. Chaque écran important porte une pièce visuelle qui trompe l'œil, puis se révèle au toucher. Papier chaud
+et encre pour le fond ; la seule couleur vive vient des 14 couleurs de catégorie, traitées comme un spectre.
+
+**Ce qui reste de la version 1** : les deux polices, l'emblème et le trait de Müller-Lyer, le style des corrections
+(barré rouge, verdict en italique), la numérotation « B 10 / S 7 », l'ordre des groupes de la page d'une fiche, les
+conventions de la version anglaise, le contraste de 4,5:1, l'absence de mascotte, d'image de banque d'images et de
+ressource chargée depuis un autre site.
+
+**Ce qui change** : les cartes deviennent des cartes à jouer (coins arrondis, élévation, indice en coin) ; le filet du
+spectre sous l'en-tête ; une échelle typographique plus contrastée ; deux colonnes sur ordinateur ; trois mouvements
+signature ; l'illusion du jour ; quatorze glyphes de catégorie ; des états vides dessinés ; un vocabulaire de graphiques.
 
 ## Polices
 
@@ -18,10 +29,55 @@ de couleur de catégorie à gauche, navigation, espacements) ne change pas : l'i
 
 ## Couleurs
 
-Les jetons existants de `static/style.css` (`--fond`, `--carte`, `--texte`, `--discret`, `--trait`, `--accent`,
-`--vert`, `--rouge`, `--orange`, `--encadre`, et `--c` avec ses dérivés `--c-fort`, `--c-texte`, `--c-clair`,
-`--sur-c` pour la couleur de catégorie), en clair et en sombre. **Aucun jeton nouveau.** Contraste : 4,5:1 pour le
-texte (3:1 en grands caractères), vérifié par le contrôle d'affichage (`contraste-faible`).
+Les jetons de `static/style.css` (`--fond`, `--carte`, `--texte`, `--discret`, `--trait`, `--accent`, `--vert`,
+`--rouge`, `--orange`, `--encadre`, et `--c` avec ses dérivés `--c-fort`, `--c-texte`, `--c-clair`, `--sur-c` pour la
+couleur de catégorie), en clair et en sombre. Version 2 : `--carte-haute` (surface d'une carte survolée ou levée, plus
+claire en sombre, où l'ombre ne se voit pas). Contraste : 4,5:1 pour le texte (3:1 en grands caractères), vérifié par
+le contrôle d'affichage (`contraste-faible`).
+
+- **Le spectre** : les 14 couleurs de catégorie (`donnees.js`), dans l'ordre des catégories, biais puis sophismes.
+  Elles ne se côtoient que dans le filet du spectre et dans le codex ; partout ailleurs, une seule couleur de
+  catégorie par carte.
+- Le bleu `--accent` reste la couleur des actions et des liens hors catégorie.
+
+## Jetons de forme, d'élévation, de mouvement et de mise en page
+
+| Jeton | Valeur | Usage |
+|---|---|---|
+| `--rayon` | 4 px | petites boîtes (encadré de l'exemple, pastilles, champs) |
+| `--rayon-bouton` | 10 px | boutons et choix du quiz |
+| `--rayon-carte` | 12 px | cartes (le bas de la fourchette du brief : rester sobre) |
+| `--ombre-1` | deux ombres très douces | carte au repos |
+| `--ombre-2` | ombre plus marquée | carte survolée ou appuyée ; en sombre, `--carte-haute` à la place |
+| `--duree-courte`, `--duree`, `--duree-longue` | 160, 280, 560 ms | micro-interactions, mouvements, révélation |
+| `--courbe` | `cubic-bezier(.2, .7, .2, 1)` | toutes les animations (départ franc, arrivée douce) |
+| `--largeur-lecture` | 680 px | colonne de lecture (68 caractères au plus) |
+| `--largeur-page` | 1 120 px | page sur ordinateur, à partir de 1 040 px de large |
+
+## Échelle typographique
+
+Titre de page (h1 des vues) : Newsreader 40 px sur téléphone, jusqu'à 56 px sur ordinateur, interligne 1,05.
+Grands nombres (score, maîtrise, points) : Newsreader, 64 à 80 px, chiffres elzéviriens. Titres de carte : 21 px.
+Entre deux blocs d'une page : 28 px au moins (40 px sur ordinateur).
+
+## Cartes à jouer
+
+- Coins de `--rayon-carte`, élévation `--ombre-1`, plus marquée au survol (`--ombre-2`, et léger soulèvement de 2 px).
+- La barre de couleur de catégorie, à gauche, reste.
+- L'indice « B 10 » en coin, en haut à droite, comme sur une carte à jouer.
+
+## Filet du spectre
+
+Sous l'en-tête, un filet de 3 px découpé en 14 segments aux couleurs des catégories ; la largeur de chaque segment
+est proportionnelle au nombre de fiches de sa catégorie. C'est un graphique, pas un dégradé : il dit la composition
+du catalogue (nom accessible : « Composition du catalogue : … »). Dans le profil (lot 4), le même filet se remplit selon
+la maîtrise. C'est le seul usage de plusieurs couleurs vives côte à côte.
+
+## Mise en page
+
+Une colonne de 680 px au plus sur téléphone et tablette. À partir de 1 040 px : page de 1 120 px ; deux colonnes sur
+l'accueil (contenu principal, colonne latérale) ; sur une fiche, la colonne de lecture reste étroite, à côté d'un rail
+collant (sommaire de la fiche, carte suivante, carte au hasard).
 
 ## Motif
 
@@ -74,8 +130,60 @@ Elle suit les usages de l'anglais, non ceux du français :
 - titres en minuscules sauf le premier mot et les noms propres ; « the », « a » conservés (le français s'en passe parfois) ;
 - les phrases sont traduites pour leur ton et leur registre, non mot à mot : une explication reste aussi nette et aussi sourcée qu'en français.
 
+## Mouvement
+
+**Trois mouvements signature, et pas davantage :**
+
+- *la révélation* : les ailettes de Müller-Lyer s'effacent et les repères apparaissent. Pour une vérité dévoilée :
+  correction, illusion démontée, changement de grade.
+- *le retournement* : une carte pivote sur elle-même (tirages, cartes recto verso).
+- *la chute* : des billes tombent dans des colonnes, comme sur une planche de Galton (scores, hasard).
+
+S'y ajoutent des micro-interactions discrètes : appui (enfoncement de 1 px), survol (élévation), compteur qui défile,
+anneau qui se remplit, pastille de l'onglet actif.
+
+**Règles**
+
+- Seulement `transform` et `opacity`. Jamais d'animation qui bloque l'action, vole le focus ou tourne en boucle.
+- Toute animation lancée par script passe par `animer()` (`app.js`), qui ne fait rien quand l'appareil demande moins
+  de mouvement (`prefers-reduced-motion`) ou quand le réglage « Animations : réduites » est choisi (clé `reglages`).
+  L'état final est toujours posé sans attendre la fin de l'animation : un banc vérifie que chaque animation se termine
+  et laisse l'écran dans son état final. Le réglage réduit pose aussi `data-animations="reduites"` sur `<html>`, que la
+  règle CSS globale traite comme `prefers-reduced-motion`.
+- Transitions entre pages : `document.startViewTransition` quand il existe, en amélioration progressive, et seulement
+  si les animations ne sont pas réduites ; sinon, le fondu d'entrée de `.vue`.
+
+## Graphiques
+
+Le site a un atelier « Graphiques trompeurs » : ses propres graphiques doivent être irréprochables.
+
+- Vocabulaire : courbe, barres, toile, jauge, calendrier (`graphiques.js`, lot 4), dessinés en SVG avec `svg()`.
+- Barres depuis zéro ; pas de double axe ; pas d'effet de relief ; valeurs écrites ; la couleur n'est jamais seule à
+  porter l'information (motif, libellé ou position aussi) ; un titre qui dit ce que le graphique montre ; un bouton
+  « Voir les données » qui affiche le tableau correspondant.
+- Une toile trompe par son aire : ses valeurs sont écrites, et la même chose est proposée en barres.
+
+## Glyphes de catégorie
+
+Quatorze glyphes au trait, un par catégorie, dans le vocabulaire de l'emblème (lignes et ailettes), même grammaire que
+les personnages du Grand test : trait de 2 px, extrémités arrondies, couleur de la catégorie, sans remplissage
+dégradé. Pour les en-têtes de catégorie, le codex et les distinctions.
+
+## États vides
+
+Une page ou un bloc sans contenu (aucune révision, aucun résultat) montre un petit dessin au trait de la même
+grammaire, une phrase qui dit pourquoi c'est vide, et l'action qui le remplira.
+
+## L'illusion du jour
+
+Sur l'accueil, une illusion d'optique dessinée en SVG, différente chaque jour (`generateur(aujourdHui())`), avec
+« Vérifier » (le mouvement de la révélation démonte l'illusion : repères, superposition, fond qui s'efface) et « Une
+autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une source (auteur, année) vérifiée.
+
 ## Proscrit
 
-Refonte de la mise en page, nouvelle palette, dégradés, ombres portées, illustrations décoratives, mascotte,
-animations nouvelles, bibliothèque externe, police chargée depuis un service tiers. Aucun style dans
-un attribut `style=""` ni dans une balise `<style>` du HTML (politique de sécurité du contenu).
+Le dégradé violet, le verre dépoli, les ombres lourdes, les émojis en guise d'icônes, les illustrations de banque
+d'images, les confettis, une mascotte, les animations qui bloquent l'action ou volent le focus, tout ce qui bouge en
+boucle sans raison, une bibliothèque externe, une police chargée depuis un service tiers. Aucun style dans un attribut
+`style=""` ni dans une balise `<style>` du HTML (politique de sécurité du contenu) : les valeurs dynamiques passent
+par des variables CSS posées avec `style.setProperty()`.

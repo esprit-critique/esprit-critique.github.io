@@ -233,6 +233,30 @@ f.onload = async () => {
     ok("thème : clair choisi à la main", w.getComputedStyle(d.body).backgroundColor === "rgb(246, 244, 239)");
     d.querySelector('[data-theme-choix="auto"]').click();
     ok("thème : retour à l'automatique", !d.documentElement.dataset.theme && w.localStorage.getItem("theme") === null);
+    // Mouvement (DESIGN.md) : la révélation de l'illusion du jour se termine dans son état final ; le réglage « Animations :
+    // réduites » arrête les transitions CSS et animer() ; aucune animation ne tourne en boucle
+    await aller("accueil");
+    const illusion = d.querySelector(".illusion-jour");
+    const verifier = [...illusion.querySelectorAll("button")].find(b => b.getAttribute("aria-pressed") !== null);
+    verifier.click();
+    await pause(300);
+    // Le temps virtuel n'avance pas toujours les transitions dans le cadre : on les mène à leur fin, puis on lit l'état final
+    d.getAnimations().forEach(a => a.finish());
+    const leurre = illusion.querySelector(".leurre"), repere = illusion.querySelector(".repere, .repere-forme, .repere-plein");
+    ok("mouvement : la révélation finit dans son état final (leurres effacés, repères visibles)",
+      illusion.querySelector(".illusion-dessin").classList.contains("revele") && w.getComputedStyle(leurre).opacity === "0.12" && w.getComputedStyle(repere).opacity === "1",
+      w.getComputedStyle(leurre).opacity + " / " + w.getComputedStyle(repere).opacity);
+    // Chaque animation a une fin (pas de boucle infinie) et dure 2 s au plus
+    const sansFin = d.getAnimations().filter(a => { const t = a.effect.getComputedTiming(); return !Number.isFinite(t.endTime) || t.endTime > 2000; });
+    ok("mouvement : " + d.getAnimations().length + " animation(s) de la page, toutes finies en 2 s au plus, aucune en boucle", sansFin.length === 0,
+      sansFin.map(a => a.animationName || a.transitionProperty || "?").join(", "));
+    d.querySelector('[data-animations-choix="reduites"]').click();
+    ok("mouvement : réglage « réduites » enregistré et posé sur la page", d.documentElement.dataset.animations === "reduites"
+      && JSON.parse(w.localStorage.getItem("reglages")).animations === "reduites" && d.querySelector('[data-animations-choix="reduites"]').getAttribute("aria-pressed") === "true");
+    ok("mouvement : réglage « réduites » : transitions CSS coupées, animer() ne fait rien",
+      w.getComputedStyle(leurre).transitionDuration === "0s" && w.animer(leurre, [{ opacity: 0 }, { opacity: 1 }]) === null);
+    d.querySelector('[data-animations-choix="auto"]').click();
+    ok("mouvement : retour aux animations automatiques", !d.documentElement.dataset.animations && w.animer(leurre, [{ opacity: 1 }, { opacity: 1 }], { duration: 10 }) !== null);
     // Hors ligne : sw.js garde en cache tous les scripts de la page, et chaque fichier listé existe
     const sw = await (await fetch("sw.js", { cache: "no-store" })).text();
     const fichiersSW = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1].replace(/^\s*\/\/.*$/gm, ""));   // sans les lignes de commentaire

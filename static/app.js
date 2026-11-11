@@ -27,7 +27,7 @@
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
     [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
-    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"]
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
   // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
@@ -195,7 +195,7 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages"
 ];
 
 // Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
@@ -204,7 +204,7 @@ const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
     "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
-    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest"],
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
   booleen: ["certitudeQuiz", "ceciteFaite"]
 };
@@ -746,30 +746,50 @@ function ouverture() {
 function afficherAccueil() {
   const zone = $("vue-accueil");
   zone.replaceChildren();
+  zone.classList.add("large");
   const date = new Date().toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
-  zone.append(el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1)), el("h1", "page-titre", "Aujourd'hui"));
-  zone.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
-
-  // Ouverture : pour un nouveau visiteur (aucune activité, aucun atelier), l'emblème en grand, première leçon du site
   const resultats = lire("resultatsAteliers", {});
-  if (!lire("activite", []).length && !Object.keys(formeDe(resultats) === "objet" ? resultats : {}).length) zone.appendChild(ouverture());
+  const nouveau = !lire("activite", []).length && !Object.keys(formeDe(resultats) === "objet" ? resultats : {}).length;
 
-  // Appel à l'action : réviser s'il y a des notions dues, sinon commencer le quiz ; les fiches en second choix
+  // 1. Ouverture : la date, la série de jours, l'action principale du moment
+  const tete = el("div", "accueil-tete");
+  const serie = serieDeJours();
+  const ligneDate = el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1));
+  if (serie > 0) ligneDate.appendChild(el("span", "serie-jours", serie > 1 ? T("{0} jours d'affilée", serie) : T("1 jour d'affilée")));
+  tete.append(ligneDate, el("h1", "page-titre", "Aujourd'hui"));
+  tete.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
+  // Nouveau visiteur (aucune activité, aucun atelier) : l'emblème en grand, première leçon du site, et un seul bouton
+  if (nouveau) tete.appendChild(ouverture());
   const nbAReviser = clesAReviser().length;
   const appel = el("div", "appel-action");
   appel.appendChild(nbAReviser
     ? lienVers("#quiz/reviser", T("Réviser les notions dues ({0})", nbAReviser), "bouton")
     : lienVers("#quiz", Object.keys(memoire).length ? "Continuer le quiz" : "Commencer le quiz : 10 situations", "bouton"));
-  appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), T("Parcourir les {0} fiches", BIAIS.length + SOPHISMES.length), "bouton secondaire"));
-  zone.appendChild(appel);
-  // Le Grand test, mis en avant (grand-test-interface.js), s'il est publié
-  if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
+  if (!nouveau) appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), T("Parcourir les {0} fiches", BIAIS.length + SOPHISMES.length), "bouton secondaire"));
+  tete.appendChild(appel);
+  zone.appendChild(tete);
 
-  // Situation du jour : la même pour tout le monde, une par jour
+  // 2. Le programme du jour : les trois cartes quotidiennes, avec leur état ; puis deux colonnes sur ordinateur
   const q = situationDuJour();
   const memo = lire("jour", null);
   const dejaRepondu = memo && memo.jour === aujourdHui() ? q.options.find(o => o.id === memo.choix) : null;
+  const defi = lire("defiJour", null), vf = lire("vfJour", null);
+  const colonnes = el("div", "deux-colonnes");
+  const principal = el("div", "colonne-principale");
+  const laterale = el("aside", "colonne-laterale");
+  laterale.setAttribute("aria-label", "L'illusion du jour, révisions et progression");
+  colonnes.append(principal, laterale);
   const carteJour = el("article", "carte");
+  const carteDefi = carteDefiDuJour(), carteVF = carteVraiFauxDuJour();
+  principal.appendChild(programmeDuJour([
+    ["Situation du jour", !!dejaRepondu, carteJour],
+    ["Défi du jour", !!(defi && defi.jour === aujourdHui()), carteDefi],
+    ["Vrai ou faux du jour", !!(vf && vf.j === aujourdHui()), carteVF]
+  ]));
+  // Le Grand test, mis en avant (grand-test-interface.js), s'il est publié
+  if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) principal.appendChild(carteGrandTest());
+
+  // Situation du jour : la même pour tout le monde, une par jour
   carteJour.appendChild(el("p", "surtitre", "Situation du jour"));
   rendreQuestion(carteJour, q, dejaRepondu, option => {
     ecrire("jour", { jour: aujourdHui(), choix: option.id });
@@ -778,11 +798,11 @@ function afficherAccueil() {
     actions.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, "Lire la fiche", "bouton secondaire"));
     actions.appendChild(lienVers("#quiz", "Continuer au quiz", "bouton"));
   });
-  zone.appendChild(carteJour);
+  principal.appendChild(carteJour);
 
   // Défi du jour, puis vrai ou faux du jour
-  zone.appendChild(carteDefiDuJour());
-  zone.appendChild(carteVraiFauxDuJour());
+  principal.append(carteDefi, carteVF);
+  zone.appendChild(colonnes);
 
   // Révisions
   const dues = clesAReviser().length;
@@ -796,7 +816,7 @@ function afficherAccueil() {
     b.addEventListener("click", () => lancerQuiz("reviser"));
     carteRevision.appendChild(b);
   } else if (Object.keys(memoire).length === 0) {
-    carteRevision.appendChild(el("h2", null, "Pas encore de révision"));
+    carteRevision.append(dessinVide(), el("h2", null, "Pas encore de révision"));
     carteRevision.appendChild(el("p", "source", "Chaque notion rencontrée au quiz est ensuite reprogrammée : plus tôt si vous vous trompez, plus tard si vous répondez juste."));
     const b = el("button", "bouton", "Commencer une série");
     b.addEventListener("click", () => lancerQuiz("tout"));
@@ -817,7 +837,7 @@ function afficherAccueil() {
     agenda.addEventListener("click", () => exporterRevisions());
     carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
-  zone.appendChild(carteRevision);
+  laterale.append(carteIllusionDuJour(), carteRevision);
 
   // Progression
   const stats = statistiques();
@@ -855,7 +875,7 @@ function afficherAccueil() {
   } else {
     carteProgression.appendChild(el("p", "source", "Après quelques séries de quiz, vos catégories les plus fragiles apparaîtront ici."));
   }
-  zone.appendChild(carteProgression);
+  laterale.appendChild(carteProgression);
 
   // Suggestions
   const suggestions = [];
@@ -868,6 +888,7 @@ function afficherAccueil() {
     const [, r] = nonAcquises[Math.floor(generateur(aujourdHui())() * nonAcquises.length)];
     suggestions.push(["#" + r.type + "/" + r.fiche.id, "Une fiche à découvrir", r.fiche.nom, COULEURS[r.fiche.categorie]]);
   }
+  // Sous les deux colonnes : sur téléphone, après l'illusion, les révisions et la progression (ordre du brief)
   if (suggestions.length) {
     zone.appendChild(el("h3", "titre-bloc", "À explorer"));
     const grille = el("div", "cartes-grille");
@@ -880,6 +901,28 @@ function afficherAccueil() {
     });
     zone.appendChild(grille);
   }
+}
+
+// Le programme du jour : une case par carte quotidienne, « fait » ou « à faire » (en toutes lettres, pas seulement en
+// couleur) ; toucher une case amène à sa carte
+function programmeDuJour(cartes) {
+  const bloc = el("nav", "programme");
+  bloc.setAttribute("aria-label", "Le programme du jour");
+  bloc.appendChild(el("p", "surtitre", T("Le programme du jour : {0} sur 3", cartes.filter(([, fait]) => fait).length)));
+  const liste = el("div", "programme-cases");
+  cartes.forEach(([titre, fait, carte]) => {
+    const b = el("button", "programme-case" + (fait ? " fait" : ""));
+    b.type = "button";
+    b.append(el("span", "programme-titre", titre), el("span", "programme-etat", fait ? "Fait" : "À faire"));
+    b.addEventListener("click", () => {
+      carte.scrollIntoView({ behavior: animationsReduites() ? "auto" : "smooth", block: "start" });
+      const cible = carte.querySelector("button:not(:disabled), a");
+      if (cible) cible.focus({ preventScroll: true });
+    });
+    liste.appendChild(b);
+  });
+  bloc.appendChild(liste);
+  return bloc;
 }
 
 // Carte « Vrai ou faux du jour » de l'accueil
@@ -999,6 +1042,7 @@ function afficherFiltres(type) {
 function afficherListe(type) {
   const zone = $("liste");
   zone.replaceChildren();
+  $("vue-fiches").classList.remove("large");
   const fiches = fichesFiltrees(type);
 
   if (fiches.length === 0) {
@@ -1024,8 +1068,8 @@ function afficherListe(type) {
     const bloc = el("section", "groupe");
     bloc.style.setProperty("--c", cat.couleur);
     const entete = el("div", "groupe-entete");
-    const nom = el("div", "groupe-nom", cat.nom);
-    nom.appendChild(el("span", "nombre", String(groupe.length)));
+    const nom = el("div", "groupe-nom");
+    nom.append(glypheCategorie(cat), texteNoeud(cat.nom), el("span", "nombre", String(groupe.length)));
     entete.append(nom, el("p", "groupe-description", cat.description));
     const liste = el("div", "groupe-liste");
     groupe.forEach(f => {
@@ -1033,6 +1077,8 @@ function afficherListe(type) {
       const corps = el("span", "lf-corps");
       const nom = el("span", "lf-nom");
       nom.append(numeroFiche(type, f, "lf-num"), texteNoeud(f.nom));
+      // Le titre de la dernière fiche ouverte se prolonge en titre de sa page (et inversement) : même nom de transition
+      if (cleFiche(type, f) === lire("derniereFiche", "")) nom.style.setProperty("view-transition-name", "titre-fiche");
       corps.append(nom, el("span", "lf-def", f.definition));
       const etatFiche = el("span", "lf-etat", acquis.has(cleFiche(type, f)) ? "✓" : "");
       if (acquis.has(cleFiche(type, f))) etatFiche.setAttribute("aria-label", "acquise");
@@ -1107,19 +1153,25 @@ function afficherFiche(type, fiche) {
   const conf = TYPES[type];
   const zone = $("liste");
   zone.replaceChildren();
+  // Sur ordinateur large : la carte (colonne de lecture) et un rail collant à côté
+  $("vue-fiches").classList.add("large");
   zone.appendChild(lienVers("#" + type, "← " + conf.pluriel, "lien retour"));
 
-  const carte = el("article", "carte carte-fiche");
+  const carte = el("article", "carte carte-fiche a-indice");
   carte.style.setProperty("--c", COULEURS[fiche.categorie]);
 
   const entete = el("div", "entete-carte");
   const badge = el("span", "badge", "✓ Acquise");
   const etiquette = el("span", "etiquette-numero");
-  etiquette.append(el("span", "etiquette", conf.singulier + " · " + fiche.categorie), numeroFiche(type, fiche, "numero-fiche"));
-  entete.append(etiquette, badge);
+  // L'indice « B 10 » en coin, comme sur une carte à jouer ; le badge « Acquise » suit l'étiquette
+  etiquette.append(el("span", "etiquette", conf.singulier + " · " + fiche.categorie), badge);
+  entete.appendChild(etiquette);
+  carte.appendChild(numeroFiche(type, fiche, "numero-fiche indice-coin"));
   // En-tête de la fiche, fermé par le trait de Müller-Lyer : la définition en est le chapô
   const enteteFiche = el("div", "entete-fiche");
-  enteteFiche.append(entete, el("h1", "fiche-titre", fiche.nom));
+  const titreFiche = el("h1", "fiche-titre", fiche.nom);
+  titreFiche.style.setProperty("view-transition-name", "titre-fiche");
+  enteteFiche.append(entete, titreFiche);
   if (fiche.autresNoms) enteteFiche.appendChild(el("p", "autres-noms", fiche.autresNoms));
   enteteFiche.appendChild(el("p", "fiche-definition", fiche.definition));
   carte.appendChild(enteteFiche);
@@ -1199,17 +1251,64 @@ function afficherFiche(type, fiche) {
     pied.appendChild(info);
   }
   carte.appendChild(pied);
-  carte.appendChild(journalReperage(cle));
-  zone.appendChild(carte);
+  const reperage = journalReperage(cle);
+  carte.appendChild(reperage);
 
   // Fiches précédente et suivante, dans l'ordre de la liste
   const ordre = ORDRE[type];
   const i = ordre.indexOf(fiche);
+  const suivante = i < ordre.length - 1 ? ordre[i + 1] : null;
   const nav = el("nav", "suivantes");
   nav.setAttribute("aria-label", "Fiches voisines");
   if (i > 0) nav.appendChild(lienVers("#" + type + "/" + ordre[i - 1].id, "← " + ordre[i - 1].nom));
-  if (i < ordre.length - 1) nav.appendChild(lienVers("#" + type + "/" + ordre[i + 1].id, ordre[i + 1].nom + " →"));
-  zone.appendChild(nav);
+  if (suivante) nav.appendChild(lienVers("#" + type + "/" + suivante.id, suivante.nom + " →"));
+
+  // Rail (ordinateur large) : sommaire des groupes, carte suivante, carte au hasard
+  const allerA = cible => () => cible.scrollIntoView({ behavior: animationsReduites() ? "auto" : "smooth", block: "start" });
+  const rail = el("aside", "rail-fiche");
+  rail.setAttribute("aria-label", "Sommaire de la fiche");
+  rail.appendChild(el("p", "surtitre", "Sur cette fiche"));
+  const sommaire = el("ul", "sommaire-fiche");
+  carte.querySelectorAll("h2").forEach(h => {
+    const b = el("button", "lien", h.textContent);
+    b.type = "button";
+    b.addEventListener("click", allerA(h));
+    const li = el("li");
+    li.appendChild(b);
+    sommaire.appendChild(li);
+  });
+  rail.appendChild(sommaire);
+  if (suivante) rail.appendChild(lienVers("#" + type + "/" + suivante.id, T("Carte suivante : {0}", suivante.nom), "bouton secondaire large"));
+  const hasard = el("button", "bouton secondaire large", "Une carte au hasard");
+  hasard.type = "button";
+  hasard.addEventListener("click", tirerAuHasard);
+  rail.appendChild(hasard);
+  const miseEnPage = el("div", "fiche-mise-en-page");
+  const colonne = el("div", "fiche-colonne");
+  colonne.append(carte, nav);
+  miseEnPage.append(colonne, rail);
+  zone.appendChild(miseEnPage);
+
+  // Barre d'actions collante (téléphone) : acquise, « Je l'ai repéré », carte suivante
+  const barre = el("div", "barre-fiche");
+  barre.setAttribute("role", "toolbar");
+  barre.setAttribute("aria-label", "Actions de la fiche");
+  const acquise = el("button", "bouton secondaire");
+  acquise.type = "button";
+  const majAcquise = () => { acquise.textContent = typo(acquis.has(cle) ? T("✓ Acquise") : T("Acquise ?")); acquise.setAttribute("aria-pressed", String(acquis.has(cle))); };
+  acquise.addEventListener("click", () => { bouton.click(); majAcquise(); });
+  bouton.addEventListener("click", majAcquise);
+  majAcquise();
+  const repere = el("button", "bouton secondaire", "Je l'ai repéré");
+  repere.type = "button";
+  repere.addEventListener("click", () => {
+    reperage.scrollIntoView({ behavior: animationsReduites() ? "auto" : "smooth", block: "center" });
+    const champ = reperage.querySelector("input");
+    if (champ) champ.focus({ preventScroll: true });
+  });
+  barre.append(acquise, repere);
+  if (suivante) barre.appendChild(lienVers("#" + type + "/" + suivante.id, T("Suivante →"), "bouton"));
+  colonne.appendChild(barre);
 
   ecrire("derniereFiche", cle);
 }
@@ -1364,7 +1463,7 @@ function afficherQuiz() {
   if (quiz.serie.length === 0) {
     const carte = el("article", "carte");
     if (quiz.mode === "reviser") {
-      carte.appendChild(el("h2", null, "Rien à réviser aujourd'hui"));
+      carte.append(dessinVide(), el("h2", null, "Rien à réviser aujourd'hui"));
       const prochaine = prochaineRevision();
       carte.appendChild(el("p", null, prochaine === null
         ? "Les notions rencontrées au quiz reviendront ici au bon moment : le lendemain en cas d'erreur, puis après 3, 7, 14 et 30 jours."
@@ -1499,6 +1598,13 @@ function afficherPage() {
   let adresse = location.hash.slice(1);
   try { adresse = decodeURIComponent(adresse); } catch (erreur) { /* adresse laissée telle quelle */ }
   let [vue, id] = adresse.split("/");
+  // Raccourcis de l'application installée (manifest.webmanifest) : une fiche au hasard, le défi du jour
+  if (vue === "hasard") {
+    const [, r] = melanger([...INDEX.entries()])[0];
+    location.replace("#" + r.type + "/" + r.fiche.id);
+    return;
+  }
+  const versDefi = vue === "defi" && !id;
   if (!ONGLET_DE[vue]) vue = "accueil";
   // Sans identifiant, les jeux et les expériences renvoient à la liste des ateliers
   if ((vue === "chiffres" || vue === "tests") && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id)) vue = "ateliers";
@@ -1525,7 +1631,10 @@ function afficherPage() {
   let titre = "";
   let defilement = 0;
 
-  if (vue === "accueil") afficherAccueil();
+  if (vue === "accueil") {
+    afficherAccueil();
+    if (versDefi) setTimeout(() => { const c = document.querySelector(".defi-jour"); if (c) c.scrollIntoView({ block: "start" }); }, 0);
+  }
 
   if (vue === "biais" || vue === "sophismes") {
     if (etat.type !== vue) {
@@ -1607,7 +1716,8 @@ function afficherPage() {
 
 // ===================== Branchements =====================
 
-window.addEventListener("hashchange", afficherPage);
+// Transition de vue entre deux pages quand le navigateur la connaît (amélioration progressive, DESIGN.md « Mouvement »)
+window.addEventListener("hashchange", () => transitionDeVue(afficherPage));
 
 $("recherche-globale").addEventListener("input", e => {
   if (!rechercheDansFiches()) return;
@@ -1765,6 +1875,88 @@ $("btn-partager").addEventListener("click", async () => {
     annoncer(T("Lien du site : {0}", adresse));
   }
 });
+
+// ===================== États vides (DESIGN.md) =====================
+// Un petit dessin au trait de la grammaire de l'emblème : deux traits en pointillé, ailettes à peine tracées, en
+// attente de contenu. Décoratif : la phrase qui suit dit pourquoi c'est vide et l'action qui le remplira.
+function dessinVide() {
+  const s = svg("svg", { viewBox: "0 0 120 48", class: "dessin-vide", "aria-hidden": "true" });
+  return dessinerSvg(s, '<path d="M30 14h60M30 34h60" class="pointille"/><path d="M30 14 22 7M30 14l-8 7M90 14l8-7M90 14l8 7M30 34l8-7M30 34l8 7M90 34l-8-7M90 34l-8 7" class="ailettes"/><circle cx="60" cy="24" r="2.5"/>');
+}
+
+// ===================== Glyphes de catégorie (DESIGN.md) =====================
+// Quatorze glyphes au trait, dans le vocabulaire de l'emblème (lignes, ailettes, points) : en-têtes de catégorie,
+// codex, distinctions. Décoratifs : le nom de la catégorie est toujours écrit à côté. Clé : le champ « glyphe » de la catégorie (donnees.js), stable dans les deux langues.
+const GLYPHES_CATEGORIE = {
+  "probabilites": '<path d="M3 20h18"/><path d="M4 17c4 0 4.5-10 8-10s4 10 8 10"/><path d="M12 7v13" class="pointille"/>',
+  "decision": '<path d="M12 21v-8"/><path d="M12 13 6 7M12 13l6-6"/><path d="M6 7h3.5M6 7v3.5M18 7h-3.5M18 7v3.5"/>',
+  "memoire-et-attention": '<path d="M3 12c3.5-5.5 14.5-5.5 18 0-3.5 5.5-14.5 5.5-18 0z"/><circle cx="12" cy="12" r="2.6"/>',
+  "croyances": '<path d="M4 5.5h16v10h-8l-4.5 3.5v-3.5H4z"/><path d="M8 10.5h8"/>',
+  "social": '<circle cx="6" cy="17" r="2.4"/><circle cx="18" cy="17" r="2.4"/><circle cx="12" cy="6.5" r="2.4"/><path d="M8 15.4l2.6-6.6M16 15.4l-2.6-6.6M8.4 17h7.2"/>',
+  "image-de-soi": '<ellipse cx="12" cy="9.5" rx="6" ry="7"/><path d="M12 16.5V22M9 22h6"/><path d="M9.5 7.5l2 2"/>',
+  "attaque-personnelle": '<path d="M2.5 12h10"/><path d="M9.5 8.5 13 12l-3.5 3.5"/><circle cx="18" cy="12" r="3.5"/>',
+  "appel-illegitime": '<path d="M4 9.5v5h3l7.5 4.5v-14L7 9.5z"/><path d="M18 9c1.3 1.6 1.3 4.4 0 6"/>',
+  "esquive": '<path d="M4 19c7 0 6-13 16-13"/><path d="M16.5 3 20 6l-3.5 3"/><path d="M4 19h4" class="pointille"/>',
+  "fausse-comparaison": '<path d="M12 4v15M7 20h10"/><path d="M4 9.5 20 6"/><path d="M4 9.5l-2 5h4zM20 6l-2 5h4z"/>',
+  "causalite": '<circle cx="5.5" cy="12" r="3"/><circle cx="18.5" cy="12" r="3"/><path d="M9 12h6M12.5 9.5 15 12l-2.5 2.5"/>',
+  "generalisation": '<circle cx="5" cy="12" r="2.2"/><path d="M8 12h12M8 12l11-6.5M8 12l11 6.5"/>',
+  "logique-et-preuve": '<path d="M5 6h14M5 10.5h14"/><path d="M5 14.5h14" class="epais"/><path d="M5 19h9"/>',
+  "langage": '<path d="M6 7c-2 1.5-2 4.5 0 5.5M6 12.5c0 2-1 3.5-2.5 4.5M14 7c-2 1.5-2 4.5 0 5.5M14 12.5c0 2-1 3.5-2.5 4.5"/><path d="M17.5 17h3"/>'
+};
+function glypheCategorie(categorie) {
+  const s = svg("svg", { viewBox: "0 0 24 24", class: "glyphe", "aria-hidden": "true" });
+  return dessinerSvg(s, GLYPHES_CATEGORIE[categorie.glyphe] || "");
+}
+
+// ===================== Réglages et mouvement (DESIGN.md, « Mouvement ») =====================
+// reglages = { animations: "auto" | "reduites" }
+const reglages = lire("reglages", {});
+function animationsReduites() {
+  return reglages.animations === "reduites" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+// Le réglage réduit pose data-animations="reduites", que style.css traite comme prefers-reduced-motion
+function appliquerAnimations() {
+  if (reglages.animations === "reduites") document.documentElement.dataset.animations = "reduites";
+  else delete document.documentElement.dataset.animations;
+  document.querySelectorAll("[data-animations-choix]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.animationsChoix === (reglages.animations || "auto"))));
+}
+document.querySelectorAll("[data-animations-choix]").forEach(b => b.addEventListener("click", () => {
+  reglages.animations = b.dataset.animationsChoix;
+  ecrire("reglages", reglages);
+  appliquerAnimations();
+}));
+appliquerAnimations();
+
+// Point d'entrée unique des animations lancées par script (element.animate n'est pas arrêté par la règle CSS) :
+// rien quand le mouvement doit être réduit. L'appelant pose d'abord l'état final ; l'animation y mène, et cet état
+// reste juste même si elle n'a pas lieu ou est interrompue.
+function animer(element, images, options) {
+  if (!element || typeof element.animate !== "function" || animationsReduites()) return null;
+  return element.animate(images, Object.assign({ duration: 280, easing: "cubic-bezier(0.2, 0.7, 0.2, 1)" }, options));
+}
+// Changement de page : transition de vue quand le navigateur la connaît et que le mouvement n'est pas réduit. Pas dans
+// un cadre (les bancs d'essai) : la mise à jour y attendrait une capture d'écran que le cadre ne fait pas toujours.
+function transitionDeVue(majDom) {
+  if (typeof document.startViewTransition !== "function" || animationsReduites() || window.top !== window) { majDom(); return; }
+  document.startViewTransition(majDom);
+}
+
+// Filet du spectre sous l'en-tête : un segment par catégorie, de largeur proportionnelle à son nombre de fiches
+(function dessinerSpectre() {
+  const entete = document.querySelector(".entete");
+  if (!entete) return;
+  const parts = Object.values(TYPES).flatMap(conf => conf.categories.map(c => [c, conf.fiches.filter(f => f.categorie === c.nom).length]));
+  const filet = el("div", "spectre");
+  filet.setAttribute("role", "img");
+  filet.setAttribute("aria-label", T("Composition du catalogue, par catégorie : {0}", parts.map(([c, n]) => T(c.nom) + " " + n).join(", ")));
+  parts.forEach(([c, n]) => {
+    const segment = el("span");
+    segment.style.setProperty("--c", c.couleur);
+    segment.style.setProperty("--part", n);
+    filet.appendChild(segment);
+  });
+  entete.after(filet);
+})();
 
 // Thème : automatique (selon l'appareil), clair ou sombre. Le script de l'en-tête l'applique avant l'affichage.
 function appliquerTheme(choix) {

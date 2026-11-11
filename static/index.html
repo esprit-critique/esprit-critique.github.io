@@ -35,7 +35,7 @@
   <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="icone-32.png?v=3" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="icone.png?v=3">
-  <link rel="manifest" href="manifest.webmanifest?v=3">
+  <link rel="manifest" href="manifest.webmanifest?v=4">
   <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
   <title>Esprit critique</title>
@@ -335,6 +335,10 @@
         <button type="button" data-theme-choix="light">Clair</button>
         <button type="button" data-theme-choix="dark">Sombre</button>
       </p>
+      <p class="choix-theme choix-animations" role="group" aria-label="Animations d'affichage">Animations :
+        <button type="button" data-animations-choix="auto">Automatiques</button>
+        <button type="button" data-animations-choix="reduites">Réduites</button>
+      </p>
       <p class="choix-langue" role="group" aria-label="Langue">Langue :
         <a href="./" lang="fr" aria-current="true" data-langue="fr">Français</a>
         <a href="en/" lang="en" hreflang="en" data-langue="en">English</a>
@@ -360,6 +364,7 @@
   <script src="grand-test-donnees.js"></script>
   <script src="grand-test.js"></script>
   <script src="grand-test-interface.js"></script>
+  <script src="illusions.js"></script>
   <script src="sauvegarde.js"></script>
   <script src="app.js"></script>
   <script src="recherche.js"></script>

@@ -180,6 +180,22 @@ f.onload = async () => {
     "cartes": async () => { await aller("tests/debat-a-deux"); vue().querySelector(".option-certitude input").click(); valider(); await pause(30); },
     "guide": async () => { await aller("guide/philosophie"); },
     "guide-haut": async () => { await aller("guide/difference"); },
+    // Les neuf illusions du jour, chacune avant et après « Vérifier » (illusions.js), sur une seule page
+    "illusions": async () => {
+      await aller("accueil");
+      const zone = vue();
+      zone.replaceChildren();
+      const grille = d.createElement("div");
+      grille.className = "cartes-grille";
+      w.eval("ILLUSIONS_DU_JOUR").forEach(ill => [false, true].forEach(revele => {
+        const s = w.eval("svg")("svg", { viewBox: "0 0 320 200", class: "illusion-dessin" + (revele ? " revele" : "") });
+        ill.dessiner(s);
+        const c = d.createElement("div"); c.className = "carte"; c.append(ill.titre + (revele ? " (révélée)" : ""), s);
+        grille.appendChild(c);
+      }));
+      zone.appendChild(grille);
+      await pause(900);
+    },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
     "donnees": async () => { await aller("guide/donnees"); },
     "quiz": async () => { await aller("quiz"); },

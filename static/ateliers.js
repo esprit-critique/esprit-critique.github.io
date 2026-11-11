@@ -483,6 +483,7 @@ function atelierConseille() {
 function afficherAteliers() {
   const zone = $("vue-ateliers");
   zone.replaceChildren();
+  zone.classList.add("large");   // ordinateur large : les cartes d'atelier sur deux colonnes (style.css)
   zone.append(el("h1", "page-titre", "Ateliers"),
     el("p", "page-intro", T("{0} : estimer le monde réel, mesurer sa confiance, éprouver sa perception et refaire les expériences classiques. Répondez spontanément : c'est la première réaction qui est intéressante.", pluriel(tousLesAteliers().length, "atelier"))));
 
