@@ -11,3 +11,6 @@ tests/rapports/
 static/_*.html
 static/niveaux.html
 static/controle-affichage.js
+
+# Outils de test (Playwright), installés par npm ci
+node_modules/

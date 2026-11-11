@@ -1,5 +1,5 @@
 // Banc d'essai : recherche dans tout le site, sections d'ateliers pliables, « Question au hasard ».
-// Nécessite le serveur local (python3 app.py) et Playwright (Chromium) :
+// Nécessite le serveur local (python3 app.py) et Playwright (npm ci), avec CHROME=$(python3 tests/navigateur.py) :
 //   node tests/recherche-melange.js            (adresse : http://localhost:8000/, ou variable URL_SITE)
 // Chaque ligne affichée est un contrôle ; le code de sortie vaut 1 si l'un d'eux échoue.
 const { chromium } = require('playwright');
@@ -12,7 +12,8 @@ const ok = (libelle, condition, detail = '') => {
 };
 
 (async () => {
-  const navigateur = await chromium.launch();
+  // Chrome du système (variable CHROME, posée par tests/lancer.sh) : aucun navigateur à télécharger
+  const navigateur = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
   const erreurs = [];
   const nouvellePage = async (largeur = 1280, hauteur = 900) => {
     const contexte = await navigateur.newContext({ viewport: { width: largeur, height: hauteur } });

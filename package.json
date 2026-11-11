@@ -1,0 +1,8 @@
+{
+  "name": "esprit-critique-bancs",
+  "private": true,
+  "description": "Outils de test seulement : rien de ce dossier n'est publié (seul static/ l'est).",
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
+}

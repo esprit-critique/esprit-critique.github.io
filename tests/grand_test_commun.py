@@ -1,4 +1,4 @@
-"""Outils communs aux bancs du Grand test exécutés hors navigateur (moteur JavaScript de macOS, sans Node.js).
+"""Outils communs aux bancs du Grand test exécutés hors navigateur (Node.js).
 executer(pilote) charge les outils d'autres fichiers employés par le moteur, puis les fichiers du Grand test, puis
 le pilote, qui se termine par une expression JSON.stringify(...)."""
 import json, os, subprocess, tempfile
@@ -40,7 +40,9 @@ def executer(pilote, fichiers=("grand-test.js",), essai=True):
     with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
         f.write(code)
     try:
-        r = subprocess.run(["osascript", "-l", "JavaScript", f.name], capture_output=True, text=True, timeout=900)
+        # Le pilote se termine par une expression : vm.runInThisContext renvoie sa valeur, comme le faisait osascript
+        r = subprocess.run(["node", "-e", "process.stdout.write(String(require('vm').runInThisContext(require('fs').readFileSync(process.argv[1], 'utf8'))))", f.name],
+                           capture_output=True, text=True, timeout=900)
     finally:
         os.remove(f.name)
     if r.returncode != 0:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Banc « calculs » du Grand test : exécute les fonctions pures de static/grand-test.js hors navigateur (moteur
-JavaScript de macOS, osascript -l JavaScript, sans Node.js) et compare leurs résultats à un oracle écrit à part,
+"""Banc « calculs » du Grand test : exécute les fonctions pures de static/grand-test.js hors navigateur (Node.js)
+et compare leurs résultats à un oracle écrit à part,
 ici, en Python : intervalles de Wilson, couverture binomiale exacte, d′ et c (loi normale de Python), Brier et
 Murphy, score de fourchette, rapprochement rétrospectif, répondants simulés.
 python3 tests/grand_test_calculs.py [FICHIER_RAPPORT]"""

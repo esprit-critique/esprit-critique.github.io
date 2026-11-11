@@ -1,4 +1,4 @@
-# Publie le dossier static/ sur GitHub Pages à chaque envoi sur la branche main.
+# Publie le dossier static/ sur GitHub Pages à chaque envoi sur la branche main, si les contrôles passent.
 name: Publier le site
 
 on:
@@ -8,23 +8,30 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
+  # Un site dont les contrôles échouent n'est pas publié
+  verifier:
+    uses: ./.github/workflows/verifier.yml
+
   publier:
+    needs: verifier
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
       # Actions désignées par l'empreinte de leur commit (une étiquette comme v7 peut être déplacée) ; version en commentaire
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false   # le jeton d'accès n'est pas gardé dans la copie du dépôt
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6

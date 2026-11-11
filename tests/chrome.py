@@ -6,7 +6,7 @@ On lit la console au fil de l'eau et l'on arrête Chrome dès la fin du rapport,
 Chrome sans fenêtre ne s'arrête pas toujours de lui-même."""
 import subprocess, sys, os, signal, re, select, tempfile, shutil, time
 
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+from navigateur import CHROME
 url, taille, theme, sortie = sys.argv[1:5]
 delai = int(sys.argv[5]) if len(sys.argv) > 5 else 600
 profil = tempfile.mkdtemp(prefix="chrome-test-")
