@@ -22,7 +22,8 @@ passe. Refonte en cours : brief dans `tests/refonte-brief.md`, plan dans `tests/
 
 - Toute la progression passe par `lire(cle, defaut)` / `ecrire(cle, valeur)` (localStorage, JSON).
 - Nouvelle clé : l'ajouter à `CLES_SAUVEGARDE` et à `FORMES_SAUVEGARDE` (`app.js`), sinon elle échappe à l'export,
-  à l'import, aux sauvegardes automatiques et à l'effacement.
+  à l'import, aux sauvegardes automatiques et à l'effacement ; et lui donner son schéma dans `SCHEMAS_SAUVEGARDE`
+  (`static/sauvegarde.js`, validation profonde de tout ce qui vient de l'extérieur ; le banc `aleatoire` échoue sinon).
 - Ne jamais changer la forme d'une clé existante sans migration testée : des visiteurs ont déjà des données.
 
 ## Textes et langues
@@ -36,7 +37,11 @@ passe. Refonte en cours : brief dans `tests/refonte-brief.md`, plan dans `tests/
 
 ## Sécurité du code
 
-- DOM construit avec `el()`, `lienVers()`, `svg()`, `textContent`. Aucun HTML inséré.
+- DOM construit avec `el()`, `lienVers()`, `svg()`, `dessinerSvg()`, `textContent`. Aucun HTML inséré : Trusted Types
+  est actif (`require-trusted-types-for 'script'`), et `innerHTML` lève une erreur. Vider un élément : `replaceChildren()`.
+- Seule règle Trusted Types permise : `esprit-critique` (`app.js`), qui n'accepte que l'adresse du service worker.
+- `python3 tests/securite.py` (contrôle statique : motifs interdits, empreintes et concordance des CSP, liste du
+  service worker, expiration de `static/.well-known/security.txt`) doit passer. Modèle de menace : `SECURITE.md`.
 - CSP en balise `meta` : ni style ni gestionnaire d'événement en ligne. Valeurs dynamiques : variables CSS posées par
   `element.style.setProperty()` ; styles par des classes de `style.css`.
 - Script en ligne de `index.html` ou `en/index.html` modifié : recalculer son empreinte `sha256-…` dans la CSP
@@ -64,7 +69,10 @@ CONFIGS="390 clair" tests/lancer.sh     # une seule configuration
 
 - Code de sortie 1 si un banc échoue (`tests/verdict.py` lit la ligne « RÉSUMÉ » de chaque rapport).
 - Ne jamais lancer deux `tests/lancer.sh` en même temps : même port 8000, bancs copiés puis retirés de `static/`.
-- Vérifications rapides : `node --check static/*.js`, `python3 tests/noms_globaux.py`, `python3 tests/en/controle.py`.
+- Vérifications rapides : `node --check static/*.js`, `python3 tests/noms_globaux.py`, `python3 tests/en/controle.py`,
+  `python3 tests/securite.py`.
+- L'intégration continue est rapide (≈ 3 min) : pousser la branche et lire `gh pr checks` vaut souvent mieux que la
+  suite locale (≈ 1 h sur le Mac du propriétaire).
 - `tests/safari.sh` reste propre à macOS.
 
 ## Git

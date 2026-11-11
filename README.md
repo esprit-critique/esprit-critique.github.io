@@ -67,9 +67,11 @@ Charte graphique (polices, couleurs, motif, corrections, numérotation des fiche
 - **Aucun compte, aucune donnée envoyée** : la progression est enregistrée uniquement dans le navigateur du
   visiteur, qui peut l'exporter dans un fichier.
 - **Aucune dépendance** : du HTML, du CSS et du JavaScript simples, sans bibliothèque ni étape de compilation.
-- **Sécurité** : politique de sécurité du contenu (CSP) stricte, le site ne charge que ses propres fichiers ; aucun
-  texte n'est inséré comme HTML ; une sauvegarde importée est vérifiée clé par clé ; le serveur local n'écoute que
-  l'ordinateur lui-même, sans liste des dossiers ; les actions de publication sont désignées par l'empreinte de leur commit.
+- **Sécurité** (détail et modèle de menace : [SECURITE.md](SECURITE.md)) : politique de sécurité du contenu (CSP)
+  stricte, le site ne charge que ses propres fichiers ; aucun texte n'est inséré comme HTML, et Trusted Types le fait
+  refuser par le navigateur ; une sauvegarde importée est validée en profondeur, élément par élément ; le serveur local
+  n'écoute que l'ordinateur lui-même, sans liste des dossiers ; les actions de publication sont désignées par
+  l'empreinte de leur commit, et rien n'est publié si les contrôles échouent. Signaler une faille : [SECURITY.md](SECURITY.md).
 
 ## Utiliser le site sur son ordinateur
 
@@ -146,12 +148,12 @@ Les bancs d'essai tournent sous macOS comme sous Linux, avec Chrome (variable `C
 npm ci                                 # Playwright, outil de test seulement (rien n'est publié hors de static/)
 tests/lancer.sh                        # tous les bancs, à 390 et 1 280 px, en clair et en sombre (≈ 1 h)
 tests/lancer.sh affichage              # un seul banc : affichage, ateliers, test, niveaux, items, csp,
-                                       # grand, hors-ligne, calculs, familles, banques ou recherche
+                                       # grand, hors-ligne, calculs, familles, banques, recherche ou aleatoire
 CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 ```
 
 `tests/lancer.sh` sort en erreur si un banc échoue (`tests/verdict.py` lit la ligne « RÉSUMÉ » de chaque rapport).
-Les bancs `calculs`, `familles`, `banques` et `recherche` ne dépendent ni de la taille ni du thème : ils ne tournent
+Les bancs `calculs`, `familles`, `banques`, `recherche` et `aleatoire` ne dépendent ni de la taille ni du thème : ils ne tournent
 que dans la première configuration.
 
 | Fichier | Rôle |
@@ -169,6 +171,8 @@ que dans la première configuration.
 | `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |
 | `tests/pays/` | `telecharger.sh` puis `generer_pays.py` : régénère `static/pays.js` (Banque mondiale, HCR) |
 | `tests/hors_ligne.py`, `tests/_hors-ligne.html` | service worker : installe le cache, coupe le serveur, recharge chaque fichier depuis le cache |
+| `tests/_aleatoire.html` | banc `aleatoire` : validation profonde des sauvegardes, 1 000 sauvegardes déformées puis 1 000 adresses aléatoires ; le site doit démarrer sans erreur |
+| `tests/securite.py` | contrôle statique de sécurité (voir `SECURITE.md`), lancé avant les bancs |
 | `tests/navigateur.py`, `tests/verdict.py` | chemin de Chrome ; verdict d'un rapport (sans argument : contrôle du script) |
 | `tests/noms_globaux.py` | noms globaux déclarés deux fois entre les scripts du site (lancé avant tous les bancs) |
 | `tests/_grand-test.html` | Grand test : drapeaux, stockage, migration, parcours simulés, reprise, graphiques à 0/1/3/20 tests, rappels |
