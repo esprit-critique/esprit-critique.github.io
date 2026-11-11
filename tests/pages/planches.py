@@ -4,6 +4,7 @@ en clair et en sombre, côte à côte (tests/rapports/identite/planches/<écran>
 python3 tests/pages/planches.py [étape finale, par défaut apres-6]"""
 import os, signal, subprocess, sys, tempfile, time
 ICI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(ICI)); from navigateur import CHROME
 DOSSIER = os.path.abspath(os.path.join(ICI, "..", "rapports", "identite"))
 APRES = sys.argv[1] if len(sys.argv) > 1 else "apres-6"
 ECRANS = ["accueil", "biais", "biais-ancrage", "sophismes-ad-hominem", "quiz-faux", "vf-bilan", "guide"]
@@ -18,7 +19,7 @@ figure{{margin:0}}figcaption{{margin:0 0 6px;font-weight:600}}img{{width:{l}px;d
         html = os.path.join(tempfile.mkdtemp(), "planche.html"); open(html, "w").write(page)
         sortie = os.path.join(DOSSIER, "planches", f"{e}-{largeur}.png")
         hauteur = int((844 if largeur == 390 else 900) * echelle) + 70
-        p = subprocess.Popen(["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "--headless=new", "--disable-gpu", "--hide-scrollbars",
+        p = subprocess.Popen([CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars",
             "--user-data-dir=" + tempfile.mkdtemp(), f"--window-size={4 * l + 80},{hauteur}", "--virtual-time-budget=2000",
             "--allow-file-access-from-files", "--screenshot=" + sortie, "file://" + html], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
         for _ in range(40):

@@ -7,7 +7,7 @@ import functools, http.server, os, re, select, shutil, signal, subprocess, sys, 
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.abspath(os.path.join(ICI, "..", "static"))
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+from navigateur import CHROME
 PORT = 8011
 taille, theme, sortie = sys.argv[1:4]
 

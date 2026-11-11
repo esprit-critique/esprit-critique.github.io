@@ -5,6 +5,7 @@ Les bandes sont découpées dans les captures pleine page de tests/pages/fiches.
 python3 tests/pages/planches_fiches.py [étape finale, par défaut etape-6]"""
 import os, signal, subprocess, sys, tempfile, time
 ICI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(ICI)); from navigateur import CHROME
 DOSSIER = os.path.abspath(os.path.join(ICI, "..", "rapports", "fiches"))
 APRES = sys.argv[1] if len(sys.argv) > 1 else "etape-6"
 FICHES = ["biais-ancrage", "biais-halo", "sophismes-ad-hominem", "sophismes-faux-dilemme"]
@@ -27,7 +28,7 @@ for largeur, (bandes, echelle) in BANDES.items():
         html = os.path.join(tempfile.mkdtemp(), "planche.html"); open(html, "w").write(page)
         sortie = os.path.join(DOSSIER, "planches", f"{fiche}-{largeur}.png")
         if os.path.exists(sortie): os.remove(sortie)
-        p = subprocess.Popen(["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "--headless=new", "--disable-gpu", "--hide-scrollbars",
+        p = subprocess.Popen([CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars",
             "--user-data-dir=" + tempfile.mkdtemp(), "--allow-file-access-from-files", f"--window-size={4 * l + 60},{2 * hh + 90}",
             "--virtual-time-budget=2000", "--screenshot=" + sortie, "file://" + html], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
         for _ in range(40):

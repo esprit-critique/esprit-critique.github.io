@@ -8,7 +8,7 @@ import subprocess, sys, os, signal, tempfile, shutil, time, urllib.request, urll
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "static")
 DOSSIER = os.path.join(ICI, "rapports", "captures")
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+from navigateur import CHROME
 taille, theme, *scenarios = sys.argv[1:]
 os.makedirs(DOSSIER, exist_ok=True)
 

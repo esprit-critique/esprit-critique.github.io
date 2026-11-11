@@ -5,7 +5,7 @@ et les erreurs JavaScript. Les autres bancs utilisent une copie sans CSP (voir l
 python3 tests/csp.py LARGEUR,HAUTEUR clair|sombre FICHIER_RAPPORT"""
 import os, re, select, shutil, signal, subprocess, sys, tempfile, time
 
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+from navigateur import CHROME
 ADRESSES = ["accueil", "biais/ancrage", "sophismes/post-hoc", "quiz", "ateliers", "chiffres/monde", "chiffres/intervalles",
             "tests/demonter", "tests/laterale", "bingo/12345", "portrait", "guide/methode", "adresse-inconnue", "biais/%E0",
             # Pages fixes (adresses commençant par « / »)
