@@ -167,7 +167,7 @@ function majBoutonProfil(m, etat) {
 }
 
 // ===================== Page Profil =====================
-const ONGLETS_PROFIL = [["ensemble", "Vue d'ensemble"], ["jeux", "Jeux"], ["notions", "Notions"], ["distinctions", "Distinctions"], ["reglages", "Réglages"]];
+const ONGLETS_PROFIL = [["ensemble", "Vue d'ensemble"], ["jeux", "Jeux"], ["notions", "Notions"], ["distinctions", "Distinctions"], ["parcours", "Parcours"], ["reglages", "Réglages"]];
 let ongletProfil = "ensemble";
 
 function afficherPageProfil(onglet) {
@@ -213,6 +213,7 @@ function afficherPageProfil(onglet) {
     case "notions": ongletNotions(panneau, m, etat); break;
     case "distinctions": ongletDistinctions(panneau, m, etat); break;
     case "reglages": ongletReglages(panneau, m, etat); break;
+    case "parcours": ongletParcours(panneau); break;
     default: ongletEnsemble(panneau, m, etat);
   }
 }

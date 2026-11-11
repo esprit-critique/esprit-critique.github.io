@@ -70,7 +70,8 @@ const SCHEMAS_SAUVEGARDE = {
     journal: ["liste", ["liste", "libre", 3], 60], rattrapage: "nombre", rattrapageVu: "booleen", cumuls: ["dico", "entier", 20] },
   distinctions: { obtenues: ["liste", "texte", 100], drapeaux: { embleme: "booleen", illusions: ["liste", "texte", 50] } },
   objectif: "entier",
-  profil: { pseudo: "texte" }
+  profil: { pseudo: "texte" },
+  parcours: { actif: "texte", quiz: ["dico", "booleen", 50] }
 };
 
 // Identifiants d'ateliers acceptés : ceux de la liste des ateliers (le banc « ateliers » vérifie qu'il n'en manque aucun)

@@ -13,7 +13,8 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | 3 — Relancer le hasard | `refonte/lot-3` | #9 | fusionné (captures : branche `captures`, dossier `lot-3`) |
 | Planche de Galton (demande du propriétaire) | `galton-20` | #10 | fusionné : 20 questions, jauge qui suit la partie |
 | 4 — Maîtrise, grades, points | `refonte/lot-4` | #11 | fusionné (captures : branche `captures`, dossier `lot-4`) |
-| 5 à 8 | — | — | à faire |
+| 5 — Parcours | `refonte/lot-5` | #12 | fusionné |
+| 6 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
 
@@ -167,6 +168,21 @@ donc toujours vide) : `entete()` (ateliers.js) suit la partie quand `MELANGE.act
   (10.1007/s10648-019-09498-w), Deci, Koestner et Ryan 1999 (10.1037/0033-2909.125.6.627), Nunes et Drèze 2006
   (10.1086/500480), Kivetz, Urminsky et Zheng 2006 (JMR 43, 39-58).
 - Reporté : onglet « Parcours » du profil (lot 5) ; carte à partager du grade (lot 8).
+
+### Lot 5
+
+- `static/parcours.js` : huit parcours (identifiants du brief, tous vérifiés), étapes ordonnées en alternant lecture
+  et pratique, terminées par le quiz ciblé (Premiers pas : puis la première série). Titre, promesse, conclusion
+  rédigés ; la conclusion renvoie vers « Je l'ai repéré ».
+- Étapes : fiche lue (`fichesLues`), atelier = une partie enregistrée (le carnet et le débat à deux enregistrent une
+  partie : aucun cas particulier nécessaire ; le bingo n'est dans aucun parcours), série = 10 notions rencontrées,
+  quiz ciblé = 4/5 (`parcours.quiz[id]`). Le quiz ciblé n'écrit pas dans la mémoire du quiz (pas d'effet de bord).
+- Accueil : nouveau visiteur → « Commencer : Premiers pas » ; parcours suivi → sa prochaine étape est l'action
+  principale ; sinon « Suivre un parcours ». Profil : onglet « Parcours » avec les sceaux. Recherche : les parcours
+  sont indexés.
+- Points : 10 par étape faite et 50 par parcours terminé, une seule fois, crédités à la visite du parcours
+  (une étape faite ailleurs est créditée à la visite suivante de sa page).
+- `avancement` existait (Grand test) : `avancementParcours`.
 
 ## État des lieux (lot 0, commit cb90ed8)
 
