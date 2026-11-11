@@ -1915,9 +1915,10 @@ function animer(element, images, options) {
   if (!element || typeof element.animate !== "function" || animationsReduites()) return null;
   return element.animate(images, Object.assign({ duration: 280, easing: "cubic-bezier(0.2, 0.7, 0.2, 1)" }, options));
 }
-// Changement de page : transition de vue quand le navigateur la connaît et que le mouvement n'est pas réduit
+// Changement de page : transition de vue quand le navigateur la connaît et que le mouvement n'est pas réduit. Pas dans
+// un cadre (les bancs d'essai) : la mise à jour y attendrait une capture d'écran que le cadre ne fait pas toujours.
 function transitionDeVue(majDom) {
-  if (typeof document.startViewTransition !== "function" || animationsReduites()) { majDom(); return; }
+  if (typeof document.startViewTransition !== "function" || animationsReduites() || window.top !== window) { majDom(); return; }
   document.startViewTransition(majDom);
 }
 
