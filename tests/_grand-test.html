@@ -50,7 +50,7 @@ f.onload = async () => {
     ok("publié : grand-test.js déclare les drapeaux (true, true, essai false)",
       /^const GRAND_TEST_VISIBLE = true;$/m.test(source) && /^const PERSONNAGES_VISIBLES = true;$/m.test(source) && /^const GRAND_TEST_ESSAI = false;$/m.test(source));
     ok("publié : relecture enregistrée, contenus publiables", w.eval("RELECTURE_GT.relu === true && FAMILLES_GT.every(f => f.aRelire === false) && aRelireGT(VF_GT[0]) === false && aRelireGT(CARTES_GT[0]) === false"));
-    ok("publié : 49 ateliers (45 + Grand test + « Faux souvenirs » + « Douter juste » + mélange)", w.eval("tousLesAteliers().length") === 49);
+    ok("publié : 51 ateliers (45 + Grand test + « Faux souvenirs » + « Douter juste » + mélange + deux ateliers « en ligne »)", w.eval("tousLesAteliers().length") === 51);
     const tirePublie = w.eval("tirerPassation(etatGrandTestVide(), 'complet', 9)");
     ok("publié : un test complet tire tous ses items, sans déficit", tirePublie.instances.length === 105 && !tirePublie.issues.some(x => /publiables/.test(x)), tirePublie.instances.length + " " + tirePublie.issues.join(" | "));
     await aller("ateliers");
@@ -326,7 +326,7 @@ f.onload = async () => {
     }
 
     // --- Ateliers conseillés et ateliers nouveaux (lot 8) ---
-    ok("essai : 49 ateliers (45 + Grand test + deux ateliers nouveaux + mélange)", w.eval("tousLesAteliers().length") === 49);
+    ok("essai : 51 ateliers (45 + Grand test + deux ateliers nouveaux + mélange + deux ateliers « en ligne »)", w.eval("tousLesAteliers().length") === 51);
     const conseils = w.eval("ateliersConseilles(passationsTerminees(GT.etat).slice(-1)[0])");
     ok("trois ateliers conseillés au plus, adresses réelles, raison donnée", conseils.length <= 3 && conseils.length > 0 && conseils.every(c => w.eval("tousLesAteliers()").some(a => a.adresse === c.atelier.adresse) && /^Pourquoi celui-ci/.test(c.raison)));
     for (const [route, motif] of [["tests/faux-souvenirs", /Ce que montre cet atelier/], ["tests/douter-juste", /Douter juste/]]) {

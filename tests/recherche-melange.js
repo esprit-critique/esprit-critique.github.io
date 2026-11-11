@@ -68,7 +68,7 @@ const ok = (libelle, condition, detail = '') => {
   await p.reload({ waitUntil: 'load' });
   await p.waitForTimeout(300);
   const nSections = await p.$$eval('.section-ateliers', s => s.length);
-  ok('sept sections d\'ateliers', nSections === 7, String(nSections));
+  ok('huit sections d\'ateliers', nSections === 8, String(nSections));
   const pliees = await p.$$eval('.section-ateliers .pliant', b => b.every(x => x.getAttribute('aria-expanded') === 'false'));
   const masquees = await p.$$eval('.section-ateliers .corps-section', c => c.every(x => x.hidden));
   ok('toutes les sections sont pliées par défaut', pliees && masquees);
