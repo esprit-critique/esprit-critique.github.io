@@ -2,11 +2,11 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://esprit-critique-synchro.esprit-critique-synchro.workers.dev; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Politique de confidentialité · Esprit critique</title>
-  <meta name="description" content="Esprit critique ne collecte aucune donnée personnelle : pas de compte, pas de cookie, pas de mesure d&#x27;audience.">
+  <meta name="description" content="Esprit critique ne collecte pas de données personnelles : sans compte par défaut, sans cookie ni mesure d&#x27;audience ; synchronisation facultative chiffrée sur l&#x27;appareil.">
   <link rel="canonical" href="https://esprit-critique.github.io/confidentialite.html">
   <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="icone-32.png?v=3" sizes="32x32" type="image/png">
@@ -33,13 +33,15 @@
       <article class="carte texte-fixe">
         <h1>Politique de confidentialité</h1>
         <p class="source">Mise à jour le 11 novembre 2026.</p>
-        <p><strong>En bref : l'éditeur ne collecte aucune donnée personnelle.</strong> Le site n'a ni compte, ni formulaire envoyé
-        à un serveur, ni cookie, ni mesure d'audience, ni publicité, ni ressource extérieure (polices, scripts ou images d'autres sites).</p>
+        <p><strong>En bref : l'éditeur ne collecte aucune donnée personnelle.</strong> Sans compte par défaut : votre progression
+        reste dans votre navigateur. Pas de cookie, de mesure d'audience, de publicité ni de ressource extérieure (polices,
+        scripts ou images d'autres sites). Si vous activez la synchronisation, une copie chiffrée sur votre appareil est
+        conservée chez un hébergeur ; personne d'autre que vous ne peut la lire, pas même l'éditeur.</p>
         <h2>Ce qui reste dans votre navigateur</h2>
         <p>Votre progression est enregistrée dans le stockage local de votre navigateur (« localStorage ») : fiches acquises,
         réponses et révisions du quiz, résultats et niveaux des ateliers, prévisions et décisions que vous notez, repérages,
         fiches lues, parcours suivis, maîtrise, grade, points de lucidité et distinctions, objectif du jour, pseudonyme
-        (facultatif) et réglages (thème, animations, mode sobre). Ces données ne quittent jamais votre appareil ; l'éditeur n'y a pas accès. Elles servent uniquement
+        (facultatif) et réglages (thème, animations, mode sobre). Sans synchronisation, ces données ne quittent jamais votre appareil ; l'éditeur n'y a jamais accès. Elles servent uniquement
         au fonctionnement que vous demandez : ce stockage strictement nécessaire n'exige pas de consentement (article 82
         de la loi Informatique et Libertés), d'où l'absence de bandeau.</p>
         <p>Le site garde aussi, dans votre navigateur, jusqu'à quatre copies de cette progression : une par jour, et une juste
@@ -52,6 +54,14 @@
           <li>Les effacer : « Effacer ma progression », au même endroit (les copies automatiques sont effacées aussi), ou en effaçant les données de navigation du site.</li>
           <li>Les fichiers que le site crée (sauvegarde, agenda .ics) sont fabriqués sur votre appareil et ne sont envoyés nulle part.</li>
         </ul>
+        <h2>Synchronisation (facultative)</h2>
+        <p>Si vous l'activez (Profil, Réglages), votre progression est chiffrée dans votre navigateur (AES-256-GCM) avant
+        d'être envoyée. Sont envoyés : ce contenu chiffré, illisible sans votre code ; sa taille ; un identifiant et un jeton
+        dérivés de votre code. L'hébergeur du serveur (Cloudflare) voit, comme tout hébergeur, l'adresse IP des requêtes.
+        Les données sont conservées dans une base située dans l'Union européenne, tant que vous les utilisez, et supprimées
+        automatiquement après 24 mois sans écriture. Vous pouvez les supprimer à tout moment : Profil, Réglages, « Supprimer
+        la copie en ligne ». Aucune adresse électronique, aucun nom, aucun mot de passe ne sont collectés ; le site ne peut
+        pas récupérer un code perdu. Le code est gardé sur vos appareils connectés, pour pouvoir être réaffiché.</p>
         <h2>L'hébergeur</h2>
         <p>Le site est hébergé par GitHub Pages. Comme tout hébergeur, GitHub reçoit les demandes de pages : selon sa
         documentation, l'adresse IP des visiteurs est enregistrée et conservée pour des raisons de sécurité. L'éditeur n'a pas

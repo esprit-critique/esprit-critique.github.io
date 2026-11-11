@@ -6,7 +6,7 @@
 // indépendantes : l'identifiant du coffre, le jeton d'accès, et la clé AES-256-GCM (non extractible). Le serveur ne voit
 // que l'identifiant, l'empreinte du jeton et un contenu chiffré illisible. Modèle de menace : SECURITE.md.
 
-const SYNCHRO_URL = "";   // à remplir à la mise en service (serveur/README.md), avec l'origine dans connect-src
+const SYNCHRO_URL = "https://esprit-critique-synchro.esprit-critique-synchro.workers.dev";   // serveur/README.md ; son origine est dans connect-src (contrôlé par tests/securite.py)
 
 const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 const SEL_SYNCHRO = "esprit-critique/synchro/v1";

@@ -241,6 +241,16 @@ Mesures (Mac du propriétaire, serveur Python local, médiane de 5 chargements d
   confirme en ligne : regrouper les petits scripts de la refonte, ou charger graphiques/profil/coffre seulement à la
   demande.
 
+## Mise en service de la synchronisation (11 novembre 2026)
+
+Compte Cloudflare du propriétaire ; base D1 `esprit-critique-synchro` créée avec `--jurisdiction=eu`
+(5178d7d8-15e4-465d-a837-013b0c5729a3), table créée, Worker déployé :
+https://esprit-critique-synchro.esprit-critique-synchro.workers.dev (vérifié en ligne : 401 sans jeton, 403 pour une
+autre origine, `no-store`, `nosniff`). `SYNCHRO_URL` et `connect-src` renseignés ; textes validés par le propriétaire :
+confidentialité (section « Synchronisation »), conditions d'utilisation, mentions légales (Cloudflare, Inc., 101
+Townsend Street, San Francisco, CA 94107, +1 888 993 5273 : adresse et téléphone des documents déposés à la SEC),
+« Vos données », `noscript`, pied de page, Grand test, README, SECURITE.md.
+
 ## Bilan de la refonte (11 novembre 2026)
 
 **Fait** : les neuf lots (0 à 8), chacun en pull request vérifiée par l'intégration continue et fusionnée ; plus les
@@ -256,8 +266,7 @@ courbe de maîtrise lisible).
 - Règle CodeQL `js/clear-text-storage-of-sensitive-data` désactivée à la demande du propriétaire (faux positif récurrent).
 
 **Reste** :
-- Mise en service de la synchronisation (étape manuelle : compte Cloudflare, `serveur/README.md`, textes de
-  confidentialité proposés dans `tests/a-verifier.md`).
+- ~~Mise en service de la synchronisation~~ : faite le 11 novembre (voir plus haut).
 - Réglages GitHub du brief §7 (protection de `main` avec « Vérifier » obligatoire, etc.), à faire par le propriétaire.
 - Temps de chargement de l'accueil (voir Lot 8) ; parts de hasard de `MAITRISE_JEUX` à affiner jeu par jeu ; la
   distinction « Bingo » attend que l'atelier enregistre une ligne complète.

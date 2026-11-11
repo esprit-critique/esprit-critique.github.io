@@ -47,8 +47,8 @@ pour l'utiliser comme une application.
 - **Des parcours** : neuf chemins à travers les fiches et les ateliers (« Premiers pas », « Les chiffres qui trompent »…),
   avec un quiz ciblé ; rien n'est verrouillé.
 - **Des images à partager** (une fiche, son grade), dessinées sur l'appareil ; l'aide des raccourcis clavier (touche `?`).
-- **Synchronisation chiffrée** entre appareils, facultative et sans adresse électronique : prête (dossier `serveur/`),
-  pas encore en service.
+- **Synchronisation chiffrée** entre appareils, facultative et sans adresse électronique (Profil, Réglages ;
+  serveur Cloudflare dans l'Union européenne, dossier `serveur/`).
 - **Maîtrise, grades et points** : une maîtrise de 0 à 1 000, commune à tous les jeux (moyenne de six domaines, un jeu
   jamais joué comptant pour zéro), dix grades, des points de lucidité qui récompensent ce que le site enseigne (le barème
   du quiz paie l'étalonnage), un objectif du jour, des distinctions, un codex des 90 notions et une page Profil avec ses
@@ -77,8 +77,9 @@ Charte graphique (polices, couleurs, motif, corrections, numérotation des fiche
 
 - **Sources vérifiées** : chaque chiffre est accompagné de sa source ; les résultats discutés ou non répliqués
   sont signalés comme tels.
-- **Aucun compte, aucune donnée envoyée** : la progression est enregistrée uniquement dans le navigateur du
-  visiteur, qui peut l'exporter dans un fichier.
+- **Sans compte par défaut** : la progression est enregistrée dans le navigateur du visiteur, qui peut l'exporter dans
+  un fichier. Synchronisation entre appareils facultative, chiffrée sur l'appareil avant tout envoi (`serveur/`,
+  `SECURITE.md`) : personne d'autre que le visiteur ne peut lire sa copie en ligne.
 - **Aucune dépendance** : du HTML, du CSS et du JavaScript simples, sans bibliothèque ni étape de compilation.
 - **Sécurité** (détail et modèle de menace : [SECURITE.md](SECURITE.md)) : politique de sécurité du contenu (CSP)
   stricte, le site ne charge que ses propres fichiers ; aucun texte n'est inséré comme HTML, et Trusted Types le fait

@@ -74,8 +74,9 @@ compromission de GitHub lui-même, une personne ayant un accès physique au navi
 
 ## Synchronisation chiffrée (facultative, lot 6)
 
-Livrée derrière un drapeau : tant que `SYNCHRO_URL` (`static/coffre.js`) est vide, rien n'apparaît et rien n'est envoyé
-(le banc « synchro » le vérifie sur 18 adresses de la vraie page). Serveur : `serveur/` (Cloudflare Worker + D1).
+En service depuis le 11 novembre 2026 (`SYNCHRO_URL` dans `static/coffre.js`, origine dans `connect-src`). Sans compte,
+rien n'est envoyé (le banc « synchro » le vérifie sur 18 adresses de la vraie page). Serveur : `serveur/` (Cloudflare
+Worker + D1 dans l'Union européenne).
 
 **Hypothèses.** Le code de synchronisation (16 caractères en base 32 de Crockford, 80 bits tirés de
 `crypto.getRandomValues`) est le compte. Le navigateur (Web Crypto) est sain ; la page est servie par GitHub Pages en

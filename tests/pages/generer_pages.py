@@ -102,6 +102,9 @@ page("mentions-legales.html", "Mentions légales", "Éditeur, hébergeur et lice
         <h2>Hébergeur</h2>
         <p>GitHub, Inc. (service GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.
         Téléphone : +1 415 857 5430. Site : <a href="https://github.com">github.com</a>.</p>
+        <p>Serveur de synchronisation (facultative) : Cloudflare, Inc. (service Cloudflare Workers ; base de données située
+        dans l'Union européenne), 101 Townsend Street, San Francisco, CA 94107, États-Unis. Téléphone : +1 888 993 5273.
+        Site : <a href="https://www.cloudflare.com">cloudflare.com</a>.</p>
         <h2>Propriété intellectuelle</h2>
         <p>Le code du site est sous licence MIT ; les textes (fiches, questions, explications, guide) sous licence
         Creative Commons Attribution 4.0 (CC BY 4.0) : vous pouvez les reprendre et les adapter en citant « Esprit critique,
@@ -113,15 +116,17 @@ page("mentions-legales.html", "Mentions légales", "Éditeur, hébergeur et lice
         personnes ou des organisations existantes serait fortuite. Les études et les chiffres réels sont signalés comme tels,
         avec leur source.</p>''')
 
-page("confidentialite.html", "Politique de confidentialité", "Esprit critique ne collecte aucune donnée personnelle : pas de compte, pas de cookie, pas de mesure d'audience.", f'''        <h1>Politique de confidentialité</h1>
+page("confidentialite.html", "Politique de confidentialité", "Esprit critique ne collecte pas de données personnelles : sans compte par défaut, sans cookie ni mesure d'audience ; synchronisation facultative chiffrée sur l'appareil.", f'''        <h1>Politique de confidentialité</h1>
         <p class="source">Mise à jour le {MAJ}.</p>
-        <p><strong>En bref : l'éditeur ne collecte aucune donnée personnelle.</strong> Le site n'a ni compte, ni formulaire envoyé
-        à un serveur, ni cookie, ni mesure d'audience, ni publicité, ni ressource extérieure (polices, scripts ou images d'autres sites).</p>
+        <p><strong>En bref : l'éditeur ne collecte aucune donnée personnelle.</strong> Sans compte par défaut : votre progression
+        reste dans votre navigateur. Pas de cookie, de mesure d'audience, de publicité ni de ressource extérieure (polices,
+        scripts ou images d'autres sites). Si vous activez la synchronisation, une copie chiffrée sur votre appareil est
+        conservée chez un hébergeur ; personne d'autre que vous ne peut la lire, pas même l'éditeur.</p>
         <h2>Ce qui reste dans votre navigateur</h2>
         <p>Votre progression est enregistrée dans le stockage local de votre navigateur (« localStorage ») : fiches acquises,
         réponses et révisions du quiz, résultats et niveaux des ateliers, prévisions et décisions que vous notez, repérages,
         fiches lues, parcours suivis, maîtrise, grade, points de lucidité et distinctions, objectif du jour, pseudonyme
-        (facultatif) et réglages (thème, animations, mode sobre). Ces données ne quittent jamais votre appareil ; l'éditeur n'y a pas accès. Elles servent uniquement
+        (facultatif) et réglages (thème, animations, mode sobre). Sans synchronisation, ces données ne quittent jamais votre appareil ; l'éditeur n'y a jamais accès. Elles servent uniquement
         au fonctionnement que vous demandez : ce stockage strictement nécessaire n'exige pas de consentement (article 82
         de la loi Informatique et Libertés), d'où l'absence de bandeau.</p>
         <p>Le site garde aussi, dans votre navigateur, jusqu'à quatre copies de cette progression : une par jour, et une juste
@@ -134,6 +139,14 @@ page("confidentialite.html", "Politique de confidentialité", "Esprit critique n
           <li>Les effacer : « Effacer ma progression », au même endroit (les copies automatiques sont effacées aussi), ou en effaçant les données de navigation du site.</li>
           <li>Les fichiers que le site crée (sauvegarde, agenda .ics) sont fabriqués sur votre appareil et ne sont envoyés nulle part.</li>
         </ul>
+        <h2>Synchronisation (facultative)</h2>
+        <p>Si vous l'activez (Profil, Réglages), votre progression est chiffrée dans votre navigateur (AES-256-GCM) avant
+        d'être envoyée. Sont envoyés : ce contenu chiffré, illisible sans votre code ; sa taille ; un identifiant et un jeton
+        dérivés de votre code. L'hébergeur du serveur (Cloudflare) voit, comme tout hébergeur, l'adresse IP des requêtes.
+        Les données sont conservées dans une base située dans l'Union européenne, tant que vous les utilisez, et supprimées
+        automatiquement après 24 mois sans écriture. Vous pouvez les supprimer à tout moment : Profil, Réglages, « Supprimer
+        la copie en ligne ». Aucune adresse électronique, aucun nom, aucun mot de passe ne sont collectés ; le site ne peut
+        pas récupérer un code perdu. Le code est gardé sur vos appareils connectés, pour pouvoir être réaffiché.</p>
         <h2>L'hébergeur</h2>
         <p>Le site est hébergé par GitHub Pages. Comme tout hébergeur, GitHub reçoit les demandes de pages : selon sa
         documentation, l'adresse IP des visiteurs est enregistrée et conservée pour des raisons de sécurité. L'éditeur n'a pas
@@ -164,8 +177,11 @@ page("cgu.html", "Conditions d'utilisation", "Conditions d'utilisation du site E
         comparent personne à personne.</p>
         <p>Les situations, débats, sites et organismes des exercices sont fictifs.</p>
         <h2>Vos données</h2>
-        <p>Votre progression reste dans votre navigateur : voir la <a href="confidentialite.html">politique de confidentialité</a>.
-        Vous êtes seul responsable de sa conservation ; le site propose de l'enregistrer dans un fichier.</p>
+        <p>Votre progression reste dans votre navigateur, sauf si vous activez la synchronisation : voir la
+        <a href="confidentialite.html">politique de confidentialité</a>. Vous êtes seul responsable de sa conservation ; le
+        site propose de l'enregistrer dans un fichier. La synchronisation est un service gratuit, sans garantie de
+        disponibilité ; gardez un fichier de sauvegarde (« Enregistrer dans un fichier ») pour ne rien perdre, ainsi que
+        votre code de synchronisation, que le site ne peut pas récupérer.</p>
         <h2>Propriété intellectuelle</h2>
         <p>Code sous licence MIT, textes sous licence CC BY 4.0 : vous pouvez les réutiliser, y compris à des fins
         commerciales, en citant la source. Voir les <a href="mentions-legales.html">mentions légales</a>.</p>
@@ -207,6 +223,9 @@ page("legal-notice.html", "Legal notice", "Publisher, host and licences of the E
         <h2>Host</h2>
         <p>GitHub, Inc. (GitHub Pages service), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States.
         Telephone: +1 415 857 5430. Website: <a href="https://github.com">github.com</a>.</p>
+        <p>Sync server (optional): Cloudflare, Inc. (Cloudflare Workers service; database located in the European Union),
+        101 Townsend Street, San Francisco, CA 94107, United States. Telephone: +1 888 993 5273.
+        Website: <a href="https://www.cloudflare.com">cloudflare.com</a>.</p>
         <h2>Intellectual property</h2>
         <p>The site’s code is released under the MIT licence; the texts (entries, questions, explanations, guide) under the
         Creative Commons Attribution 4.0 licence (CC BY 4.0): you may reuse and adapt them, crediting “Esprit critique,
@@ -218,15 +237,16 @@ page("legal-notice.html", "Legal notice", "Publisher, host and licences of the E
         real people or organisations would be coincidental. Real studies and figures are flagged as such,
         with their source.</p>''', langue="en", pied=PIED_EN)
 
-page("privacy.html", "Privacy policy", "Esprit critique collects no personal data: no account, no cookies, no audience tracking.", f'''        <h1>Privacy policy</h1>
+page("privacy.html", "Privacy policy", "Esprit critique collects no personal data: no account by default, no cookies or audience tracking; optional sync, encrypted on your device.", f'''        <h1>Privacy policy</h1>
         <p class="source">Last updated {MAJ_EN}.</p>
-        <p><strong>In short: the publisher collects no personal data.</strong> The site has no account, no form sent to a server,
-        no cookies, no audience tracking, no advertising, and no external resources (fonts, scripts or images from other sites).</p>
+        <p><strong>In short: the publisher collects no personal data.</strong> No account by default: your progress stays in your
+        browser. No cookies, audience tracking, advertising or external resources (fonts, scripts or images from other sites).
+        If you turn on sync, a copy encrypted on your device is kept by a host; no one but you can read it, not even the publisher.</p>
         <h2>What stays in your browser</h2>
         <p>Your progress is saved in your browser’s local storage (“localStorage”): entries marked as learned, quiz answers
         and reviews, workshop results and levels, forecasts and decisions you record, anything you have spotted, cards read,
         paths followed, mastery, rank, clarity points and distinctions, daily goal, nickname (optional) and settings (theme,
-        animations, plain mode). This data never leaves your device; the publisher has no access to it. It is used only to provide
+        animations, plain mode). Without sync, this data never leaves your device; the publisher never has access to it. It is used only to provide
         the features you ask for: this strictly necessary storage does not require consent (Article 82 of the French Data
         Protection Act), which is why there is no banner.</p>
         <p>The site also keeps, in your browser, up to four copies of this progress: one per day, and one just before an
@@ -239,6 +259,14 @@ page("privacy.html", "Privacy policy", "Esprit critique collects no personal dat
           <li>Erase it: “Erase my progress”, in the same place (the automatic copies are erased too), or by clearing the site’s browsing data.</li>
           <li>The files the site creates (backup, .ics calendar) are produced on your device and are not sent anywhere.</li>
         </ul>
+        <h2>Sync (optional)</h2>
+        <p>If you turn it on (Profile, Settings), your progress is encrypted in your browser (AES-256-GCM) before being sent.
+        What is sent: this encrypted content, unreadable without your code; its size; an identifier and a token derived from
+        your code. The server’s host (Cloudflare), like any host, sees the IP address of requests. The data is kept in a
+        database located in the European Union, for as long as you use it, and deleted automatically after 24 months without
+        a write. You can delete it at any time: Profile, Settings, “Delete the online copy”. No email address, name or
+        password is collected; the site cannot recover a lost code. The code is kept on your signed-in devices so that it
+        can be shown again.</p>
         <h2>The host</h2>
         <p>The site is hosted by GitHub Pages. Like any host, GitHub receives requests for pages: according to its
         documentation, visitors’ IP addresses are recorded and kept for security reasons. The publisher has no
@@ -268,8 +296,10 @@ page("terms.html", "Terms of use", "Terms of use of the Esprit critique website:
         with anyone.</p>
         <p>The situations, debates, websites and organisations in the exercises are fictional.</p>
         <h2>Your data</h2>
-        <p>Your progress stays in your browser: see the <a href="privacy.html">privacy policy</a>.
-        You alone are responsible for keeping it; the site offers to save it to a file.</p>
+        <p>Your progress stays in your browser, unless you turn on sync: see the <a href="privacy.html">privacy policy</a>.
+        You alone are responsible for keeping it; the site offers to save it to a file. Sync is a free service with no
+        guarantee of availability; keep a backup file (“Save to a file”) so as not to lose anything, as well as your sync
+        code, which the site cannot recover.</p>
         <h2>Intellectual property</h2>
         <p>Code under the MIT licence, texts under the CC BY 4.0 licence: you may reuse them, including for
         commercial purposes, crediting the source. See the <a href="legal-notice.html">legal notice</a>.</p>

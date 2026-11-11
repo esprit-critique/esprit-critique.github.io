@@ -263,7 +263,7 @@ function blocCeQueLeTestNeMesurePas(titreNiveau) {
 function accueilGrandTest(zone) {
   const rappel = blocRappelsEchus();
   if (rappel) zone.appendChild(rappel);
-  zone.appendChild(paragraphe("Ce test ne produit pas de score global. Vos réponses restent dans votre navigateur et ne sont pas envoyées. Répondez sans chercher ailleurs : le but est d'observer votre raisonnement, pas ce que vous pouvez trouver. Vous pouvez fractionner le test complet ; votre progression sera reprise sur cet appareil."));
+  zone.appendChild(paragraphe("Ce test ne produit pas de score global. Vos réponses restent dans votre navigateur (ou dans votre copie chiffrée, si vous avez activé la synchronisation). Répondez sans chercher ailleurs : le but est d'observer votre raisonnement, pas ce que vous pouvez trouver. Vous pouvez fractionner le test complet ; votre progression sera reprise sur cet appareil."));
   const choix = el("div", "gt-modes");
   [["express", "Test express", "Un aperçu de chaque façon de raisonner. Certaines mesures y sont trop courtes pour être précises."],
    ["complet", "Test complet", "Cinq étapes, avec des mesures plus précises et des démonstrations de mémoire. Vous pouvez le faire en plusieurs fois."]]
@@ -1345,7 +1345,7 @@ function carteGrandTest() {
   cadre.appendChild(pictogramme(atelier.picto));
   const corps = el("div", "atelier-corps");
   corps.append(el("p", "surtitre", "Le Grand test"), el("h2", null, "Cinq façons de raisonner, mesurées séparément"),
-    el("p", null, "Sans score global ni classement, et tout reste dans votre navigateur. Express : 12 à 15 minutes. Complet : environ 45 à 60 minutes, en une ou plusieurs fois."));
+    el("p", null, "Sans score global ni classement, et tout reste dans votre navigateur (sauf synchronisation chiffrée). Express : 12 à 15 minutes. Complet : environ 45 à 60 minutes, en une ou plusieurs fois."));
   if (faits.length && !enCours) corps.appendChild(el("p", "source", T("Dernier test terminé le {0}.", new Date(faits[faits.length - 1].dateFin).toLocaleDateString(LOCALE))));
   corps.appendChild(el("span", "bouton", enCours ? T("Reprendre le test {0}", nomMode(enCours.mode)) : faits.length ? T("Refaire le test") : T("Commencer")));
   carte.append(cadre, corps);

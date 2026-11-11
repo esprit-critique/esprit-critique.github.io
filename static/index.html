@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <!-- Politique de sécurité : le site ne charge que ses propres fichiers. Le seul script en ligne (thème, plus bas)
        est autorisé par son empreinte : si on le modifie, recalculer l'empreinte (tests/lancer.sh csp le signale). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2kIPIJtJiIOEXZ5gvBoTdS5n/bpjKQu/dPA8rQHusQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2kIPIJtJiIOEXZ5gvBoTdS5n/bpjKQu/dPA8rQHusQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://esprit-critique-synchro.esprit-critique-synchro.workers.dev; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
   <!-- Aucune adresse de page transmise aux sites vers lesquels pointent les liens (GitHub Pages ne permet pas l'en-tête) -->
   <meta name="referrer" content="no-referrer">
   <!-- Adapte la page à la largeur de l'écran du téléphone -->
@@ -45,7 +45,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <noscript><p class="sans-script">Ce site a besoin de JavaScript pour fonctionner : activez-le dans les réglages de votre navigateur. Aucune donnée n'est envoyée nulle part.</p></noscript>
+  <noscript><p class="sans-script">Ce site a besoin de JavaScript pour fonctionner : activez-le dans les réglages de votre navigateur. Sans compte, aucune donnée n'est envoyée.</p></noscript>
   <div class="conteneur">
     <header class="entete">
       <a class="marque" href="#accueil" title="Les deux traits ont la même longueur">
@@ -318,7 +318,7 @@
 
         <article class="carte" id="g-donnees">
           <h2>Vos données</h2>
-          <p>Votre progression (fiches acquises et lues, réponses au quiz, révisions, résultats des ateliers, parcours, maîtrise, points et distinctions) est enregistrée uniquement dans votre navigateur. Elle n'est envoyée nulle part : le site n'a ni compte, ni base de données, ni mesure d'audience. Une copie en est faite chaque jour, dans ce même navigateur (voir plus bas). Détail : <a href="confidentialite.html">politique de confidentialité</a>. Il est hébergé par GitHub Pages, qui, comme tout hébergeur, reçoit les demandes de pages, mais jamais vos réponses.</p>
+          <p>Votre progression (fiches acquises et lues, réponses au quiz, révisions, résultats des ateliers, parcours, maîtrise, points et distinctions) est enregistrée uniquement dans votre navigateur. Par défaut, elle n'est envoyée nulle part : pas de compte obligatoire, pas de mesure d'audience. Si vous activez la synchronisation entre appareils (Profil, Réglages), une copie chiffrée sur votre appareil est gardée en ligne ; personne d'autre que vous ne peut la lire. Une copie en est faite chaque jour, dans ce même navigateur (voir plus bas). Détail : <a href="confidentialite.html">politique de confidentialité</a>. Il est hébergé par GitHub Pages, qui, comme tout hébergeur, reçoit les demandes de pages, mais jamais vos réponses.</p>
           <p class="source">Titres composés en Newsreader (Production Type), sous licence SIL OFL.</p>
           <p>Si vous effacez les données de navigation, votre progression disparaît. Pour la conserver, ou pour la retrouver sur un autre appareil (de l'ordinateur au téléphone, par exemple), enregistrez-la dans un fichier, puis ouvrez ce fichier depuis l'autre appareil.</p>
           <div class="actions actions-donnees">
@@ -363,7 +363,7 @@
     </main>
 
     <footer class="pied">
-      <p>Esprit critique · contenu sourcé · votre progression reste dans votre navigateur</p>
+      <p>Esprit critique · contenu sourcé · votre progression reste dans votre navigateur, sauf synchronisation chiffrée</p>
       <p><button class="lien" id="btn-partager">Partager le site</button> · <a href="https://github.com/esprit-critique/esprit-critique.github.io">Code source</a> · <a href="#guide/donnees">Vos données</a></p>
       <p><a href="mentions-legales.html">Mentions légales</a> · <a href="confidentialite.html">Confidentialité</a> · <a href="cgu.html">Conditions d'utilisation</a></p>
       <p class="choix-theme" role="group" aria-label="Thème d'affichage">Thème :
