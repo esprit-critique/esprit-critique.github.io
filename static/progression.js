@@ -57,6 +57,8 @@ const MAITRISE_JEUX = {
   pyramide: ["debattre", "note", 0.14],   // sept niveaux du désaccord
   demonter: ["debattre", "note", 0.25],   // rôle de chaque phrase
   laterale: ["debattre", "note", 0.33],   // quelle source est fiable
+  hameconnage: ["debattre", "note", 0.5],   // arnaque ou vrai message (section « Se protéger en ligne », rattachée à débattre)
+  "mots-de-passe": ["raisonner", "note", 0.5],   // le plus solide de deux (section « Se protéger en ligne », rattachée à raisonner)
   melange: ["melange", "aucun", 0],   // tire ses questions dans les autres jeux
   "grand-test": ["raisonner", "aucun", 0]   // ses axes comptent à part (maitriseGrandTest)
 };

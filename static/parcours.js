@@ -36,7 +36,11 @@ const PARCOURS = [
   { id: "autres", titre: "Nous et les autres",
     promesse: "Le groupe, l'autorité et l'attribution : comment les autres pèsent sur notre jugement.",
     conclusion: "Penser par soi-même n'est pas penser seul : c'est savoir quand le groupe nous éclaire et quand il nous entraîne. Repérez la prochaine fois où vous vous êtes rangé à l'avis général sans l'examiner.",
-    etapes: ["f:biais:conformisme", "a:plusieurs", "f:biais:pensee-groupe", "f:biais:attribution", "a:debat-a-deux", "f:biais:endogroupe", "f:biais:faux-consensus", "f:biais:autorite", "q"] }
+    etapes: ["f:biais:conformisme", "a:plusieurs", "f:biais:pensee-groupe", "f:biais:attribution", "a:debat-a-deux", "f:biais:endogroupe", "f:biais:faux-consensus", "f:biais:autorite", "q"] },
+  { id: "en-ligne", titre: "Ne pas se faire avoir en ligne",
+    promesse: "Les leviers des arnaques, les signes qui trahissent un message, et des mots de passe qui résistent.",
+    conclusion: "Une arnaque presse, menace ou promet, et demande ce qu'on ne demande jamais par message. Le bon réflexe passe toujours par un autre chemin : le numéro que vous connaissez, l'adresse que vous tapez vous-même. Notez le prochain message douteux que vous aurez démonté.",
+    etapes: ["f:biais:autorite", "a:hameconnage", "f:biais:aversion-perte", "f:sophismes:ad-baculum", "a:laterale", "f:biais:conformisme", "f:sophismes:emotion", "a:mots-de-passe", "q"] }
 ];
 
 // Une étape est-elle faite ? (d : lectures, résultats, mémoire, quiz ciblés réussis)

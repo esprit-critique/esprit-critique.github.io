@@ -21,7 +21,7 @@ pour l'utiliser comme une application.
 - **Une recherche dans tout le site** (en haut de chaque page) : fiches, ateliers, expériences de pensée, guide et lexique ; accents et casse ignorés, « B 10 » ouvre une fiche, flèches et Entrée au clavier.
 - **Planche de Galton** (section « Mélanges ») : vingt questions, une à la fois, tirées au hasard dans les jeux les plus rapides (une question peut être passée), puis un bilan avec un anneau par catégorie. Les réponses ne sont pas enregistrées.
 - **Un défi du jour** : dix questions difficiles, les mêmes pour tout le monde, une tentative par jour.
-- **49 ateliers**, en six sections, dont le Grand test :
+- **51 ateliers**, en sept sections, dont le Grand test :
   - *le monde en chiffres* : état du monde, causes de décès, duels entre 155 pays (démographie, économie,
     géopolitique), cartes mentales, ordres de grandeur, chronologie ;
   - *mesurer sa confiance* : vrai ou faux avec degré de certitude, intervalles à 90 %, effet d'ancrage,
@@ -37,6 +37,8 @@ pour l'utiliser comme une application.
     reformuler sans trahir, un débat minuté à deux sur un même téléphone, qui doit prouver, la pyramide du désaccord,
     démonter un argument (rôle de chaque phrase, puis arbre de l'argument), la lecture latérale (sites fictifs) et
     un bingo des sophismes à imprimer (`#bingo/<graine>` : la même grille pour tous les joueurs) ;
+  - *se protéger en ligne* : vrai message ou hameçonnage (fausses alertes comprises, avec « Trouver l'indice »),
+    et « Lequel résiste le plus longtemps ? » (mots de passe : l'entropie calculée, repère de la CNIL) ;
   - *philosopher* : expériences de pensée, citations vraies ou fausses, la cécité au choix (à ne faire qu'une fois).
 - **S'entraîner** : chaque fiche de sophisme propose trois mini-exercices tirés des débats.
 - **Un portrait** qui rassemble ce que vos réponses révèlent : étalonnage, ancrage, perception du hasard…

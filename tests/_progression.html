@@ -193,7 +193,7 @@ f.onload = async () => {
     const PARC = ev("PARCOURS");
     const inconnues = [];
     PARC.forEach(p => p.etapes.forEach(e => { try { ev("descriptionEtape")(e, p); } catch (x) { inconnues.push(p.id + " " + e); } }));
-    ok("parcours : " + PARC.length + " parcours, toutes leurs fiches et tous leurs ateliers existent", PARC.length === 8 && !inconnues.length, inconnues.join(", "));
+    ok("parcours : " + PARC.length + " parcours, toutes leurs fiches et tous leurs ateliers existent", PARC.length === 9 && !inconnues.length, inconnues.join(", "));
     ok("parcours : chacun se termine par le quiz ciblé (Premiers pas : puis la première série)", PARC.every(p => p.etapes.includes("q") && (p.etapes[p.etapes.length - 1] === "q" || p.id === "premiers-pas")));
     // Joueur simulé : chaque étape faite, parcours par parcours
     const fichesParc = [...new Set(PARC.flatMap(p => p.etapes.filter(e => e.startsWith("f:")).map(e => e.slice(2))))];
@@ -223,7 +223,7 @@ f.onload = async () => {
     ok("parcours : revenir ne redonne pas de points", JSON.parse(w.localStorage.getItem("lucidite")).total === luc1);
     w.location.hash = "parcours";
     await pause(200);
-    ok("page des parcours : huit cartes", d2.querySelectorAll("#vue-parcours .carte-parcours").length === 8);
+    ok("page des parcours : neuf cartes", d2.querySelectorAll("#vue-parcours .carte-parcours").length === 9);
     w.location.hash = "parcours/premiers-pas/quiz";
     await pause(200);
     for (let k = 0; k < 5; k++) {
