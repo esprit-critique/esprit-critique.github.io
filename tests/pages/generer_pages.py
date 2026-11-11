@@ -7,7 +7,7 @@ import os, re, html, base64, hashlib
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "..", "static")
-MAJ = "30 octobre 2026"
+MAJ = "11 novembre 2026"
 
 # Même CSP et même script de thème que la page principale de la langue (le script est autorisé par son empreinte) :
 # la page française redirige vers en/ si l'anglais a été choisi, la page anglaise non, d'où un gabarit par langue
@@ -120,7 +120,8 @@ page("confidentialite.html", "Politique de confidentialité", "Esprit critique n
         <h2>Ce qui reste dans votre navigateur</h2>
         <p>Votre progression est enregistrée dans le stockage local de votre navigateur (« localStorage ») : fiches acquises,
         réponses et révisions du quiz, résultats et niveaux des ateliers, prévisions et décisions que vous notez, repérages,
-        thème choisi. Ces données ne quittent jamais votre appareil ; l'éditeur n'y a pas accès. Elles servent uniquement
+        fiches lues, parcours suivis, maîtrise, grade, points de lucidité et distinctions, objectif du jour, pseudonyme
+        (facultatif) et réglages (thème, animations, mode sobre). Ces données ne quittent jamais votre appareil ; l'éditeur n'y a pas accès. Elles servent uniquement
         au fonctionnement que vous demandez : ce stockage strictement nécessaire n'exige pas de consentement (article 82
         de la loi Informatique et Libertés), d'où l'absence de bandeau.</p>
         <p>Le site garde aussi, dans votre navigateur, jusqu'à quatre copies de cette progression : une par jour, et une juste
@@ -138,7 +139,11 @@ page("confidentialite.html", "Politique de confidentialité", "Esprit critique n
         documentation, l'adresse IP des visiteurs est enregistrée et conservée pour des raisons de sécurité. L'éditeur n'a pas
         accès à ces journaux. Voir la <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement">déclaration de confidentialité de GitHub</a>.</p>
         <h2>Partage</h2>
-        <p>Le bouton « Partager » ouvre le menu de partage de votre appareil, ou copie le lien : le site n'envoie rien lui-même.</p>
+        <p>Le bouton « Partager » ouvre le menu de partage de votre appareil, ou copie le lien : le site n'envoie rien lui-même.
+        Les images « Partager cette carte » et « Partager mon grade » sont dessinées sur votre appareil, puis confiées au menu
+        de partage ou enregistrées dans vos fichiers : elles ne passent par aucun serveur.</p>
+        <p>Installer le site comme une application (écran d'accueil) ne transmet rien non plus : votre appareil garde la page
+        et ses fichiers.</p>
         <h2>Contact et réclamation</h2>
         <p>Pour toute question : <a href="{DEPOT}/issues">tickets du dépôt</a>. Vous pouvez aussi adresser une réclamation à la
         CNIL (<a href="https://www.cnil.fr">cnil.fr</a>).</p>''')
@@ -154,7 +159,9 @@ page("cgu.html", "Conditions d'utilisation", "Conditions d'utilisation du site E
         <h2>Nature des contenus</h2>
         <p>Les contenus ont un but pédagogique. Ils sont sourcés et vérifiés avec soin, mais peuvent contenir des erreurs :
         signalez-les. Ils ne constituent ni un avis médical, ni un conseil financier, juridique ou psychologique. Les tests
-        et bilans proposés (portrait, bilan avant et après…) sont des exercices, non des évaluations validées.</p>
+        et bilans proposés (portrait, bilan avant et après…) sont des exercices, non des évaluations validées. La maîtrise,
+        les grades et les points mesurent la réussite dans les jeux du site, pas l'intelligence ni l'esprit critique ; ils ne
+        comparent personne à personne.</p>
         <p>Les situations, débats, sites et organismes des exercices sont fictifs.</p>
         <h2>Vos données</h2>
         <p>Votre progression reste dans votre navigateur : voir la <a href="confidentialite.html">politique de confidentialité</a>.
@@ -182,7 +189,7 @@ page("404.html", "Page introuvable", "Cette adresse n'existe pas sur Esprit crit
           <li><a href="/#guide">Le guide</a></li>
         </ul>''', racine="/", indexer=False)
 # ---------------------------------------------------------------- pages anglaises (static/en/)
-MAJ_EN = "30 October 2026"
+MAJ_EN = "11 November 2026"
 PIED_EN = ("legal-notice.html", "privacy.html", "terms.html")
 
 page("legal-notice.html", "Legal notice", "Publisher, host and licences of the Esprit critique website.", f'''        <h1>Legal notice</h1>
@@ -217,8 +224,9 @@ page("privacy.html", "Privacy policy", "Esprit critique collects no personal dat
         no cookies, no audience tracking, no advertising, and no external resources (fonts, scripts or images from other sites).</p>
         <h2>What stays in your browser</h2>
         <p>Your progress is saved in your browser’s local storage (“localStorage”): entries marked as learned, quiz answers
-        and reviews, workshop results and levels, forecasts and decisions you record, anything you have spotted, and the
-        theme you chose. This data never leaves your device; the publisher has no access to it. It is used only to provide
+        and reviews, workshop results and levels, forecasts and decisions you record, anything you have spotted, cards read,
+        paths followed, mastery, rank, clarity points and distinctions, daily goal, nickname (optional) and settings (theme,
+        animations, plain mode). This data never leaves your device; the publisher has no access to it. It is used only to provide
         the features you ask for: this strictly necessary storage does not require consent (Article 82 of the French Data
         Protection Act), which is why there is no banner.</p>
         <p>The site also keeps, in your browser, up to four copies of this progress: one per day, and one just before an
@@ -236,7 +244,10 @@ page("privacy.html", "Privacy policy", "Esprit critique collects no personal dat
         documentation, visitors’ IP addresses are recorded and kept for security reasons. The publisher has no
         access to these logs. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub’s privacy statement</a>.</p>
         <h2>Sharing</h2>
-        <p>The “Share” button opens your device’s sharing menu, or copies the link: the site itself sends nothing.</p>
+        <p>The “Share” button opens your device’s sharing menu, or copies the link: the site itself sends nothing.
+        The “Share this card” and “Share my rank” images are drawn on your device, then handed to the sharing menu or saved
+        to your files: they go through no server.</p>
+        <p>Installing the site as an app (home screen) sends nothing either: your device keeps the page and its files.</p>
         <h2>Contact and complaints</h2>
         <p>For any question: <a href="{DEPOT}/issues">the repository’s issues</a>. You may also lodge a complaint with the
         CNIL, the French data protection authority (<a href="https://www.cnil.fr/en">cnil.fr</a>).</p>''', langue="en", pied=PIED_EN)
@@ -252,7 +263,9 @@ page("terms.html", "Terms of use", "Terms of use of the Esprit critique website:
         <h2>Nature of the content</h2>
         <p>The content is educational. It is sourced and checked with care, but may contain errors:
         please report them. It is neither medical advice nor financial, legal or psychological advice. The tests
-        and assessments offered (portrait, before-and-after assessment…) are exercises, not validated evaluations.</p>
+        and assessments offered (portrait, before-and-after assessment…) are exercises, not validated evaluations. Mastery,
+        ranks and points measure success in the site’s games, not intelligence or critical thinking; they compare no one
+        with anyone.</p>
         <p>The situations, debates, websites and organisations in the exercises are fictional.</p>
         <h2>Your data</h2>
         <p>Your progress stays in your browser: see the <a href="privacy.html">privacy policy</a>.
