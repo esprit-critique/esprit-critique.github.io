@@ -9,7 +9,8 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 |---|---|---|---|
 | 0 — Filet de sécurité | `refonte/lot-0` | #6 | fusionné |
 | 1 — Protéger le site | `refonte/lot-1` | #7 | fusionné (alerte CodeQL « certitudes » classée faux positif par le propriétaire) |
-| 2 à 8 | — | — | à faire |
+| 2 — Identité visuelle | `refonte/lot-2` | #8 (brouillon) | en cours : voir « Lot 2 » plus bas |
+| 3 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
 
@@ -81,6 +82,31 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 - `tests/securite.py` : éprouvé sur un fichier piégé (14 problèmes relevés sur 14) et sur une CSP faussée.
 - `security.txt` expire le 1er novembre 2027 ; le contrôle échoue à partir du 2 octobre 2027.
 - CodeQL v4.39.3, Dependabot (actions chaque semaine, npm chaque mois).
+
+### Lot 2
+
+Fait (branche `refonte/lot-2`, PR #8) :
+- `DESIGN.md` version 2 ; jetons (`--rayon-bouton` 10 px, `--rayon-carte` 12 px, le bas de la fourchette du brief,
+  car le propriétaire avait demandé fin octobre « pas de coins très arrondis » ; `--ombre-1/2`, `--carte-haute`,
+  durées, `--courbe`, largeurs) ; cartes à jouer ; titres 40 à 56 px ; grands nombres 64 à 80 px.
+- Filet du spectre (app.js, `dessinerSpectre`) ; en-tête sur une ligne dès 1 040 px ; page de 1 120 px.
+- Accueil : ouverture (date, série, action principale ; nouveau visiteur : emblème et un seul bouton), « Le programme
+  du jour » (trois cases fait / à faire), deux colonnes dès 1 040 px. Écart : l'illusion du jour est en tête de la colonne
+  latérale ; sur téléphone elle vient donc après les cartes du jour (le brief la place juste après le programme).
+- L'illusion du jour (`static/illusions.js`, `dico-illusions.js`) : 9 illusions, sources vérifiées le 11 novembre
+  (Gregory et Heard 1979 sur richardgregory.org ; Kanizsa 1955, Rivista di Psicologia 49:7-30 ; Zöllner 1860,
+  Annalen der Physik, DOI 10.1002/andp.18601860712 ; Hering 1861, Beiträge zur Physiologie ; Jastrow 1892, American
+  Journal of Psychology 4(3) — et non 1889, date de Müller-Lyer ; Chevreul 1839, Pitois-Levrault). Ponzo écarté
+  (`tests/a-verifier.md`). Scénario de capture `illusions` dans `_visu.html`.
+- Fiche : indice en coin, rail collant (sommaire, carte suivante, carte au hasard) dès 1 040 px, barre d'actions
+  collante sous 760 px.
+- Transitions de vue (`transitionDeVue`, pas dans un cadre), `view-transition-name: titre-fiche` entre liste et fiche.
+- Glyphes des 14 catégories (`GLYPHES_CATEGORIE`, champ `glyphe` ajouté aux catégories de `donnees.js`, car
+  `en/fiches.js` remplace leur nom).
+- Réglage « Animations » (clé `reglages`), `animer()`, `data-animations="reduites"` ; banc du mouvement dans `_test`.
+
+Reste : états vides dessinés ; raccourcis du manifeste et image d'aperçu ; passes écran par écran (quiz, bilan,
+ateliers, atelier, portrait, guide, pages fixes) en clair et en sombre ; captures pour la PR.
 
 ## État des lieux (lot 0, commit cb90ed8)
 
