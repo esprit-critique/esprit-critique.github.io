@@ -262,11 +262,12 @@ function ongletEnsemble(p, m, etat) {
 function ongletJeux(p, m) {
   SECTIONS_ATELIERS.filter(s => s.id !== "melange").forEach(section => {
     const dom = section.id === "philosopher" ? "raisonner" : section.id;
+    const domaineConnu = DOMAINES.some(([d]) => d === dom);
     const lignes = tousLesAteliers().filter(a => a.atelier.section === section.id && MAITRISE_JEUX[a.atelier.id] && MAITRISE_JEUX[a.atelier.id][1] !== "aucun")
       .map(a => { const v = m.jeux[a.atelier.id] ? m.jeux[a.atelier.id][1] : 0; return [a.atelier.titre, resultatAtelier(a.atelier.id) ? v : null, a.atelier.couleur]; });
     if (!lignes.length) return;
     p.appendChild(graphiqueBarres(T("{0} : maîtrise de chaque jeu (repères 500, 750, 1 000 : plafonds des niveaux 1, 2 et 3)", section.titre), lignes, 1000, [500, 750]));
-    if (section.id !== "philosopher") p.appendChild(el("p", "source", T("Maîtrise du domaine : {0}. Un jeu jamais joué compte pour zéro.", m.domaines[dom])));
+    if (domaineConnu) p.appendChild(el("p", "source", T("Maîtrise du domaine : {0}. Un jeu jamais joué compte pour zéro.", m.domaines[dom])));
   });
 }
 

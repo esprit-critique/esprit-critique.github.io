@@ -178,7 +178,7 @@ page("404.html", "Page introuvable", "Cette adresse n'existe pas sur Esprit crit
           <li><a href="/#biais">Les 51 biais cognitifs</a></li>
           <li><a href="/#sophismes">Les 39 sophismes</a></li>
           <li><a href="/#quiz">Le quiz</a></li>
-          <li><a href="/#ateliers">Les 49 ateliers</a></li>
+          <li><a href="/#ateliers">Les 51 ateliers</a></li>
           <li><a href="/#guide">Le guide</a></li>
         </ul>''', racine="/", indexer=False)
 # ---------------------------------------------------------------- pages anglaises (static/en/)

@@ -249,6 +249,9 @@ f.onload = async () => {
       w.localStorage.setItem("parcours", JSON.stringify({ actif: "hasard" }));
       await aller("parcours/hasard"); await pause(300);
     },
+    // Lot 7 : hameçonnage après réponse et indice trouvé ; mots de passe après réponse
+    "hameconnage": async () => { await aller("tests/hameconnage"); choix(0); await pause(80); const s = vue().querySelector(".segment-indice"); if (s) s.click(); await pause(200); w.scrollTo(0, vue().querySelector(".message-fictif").getBoundingClientRect().top + w.scrollY - 70); },
+    "mots-de-passe": async () => { await aller("tests/mots-de-passe"); choix(0); await pause(200); w.scrollTo(0, vue().querySelector(".consigne").getBoundingClientRect().top + w.scrollY - 70); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
     "donnees": async () => { await aller("guide/donnees"); },
     "quiz": async () => { await aller("quiz"); },

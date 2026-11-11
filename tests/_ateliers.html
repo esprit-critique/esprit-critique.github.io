@@ -50,7 +50,7 @@ f.onload = async () => {
     await aller("ateliers");
     const nbJeux = w.eval("JEUX.length"), nbExp = w.eval("EXPERIENCES.length");
     ok("page ateliers : " + (nbJeux + nbExp) + " cartes", vue().querySelectorAll(".atelier").length === nbJeux + nbExp);
-    ok("page ateliers : 7 sections (mélanges compris)", vue().querySelectorAll(".section-ateliers").length === 7);
+    ok("page ateliers : 8 sections (mélanges et « Se protéger en ligne » compris)", vue().querySelectorAll(".section-ateliers").length === 8);
     ok("page ateliers : un pictogramme par carte", vue().querySelectorAll(".atelier svg.picto path, .atelier svg.picto circle, .atelier svg.picto rect").length > 3 * (nbJeux + nbExp));
     ok("page ateliers : suggestion pour commencer", !!vue().querySelector(".conseil a"));
     ok("page ateliers : l'illusion ouvre la section Percevoir", vue().querySelectorAll(".section-ateliers")[3].querySelector(".atelier").getAttribute("href") === "#chiffres/illusion");
@@ -109,7 +109,7 @@ f.onload = async () => {
 
     const generiques = ["#chiffres/monde", "#chiffres/mortalite", "#chiffres/pays", "#chiffres/nord", "#chiffres/grandeurs", "#chiffres/chronologie",
       "#chiffres/vrai-faux", "#chiffres/illusion", "#chiffres/hasard", "#chiffres/correlation", "#chiffres/graphiques",
-      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations", "#tests/debat-truque", "#tests/reparer", "#tests/reformuler", "#tests/logique", "#tests/moniteur", "#tests/etudes", "#tests/wald", "#tests/qui-prouve", "#tests/pyramide", "#tests/foule", "#tests/demonter", "#tests/laterale"];
+      "#tests/classiques", "#tests/depistage", "#tests/pensee", "#tests/citations", "#tests/debat-truque", "#tests/reparer", "#tests/reformuler", "#tests/logique", "#tests/moniteur", "#tests/etudes", "#tests/wald", "#tests/qui-prouve", "#tests/pyramide", "#tests/foule", "#tests/demonter", "#tests/laterale", "#tests/hameconnage", "#tests/mots-de-passe"];
     for (const a of generiques) {
       const avant = erreursJS.length;
       for (let partie = 0; partie < 3; partie++) {

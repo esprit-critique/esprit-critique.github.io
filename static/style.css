@@ -1753,3 +1753,14 @@ h3.titre-bloc {
 .code-synchro { margin-top: 14px; padding: 12px 14px; border: 1px dashed var(--trait); border-radius: var(--rayon-carte); }
 .code-synchro-valeur { font-family: var(--mono); font-size: 22px; letter-spacing: 0.08em; margin: 4px 0 8px; }
 @media print { body * { visibility: hidden; } .code-synchro, .code-synchro * { visibility: visible; } .code-synchro { position: absolute; top: 0; left: 0; } }
+
+/* Se protéger en ligne (enligne.js) */
+.message-fictif { margin: 6px 0 14px; padding: 12px 14px; border: 1px solid var(--trait); border-radius: var(--rayon-carte); background: var(--encadre); }
+.message-canal { margin: 0 0 6px; font-size: 13px; color: var(--discret); overflow-wrap: anywhere; }
+.message-morceau { margin: 0 0 4px; overflow-wrap: anywhere; }
+.message-morceau.indice-revele { background: color-mix(in srgb, var(--orange) 22%, transparent); border-radius: var(--rayon); }
+.indices-message { display: grid; gap: 6px; margin: 6px 0 10px; }
+.segment-indice { text-align: left; min-height: 44px; padding: 8px 12px; border: 1px dashed var(--trait); border-radius: var(--rayon-bouton); background: var(--carte); overflow-wrap: anywhere; }
+.segment-indice.juste { border-style: solid; border-color: var(--vert); }
+.segment-indice.faux { border-style: solid; border-color: var(--rouge); text-decoration: line-through; text-decoration-color: var(--rouge); }
+.choix.mot-de-passe { font-family: var(--mono); overflow-wrap: anywhere; }
