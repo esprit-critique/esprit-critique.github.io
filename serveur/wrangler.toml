@@ -6,7 +6,7 @@ compatibility_date = "2026-10-01"
 [[d1_databases]]
 binding = "BASE"
 database_name = "esprit-critique-synchro"
-database_id = "A-REMPLACER"
+database_id = "5178d7d8-15e4-465d-a837-013b0c5729a3"
 
 # Limitation des créations de coffres : approximative et locale à chaque centre de données (documentation Cloudflare)
 [[ratelimits]]
