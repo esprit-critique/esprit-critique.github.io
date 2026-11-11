@@ -1,5 +1,5 @@
 // Banc « synchro » (lot 6), Playwright :
-//   1. drapeau vide (vraie page, avec sa CSP) : aucune requête ne part vers une autre origine, sur une vingtaine d'adresses ;
+//   1. vraie page, sans compte (avec sa CSP) : aucune requête ne part vers une autre origine, sur une vingtaine d'adresses ;
 //   2. drapeau pointé sur un serveur local (copie d'essai _site-synchro.html, coffre pointé sur serveur/serveur-local.mjs) :
 //      un compte créé dans un navigateur, connecté dans un second, modifications des deux côtés, fusion vérifiée ;
 //      un contenu altéré d'un seul bit est refusé sans toucher aux données locales.
@@ -21,8 +21,10 @@ const ok = (libelle, condition, detail = '') => { if (!condition) echecs++; cons
     await p.goto(SITE + '#' + h, { waitUntil: 'load' });
     await p.waitForTimeout(150);
   }
-  ok('drapeau vide : aucune requête vers une autre origine sur 18 adresses', ailleurs.length === 0, ailleurs.slice(0, 5).join(' '));
-  ok('drapeau vide : rien sur la synchronisation dans les réglages', !(await p.$('.bloc-synchro')) && (await p.$eval('.etat-synchro', e => e.hidden)));
+  ok('sans compte : aucune requête vers une autre origine sur 18 adresses', ailleurs.length === 0, ailleurs.slice(0, 5).join(' '));
+  await p.goto(SITE + '#profil/reglages', { waitUntil: 'load' });
+  await p.waitForSelector('.bloc-synchro', { timeout: 5000 }).catch(() => {});
+  ok('sans compte : le bloc de synchronisation est proposé, l\'indicateur reste caché', !!(await p.$('.bloc-synchro')) && (await p.$eval('.etat-synchro', e => e.hidden)));
   await ctx.close();
 
   // ---------- 2. Deux navigateurs, un serveur local ----------

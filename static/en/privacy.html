@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://esprit-critique-synchro.esprit-critique-synchro.workers.dev; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Privacy policy · Esprit critique</title>
-  <meta name="description" content="Esprit critique collects no personal data: no account, no cookies, no audience tracking.">
+  <meta name="description" content="Esprit critique collects no personal data: no account by default, no cookies or audience tracking; optional sync, encrypted on your device.">
   <link rel="canonical" href="https://esprit-critique.github.io/en/privacy.html">
   <link rel="icon" href="../favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="../icone-32.png?v=3" sizes="32x32" type="image/png">
@@ -33,13 +33,14 @@
       <article class="carte texte-fixe">
         <h1>Privacy policy</h1>
         <p class="source">Last updated 11 November 2026.</p>
-        <p><strong>In short: the publisher collects no personal data.</strong> The site has no account, no form sent to a server,
-        no cookies, no audience tracking, no advertising, and no external resources (fonts, scripts or images from other sites).</p>
+        <p><strong>In short: the publisher collects no personal data.</strong> No account by default: your progress stays in your
+        browser. No cookies, audience tracking, advertising or external resources (fonts, scripts or images from other sites).
+        If you turn on sync, a copy encrypted on your device is kept by a host; no one but you can read it, not even the publisher.</p>
         <h2>What stays in your browser</h2>
         <p>Your progress is saved in your browser’s local storage (“localStorage”): entries marked as learned, quiz answers
         and reviews, workshop results and levels, forecasts and decisions you record, anything you have spotted, cards read,
         paths followed, mastery, rank, clarity points and distinctions, daily goal, nickname (optional) and settings (theme,
-        animations, plain mode). This data never leaves your device; the publisher has no access to it. It is used only to provide
+        animations, plain mode). Without sync, this data never leaves your device; the publisher never has access to it. It is used only to provide
         the features you ask for: this strictly necessary storage does not require consent (Article 82 of the French Data
         Protection Act), which is why there is no banner.</p>
         <p>The site also keeps, in your browser, up to four copies of this progress: one per day, and one just before an
@@ -52,6 +53,14 @@
           <li>Erase it: “Erase my progress”, in the same place (the automatic copies are erased too), or by clearing the site’s browsing data.</li>
           <li>The files the site creates (backup, .ics calendar) are produced on your device and are not sent anywhere.</li>
         </ul>
+        <h2>Sync (optional)</h2>
+        <p>If you turn it on (Profile, Settings), your progress is encrypted in your browser (AES-256-GCM) before being sent.
+        What is sent: this encrypted content, unreadable without your code; its size; an identifier and a token derived from
+        your code. The server’s host (Cloudflare), like any host, sees the IP address of requests. The data is kept in a
+        database located in the European Union, for as long as you use it, and deleted automatically after 24 months without
+        a write. You can delete it at any time: Profile, Settings, “Delete the online copy”. No email address, name or
+        password is collected; the site cannot recover a lost code. The code is kept on your signed-in devices so that it
+        can be shown again.</p>
         <h2>The host</h2>
         <p>The site is hosted by GitHub Pages. Like any host, GitHub receives requests for pages: according to its
         documentation, visitors’ IP addresses are recorded and kept for security reasons. The publisher has no

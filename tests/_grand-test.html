@@ -86,7 +86,7 @@ f.onload = async () => {
     ok("essai : la route ouvre « Le Grand test »", vue().id === "vue-tests" && /Le Grand test/.test(vue().querySelector("h1").textContent));
     ok("essai : accueil avec les deux parcours et leur durée", /Commencer le test express/.test(vue().textContent) && /Commencer le test complet/.test(vue().textContent) && /12 à 15 minutes/.test(vue().textContent));
     ok("essai : « Ce que le test ne mesure pas » sur l'accueil, liste complète", /Ce que le test ne mesure pas/.test(vue().textContent) && vue().querySelectorAll(".gt-limites li").length === 8);
-    ok("essai : la consigne dit que rien n'est envoyé", /ne sont pas envoyées/.test(vue().textContent));
+    ok("essai : la consigne dit où restent les réponses (navigateur, ou copie chiffrée si synchronisation)", /restent dans votre navigateur \(ou dans votre copie chiffrée/.test(vue().textContent));
 
     // --- État vide, passation, réponses ---
     const E = s => w.eval(s);

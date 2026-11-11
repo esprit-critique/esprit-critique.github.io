@@ -55,7 +55,7 @@ sed -e 's/^const GRAND_TEST_VISIBLE = false;$/const GRAND_TEST_VISIBLE = true;/'
   static/grand-test.js > static/_grand-test-essai.js
 sed 's/src="grand-test.js"/src="_grand-test-essai.js"/' static/_site.html > static/_site-grand.html
 # Copie d'essai de la synchronisation : coffre pointé sur le serveur local (serveur/serveur-local.mjs) ; rien n'est modifié dans static/
-sed 's|^const SYNCHRO_URL = "";|const SYNCHRO_URL = "http://localhost:8787";|' static/coffre.js > static/_coffre-essai.js
+sed 's|^const SYNCHRO_URL = "[^"]*";|const SYNCHRO_URL = "http://localhost:8787";|' static/coffre.js > static/_coffre-essai.js
 sed 's/src="coffre.js"/src="_coffre-essai.js"/' static/_site.html > static/_site-synchro.html
 if ! curl -s -o /dev/null http://localhost:8000/; then
   python3 app.py > /dev/null 2>&1 &

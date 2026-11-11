@@ -5,7 +5,7 @@
   <!-- English version of ../index.html. Same structure, same ids, same scripts: only the text differs.
        Content security policy: the site only loads its own files. The only inline script (theme, below) is allowed
        by its hash: if you change it, recompute the hash (tests/lancer.sh csp reports it). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://esprit-critique-synchro.esprit-critique-synchro.workers.dev; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
   <!-- Aucune adresse de page transmise aux sites vers lesquels pointent les liens (GitHub Pages ne permet pas l'en-tête) -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -43,7 +43,7 @@
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <noscript><p class="sans-script">This site needs JavaScript to work: please turn it on in your browser settings. No data is sent anywhere.</p></noscript>
+  <noscript><p class="sans-script">This site needs JavaScript to work: please turn it on in your browser settings. Without an account, no data is sent.</p></noscript>
   <div class="conteneur">
     <header class="entete">
       <a class="marque" href="#accueil" title="The two lines are the same length">
@@ -316,7 +316,7 @@
 
         <article class="carte" id="g-donnees">
           <h2>Your data</h2>
-          <p>Your progress (cards learned and read, quiz answers, reviews, workshop results, paths, mastery, points and distinctions) is saved only in your browser. It is not sent anywhere: the site has no account, no database and no audience tracking. A copy is made every day, in this same browser (see below). Details: <a href="privacy.html">privacy policy</a>. The site is hosted by GitHub Pages, which, like any host, receives requests for pages, but never your answers.</p>
+          <p>Your progress (cards learned and read, quiz answers, reviews, workshop results, paths, mastery, points and distinctions) is saved only in your browser. By default, it is not sent anywhere: no account required, no audience tracking. If you turn on sync between devices (Profile, Settings), a copy encrypted on your device is kept online; no one but you can read it. A copy is made every day, in this same browser (see below). Details: <a href="privacy.html">privacy policy</a>. The site is hosted by GitHub Pages, which, like any host, receives requests for pages, but never your answers.</p>
           <p class="source">Titles set in Newsreader (Production Type), under the SIL OFL licence.</p>
           <p>If you clear your browsing data, your progress disappears. To keep it, or to carry it over to another device (from computer to phone, for instance), save it to a file, then open that file from the other device.</p>
           <div class="actions actions-donnees">
@@ -361,7 +361,7 @@
     </main>
 
     <footer class="pied">
-      <p>Esprit critique · sourced content · your progress stays in your browser</p>
+      <p>Esprit critique · sourced content · your progress stays in your browser, unless you use encrypted sync</p>
       <p><button class="lien" id="btn-partager">Share the site</button> · <a href="https://github.com/esprit-critique/esprit-critique.github.io">Source code</a> · <a href="#guide/donnees">Your data</a></p>
       <p><a href="legal-notice.html">Legal notice</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms of use</a></p>
       <p class="choix-theme" role="group" aria-label="Display theme">Theme:
