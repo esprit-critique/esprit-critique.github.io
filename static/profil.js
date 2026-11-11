@@ -207,9 +207,14 @@ function afficherPageProfil(onglet) {
   const panneau = el("div", "panneau-profil");
   panneau.setAttribute("role", "tabpanel");
   zone.appendChild(panneau);
-  // Onglet tiré de l'adresse : choisi dans une table fermée, avec la vue d'ensemble par défaut
-  const rendus = new Map([["ensemble", ongletEnsemble], ["jeux", ongletJeux], ["notions", ongletNotions], ["distinctions", ongletDistinctions], ["reglages", ongletReglages]]);
-  (rendus.get(ongletProfil) || ongletEnsemble)(panneau, m, etat);
+  // Onglet tiré de l'adresse : choix fermé, la vue d'ensemble par défaut
+  switch (ongletProfil) {
+    case "jeux": ongletJeux(panneau, m, etat); break;
+    case "notions": ongletNotions(panneau, m, etat); break;
+    case "distinctions": ongletDistinctions(panneau, m, etat); break;
+    case "reglages": ongletReglages(panneau, m, etat); break;
+    default: ongletEnsemble(panneau, m, etat);
+  }
 }
 
 // Jeu mesuré le plus faible (ou jamais joué) du domaine le plus faible
