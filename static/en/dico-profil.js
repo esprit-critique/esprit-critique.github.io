@@ -73,5 +73,17 @@ EN_AJOUTER([
   ["moins d'une", "fewer than one"],
   ["Votre score face au hasard : les scores qu'on obtiendrait en répondant au hasard", "Your score against chance: the scores you would get answering at random"],
   ["Image enregistrée : {0}", "Image saved: {0}"],
-  ["La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence.", "Mastery measures success in the site’s games, not intelligence."]
+  ["La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence.", "Mastery measures success in the site’s games, not intelligence."],
+  ["Bienvenue", "Welcome"],
+  ["Bienvenue · {0} sur 3", "Welcome · {0} of 3"],
+  ["Un site qui commence par vous tromper", "A site that starts by fooling you"],
+  ["Combien de temps par jour ?", "How much time a day?"],
+  ["L'objectif du jour se compte en points de lucidité : une série de quiz bien répondue en rapporte plusieurs dizaines. Vous pourrez le changer dans votre profil.", "The daily goal is counted in clarity points: a well-answered quiz series earns several dozen. You can change it in your profile."],
+  ["Tranquille : 30 points", "Relaxed: 30 points"],
+  ["Régulier : 60 points", "Regular: 60 points"],
+  ["Intensif : 100 points", "Intensive: 100 points"],
+  ["« Premiers pas » fait le tour du site en trois quarts d'heure : une illusion, deux fiches, un test de réflexion, un quiz. Rien n'est verrouillé : tout reste ouvert.", "“First steps” tours the site in three quarters of an hour: an illusion, two cards, a reflection test, a quiz. Nothing is locked: everything stays open."],
+  ["Plutôt le quiz", "The quiz instead"],
+  ["Passer l'accueil", "Skip the welcome"],
+  ["Ces deux traits ont la même longueur", "These two lines are the same length"]
 ]);

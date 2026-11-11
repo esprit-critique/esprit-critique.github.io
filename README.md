@@ -42,6 +42,13 @@ pour l'utiliser comme une application.
   - *philosopher* : expériences de pensée, citations vraies ou fausses, la cécité au choix (à ne faire qu'une fois).
 - **S'entraîner** : chaque fiche de sophisme propose trois mini-exercices tirés des débats.
 - **Un portrait** qui rassemble ce que vos réponses révèlent : étalonnage, ancrage, perception du hasard…
+- **Relancer le hasard** : une fiche tirée au hasard ouvre un bandeau de tirage (touche R, carte précédente, périmètre) ;
+  un mode « Cartes » recto verso ; un défi libre partageable (`#defi/<graine>`) ; l'illusion du jour sur l'accueil.
+- **Des parcours** : neuf chemins à travers les fiches et les ateliers (« Premiers pas », « Les chiffres qui trompent »…),
+  avec un quiz ciblé ; rien n'est verrouillé.
+- **Des images à partager** (une fiche, son grade), dessinées sur l'appareil ; l'aide des raccourcis clavier (touche `?`).
+- **Synchronisation chiffrée** entre appareils, facultative et sans adresse électronique : prête (dossier `serveur/`),
+  pas encore en service.
 - **Maîtrise, grades et points** : une maîtrise de 0 à 1 000, commune à tous les jeux (moyenne de six domaines, un jeu
   jamais joué comptant pour zéro), dix grades, des points de lucidité qui récompensent ce que le site enseigne (le barème
   du quiz paie l'étalonnage), un objectif du jour, des distinctions, un codex des 90 notions et une page Profil avec ses

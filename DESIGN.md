@@ -180,6 +180,18 @@ Sur l'accueil, une illusion d'optique dessinée en SVG, différente chaque jour 
 « Vérifier » (le mouvement de la révélation démonte l'illusion : repères, superposition, fond qui s'efface) et « Une
 autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une source (auteur, année) vérifiée.
 
+## Écrans ajoutés par la refonte (lots 3 à 8)
+
+- **Profil** (`#profil`) : en tête, blason (dessin au trait tiré du pseudonyme), insigne du grade (galons faits des
+  ailettes de l'emblème), maîtrise en grand nombre, jauge vers le grade suivant et la phrase « La maîtrise mesure votre
+  réussite dans les jeux de ce site, pas votre intelligence. » ; onglets. Graphiques selon « Graphiques ».
+- **Bouton de profil** dans l'en-tête : anneau de l'objectif du jour, insigne ; sur ordinateur, blason et maîtrise.
+- **Codex** : une roue de 90 points en 14 arcs aux couleurs des catégories, la taille dit l'état de la fiche.
+- **Parcours** : un chemin vertical, une pastille par étape (pleine et verte : fait ; bleue : prochaine étape).
+- **Moments de récompense** : une pastille « +8 » près du bouton de profil, une carte en bas d'écran pour un grade ou
+  une distinction ; jamais bloquants, fermés seuls.
+- **Images à partager** : 1 080 × 1 350, papier clair, barre de couleur de catégorie, Newsreader.
+
 ## Proscrit
 
 Le dégradé violet, le verre dépoli, les ombres lourdes, les émojis en guise d'icônes, les illustrations de banque

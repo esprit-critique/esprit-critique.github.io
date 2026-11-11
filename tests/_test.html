@@ -52,7 +52,7 @@ f.onload = async () => {
     ok("accueil visible", vue().id === "vue-accueil");
     ok("5 onglets", d.querySelectorAll(".onglet").length === 5);
     ok("onglet Accueil actif", d.querySelector(".onglet.actif").dataset.onglet === "accueil");
-    ok("situation du jour : 4 choix", vue().querySelector("article.carte").querySelectorAll(".choix").length === 4);
+    ok("situation du jour : 4 choix", [...vue().querySelectorAll("article.carte")].find(c => /Situation du jour/i.test(c.querySelector(".surtitre")?.textContent || "")).querySelectorAll(".choix").length === 4);
     ok("vrai ou faux du jour : 2 choix", vue().querySelectorAll(".vf-jour .choix").length === 2);
     ok("3 tuiles de progression", vue().querySelectorAll(".tuile").length === 3);
     ok("plus de bandeau de couleurs", !d.getElementById("bandeau"));
@@ -391,7 +391,8 @@ f.onload = async () => {
     w.localStorage.removeItem("activite"); w.localStorage.removeItem("resultatsAteliers");
     await aller("quiz"); await aller("accueil");
     const boutonOuv = vue().querySelector(".ouverture-dessin");
-    ok("ouverture : visible pour un nouveau visiteur, avant l'appel à l'action", !!boutonOuv && boutonOuv.closest(".ouverture").nextElementSibling.classList.contains("appel-action"));
+    // Nouveau visiteur : l'emblème est le premier écran de l'accueil en trois écrans (profil.js), avant l'appel à l'action
+    ok("ouverture : visible pour un nouveau visiteur, avant l'appel à l'action", !!boutonOuv && boutonOuv.closest(".carte-bienvenue").nextElementSibling.classList.contains("appel-action"));
     boutonOuv.click();
     ok("ouverture : toucher révèle les repères (aria-pressed)", boutonOuv.getAttribute("aria-pressed") === "true" && boutonOuv.querySelector("svg").classList.contains("revele"));
     w.localStorage.setItem("activite", JSON.stringify([w.eval("aujourdHui()")]));

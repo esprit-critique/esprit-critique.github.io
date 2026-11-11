@@ -782,8 +782,10 @@ function afficherAccueil() {
   if (serie > 0) ligneDate.appendChild(el("span", "serie-jours", serie > 1 ? T("{0} jours d'affilée", serie) : T("1 jour d'affilée")));
   tete.append(ligneDate, el("h1", "page-titre", "Aujourd'hui"));
   tete.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
-  // Nouveau visiteur (aucune activité, aucun atelier) : l'emblème en grand, première leçon du site, et un seul bouton
-  if (nouveau) tete.appendChild(ouverture());
+  // Nouveau visiteur (aucune activité, aucun atelier) : l'accueil en trois écrans (profil.js), sinon l'emblème en grand
+  const bienvenue = nouveau ? carteBienvenue() : null;
+  if (bienvenue) tete.appendChild(bienvenue);
+  else if (nouveau) tete.appendChild(ouverture());
   const nbAReviser = clesAReviser().length;
   const appel = el("div", "appel-action");
   const etape = prochaineEtape();

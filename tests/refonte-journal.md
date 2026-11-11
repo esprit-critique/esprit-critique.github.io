@@ -16,7 +16,8 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | 5 — Parcours | `refonte/lot-5` | #12 | fusionné |
 | 6 — Synchronisation chiffrée | `refonte/lot-6` | #13 | fusionné, drapeau vide ; mise en service : étape manuelle du propriétaire (serveur/README.md) |
 | 7 — Cybersécurité | `refonte/lot-7` | #14 | fusionné |
-| 8 — Finitions (1re partie) | `refonte/lot-8` | #15 | fusionné ; reste : voir « Lot 8 » |
+| 8 — Finitions (1re partie) | `refonte/lot-8` | #15 | fusionné |
+| 8 — Finitions (fin) | `refonte/lot-8b` | #16 | fusionné : la refonte est terminée, voir « Bilan » |
 
 ## Écarts entre le brief et le code
 
@@ -228,11 +229,40 @@ le propriétaire) ; aide des raccourcis (touche `?`, `<dialog>` natif) ; bouton 
 sinon téléchargement). Chromium sans fenêtre déclare savoir partager des fichiers : pour vérifier l'image, le banc
 manuel remplace `navigator.canShare` (scratchpad, non versionné).
 
-**Reste à faire (prochaine session, reprendre ici)** : accueil du nouveau visiteur en trois écrans (illusion, choix de
-l'objectif, premier pas), qu'on peut passer ; captures des lots 7 et 8 sur la branche `captures` ; relecture
-d'ensemble aux deux largeurs et dans les deux thèmes ; contrôle clavier des parcours principaux ; mesure du poids de
-`static/` comparée à l'état des lieux ; README et DESIGN.md (sections lots 4 à 8) ; bilan final du journal
-(fait, écarté, restant).
+Fin (PR #16) : accueil du nouveau visiteur en trois écrans (l'illusion, l'objectif du jour, le premier pas), qu'on peut
+passer, jamais bloquant (`profil.accueilFait`) ; captures des lots 7 et 8 ajoutées aux PR #14 et #15 ; README et
+DESIGN.md à jour ; banc `progression` 63/63.
+
+Mesures (Mac du propriétaire, serveur Python local, médiane de 5 chargements de l'accueil dans Chromium) :
+- poids de `static/` : 3 217 282 octets au lot 0 → 3 509 461 (+9 %) ;
+- chargement de l'accueil : 802 ms à `cb90ed8` → 1 204 ms. Le calcul de l'accueil coûte ≈ 11 ms (maîtrise 2 ms, codex
+  6 ms, illusion 7 ms) : l'écart vient des 9 scripts ajoutés (29 au total, 1,78 Mo), servis un par un par le serveur
+  Python de mesure. Non mesuré sur GitHub Pages (HTTP/2, cache, service worker). **Régression à traiter** si elle se
+  confirme en ligne : regrouper les petits scripts de la refonte, ou charger graphiques/profil/coffre seulement à la
+  demande.
+
+## Bilan de la refonte (11 novembre 2026)
+
+**Fait** : les neuf lots (0 à 8), chacun en pull request vérifiée par l'intégration continue et fusionnée ; plus les
+demandes du propriétaire en cours de route (Planche de Galton : 20 questions, bilan en anneaux, jauge qui avance ;
+courbe de maîtrise lisible).
+
+**Écarté, et pourquoi** :
+- `trusted-types 'none'` → une règle nommée `esprit-critique` (sinon le service worker ne s'enregistre plus).
+- PICTOS et TRAITS_ENTITE non réécrits en listes d'objets : `dessinerSvg()` lit les chaînes fixes (même résultat).
+- Ponzo absent de l'illusion du jour (source primaire incertaine).
+- « Cartes jamais ouvertes » → « jamais lues » (`fichesLues`).
+- Essais du serveur sans `wrangler dev` (base D1 simulée, sans dépendance).
+- Règle CodeQL `js/clear-text-storage-of-sensitive-data` désactivée à la demande du propriétaire (faux positif récurrent).
+
+**Reste** :
+- Mise en service de la synchronisation (étape manuelle : compte Cloudflare, `serveur/README.md`, textes de
+  confidentialité proposés dans `tests/a-verifier.md`).
+- Réglages GitHub du brief §7 (protection de `main` avec « Vérifier » obligatoire, etc.), à faire par le propriétaire.
+- Temps de chargement de l'accueil (voir Lot 8) ; parts de hasard de `MAITRISE_JEUX` à affiner jeu par jeu ; la
+  distinction « Bingo » attend que l'atelier enregistre une ligne complète.
+- Contrôle avec un vrai lecteur d'écran (VoiceOver) des parcours principaux : non fait (les bancs vérifient noms
+  accessibles, focus et contraste, pas l'écoute réelle) ; partage natif des images sur un vrai téléphone : non vérifié.
 
 ## État des lieux (lot 0, commit cb90ed8)
 
