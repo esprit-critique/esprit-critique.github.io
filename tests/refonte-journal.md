@@ -7,7 +7,7 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 
 | Lot | Branche | Pull request | État |
 |---|---|---|---|
-| 0 — Filet de sécurité | `refonte/lot-0` | #6 | en cours : intégration continue à faire passer |
+| 0 — Filet de sécurité | `refonte/lot-0` | #6 | fusionné |
 | 1 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
