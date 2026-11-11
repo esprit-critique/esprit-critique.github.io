@@ -11,7 +11,9 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | 1 — Protéger le site | `refonte/lot-1` | #7 | fusionné (alerte CodeQL « certitudes » classée faux positif par le propriétaire) |
 | 2 — Identité visuelle | `refonte/lot-2` | #8 | fusionné (captures : branche `captures`, dossier `lot-2`) |
 | 3 — Relancer le hasard | `refonte/lot-3` | #9 | fusionné (captures : branche `captures`, dossier `lot-3`) |
-| 4 à 8 | — | — | à faire |
+| Planche de Galton (demande du propriétaire) | `galton-20` | #10 | fusionné : 20 questions, jauge qui suit la partie |
+| 4 — Maîtrise, grades, points | `refonte/lot-4` | #11 | fusionné (captures : branche `captures`, dossier `lot-4`) |
+| 5 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
 
@@ -131,6 +133,40 @@ Reporté aux lots 3 et 4 : bouton de profil et graphiques (lot 4), carte « Au h
 - Planche de Galton : « Passer cette question » rétablit `vus` tel qu'avant le tirage, désactivé dès qu'on répond.
 - Limite des bancs : l'observateur de visibilité, comme les transitions de vue, dépend du rendu, que le cadre sans
   fenêtre ne produit pas toujours ; le banc vérifie `noterFicheLue()` directement.
+
+### Planche de Galton (hors lots, demandes du propriétaire du 11 novembre)
+
+Partie de 12 puis 20 questions répondues (les passées ne comptent pas), bilan avec un anneau par catégorie jouée
+(part de bonnes réponses, valeurs écrites ; un anneau par catégorie plutôt qu'un camembert, qui montrerait la
+répartition des questions et non la réussite). La jauge de l'en-tête de question suivait le jeu (une question,
+donc toujours vide) : `entete()` (ateliers.js) suit la partie quand `MELANGE.actif`.
+
+### Lot 4
+
+- `static/progression.js` (pur), `static/graphiques.js`, `static/profil.js` (interface). Noms globaux en double
+  évités : `majMaitrise` (et non `majProgression`, déjà dans app.js), `afficherPageProfil` (`afficherProfil` existe
+  dans le Grand test).
+- Parts de hasard de `MAITRISE_JEUX` : déduites de la forme des questions de chaque jeu (commentaire par ligne), sans
+  relecture jeu par jeu de chaque banque : à affiner si un jeu paraît trop sévère ou trop généreux.
+- Grand test : axes A à D (proportion p) corrigés d'un hasard estimé à 1/4, pleine confiance à 10 items ; E (excès de
+  confiance) : 30 points d'écart → 0 ; F exclu (exploratoire). A et C → raisonner, B → perception, D → débattre,
+  E → confiance.
+- Points : le quiz donne le total de la série (barème par réponse, `totalSerie`, jamais négatif) une fois, au bilan ;
+  la réponse libre juste vaut 12 dans ce total. Une erreur qui place une notion nouvelle en boîte 1 n'est pas une
+  « montée de boîte » (défaut trouvé à l'essai). Seuils vérifiés par le calcul (banc) : quiz 1/3 et 3/4, duels 60 % et 6/7.
+- Distinctions : calculées à la volée (rétroactives) ; `distinctions.obtenues` sert seulement à annoncer les nouvelles ;
+  drapeaux des secrètes dans `distinctions.drapeaux` ; compteurs « À l'heure » et « Leçon retenue » dans
+  `lucidite.cumuls`. « Bingo » lit `bingo.ligne` : à vérifier quand l'atelier enregistrera une ligne complète (il ne le
+  fait pas encore : distinction pour l'instant inaccessible).
+- Série avec repos : un jour manqué est pardonné si aucun autre ne l'a été dans les sept jours suivants.
+- Simulation (banc, joueurs à 45, 70 et 92 % ; quiz et jeux notés seulement) : moyen — Élève j1, Sceptique j4,
+  Détective j7, Analyste j16, Stratège j35, Philosophe j107, 360 à six mois ; fort — Maître j92, 710 à six mois.
+  Le joueur moyen plafonne à Philosophe et non à Virtuose (brief) ; seuils non modifiés : la simulation n'inclut pas
+  les mesures particulières ni le Grand test, qui le feraient monter.
+- Références de l'article sur la motivation vérifiées (DOI, revue, pages, résultats) : Sailer et Homner 2020
+  (10.1007/s10648-019-09498-w), Deci, Koestner et Ryan 1999 (10.1037/0033-2909.125.6.627), Nunes et Drèze 2006
+  (10.1086/500480), Kivetz, Urminsky et Zheng 2006 (JMR 43, 39-58).
+- Reporté : onglet « Parcours » du profil (lot 5) ; carte à partager du grade (lot 8).
 
 ## État des lieux (lot 0, commit cb90ed8)
 
