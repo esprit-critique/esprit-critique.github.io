@@ -9,7 +9,7 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 |---|---|---|---|
 | 0 — Filet de sécurité | `refonte/lot-0` | #6 | fusionné |
 | 1 — Protéger le site | `refonte/lot-1` | #7 | fusionné (alerte CodeQL « certitudes » classée faux positif par le propriétaire) |
-| 2 — Identité visuelle | `refonte/lot-2` | #8 (brouillon) | en cours : voir « Lot 2 » plus bas |
+| 2 — Identité visuelle | `refonte/lot-2` | #8 | fusionné (captures : branche `captures`, dossier `lot-2`) |
 | 3 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
@@ -105,8 +105,12 @@ Fait (branche `refonte/lot-2`, PR #8) :
   `en/fiches.js` remplace leur nom).
 - Réglage « Animations » (clé `reglages`), `animer()`, `data-animations="reduites"` ; banc du mouvement dans `_test`.
 
-Reste : états vides dessinés ; raccourcis du manifeste et image d'aperçu ; passes écran par écran (quiz, bilan,
-ateliers, atelier, portrait, guide, pages fixes) en clair et en sombre ; captures pour la PR.
+Aussi : états vides dessinés (`dessinVide`), raccourcis du manifeste (`#hasard`, `#defi`), images d'aperçu (FR et EN,
+`generer_apercu.sh` fait les deux), ateliers sur deux colonnes, suggestions de l'accueil sous les deux colonnes.
+Captures des PR : branche orpheline `captures` (dossier par lot), liées depuis la PR, pour ne pas alourdir `main`.
+Bancs rendus déterministes : la révélation est menée à sa fin (`finish()`) avant lecture ; la Planche de Galton du banc
+Playwright joue jusqu'à dix questions comptées (échec intermittent ancien, dépendant du tirage).
+Reporté aux lots 3 et 4 : bouton de profil et graphiques (lot 4), carte « Au hasard » de l'accueil (lot 3).
 
 ## État des lieux (lot 0, commit cb90ed8)
 
