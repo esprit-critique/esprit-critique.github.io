@@ -15,7 +15,8 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | 4 — Maîtrise, grades, points | `refonte/lot-4` | #11 | fusionné (captures : branche `captures`, dossier `lot-4`) |
 | 5 — Parcours | `refonte/lot-5` | #12 | fusionné |
 | 6 — Synchronisation chiffrée | `refonte/lot-6` | #13 | fusionné, drapeau vide ; mise en service : étape manuelle du propriétaire (serveur/README.md) |
-| 7 et 8 | — | — | à faire |
+| 7 — Cybersécurité | `refonte/lot-7` | #14 | fusionné |
+| 8 — Finitions | — | — | **à faire : reprendre ici** |
 
 ## Écarts entre le brief et le code
 
@@ -207,6 +208,23 @@ donc toujours vide) : `entete()` (ateliers.js) suit la partie quand `MELANGE.act
 - Étape manuelle (brief §7, point 2) : compte Cloudflare, puis serveur/README.md.
 - CodeQL : la règle js/clear-text-storage-of-sensitive-data est désactivée (`.github/codeql/codeql-config.yml`), à la
   demande du propriétaire : faux positif « certitudes » récurrent (il revenait à chaque déplacement de `ecrire()`).
+
+### Lot 7
+
+- `static/enligne.js` : section « Se protéger en ligne » (8e section ; 51 ateliers) ; « Vrai message ou hameçonnage ? »
+  (15 messages fictifs, domaines en .example, d′, « Trouver l'indice » par boutons `.segment-indice`, ignorés du joueur
+  générique) ; « Lequel résiste le plus longtemps ? » (9 paires ; hypothèse de calcul : 10¹⁰ essais/s, écrite ;
+  CNIL vérifiée : délibération 2022-100 du 21 juillet 2022, 80 bits, 12/14 caractères, 7 mots).
+- Parcours « Ne pas se faire avoir en ligne » (9 parcours) ; article « La sécurité de ce site » (`#guide/securite`).
+- Unités courtes (`an`, `heure`, `seconde`) ajoutées au dictionnaire par `=texte` (l'extracteur ne les voit pas).
+- Comptes en dur mis à jour : `_ateliers` (8 sections), `_grand-test` (51), `_test` (51 cartes), Playwright (8).
+- Captures du lot 7 non publiées sur la branche `captures` (manque de temps) : à faire au lot 8.
+
+### Lot 8 — à faire (prochaine session)
+
+Accueil du nouveau visiteur en trois écrans ; cartes à partager (canvas → PNG, fiche et grade) ; aide des raccourcis (`?`) ;
+bouton « Installer l'application » ; relecture d'ensemble aux deux largeurs ; accessibilité clavier ; mesure du poids
+comparée à l'état des lieux ; README, DESIGN.md, images d'aperçu ; `tests/a-verifier.md` ; bilan final du journal.
 
 ## État des lieux (lot 0, commit cb90ed8)
 
