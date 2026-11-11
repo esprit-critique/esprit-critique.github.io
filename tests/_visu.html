@@ -201,6 +201,14 @@ f.onload = async () => {
     "cartes": async () => { await aller("cartes/biais"); await pause(500); },
     "cartes-verso": async () => { await aller("cartes/biais"); vue().querySelector("[data-retourner]").click(); await pause(500); },
     "defi-libre": async () => { await aller("defi/123"); },
+    // Bilan de la Planche de Galton : douze questions jouées (états simulés), un anneau par catégorie
+    "galton-bilan": async () => {
+      await aller("chiffres/melange");
+      const m = w.eval("melange");
+      Object.assign(m, { juste: 8, total: 12, passees: 1, parSection: { monde: { juste: 3, total: 4, couleur: "#1f8a70" }, perception: { juste: 2, total: 4, couleur: "#c23b5a" }, raisonner: { juste: 2, total: 2, couleur: "#2f6db5" }, philosopher: { juste: 1, total: 2, couleur: "#9a4f9e" } } });
+      w.eval("bilanMelange")(vue().querySelector(".melange"));
+      await pause(900);
+    },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
     "donnees": async () => { await aller("guide/donnees"); },
     "quiz": async () => { await aller("quiz"); },

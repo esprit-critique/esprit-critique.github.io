@@ -283,18 +283,29 @@ f.onload = async () => {
     ok("défi libre : #defi/123 ouvre la page du défi libre n° 123", vue().querySelector(".page-titre").textContent === "Défi libre" && /123/.test(vue().textContent));
     await aller("defi/pas-un-nombre");
     ok("défi libre : une graine invalide est remplacée par une graine valide", /^#defi\/\d+$/.test(w.location.hash), w.location.hash);
-    // Passer : les identifiants inscrits dans « vus » par la question passée en sont retirés (la suivante y inscrit les siens)
+    // Passer : les identifiants inscrits dans « vus » par la question passée en sont retirés (la suivante y inscrit les
+    // siens). Chaque passage rétablit « vus » tel qu'avant la première question : la référence reste vus0. Certains jeux
+    // n'inscrivent rien (données tirées au hasard) : on passe jusqu'à dix questions, et l'une au moins doit avoir inscrit.
     const vus0 = JSON.parse(w.localStorage.getItem("vus") || "{}");
     await aller("chiffres/melange");
     await pause(100);
-    const vus1 = JSON.parse(w.localStorage.getItem("vus") || "{}");
-    vue().querySelector(".melange-passer").click();
-    await pause(100);
-    const vus2 = JSON.parse(w.localStorage.getItem("vus") || "{}");
-    const ajoutes = Object.entries(vus1).flatMap(([k, l]) => l.filter(x => !(vus0[k] || []).includes(x)).map(x => [k, x]));
+    let verifiees = 0, fautes = [], passages = 0;
+    for (let k = 0; k < 10; k++) {
+      const vusQ = JSON.parse(w.localStorage.getItem("vus") || "{}");
+      const ajoutes = Object.entries(vusQ).flatMap(([cle, l]) => l.filter(x => !(vus0[cle] || []).includes(x)).map(x => [cle, x]));
+      const jeu = vue().querySelector(".melange-jeu a").textContent;
+      vue().querySelector(".melange-passer").click();
+      passages++;
+      await pause(100);
+      const vusN = JSON.parse(w.localStorage.getItem("vus") || "{}");
+      const jeuSuivant = vue().querySelector(".melange-jeu a").textContent;
+      if (ajoutes.length) verifiees++;
+      // Les identifiants du jeu passé (sa clé dans « vus ») ne doivent plus y être, sauf retour du même jeu (exclu par le tirage)
+      ajoutes.forEach(([cle, x]) => { if ((vusN[cle] || []).includes(x) && jeuSuivant !== jeu) fautes.push(cle + ":" + x); });
+    }
     ok("Planche de Galton : passer une question ne la marque pas comme vue, et compte les questions passées",
-      ajoutes.length > 0 && ajoutes.every(([k, x]) => !(vus2[k] || []).includes(x)) && /passées\s*:\s*1/.test(vue().querySelector(".melange-score").textContent),
-      JSON.stringify(ajoutes) + " | " + vue().querySelector(".melange-score").textContent);
+      verifiees > 0 && !fautes.length && new RegExp("passées\\s*:\\s*" + passages).test(vue().querySelector(".melange-score").textContent),
+      verifiees + " question(s) vérifiée(s) ; " + fautes.join(", ") + " | " + vue().querySelector(".melange-score").textContent);
 
     // Mouvement (DESIGN.md) : la révélation de l'illusion du jour se termine dans son état final ; le réglage « Animations :
     // réduites » arrête les transitions CSS et animer() ; aucune animation ne tourne en boucle

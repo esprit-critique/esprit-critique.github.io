@@ -91,7 +91,8 @@ const ok = (libelle, condition, detail = '') => {
   const jeux = [];
   // Chaque jeu demande une ou plusieurs actions (choisir, certitude, valider, saisir) avant « Question suivante »
   // Jusqu'à dix questions comptées dans le score de session (certains jeux demandent plusieurs gestes par question)
-  for (let tour = 0, questions = 0; tour < 300 && (questions < 12 || await p.evaluate(() => melange.total) < 10); tour++) {
+  // Jusqu'au bilan, qui vient après douze questions répondues
+  for (let tour = 0, questions = 0; tour < 400 && !(await p.$('.melange-bilan')); tour++) {
     const suivant = p.locator('.melange-partie button[data-suivant]').first();
     if (await suivant.count()) {
       await suivant.click();
@@ -114,9 +115,11 @@ const ok = (libelle, condition, detail = '') => {
     await p.waitForTimeout(60);
   }
   ok('le mélange tire des jeux différents', new Set(jeux).size >= 4, [...new Set(jeux)].join(' | '));
-  ok('une question à la fois : pas de compteur « / 10 »', !(await p.textContent('.melange-partie')).includes(' / 10'));
+  ok('partie de douze questions : le bilan affiche « x / 12 »', / \/ 12$/.test((await p.textContent('.melange-bilan .grand-score')).trim()));
   const total = await p.evaluate(() => melange.total);
-  ok('le score de session compte les questions jouées', total >= 10, String(total));
+  ok('le score de session compte les questions jouées', total === 12, String(total));
+  const anneaux = await p.$$eval('.melange-bilan .anneau', l => l.map(a => a.querySelector('figcaption').textContent + ' ' + a.querySelector('svg').getAttribute('aria-label')));
+  ok('bilan après douze questions : un anneau par catégorie, avec sa part de bonnes réponses', anneaux.length >= 2 && anneaux.every(a => /sur \d+/.test(a)), JSON.stringify(anneaux));
   const resultatsAteliers = await p.evaluate(() => lire('resultatsAteliers', {}));
   ok('le mélange n\'enregistre aucune partie', !('melange' in resultatsAteliers));
   await p.goto(SITE + '#chiffres/monde', { waitUntil: 'load' });

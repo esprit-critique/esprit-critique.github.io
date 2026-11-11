@@ -1614,3 +1614,14 @@ h3.titre-bloc {
 .atelier-hasard { margin-top: 12px; }
 .atelier-hasard-resultat .carte { margin: 12px 0 0; }
 .carte-hasard h2 { padding-right: 48px; }
+
+/* Planche de Galton : bilan, un anneau par catégorie (melange.js) */
+.anneaux { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 16px; margin: 14px 0 6px; }
+.anneau { margin: 0; text-align: center; }
+.anneau svg { display: block; width: 100%; max-width: 140px; margin: 0 auto 6px; }
+.anneau figcaption { font-family: var(--titre); font-size: 15px; font-weight: 650; line-height: 1.25; }
+.anneau-fond { fill: none; stroke: var(--trait); stroke-width: 12; }
+.anneau-valeur { fill: none; stroke: var(--c); stroke-width: 12; stroke-linecap: round; animation: anneau-remplit var(--duree-longue) var(--courbe) both; }
+@keyframes anneau-remplit { from { stroke-dasharray: 0 100; } }
+.anneau-score { font-family: var(--titre); font-size: 22px; font-weight: 700; fill: var(--texte); }
+.anneau-part { font-size: 14px; fill: var(--discret); }
