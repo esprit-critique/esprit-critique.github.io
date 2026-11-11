@@ -57,12 +57,14 @@ function graphiqueCourbe(titre, points, max, bandes = []) {
   const j0 = points.length ? points[0][0] : 0, j1 = points.length ? Math.max(points[points.length - 1][0], j0 + 1) : 1;
   const x = j => g + (L - g - 8) * (j - j0) / (j1 - j0), y = v => H - b - (H - b - 8) * v / max;
   // Bandes des seuils ; un nom trop proche du précédent n'est pas écrit (la ligne reste), un nom en haut passe sous sa ligne
+  // Les noms des seuils sont écrits après la courbe (plus bas), avec un liseré : la courbe ne passe jamais par-dessus
   let dernierY = Infinity;
+  const nomsBandes = [];
   bandes.filter(([seuil]) => seuil <= max).forEach(([seuil, nom]) => {
     s.appendChild(svg("line", { x1: g, y1: y(seuil), x2: L - 8, y2: y(seuil), class: "repere-graphique" }));
     if (dernierY - y(seuil) < 12) return;
     dernierY = y(seuil);
-    s.appendChild(texteSvg(g + 3, y(seuil) < 16 ? y(seuil) + 11 : y(seuil) - 3, nom, { class: "graduation-graphique" }));
+    nomsBandes.push(texteSvg(g + 3, y(seuil) < 16 ? y(seuil) + 11 : y(seuil) - 3, nom, { class: "graduation-graphique nom-seuil" }));
   });
   s.appendChild(svg("line", { x1: g, y1: H - b, x2: L - 8, y2: H - b, class: "axe-graphique" }));
   [0, max].forEach(v => s.appendChild(texteSvg(g - 5, y(v) + 4, String(v), { class: "graduation-graphique", "text-anchor": "end" })));
@@ -73,6 +75,7 @@ function graphiqueCourbe(titre, points, max, bandes = []) {
     s.appendChild(svg("circle", { cx: x(jd), cy: y(vd), r: 4, class: "point-graphique" }));
     s.appendChild(texteSvg(Math.min(x(jd), L - 30), y(vd) - 8, String(vd), { class: "valeur-graphique", "text-anchor": "middle" }));
   }
+  nomsBandes.forEach(t => s.appendChild(t));
   const date = j => new Date(j * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "short", timeZone: "UTC" });
   if (points.length) {
     s.appendChild(texteSvg(g, H - 6, date(j0), { class: "graduation-graphique" }));

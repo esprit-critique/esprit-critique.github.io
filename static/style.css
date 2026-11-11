@@ -1764,3 +1764,9 @@ h3.titre-bloc {
 .segment-indice.juste { border-style: solid; border-color: var(--vert); }
 .segment-indice.faux { border-style: solid; border-color: var(--rouge); text-decoration: line-through; text-decoration-color: var(--rouge); }
 .choix.mot-de-passe { font-family: var(--mono); overflow-wrap: anywhere; }
+
+/* Noms des seuils de grade sur la courbe : liseré de la couleur de la carte, au-dessus du tracé */
+.graphique { --fond-graphique: var(--fond); }
+.carte .graphique { --fond-graphique: var(--carte); }
+.nom-seuil { paint-order: stroke; stroke: var(--fond-graphique); stroke-width: 4px; stroke-linejoin: round; }
+.valeur-graphique { paint-order: stroke; stroke: var(--fond-graphique); stroke-width: 3px; stroke-linejoin: round; }
