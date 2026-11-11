@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/_site.html#accueil" style="border: 0; display: block; width: 390px; height: 844px"></iframe>
+<script>
+// Banc « progression » (lot 4) : maîtrise de chaque type de jeu, table des jeux, domaines, grades et leurs délais pour des
+// joueurs simulés, photographie quotidienne, barème des points et ses seuils, plafonds, distinctions, jour de repos,
+// idempotence du rattrapage, mode sobre. Les fonctions de progression.js sont pures : on les appelle directement.
+const lignes = [];
+const ok = (nom, cond, detail) => { lignes.push((cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail)); console.log("BANC: " + lignes[lignes.length - 1]); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const erreursJS = [];
+const f = document.getElementById("f");
+let lance = false;
+f.onload = async () => {
+  if (lance) return;
+  lance = true;
+  const w = f.contentWindow;
+  w.addEventListener("error", e => erreursJS.push(e.message));
+  const ev = x => w.eval(x);
+  try {
+    w.localStorage.clear();
+    const MJ = ev("MAITRISE_JEUX"), ateliers = ev("tousLesAteliers()").map(a => a.atelier.id);
+    ok("table des jeux : chaque atelier y figure (" + ateliers.length + " ateliers)", ateliers.every(id => MJ[id]), ateliers.filter(id => !MJ[id]).join(", "));
+    ok("table des jeux : domaines, types et parts de hasard valides", Object.values(MJ).every(([d, t, c]) => ["monde", "confiance", "perception", "raisonner", "debattre", "melange"].includes(d) && ["note", "mesure", "aucun"].includes(t) && c >= 0 && c < 1));
+
+    // ---------- Maîtrise d'un jeu noté ----------
+    const noteNiveau = (L, reussite, parties = 3) => ({ niveaux: { [L]: { n: parties, sur: 20, historique: Array(parties).fill(20 * reussite) } } });
+    const mN = (r, c) => Math.round(ev("maitriseNotee")(r, c));
+    ok("jeu noté : 85 % à quatre réponses donne 400 / 600 / 800 aux niveaux 1, 2, 3", mN(noteNiveau(1, 0.85), 0.25) === 400 && mN(noteNiveau(2, 0.85), 0.25) === 600 && mN(noteNiveau(3, 0.85), 0.25) === 800,
+      [1, 2, 3].map(L => mN(noteNiveau(L, 0.85), 0.25)).join(" / "));
+    ok("jeu noté : une seule partie compte pour un tiers", mN(noteNiveau(1, 0.85, 1), 0.25) === 133);
+    ok("jeu noté : répondre au hasard donne 0", mN(noteNiveau(2, 0.25), 0.25) === 0 && mN(noteNiveau(2, 0.5), 0.5) === 0);
+    ok("jeu noté : la meilleure valeur des niveaux est gardée", mN({ niveaux: { 1: noteNiveau(1, 1).niveaux[1], 3: noteNiveau(3, 0.4).niveaux[3] } }, 0.25) === 500);
+    ok("jeu noté : une partie à 100 % au niveau 3 sur trois parties donne 1 000", mN(noteNiveau(3, 1), 0) === 1000);
+    // Mesures particulières
+    const vide = { aujourdhui: 20000 };
+    ok("mesures : ancrage nul sur trois parties → 1 000 ; effet de 50 % → 0", Math.round(ev("MESURES").ancre({ ancrages: [1, 2, 3].map(() => ({ h: 1, b: 1 })) })) === 1000 && Math.round(ev("MESURES").ancre({ ancrages: [1, 2, 3].map(() => ({ h: 1.5, b: 1 })) })) === 0);
+    ok("mesures : prévisions parfaites (10) → 1 000 ; toujours 50 % → 0", Math.round(ev("MESURES").carnet({ previsions: Array(10).fill({ p: 1, issue: true }) })) === 1000 && Math.round(ev("MESURES").carnet({ previsions: Array(10).fill({ p: 0.5, issue: true }) })) === 0);
+    ok("mesures : étalonnage parfait sur 40 réponses → 1 000", Math.round(ev("maitriseEtalonnage")({ confiance: { 50: [20, 10], 90: [20, 18] } })) === 1000);
+    // Domaines : un jeu jamais joué compte pour zéro
+    const m1 = ev("maitrises")({ resultatsAteliers: { monde: noteNiveau(3, 1) } }, ateliers, 90);
+    const jeuxMonde = Object.values(m1.jeux).filter(([d]) => d === "monde").length;
+    ok("domaines : un seul jeu parfait sur " + jeuxMonde + " dans « le monde en chiffres » donne 1 000 / " + jeuxMonde, m1.domaines.monde === Math.round(1000 / jeuxMonde), String(m1.domaines.monde));
+    ok("domaines : six domaines, maîtrise globale = leur moyenne", Object.keys(m1.domaines).length === 6 && m1.globale === Math.round(Object.values(m1.domaines).reduce((s, x) => s + x, 0) / 6));
+    ok("notions : 90 notions en boîte 5 donnent 800 sans duels", ev("maitriseNotions")({ memoire: Object.fromEntries(Array.from({ length: 90 }, (_, k) => ["x" + k, { b: 5 }])) }, 90) === 800);
+    const gt = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { A: { valeur: 1, n: 20 }, B: { valeur: 0.25, n: 20 }, E: { valeur: 0, n: 30 }, F: { valeur: 0.9, n: 10 } } }] } });
+    ok("Grand test : ses axes comptent dans les domaines (A parfait → 1 000, B au hasard → 0, E sans excès → 1 000, F exclu)", gt.A[1] === 1000 && gt.B[1] === 0 && gt.E[1] === 1000 && !gt.F && gt.A[0] === "raisonner", JSON.stringify(gt));
+
+    // ---------- Grades ----------
+    const g = s => ev("gradeDe")(s).nom;
+    ok("grades : seuils 0, 5, 25, 60, 120, 220, 350, 500, 650, 800", [0, 5, 25, 60, 120, 220, 350, 500, 650, 800].map(g).join() === "Novice,Élève,Sceptique,Détective,Analyste,Stratège,Philosophe,Virtuose,Maître,Esprit critique" && g(4) === "Novice" && g(799) === "Maître");
+    let photo = null;
+    photo = ev("photographier")(photo, 100, { globale: 300, domaines: {} });
+    photo = ev("photographier")(photo, 101, { globale: 200, domaines: {} });
+    ok("photographie : un grade acquis ne se perd pas (meilleure maîtrise gardée)", photo.meilleure === 300 && photo.jours[101][0] === 200 && photo.depuis === 100);
+    for (let j = 0; j < 450; j++) photo = ev("photographier")(photo, 200 + j, { globale: 10, domaines: {} });
+    ok("photographie : 400 jours au plus", Object.keys(photo.jours).length === 400);
+
+    // ---------- Barème et seuils d'étalonnage ----------
+    const bascules = bareme => {
+      const B = ev(bareme), l = [];
+      let prec = null;
+      for (let i = 0; i <= 10000; i++) {
+        const p = i / 10000;
+        const meilleur = ["hasard", "plutot", "sur"].reduce((a, k) => p * B[k][0] + (1 - p) * B[k][1] > p * B[a][0] + (1 - p) * B[a][1] + 1e-12 ? k : a, "hasard");
+        if (meilleur !== prec) { l.push([meilleur, p]); prec = meilleur; }
+      }
+      return l;
+    };
+    const q = bascules("BAREME_QUIZ"), dl = bascules("BAREME_DUEL");
+    ok("barème du quiz : « Plutôt sûr » dès 1/3, « Sûr » dès 3/4", q.length === 3 && Math.abs(q[1][1] - 1 / 3) < 0.001 && Math.abs(q[2][1] - 0.75) < 0.001, JSON.stringify(q));
+    ok("barème des duels : « Plutôt sûr » dès 60 %, « Sûr » dès 6/7", dl.length === 3 && Math.abs(dl[1][1] - 0.6) < 0.001 && Math.abs(dl[2][1] - 6 / 7) < 0.001, JSON.stringify(dl));
+    ok("barème : ne pas indiquer sa certitude ne rapporte jamais plus que la meilleure déclaration", [0, 0.2, 0.5, 0.8, 1].every(p => {
+      const B = ev("BAREME_QUIZ"), v = k => p * B[k][0] + (1 - p) * B[k][1];
+      return v("aucune") <= Math.max(v("sur"), v("plutot"), v("hasard")) + 1e-9;
+    }));
+    ok("barème : le total d'une série n'est jamais négatif", ev("totalSerie")([-8, -8, -8]) === 0 && ev("totalSerie")([10, -8, 4]) === 6);
+
+    // ---------- Plafonds ----------
+    const gain = (e, src, v, jour, cle) => ev("appliquerGain")(e, src, v, jour, cle);
+    let e = null, p;
+    [e, p] = gain(e, "situation-jour", true, 1); const p1 = p;
+    [e, p] = gain(e, "situation-jour", true, 1);
+    ok("plafond : situation du jour une fois par jour (8 puis 0)", p1 === 8 && p === 0);
+    [e, p] = gain(e, "situation-jour", false, 2);
+    ok("plafond : de nouveau le lendemain (5)", p === 5);
+    let somme = 0;
+    for (let k = 0; k < 5; k++) { [e, p] = gain(e, "atelier-note", [10, 10, 3], 3, "monde"); somme += p; }
+    ok("plafond : atelier noté, trois parties par jour (3 × 20)", somme === 60, String(somme));
+    [e, p] = gain(e, "galton", 15, 4); const g1 = p;
+    [e, p] = gain(e, "galton", 15, 4);
+    ok("plafond : Planche de Galton, 20 points par jour (20 puis 0)", g1 === 20 && p === 0, g1 + " / " + p);
+    [e, p] = gain(e, "fiche-lue", 0, 5, "biais:ancrage"); const l1 = p;
+    [e, p] = gain(e, "fiche-lue", 0, 9, "biais:ancrage");
+    ok("plafond : une fiche lue rapporte une seule fois", l1 === 2 && p === 0);
+    [e, p] = gain(e, "grand-test", "complet", 10, "complet"); const t1 = p;
+    [e, p] = gain(e, "grand-test", "complet", 20, "complet"); const t2 = p;
+    [e, p] = gain(e, "grand-test", "complet", 41, "complet");
+    ok("plafond : Grand test, une fois par 30 jours (100, 0, puis 100)", t1 === 100 && t2 === 0 && p === 100);
+    ok("points : le total ne baisse jamais et le journal garde 50 gains au plus", e.total >= 0 && e.journal.length <= 50);
+
+    // ---------- Jour de repos ----------
+    const serie = (jours, auj) => ev("serieAvecRepos")(jours, auj);
+    ok("série : sept jours de suite → 7", serie([1, 2, 3, 4, 5, 6, 7], 7) === 7);
+    ok("série : un jour manqué dans la semaine ne rompt pas la série", serie([1, 2, 3, 5, 6, 7], 7) === 6);
+    // Jours 3 et 5 manqués : le 5 est pardonné, le 3 rompt la série, qui compte 7, 6 et 4
+    ok("série : deux jours manqués en sept jours la rompent", serie([1, 2, 4, 6, 7], 7) === 3, String(serie([1, 2, 4, 6, 7], 7)));
+    ok("série : hier compte encore aujourd'hui", serie([5, 6], 7) === 2);
+
+    // ---------- Rattrapage ----------
+    const d = { memoire: { a: { b: 3, j: 4 } }, resultatsAteliers: { monde: { n: 30 } }, activite: [1, 2], reperages: Array(70).fill({}) };
+    const [r1, pr] = ev("rattraper")(null, d, 1);
+    const [r2, pr2] = ev("rattraper")(r1, d, 2);
+    ok("rattrapage : 6 × 4 + 4 × 3 + 15 + 8 × 20 + 5 × 2 + 5 × 60 = " + pr + ", une seule fois", pr === 24 + 12 + 15 + 160 + 10 + 300 && pr2 === 0 && r2.total === pr);
+
+    // ---------- Distinctions ----------
+    const base = { aujourdhui: 100, ateliers, nbFiches: 90, categorieDe: () => "x", drapeaux: {}, compteursLucidite: {}, domaines: {} };
+    const obt = x => ev("distinctionsObtenues")(Object.assign({}, base, x));
+    ok("distinctions : aucune sans données", obt({}).length === 0, obt({}).join());
+    ok("distinctions : Premier doute, Régulier, Bien étalonné, Sans ancre, Sur le terrain", ["premier-doute", "regulier", "bien-etalonne", "sans-ancre", "sur-le-terrain"].every(id => obt({
+      memoire: Object.fromEntries(Array.from({ length: 10 }, (_, k) => ["k" + k, { b: 1 }])), activite: [94, 95, 96, 97, 98, 99, 100],
+      certitudes: { sur: [40, 36], hasard: [10, 4] }, ancrages: [{ h: 1, b: 1 }, { h: 1.05, b: 1 }, { h: 1, b: 1.02 }], reperages: Array(10).fill({ cle: "a" })
+    }).includes(id)));
+    ok("distinctions : les secrètes (emblème, huit illusions)", obt({ drapeaux: { embleme: true, illusions: ["a", "b", "c", "d", "e", "f", "g", "h"] } }).join() === "apparences,demonteur");
+    ok("distinctions : une condition qui échoue sur des données inattendues n'arrête rien", Array.isArray(obt({ certitudes: "x", fourchettes: null, previsions: [null] })));
+
+    // ---------- Score face au hasard ----------
+    const auMoins = ev("auMoinsAuHasard")(7, 10, 0.25);
+    ok("face au hasard : 7 sur 10 ou mieux au hasard (1/4) : 0,35 %", Math.abs(auMoins - 0.003506) < 0.00001, String(auMoins));
+    ok("face au hasard : les probabilités de la loi binomiale font 1", Math.abs(ev("binomiale")(10, 0.25).reduce((s, x) => s + x, 0) - 1) < 1e-12);
+
+    // ---------- Joueurs simulés : délais pour atteindre chaque grade ----------
+    // Chaque jour : une série de quiz (10 notions) et une ou deux parties d'atelier, au niveau que le joueur tient.
+    const simuler = (p, nom) => {
+      const alea = ev("generateur")(Math.round(p * 1000));
+      const memoire = {}, res = {}, cles = Array.from({ length: 90 }, (_, k) => "f" + k);
+      const notes = ateliers.filter(id => MJ[id][1] === "note");
+      let meilleure = 0;
+      const delais = {};
+      for (let jour = 1; jour <= 180; jour++) {
+        cles.slice(((jour - 1) * 10) % 90, ((jour - 1) * 10) % 90 + 10).forEach(c => {
+          const m = memoire[c] || { b: 0 };
+          m.b = alea() < p ? Math.min(5, m.b + 1) : 1;
+          memoire[c] = m;
+        });
+        for (let k = 0; k < 1 + (jour % 2); k++) {
+          const id = notes[Math.floor(alea() * notes.length)], c = MJ[id][2];
+          const L = p > 0.85 && jour > 20 ? 3 : p > 0.7 && jour > 10 ? 2 : 1;
+          const r = res[id] || { niveaux: {} };
+          const n = r.niveaux[L] || { n: 0, sur: 10, historique: [] };
+          const reussite = c + (1 - c) * Math.min(1, p * (1.15 - 0.1 * L));
+          n.historique = [...n.historique, Math.round(10 * Math.min(1, reussite + (alea() - 0.5) * 0.2))].slice(-12);
+          n.n++;
+          r.niveaux[L] = n;
+          res[id] = r;
+        }
+        meilleure = Math.max(meilleure, ev("maitrises")({ memoire, resultatsAteliers: res }, ateliers, 90).globale);
+        ev("GRADES").forEach(([seuil, g]) => { if (meilleure >= seuil && !delais[g]) delais[g] = jour; });
+      }
+      lignes.push("INFO  joueur " + nom + " : " + Object.entries(delais).map(([g, j]) => g + " j" + j).join(", ") + " ; maîtrise après 180 jours : " + meilleure);
+      return { delais, meilleure };
+    };
+    const faible = simuler(0.45, "faible"), moyen = simuler(0.7, "moyen"), fort = simuler(0.92, "fort");
+    ok("joueurs simulés : Élève dès le premier jour pour le joueur moyen", moyen.delais["Élève"] === 1);
+    ok("joueurs simulés : le joueur fort progresse plus haut que le moyen, et le moyen que le faible", fort.meilleure > moyen.meilleure && moyen.meilleure > faible.meilleure, [faible.meilleure, moyen.meilleure, fort.meilleure].join(" < "));
+    ok("joueurs simulés : « Esprit critique » hors d'atteinte du joueur moyen en six mois", !moyen.delais["Esprit critique"]);
+
+    // ---------- Intégration : points dans le site, mode sobre ----------
+    w.localStorage.clear();
+    w.location.reload();
+    await new Promise(r => { f.onload = r; });
+    await pause(200);
+    const d2 = f.contentDocument;
+    ok("rattrapage au chargement : clé lucidite créée", !!w.localStorage.getItem("lucidite"));
+    const avant = JSON.parse(w.localStorage.getItem("lucidite")).total;
+    w.gagner("situation-jour", true);
+    ok("gagner() : +8 pour la situation du jour, enregistrés", JSON.parse(w.localStorage.getItem("lucidite")).total === avant + 8);
+    ok("bouton de profil visible, avec maîtrise et objectif dans son nom", !d2.querySelector(".bouton-profil").hidden && /maîtrise/.test(d2.querySelector(".bouton-profil").getAttribute("aria-label")));
+    w.localStorage.setItem("reglages", JSON.stringify({ sobre: true }));
+    w.location.hash = "accueil-sobre"; w.location.hash = "accueil";
+    await pause(200);
+    w.gagner("vf-jour", true);
+    ok("mode sobre : bouton de profil caché, carte de maîtrise absente, points toujours comptés",
+      d2.querySelector(".bouton-profil").hidden === true && !d2.querySelector(".carte-progression-v2") && JSON.parse(w.localStorage.getItem("lucidite")).total === avant + 13);
+    w.localStorage.setItem("reglages", JSON.stringify({}));
+    w.location.hash = "profil/ensemble";
+    await pause(300);
+    ok("page Profil : courbe, toile, barres et calendrier dessinés", d2.querySelectorAll("#vue-profil .graphique").length >= 4);
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
+  }
+  ok("aucune erreur JavaScript" + (erreursJS.length ? " : " + erreursJS.join(" | ") : ""), erreursJS.length === 0);
+  const echecs = lignes.filter(l => l.startsWith("ÉCHEC") || l.startsWith("EXCEPTION")).length;
+  const total = lignes.filter(l => !l.startsWith("INFO")).length;
+  lignes.unshift("RÉSUMÉ : " + (total - echecs) + " / " + total + " vérifications réussies");
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+  console.log("RAPPORT-FIN");
+};
+</script>

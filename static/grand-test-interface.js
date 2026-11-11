@@ -822,6 +822,7 @@ function terminerEtAfficher(t) {
   const niveau = niveauObserve(r.etat);
   fini.niveau = { id: niveau.id, statut: niveau.statut, calculeLe: maintenantISO() };
   sauver(r.etat);
+  gagner("grand-test", fini.mode, fini.mode);   // une fois par 30 jours ; ne dépend pas des résultats
   GT.zone.replaceChildren();
   afficherProfil(GT.zone, t.id);
 }

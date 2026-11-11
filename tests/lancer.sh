@@ -12,13 +12,13 @@
 # Code de sortie 1 si un banc échoue (tests/verdict.py), pour l'intégration continue.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire progression"}
 export CHROME=${CHROME:-$(python3 tests/navigateur.py)}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair
 1280 sombre"}
-COPIES="_aleatoire.html _affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js _grand-test.html"
+COPIES="_progression.html _aleatoire.html _affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js _grand-test.html"
 # Les bancs chargent _site.html : la page du site sans sa politique de sécurité (CSP), qui interdit eval,
 # dont les bancs se servent pour lire l'état du site. La vraie page est contrôlée par le banc « csp ».
 mkdir -p tests/rapports
@@ -67,7 +67,7 @@ while read -r largeur theme; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
     page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
     [ "$banc" = grand ] && page="_grand-test.html"
-    case $banc in recherche|calculs|familles|banques|aleatoire)
+    case $banc in recherche|calculs|familles|banques|aleatoire|progression)
       # Bancs indépendants de la taille et du thème : une seule fois, dans la première configuration
       [ "$PREMIERE" = "$largeur-$theme" ] || continue
       rapport="tests/rapports/$banc.txt" ;;

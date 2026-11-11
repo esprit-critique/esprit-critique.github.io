@@ -268,6 +268,13 @@ function tirerNouveaux(cle, elements, n, idDe = e => e.id) {
 // historique, reussites90 }. Les champs généraux (n, record, historique) restent tenus pour toutes les parties.
 function noterPartie(id, score, sur, niveau) {
   const tous = lire("resultatsAteliers", {});
+  // Points de lucidité (profil.js) : premier essai, partie notée ou non, atelier maîtrisé
+  const premier = !tous[id];
+  setTimeout(() => {
+    if (premier) gagner("atelier-premier", 0, id);
+    if (score !== undefined && score !== null && sur) gagner("atelier-note", [score, sur, niveau], id); else gagner("atelier-sans-note", 0, id);
+    if (atelierMaitrise(id)) gagner("atelier-maitrise", 0, id);
+  }, 0);
   const r = migrerResultat(tous[id] || { n: 0, historique: [] });
   const ancienRecord = r.record;
   r.n++;
@@ -312,6 +319,7 @@ function resultatAtelier(id) {
 function afficherScore(zone, id, score, sur, texteScore) {
   const partie = PARTIES_EN_COURS[id];
   const niveau = partie ? niveauDePartie(partie.niveaux) : undefined;
+  const avant = maitriseAvant(id);
   const r = noterPartie(id, score, sur, niveau);
   zone.appendChild(el("p", "consigne", "Bilan"));
   zone.appendChild(el("p", "grand-score", texteScore || (score + " / " + sur)));
@@ -323,6 +331,8 @@ function afficherScore(zone, id, score, sur, texteScore) {
   else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", T(niveau ? "Votre record au niveau {0} : {1} / {2} · {3} jouées." : "Votre record : {1} / {2} · {3} jouées.", niveau, fr(r.record), sur, pluriel(r.parties, "partie"))));
   if (r.historique && r.historique.length > 1) zone.appendChild(histogrammeParties(r.historique, sur));
   if (niveau === 3 && atelierMaitrise(id)) zone.appendChild(el("p", "source", "Atelier maîtrisé : au moins 90 % au niveau 3 sur trois parties."));
+  const maitrise = blocMaitriseJeu(id, avant);
+  if (maitrise) zone.appendChild(maitrise);
 }
 
 // Petites barres : les dernières parties, de la plus ancienne à la plus récente
@@ -466,6 +476,17 @@ function carteAtelier({ atelier, adresse }) {
   if (r && r.n) badge = "✓ " + pluriel(r.n, "partie") + (r.record !== undefined && r.sur ? " · " + T("record {0}/{1}", r.record, r.sur) : "");
   haut.append(el("span", "etiquette", atelier.duree), el("span", "badge", badge));
   corps.append(haut, el("h2", null, atelier.titre), el("p", null, atelier.resume));
+  // Barre de maîtrise du jeu (profil.js), pour les jeux mesurés déjà joués
+  if (r && !modeSobre() && MAITRISE_JEUX[atelier.id] && MAITRISE_JEUX[atelier.id][1] !== "aucun") {
+    const v = Math.round(maitriseJeu(atelier.id, donneesProgression()));
+    const barre = el("div", "barre-maitrise");
+    barre.setAttribute("role", "img");
+    barre.setAttribute("aria-label", T("Maîtrise de ce jeu : {0} sur 1 000", v));
+    const rempli = el("div");
+    rempli.style.setProperty("--part", v / 1000);
+    barre.appendChild(rempli);
+    corps.append(barre, el("span", "source", T("Maîtrise : {0}", v)));
+  }
   carte.append(cadre, corps);
   return carte;
 }

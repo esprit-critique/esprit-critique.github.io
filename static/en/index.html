@@ -89,6 +89,8 @@
       </nav>
 
       <!-- Language: the button offers the other language (same page, same “#”) -->
+      <!-- Profil : blason, objectif du jour, insigne du grade et maîtrise (profil.js) -->
+      <a class="bouton-profil" href="#profil" aria-label="Profile"></a>
       <a class="langue-entete" href="../" lang="fr" hreflang="fr" data-langue="fr" title="Français" aria-label="Switch the site to French"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.4 3.9 5.4 3.9 9s-1.3 6.6-3.9 9c-2.6-2.4-3.9-5.4-3.9-9S9.4 5.4 12 3z"/></svg><span>FR</span></a>
 
     </header>
@@ -98,6 +100,7 @@
     <!-- The views: only one is visible at a time, depending on the address (#accueil, #biais, #quiz…) -->
     <main>
       <section id="vue-accueil" class="vue" hidden></section>
+      <section id="vue-profil" class="vue" hidden></section>
 
       <section id="vue-fiches" class="vue" hidden>
         <div id="outils-liste">
@@ -322,6 +325,26 @@
           <div id="sauvegardes-auto"></div>
           <button class="bouton secondaire bouton-danger" id="btn-effacer">Erase my progress</button>
         </article>
+
+        <article class="carte" id="g-maitrise">
+          <h2>How your mastery is calculated</h2>
+          <p><strong>Mastery</strong> (from 0 to 1,000) says how well you do in this site’s games. It is calculated entirely from the results already saved in your browser; it can go up or down, but never because you stayed away.</p>
+          <p><strong>A scored game.</strong> For each level played: the average success of your last five rounds, corrected for chance (with four answers, guessing gives 25%: only what is above counts), multiplied by confidence (a single round counts for a third, three rounds or more in full), under a ceiling of 500 at level 1, 750 at level 2 and 1,000 at level 3. The game keeps the best of these values. Example: 85% success with four answers, over three rounds, gives 400 at level 1 and 800 at level 3.</p>
+          <p><strong>Special measures.</strong> Calibration: the average gap between your confidence and your success (no gap gives 1,000, 30 points or more give 0). Anchoring: the gap between your estimates after a high and a low anchor (no gap: 1,000; 50% or more: 0). Forecasts: the Brier score of your resolved forecasts (0: 1,000; 0.25, always “50%”: 0).</p>
+          <p><strong>Concepts</strong>: 80% for the quiz review boxes (every concept in box 5: 800), 20% for duels between close concepts.</p>
+          <p><strong>Six domains</strong>: the world in numbers, measuring your confidence, perceiving, reasoning (with philosophising), debating, and concepts. A domain’s mastery is the average of its games, <strong>a game never played counting as zero</strong>: you cannot inflate your score by playing only what you are good at. The axes of your latest full Grand test each count as a game of the nearest domain. Overall mastery is the average of the six domains; it gives your rank, and a rank once reached is never lost.</p>
+          <p><strong>Its limits.</strong> It measures success in this site’s games, not intelligence nor critical thinking in life. It depends on how many games you play. It compares you with no one: the site has no one else’s data. And a number you aim for soon stops being a good measure: playing for the score rather than to understand would raise it without teaching you anything.</p>
+        </article>
+
+        <article class="carte" id="g-motivation">
+          <h2>How this site tries to motivate you</h2>
+          <p>This site teaches you to spot the mechanisms that influence us. It uses a few of them itself to make you want to come back: here is which ones, and what it refuses to do.</p>
+          <p><strong>What it uses.</strong> Clarity points, a daily goal, a streak of days, ranks and distinctions. They reward what the site teaches: stating your true confidence (the quiz scoring makes “A guess” pay better than “Sure” when you are in doubt), reviewing at the right time, spotting a concept in everyday life. A ring that fills up plays on the goal gradient (people speed up as they approach a goal: Kivetz, Urminsky and Zheng, 2006); points granted for past progress play on the endowed progress effect (a head start increases effort: Nunes and Drèze, 2006). A streak you do not want to lose plays on <a href="#biais/aversion-perte">loss aversion</a>; points you have accumulated, on <a href="#biais/dotation">the endowment effect</a> and <a href="#biais/couts-irrecuperables">sunk costs</a>.</p>
+          <p><strong>What research says.</strong> A meta-analysis of 40 experiments finds positive but modest effects of gamification on learning (g = 0.49), motivation (0.36) and behaviour (0.25); its authors present it as a stopgap on the question (Sailer and Homner, 2020). Another shows that rewards promised for an activity already found interesting can reduce interest in it, while positive feedback increases it (Deci, Koestner and Ryan, 1999); this result is still debated.</p>
+          <p><strong>What the site refuses to do.</strong> No notifications or reminders. No punishing streak: one missed day a week does not break it, and there is no reproach. No points for time spent, sharing or creating an account. No ranking between people. And a <strong>plain mode</strong>, in the profile settings, hides all this: the site becomes what it was, and everything is still counted in case you change your mind.</p>
+          <p class="source">Sailer, M. and Homner, L. (2020). The gamification of learning: a meta-analysis. <em>Educational Psychology Review</em>, 32(1), 77-112. Deci, E. L., Koestner, R. and Ryan, R. M. (1999). <em>Psychological Bulletin</em>, 125(6), 627-668. Nunes, J. C. and Drèze, X. (2006). The endowed progress effect. <em>Journal of Consumer Research</em>, 32(4), 504-512. Kivetz, R., Urminsky, O. and Zheng, Y. (2006). The goal-gradient hypothesis resurrected. <em>Journal of Marketing Research</em>, 43(1), 39-58.</p>
+        </article>
+
       </section>
     </main>
 
@@ -351,6 +374,9 @@
   <script src="dico-illusions.js"></script>
   <script src="dico-melange.js"></script>
   <script src="dico-tirage.js"></script>
+  <script src="dico-progression.js"></script>
+  <script src="dico-graphiques.js"></script>
+  <script src="dico-profil.js"></script>
   <script src="dico-niveaux.js"></script>
   <script src="dico-schemas.js"></script>
   <script src="dico-chiffres.js"></script>
@@ -386,6 +412,9 @@
   <script src="fiches.js"></script>
   <script src="../illusions.js"></script>
   <script src="../tirage.js"></script>
+  <script src="../progression.js"></script>
+  <script src="../graphiques.js"></script>
+  <script src="../profil.js"></script>
   <script src="../sauvegarde.js"></script>
   <script src="../app.js"></script>
   <script src="../recherche.js"></script>

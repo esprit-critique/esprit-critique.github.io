@@ -40,6 +40,10 @@ pour l'utiliser comme une application.
   - *philosopher* : expériences de pensée, citations vraies ou fausses, la cécité au choix (à ne faire qu'une fois).
 - **S'entraîner** : chaque fiche de sophisme propose trois mini-exercices tirés des débats.
 - **Un portrait** qui rassemble ce que vos réponses révèlent : étalonnage, ancrage, perception du hasard…
+- **Maîtrise, grades et points** : une maîtrise de 0 à 1 000, commune à tous les jeux (moyenne de six domaines, un jeu
+  jamais joué comptant pour zéro), dix grades, des points de lucidité qui récompensent ce que le site enseigne (le barème
+  du quiz paie l'étalonnage), un objectif du jour, des distinctions, un codex des 90 notions et une page Profil avec ses
+  graphiques ; tout est expliqué dans le guide, et un mode sobre cache tout. Aucun classement, aucune notification.
 - **Une progression** : les ateliers à questions ajustent leur difficulté (niveaux 1 à 3) à vos réponses ; on peut aussi
   choisir son niveau. Records par niveau, et tableau des niveaux dans le portrait.
   Au niveau 3 : classer quatre pays, villes ou événements (score par paires), deux fourchettes à 50 et 90 %

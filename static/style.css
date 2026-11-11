@@ -1625,3 +1625,103 @@ h3.titre-bloc {
 @keyframes anneau-remplit { from { stroke-dasharray: 0 100; } }
 .anneau-score { font-family: var(--titre); font-size: 22px; font-weight: 700; fill: var(--texte); }
 .anneau-part { font-size: 14px; fill: var(--discret); }
+
+/* ===================== Lot 4 : maîtrise, grades, points, graphiques (profil.js, graphiques.js) ===================== */
+.bouton-profil { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 8px; border: 1px solid var(--trait);
+  border-radius: 999px; background: var(--carte); color: var(--texte); text-decoration: none; position: relative; }
+.bouton-profil .blason { position: absolute; left: 12px; top: 9px; }
+.bouton-profil .anneau-profil { margin-right: 2px; }
+.bouton-profil-maitrise { font-family: var(--titre); font-weight: 700; font-size: 15px; font-variant-numeric: oldstyle-nums; }
+.entete .bouton-profil { position: absolute; top: calc(env(safe-area-inset-top) + 12px); right: 86px; }
+@media (min-width: 1040px) { .entete .bouton-profil { position: relative; top: auto; right: auto; order: 3; } .langue-entete { order: 4; } }
+.anneau-mini .anneau-fond { fill: none; stroke: var(--trait); stroke-width: 4; }
+.anneau-mini .anneau-valeur { fill: none; stroke: var(--vert); stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray var(--duree) var(--courbe); }
+.insigne { flex: none; }
+.insigne-trait { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: opacity var(--duree-longue); }
+.insigne-plein { fill: var(--accent); }
+.insigne.revele .insigne-trait { animation: revelation-insigne var(--duree-longue) var(--courbe); }
+@keyframes revelation-insigne { from { opacity: 0; } }
+.blason-fond { fill: color-mix(in srgb, var(--c) 18%, var(--carte)); stroke: var(--c); stroke-width: 1.5; }
+.blason-trait { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; }
+
+.pastille-points { position: fixed; left: var(--x); top: var(--y); z-index: 60; transform: translateX(-50%); pointer-events: none;
+  padding: 2px 8px; border-radius: 999px; background: var(--vert); color: var(--fond); font-weight: 700; font-size: 13px; opacity: 0; }
+:root[data-animations="reduites"] .pastille-points { display: none; }
+@media (prefers-reduced-motion: reduce) { .pastille-points { display: none; } }
+.moment { position: fixed; z-index: 55; left: 50%; bottom: calc(var(--hauteur-nav) + 24px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  width: min(420px, calc(100% - 32px)); padding: 14px 16px; border-radius: var(--rayon-carte); background: var(--carte-haute);
+  border: 1px solid var(--trait); box-shadow: var(--ombre-2); }
+@media (min-width: 760px) { .moment { bottom: 28px; } }
+.moment-titre { margin: 0 0 4px; font-family: var(--titre); font-size: 18px; font-weight: 700; }
+.moment-grade { display: grid; grid-template-columns: auto 1fr; gap: 0 12px; align-items: center; }
+.moment-grade .source, .moment-grade .moment-fermer { grid-column: 2; }
+.moment-fermer { font-size: 13px; }
+
+.graphique { margin: 18px 0; }
+.graphique-titre { font-family: var(--titre); font-size: 16px; font-weight: 650; margin: 0 0 6px; }
+.graphique svg { display: block; width: 100%; height: auto; max-width: 560px; }
+.graphique-donnees { font-size: 13px; margin-top: 4px; }
+.tableau-donnees { border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+.tableau-donnees th, .tableau-donnees td { border-bottom: 1px solid var(--trait); padding: 3px 10px 3px 0; text-align: left; }
+.libelle-graphique { font-size: 11px; fill: var(--texte); }
+.valeur-graphique { font-size: 11px; font-weight: 700; fill: var(--texte); font-variant-numeric: tabular-nums; }
+.graduation-graphique { font-size: 10px; fill: var(--discret); }
+.repere-graphique { stroke: var(--trait); stroke-width: 1; stroke-dasharray: 3 3; }
+.axe-graphique { stroke: var(--discret); stroke-width: 1; }
+.barre-graphique { fill: var(--c, var(--accent)); }
+.barre-vide { fill: none; stroke: var(--trait); stroke-dasharray: 3 2; }
+.ligne-graphique { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linejoin: round; }
+.point-graphique { fill: var(--accent); }
+.grille-toile { fill: none; stroke: var(--trait); }
+.toile-ancienne { fill: none; stroke: var(--discret); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.toile-actuelle { fill: color-mix(in srgb, var(--accent) 18%, transparent); stroke: var(--accent); stroke-width: 2; }
+.toile-svg { max-width: 360px !important; }
+.case-calendrier { fill: var(--trait-doux); }
+.case-calendrier.active { fill: color-mix(in srgb, var(--vert) calc(var(--intensite) * 100%), var(--trait-doux)); }
+.bille { fill: var(--trait); transform-box: fill-box; transform-origin: bottom; animation: chute var(--duree-longue) var(--courbe) both; animation-delay: var(--retard); }
+.bille.score-joueur { fill: var(--accent); }
+.score-joueur-texte { font-weight: 700; fill: var(--texte); }
+@keyframes chute { from { transform: translateY(-60px); opacity: 0; } }
+.jauge-grade { margin: 12px 0; }
+.jauge-grade-titre { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
+.jauge > .jauge-remplie { height: 100%; width: calc(var(--part) * 100%); background: var(--accent); border-radius: inherit; }
+.barre-maitrise { height: 6px; margin: 8px 0 2px; border-radius: 3px; background: var(--trait-doux); overflow: hidden; }
+.barre-maitrise > div { height: 100%; width: calc(var(--part) * 100%); background: var(--c-fort, var(--accent)); }
+
+.profil-tete { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.profil-identite { display: flex; gap: 14px; align-items: center; }
+.profil-grade { display: flex; gap: 8px; align-items: center; margin: 0; font-family: var(--titre); font-size: 18px; font-weight: 650; }
+.profil-maitrise { text-align: right; }
+.grand-nombre { display: block; font-family: var(--titre); font-size: clamp(64px, 2vw + 56px, 80px); font-weight: 700; line-height: 1; font-variant-numeric: oldstyle-nums; }
+.grand-nombre.petit { font-size: 34px; margin-left: auto; display: inline; }
+.avertissement-maitrise { font-style: italic; }
+.onglets-profil { display: flex; flex-wrap: wrap; gap: 6px; margin: 20px 0 6px; border-bottom: 1px solid var(--trait); }
+.onglet-profil { min-height: 44px; padding: 8px 12px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--discret); font-weight: 600; }
+.onglet-profil[aria-selected="true"] { color: var(--texte); border-bottom-color: var(--accent); }
+.codex-cadre { display: flex; justify-content: center; }
+.codex { max-width: 100%; height: auto; }
+.codex-point { fill: var(--c); opacity: 0.25; }
+.codex-point.etat-1 { opacity: 0.45; }
+.codex-point.etat-2 { opacity: 0.65; }
+.codex-point.etat-3 { opacity: 0.85; }
+.codex-point.etat-4 { opacity: 1; }
+.codex-point.etat-0 { fill: none; stroke: var(--c); stroke-width: 1.2; opacity: 0.7; }
+.codex-nombre { font-family: var(--titre); font-size: 40px; font-weight: 700; fill: var(--texte); }
+.codex-mini { display: block; width: 120px; margin: 8px auto; }
+.distinctions { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; }
+.distinction-carte { padding: 10px 12px; border: 1px dashed var(--trait); border-radius: var(--rayon-bouton); }
+.distinction-carte.obtenue { border-style: solid; border-color: var(--vert); background: var(--carte); }
+.distinction-carte.secrete { color: var(--discret); font-style: italic; }
+.distinction-nom { margin: 0 0 4px; font-family: var(--titre); font-weight: 700; }
+.objectif-jour { display: flex; gap: 10px; align-items: center; }
+.objectif-jour p { margin: 0; }
+.maitrise-jeu { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--trait); }
+.face-au-hasard { margin: 12px 0; }
+
+/* Téléphone et tablette : le bouton de profil ne montre que l'anneau de l'objectif et l'insigne du grade */
+@media (max-width: 1039px) {
+  .bouton-profil { padding: 0; width: 44px; justify-content: center; }
+  .bouton-profil .blason, .bouton-profil-maitrise { display: none; }
+  .bouton-profil .insigne { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .entete .bouton-profil { right: 74px; }
+}
