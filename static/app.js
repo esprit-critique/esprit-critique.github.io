@@ -195,7 +195,7 @@ const CLES_SAUVEGARDE = [
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
-  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest"
+  "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages"
 ];
 
 // Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
@@ -204,7 +204,7 @@ const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
     "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
-    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest"],
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
   booleen: ["certitudeQuiz", "ceciteFaite"]
 };
@@ -746,30 +746,50 @@ function ouverture() {
 function afficherAccueil() {
   const zone = $("vue-accueil");
   zone.replaceChildren();
+  zone.classList.add("large");
   const date = new Date().toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
-  zone.append(el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1)), el("h1", "page-titre", "Aujourd'hui"));
-  zone.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
-
-  // Ouverture : pour un nouveau visiteur (aucune activité, aucun atelier), l'emblème en grand, première leçon du site
   const resultats = lire("resultatsAteliers", {});
-  if (!lire("activite", []).length && !Object.keys(formeDe(resultats) === "objet" ? resultats : {}).length) zone.appendChild(ouverture());
+  const nouveau = !lire("activite", []).length && !Object.keys(formeDe(resultats) === "objet" ? resultats : {}).length;
 
-  // Appel à l'action : réviser s'il y a des notions dues, sinon commencer le quiz ; les fiches en second choix
+  // 1. Ouverture : la date, la série de jours, l'action principale du moment
+  const tete = el("div", "accueil-tete");
+  const serie = serieDeJours();
+  const ligneDate = el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1));
+  if (serie > 0) ligneDate.appendChild(el("span", "serie-jours", serie > 1 ? T("{0} jours d'affilée", serie) : T("1 jour d'affilée")));
+  tete.append(ligneDate, el("h1", "page-titre", "Aujourd'hui"));
+  tete.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
+  // Nouveau visiteur (aucune activité, aucun atelier) : l'emblème en grand, première leçon du site, et un seul bouton
+  if (nouveau) tete.appendChild(ouverture());
   const nbAReviser = clesAReviser().length;
   const appel = el("div", "appel-action");
   appel.appendChild(nbAReviser
     ? lienVers("#quiz/reviser", T("Réviser les notions dues ({0})", nbAReviser), "bouton")
     : lienVers("#quiz", Object.keys(memoire).length ? "Continuer le quiz" : "Commencer le quiz : 10 situations", "bouton"));
-  appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), T("Parcourir les {0} fiches", BIAIS.length + SOPHISMES.length), "bouton secondaire"));
-  zone.appendChild(appel);
-  // Le Grand test, mis en avant (grand-test-interface.js), s'il est publié
-  if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
+  if (!nouveau) appel.appendChild(lienVers("#" + (lire("typeFiches", "biais") === "sophismes" ? "sophismes" : "biais"), T("Parcourir les {0} fiches", BIAIS.length + SOPHISMES.length), "bouton secondaire"));
+  tete.appendChild(appel);
+  zone.appendChild(tete);
 
-  // Situation du jour : la même pour tout le monde, une par jour
+  // 2. Le programme du jour : les trois cartes quotidiennes, avec leur état ; puis deux colonnes sur ordinateur
   const q = situationDuJour();
   const memo = lire("jour", null);
   const dejaRepondu = memo && memo.jour === aujourdHui() ? q.options.find(o => o.id === memo.choix) : null;
+  const defi = lire("defiJour", null), vf = lire("vfJour", null);
+  const colonnes = el("div", "deux-colonnes");
+  const principal = el("div", "colonne-principale");
+  const laterale = el("aside", "colonne-laterale");
+  laterale.setAttribute("aria-label", "Révisions et progression");
+  colonnes.append(principal, laterale);
   const carteJour = el("article", "carte");
+  const carteDefi = carteDefiDuJour(), carteVF = carteVraiFauxDuJour();
+  principal.appendChild(programmeDuJour([
+    ["Situation du jour", !!dejaRepondu, carteJour],
+    ["Défi du jour", !!(defi && defi.jour === aujourdHui()), carteDefi],
+    ["Vrai ou faux du jour", !!(vf && vf.j === aujourdHui()), carteVF]
+  ]));
+  // Le Grand test, mis en avant (grand-test-interface.js), s'il est publié
+  if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) principal.appendChild(carteGrandTest());
+
+  // Situation du jour : la même pour tout le monde, une par jour
   carteJour.appendChild(el("p", "surtitre", "Situation du jour"));
   rendreQuestion(carteJour, q, dejaRepondu, option => {
     ecrire("jour", { jour: aujourdHui(), choix: option.id });
@@ -778,11 +798,11 @@ function afficherAccueil() {
     actions.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, "Lire la fiche", "bouton secondaire"));
     actions.appendChild(lienVers("#quiz", "Continuer au quiz", "bouton"));
   });
-  zone.appendChild(carteJour);
+  principal.appendChild(carteJour);
 
   // Défi du jour, puis vrai ou faux du jour
-  zone.appendChild(carteDefiDuJour());
-  zone.appendChild(carteVraiFauxDuJour());
+  principal.append(carteDefi, carteVF);
+  zone.appendChild(colonnes);
 
   // Révisions
   const dues = clesAReviser().length;
@@ -817,7 +837,7 @@ function afficherAccueil() {
     agenda.addEventListener("click", () => exporterRevisions());
     carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
-  zone.appendChild(carteRevision);
+  laterale.appendChild(carteRevision);
 
   // Progression
   const stats = statistiques();
@@ -855,7 +875,7 @@ function afficherAccueil() {
   } else {
     carteProgression.appendChild(el("p", "source", "Après quelques séries de quiz, vos catégories les plus fragiles apparaîtront ici."));
   }
-  zone.appendChild(carteProgression);
+  laterale.appendChild(carteProgression);
 
   // Suggestions
   const suggestions = [];
@@ -869,7 +889,7 @@ function afficherAccueil() {
     suggestions.push(["#" + r.type + "/" + r.fiche.id, "Une fiche à découvrir", r.fiche.nom, COULEURS[r.fiche.categorie]]);
   }
   if (suggestions.length) {
-    zone.appendChild(el("h3", "titre-bloc", "À explorer"));
+    principal.appendChild(el("h3", "titre-bloc", "À explorer"));
     const grille = el("div", "cartes-grille");
     suggestions.forEach(([adresse, surtitre, titre, couleur]) => {
       const carte = lienVers(adresse, undefined, "carte entree");
@@ -878,8 +898,30 @@ function afficherAccueil() {
       carte.lastChild.style.margin = "4px 0 0";
       grille.appendChild(carte);
     });
-    zone.appendChild(grille);
+    principal.appendChild(grille);
   }
+}
+
+// Le programme du jour : une case par carte quotidienne, « fait » ou « à faire » (en toutes lettres, pas seulement en
+// couleur) ; toucher une case amène à sa carte
+function programmeDuJour(cartes) {
+  const bloc = el("nav", "programme");
+  bloc.setAttribute("aria-label", "Le programme du jour");
+  bloc.appendChild(el("p", "surtitre", T("Le programme du jour : {0} sur 3", cartes.filter(([, fait]) => fait).length)));
+  const liste = el("div", "programme-cases");
+  cartes.forEach(([titre, fait, carte]) => {
+    const b = el("button", "programme-case" + (fait ? " fait" : ""));
+    b.type = "button";
+    b.append(el("span", "programme-titre", titre), el("span", "programme-etat", fait ? "Fait" : "À faire"));
+    b.addEventListener("click", () => {
+      carte.scrollIntoView({ behavior: animationsReduites() ? "auto" : "smooth", block: "start" });
+      const cible = carte.querySelector("button:not(:disabled), a");
+      if (cible) cible.focus({ preventScroll: true });
+    });
+    liste.appendChild(b);
+  });
+  bloc.appendChild(liste);
+  return bloc;
 }
 
 // Carte « Vrai ou faux du jour » de l'accueil
@@ -1765,6 +1807,55 @@ $("btn-partager").addEventListener("click", async () => {
     annoncer(T("Lien du site : {0}", adresse));
   }
 });
+
+// ===================== Réglages et mouvement (DESIGN.md, « Mouvement ») =====================
+// reglages = { animations: "auto" | "reduites" }
+const reglages = lire("reglages", {});
+function animationsReduites() {
+  return reglages.animations === "reduites" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+// Le réglage réduit pose data-animations="reduites", que style.css traite comme prefers-reduced-motion
+function appliquerAnimations() {
+  if (reglages.animations === "reduites") document.documentElement.dataset.animations = "reduites";
+  else delete document.documentElement.dataset.animations;
+  document.querySelectorAll("[data-animations-choix]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.animationsChoix === (reglages.animations || "auto"))));
+}
+document.querySelectorAll("[data-animations-choix]").forEach(b => b.addEventListener("click", () => {
+  reglages.animations = b.dataset.animationsChoix;
+  ecrire("reglages", reglages);
+  appliquerAnimations();
+}));
+appliquerAnimations();
+
+// Point d'entrée unique des animations lancées par script (element.animate n'est pas arrêté par la règle CSS) :
+// rien quand le mouvement doit être réduit. L'appelant pose d'abord l'état final ; l'animation y mène, et cet état
+// reste juste même si elle n'a pas lieu ou est interrompue.
+function animer(element, images, options) {
+  if (!element || typeof element.animate !== "function" || animationsReduites()) return null;
+  return element.animate(images, Object.assign({ duration: 280, easing: "cubic-bezier(0.2, 0.7, 0.2, 1)" }, options));
+}
+// Changement de page : transition de vue quand le navigateur la connaît et que le mouvement n'est pas réduit
+function transitionDeVue(majDom) {
+  if (typeof document.startViewTransition !== "function" || animationsReduites()) { majDom(); return; }
+  document.startViewTransition(majDom);
+}
+
+// Filet du spectre sous l'en-tête : un segment par catégorie, de largeur proportionnelle à son nombre de fiches
+(function dessinerSpectre() {
+  const entete = document.querySelector(".entete");
+  if (!entete) return;
+  const parts = Object.values(TYPES).flatMap(conf => conf.categories.map(c => [c, conf.fiches.filter(f => f.categorie === c.nom).length]));
+  const filet = el("div", "spectre");
+  filet.setAttribute("role", "img");
+  filet.setAttribute("aria-label", T("Composition du catalogue, par catégorie : {0}", parts.map(([c, n]) => T(c.nom) + " " + n).join(", ")));
+  parts.forEach(([c, n]) => {
+    const segment = el("span");
+    segment.style.setProperty("--c", c.couleur);
+    segment.style.setProperty("--part", n);
+    filet.appendChild(segment);
+  });
+  entete.after(filet);
+})();
 
 // Thème : automatique (selon l'appareil), clair ou sombre. Le script de l'en-tête l'applique avant l'affichage.
 function appliquerTheme(choix) {
