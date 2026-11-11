@@ -1,7 +1,7 @@
 # Modèle de menace d'Esprit critique
 
 Ce document dit ce que le site protège, contre qui, par quelles mesures, et quels risques sont acceptés. Il est tenu à
-jour à chaque changement qui touche à la sécurité (la synchronisation, au lot 6 de la refonte, le complétera).
+jour à chaque changement qui touche à la sécurité.
 Signalement d'une faille : [SECURITY.md](SECURITY.md).
 
 ## Ce qu'il y a à protéger
@@ -72,6 +72,40 @@ compromission de GitHub lui-même, une personne ayant un accès physique au navi
   obligatoire, signalement privé des failles, analyse des secrets avec blocage à l'envoi, alertes Dependabot,
   authentification à deux facteurs.
 
+## Synchronisation chiffrée (facultative, lot 6)
+
+Livrée derrière un drapeau : tant que `SYNCHRO_URL` (`static/coffre.js`) est vide, rien n'apparaît et rien n'est envoyé
+(le banc « synchro » le vérifie sur 18 adresses de la vraie page). Serveur : `serveur/` (Cloudflare Worker + D1).
+
+**Hypothèses.** Le code de synchronisation (16 caractères en base 32 de Crockford, 80 bits tirés de
+`crypto.getRandomValues`) est le compte. Le navigateur (Web Crypto) est sain ; la page est servie par GitHub Pages en
+HTTPS, sans script d'une autre origine (CSP, Trusted Types).
+
+**Mesures.** Du code, HKDF-SHA-256 (sel fixe `esprit-critique/synchro/v1`) dérive trois valeurs indépendantes :
+l'identifiant du coffre, le jeton d'accès, la clé AES-256-GCM, non extractible. Le contenu (la progression et ses
+horodatages) est compressé, chiffré avec un vecteur d'initialisation aléatoire de 12 octets et l'identifiant du coffre en
+donnée associée. Le serveur ne garde que l'identifiant, l'empreinte SHA-256 du jeton (comparée en temps constant), le
+contenu chiffré et sa version. Tout ce qui revient du serveur est déchiffré puis validé en profondeur (`sauvegarde.js`) ;
+un contenu qui ne se déchiffre pas, ou plus ancien que la dernière version connue, est refusé sans toucher aux données
+locales. Deux appareils sont fusionnés clé par clé (union, maximum, fusion à trois des compteurs), jamais écrasés.
+
+**Un serveur compromis** peut effacer un coffre ou resservir une copie plus ancienne de ce coffre (refusée si sa
+version est inférieure à la dernière connue de l'appareil, mais pas pour un appareil qui n'a jamais synchronisé) ; il
+ne peut ni lire le contenu (AES-GCM, clé jamais envoyée), ni en forger un (le chiffrement est authentifié), ni déplacer
+un contenu d'un coffre à un autre (donnée associée). Il voit, comme tout hébergeur, l'adresse IP des requêtes, leur
+taille et leurs dates.
+
+**Un appareil compromis** (logiciel espion, extension malveillante) peut lire le code, gardé dans IndexedDB pour
+pouvoir être réaffiché : c'est un compromis assumé entre sécurité et récupération. Qui a le code peut lire et modifier
+le coffre ; « Supprimer la copie en ligne » l'efface, et créer un nouveau compte en donne un autre.
+
+**Pas de récupération.** Sans adresse électronique, il n'y a personne à qui renvoyer un code perdu : c'est le prix
+d'une synchronisation sans donnée personnelle. Le site propose d'enregistrer le code dans le gestionnaire de mots de
+passe, de l'imprimer, et le réaffiche (après confirmation) sur tout appareil déjà connecté.
+
+**Pourquoi pas de hachage lent.** Un secret aléatoire de 80 bits ne se devine pas : il n'y a ni dictionnaire ni
+mot de passe faible à ralentir, et l'offre gratuite limite le calcul à 10 ms par requête.
+
 ## Risques acceptés
 
 - **`localStorage` est lisible par tout script de la même origine.** Le site n'en charge aucun autre que les siens ;
@@ -81,3 +115,5 @@ compromission de GitHub lui-même, une personne ayant un accès physique au navi
 - **Les champs non décrits d'une sauvegarde sont gardés**, bornés (profondeur, tailles, types JSON simples), pour ne
   rien perdre d'une donnée légitime ; le code qui les lit doit rester prudent (le banc à données aléatoires le vérifie).
 - **Pas de rapport de violation de la CSP** : `report-uri` est ignoré en balise `meta`, et le site n'a pas de serveur.
+- **Synchronisation** : le code est gardé en clair dans IndexedDB (voir plus haut) ; la limitation des créations de
+  coffres est approximative (locale à chaque centre de données) ; un serveur compromis peut supprimer une copie.

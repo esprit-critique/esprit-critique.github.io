@@ -1,0 +1,26 @@
+# Configuration du Worker (voir README.md). Remplacer database_id par celui que donne « wrangler d1 create ».
+name = "esprit-critique-synchro"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "BASE"
+database_name = "esprit-critique-synchro"
+database_id = "A-REMPLACER"
+
+# Limitation des créations de coffres : approximative et locale à chaque centre de données (documentation Cloudflare)
+[[ratelimits]]
+name = "LIMITE_CREATIONS"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
+# Purge des coffres inactifs depuis 24 mois, chaque jour à 3 h 17 (UTC)
+[triggers]
+crons = ["17 3 * * *"]
+
+[vars]
+ORIGINES = "https://esprit-critique.github.io"
+MAX_COFFRES = "100000"

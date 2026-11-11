@@ -359,6 +359,10 @@ function ongletReglages(p) {
   caseSobre.addEventListener("change", () => { ecrire("reglages", { ...lire("reglages", {}), sobre: caseSobre.checked }); majBoutonProfil(); afficherPageProfil(); });
   sobre.append(caseSobre, texteNoeud(" " + T("Mode sobre : cacher la maîtrise, les grades, les points et les distinctions (tout continue d'être compté)")));
   p.appendChild(sobre);
+  // Synchronisation chiffrée (coffre.js), seulement si elle est en service
+  const place = el("div");
+  p.appendChild(place);
+  blocSynchro().then(b => { if (b) place.appendChild(b); }).catch(() => {});
   p.appendChild(lienVers("#guide/maitrise", "Comment votre maîtrise est calculée", "lien-discret"));
   p.appendChild(el("br"));
   p.appendChild(lienVers("#guide/motivation", "Comment ce site essaie de vous motiver", "lien-discret"));

@@ -1,0 +1,6 @@
+{
+  "name": "esprit-critique-synchro",
+  "private": true,
+  "type": "module",
+  "description": "Serveur de synchronisation chiffrée (Cloudflare Worker + D1). Aucune dépendance à l'exécution ; non publié avec le site."
+}

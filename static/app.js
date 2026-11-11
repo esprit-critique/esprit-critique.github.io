@@ -27,7 +27,7 @@
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
     [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
-    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof gagner, "profil.js"], [() => typeof PARCOURS, "parcours.js"]
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof gagner, "profil.js"], [() => typeof PARCOURS, "parcours.js"], [() => typeof SYNCHRO, "coffre.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
   // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
@@ -178,7 +178,10 @@ function lire(cle, defaut) {
 // Échec d'écriture (stockage plein ou refusé) : prévenu une fois par visite, sans bloquer le site
 let ecritureEchouee = false;
 function ecrire(cle, valeur) {
-  try { localStorage.setItem(cle, JSON.stringify(valeur)); } catch (e) {
+  try {
+    localStorage.setItem(cle, JSON.stringify(valeur));
+    noterModification(cle);   // coffre.js : horodatage pour la synchronisation, seulement si un compte est actif
+  } catch (e) {
     if (ecritureEchouee) return;
     ecritureEchouee = true;
     // annoncer() est défini plus bas dans app.js : différé, pour le cas d'un échec pendant le chargement
@@ -2143,3 +2146,5 @@ if (!location.hash) history.replaceState(null, "", "#accueil");
 rattraperProgression();
 majMaitrise(false);
 afficherPage();
+// Synchronisation chiffrée (coffre.js) : rien si SYNCHRO_URL est vide ou si aucun compte n'est actif sur cet appareil
+demarrerSynchro();

@@ -1,0 +1,31 @@
+// dico-coffre.js : traductions anglaises des textes de coffre.js (français à gauche, anglais à droite).
+// Les {0}, {1}… sont remplacés par les valeurs que passe le code : T("… {0} …", valeur).
+EN_AJOUTER([
+  ["version distante plus ancienne que la dernière connue", "remote version older than the last one known"],
+  ["conflits répétés", "repeated conflicts"],
+  ["Synchronisation désactivée", "Sync turned off"],
+  ["À jour", "Up to date"],
+  ["En attente", "Pending"],
+  ["Synchronisation…", "Syncing…"],
+  ["Hors ligne : la synchronisation attend", "Offline: sync is waiting"],
+  ["Erreur de synchronisation", "Sync error"],
+  ["Synchroniser mes appareils", "Sync my devices"],
+  ["Facultatif. Votre progression est chiffrée sur cet appareil avant d'être envoyée : personne d'autre ne peut la lire, pas même le propriétaire du site. Le code de synchronisation est le compte ; il n'y a ni adresse électronique, ni mot de passe, ni récupération par courriel : gardez-le.", "Optional. Your progress is encrypted on this device before it is sent: no one else can read it, not even the site’s owner. The sync code is the account; there is no email address, no password and no recovery by email: keep it safe."],
+  ["Créer un compte", "Create an account"],
+  ["XXXX XXXX XXXX XXXX", "XXXX XXXX XXXX XXXX"],
+  ["Se connecter avec un code", "Sign in with a code"],
+  ["Se connecter", "Sign in"],
+  ["Connexion impossible : {0}", "Could not sign in: {0}"],
+  ["Synchroniser maintenant", "Sync now"],
+  ["Afficher mon code", "Show my code"],
+  ["Afficher le code de synchronisation ? Toute personne qui le voit peut lire votre progression.", "Show the sync code? Anyone who sees it can read your progress."],
+  ["Se déconnecter de cet appareil", "Sign out of this device"],
+  ["Supprimer la copie en ligne", "Delete the online copy"],
+  ["Supprimer la copie chiffrée gardée en ligne ? La progression de cet appareil reste intacte.", "Delete the encrypted copy kept online? The progress on this device stays intact."],
+  ["Votre code de synchronisation", "Your sync code"],
+  ["Saisissez-le sur votre autre appareil (Profil, Réglages). Enregistrez-le dans votre gestionnaire de mots de passe ou imprimez-le : sans lui, la copie en ligne est perdue.", "Enter it on your other device (Profile, Settings). Save it in your password manager or print it: without it, the online copy is lost."],
+  ["Code proposé à votre gestionnaire de mots de passe.", "Code offered to your password manager."],
+  ["Code de synchronisation, pour le gestionnaire de mots de passe", "Sync code, for the password manager"],
+  ["Enregistrer dans le gestionnaire de mots de passe", "Save in the password manager"],
+  ["Imprimer une fiche de secours", "Print a backup sheet"]
+]);

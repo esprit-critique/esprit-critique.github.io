@@ -1741,3 +1741,15 @@ h3.titre-bloc {
 .sceau-cercle.fin { stroke-width: 0.8; }
 .sceau-trait { fill: none; stroke: var(--c); stroke-width: 1.8; stroke-linecap: round; }
 .carte-parcours .barre-maitrise > div { background: var(--vert); }
+
+/* Synchronisation (coffre.js) */
+.etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 14px); right: 122px; width: 10px; height: 10px; border-radius: 50%; background: var(--discret); }
+.etat-synchro[data-statut="a-jour"] { background: var(--vert); }
+.etat-synchro[data-statut="erreur"] { background: var(--rouge); }
+.etat-synchro[data-statut="en-cours"], .etat-synchro[data-statut="en-attente"] { background: var(--orange); }
+@media (min-width: 1040px) { .etat-synchro { position: static; order: 3; flex: none; } }
+.bloc-synchro { margin-top: 22px; }
+.actions-synchro { flex-wrap: wrap; }
+.code-synchro { margin-top: 14px; padding: 12px 14px; border: 1px dashed var(--trait); border-radius: var(--rayon-carte); }
+.code-synchro-valeur { font-family: var(--mono); font-size: 22px; letter-spacing: 0.08em; margin: 4px 0 8px; }
+@media print { body * { visibility: hidden; } .code-synchro, .code-synchro * { visibility: visible; } .code-synchro { position: absolute; top: 0; left: 0; } }
