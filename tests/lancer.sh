@@ -3,13 +3,17 @@
 # en clair puis en sombre, et rassemble les rapports dans tests/rapports/.
 #
 #   tests/lancer.sh                       tous les bancs, dans les quatre configurations
-#   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux, items, csp, grand, hors-ligne, calculs, familles ou banques)
+#   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux, items, csp, grand, hors-ligne, calculs,
+#                                         familles, banques ou recherche)
 #   CONFIGS="390 clair" tests/lancer.sh   une seule configuration
 #
 # Les bancs sont copiés dans static/ le temps du test, puis enlevés ; le serveur local est arrêté à la fin.
+# Sous macOS comme sous Linux : Chrome (variable CHROME, sinon cherché : tests/navigateur.py), Python 3 et Node.js.
+# Code de sortie 1 si un banc échoue (tests/verdict.py), pour l'intégration continue.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche"}
+export CHROME=${CHROME:-$(python3 tests/navigateur.py)}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair
@@ -26,15 +30,15 @@ nettoyer() {
 trap nettoyer EXIT
 
 # Syntaxe des scripts des bancs : une erreur empêcherait tout le banc de tourner, sans message
+SYNTAXE=$(mktemp -d)
 for f in tests/_*.html tests/niveaux.html; do
-  python3 -c "import re,sys; open('/tmp/banc-syntaxe.js','w').write('\n'.join(re.findall(r'<script>(.*?)</script>', open(sys.argv[1]).read(), re.S)))" "$f"
-  verdict=$(osascript -l JavaScript -e "ObjC.import('Foundation'); var t = \$.NSString.stringWithContentsOfFileEncodingError('/tmp/banc-syntaxe.js', \$.NSUTF8StringEncoding, null).js; try { new Function(t); 'ok' } catch (e) { e + ' (ligne ' + e.line + ')' }")
-  [ "$verdict" != ok ] && { echo "!! $f : $verdict"; ERREUR_SYNTAXE=1; }
+  python3 -c "import re,sys; open(sys.argv[2],'w').write('\n'.join(re.findall(r'<script>(.*?)</script>', open(sys.argv[1]).read(), re.S)))" "$f" "$SYNTAXE/banc.js"
+  node --check "$SYNTAXE/banc.js" 2>/dev/null || { echo "!! $f :"; node --check "$SYNTAXE/banc.js" 2>&1 | head -5; ERREUR_SYNTAXE=1; }
 done
+rm -rf "$SYNTAXE"
 # Syntaxe des scripts du site : une erreur (variable déclarée deux fois…) bloquerait tout le site
-for f in static/*.js; do
-  verdict=$(osascript -l JavaScript -e "ObjC.import('Foundation'); var t = \$.NSString.stringWithContentsOfFileEncodingError('$f', \$.NSUTF8StringEncoding, null).js; try { new Function(t); 'ok' } catch (e) { e + ' (ligne ' + e.line + ')' }")
-  [ "$verdict" != ok ] && { echo "!! $f : $verdict"; ERREUR_SYNTAXE=1; }
+for f in static/*.js static/en/*.js; do
+  node --check "$f" 2>/dev/null || { echo "!! $f :"; node --check "$f" 2>&1 | head -5; ERREUR_SYNTAXE=1; }
 done
 # Noms globaux en double entre les scripts du site (une fonction redéclarée en remplacerait une autre sans message)
 python3 tests/noms_globaux.py || ERREUR_SYNTAXE=1
@@ -53,15 +57,24 @@ if ! curl -s -o /dev/null http://localhost:8000/; then
   for _ in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null http://localhost:8000/ && break; sleep 0.5; done
 fi
 
-echo "$CONFIGS" | while read -r largeur theme; do
+while read -r largeur theme; do
   [ -z "$largeur" ] && continue
+  PREMIERE=${PREMIERE:-$largeur-$theme}
   hauteur=$([ "$largeur" = 390 ] && echo 844 || echo 900)
   for banc in $BANCS; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
     page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
     [ "$banc" = grand ] && page="_grand-test.html"
-    if [ "$banc" = calculs ] || [ "$banc" = familles ] || [ "$banc" = banques ]; then
-      python3 "tests/grand_test_$banc.py" "$rapport" > /dev/null   # hors navigateur (moteur JavaScript de macOS)
+    case $banc in recherche|calculs|familles|banques)
+      # Bancs indépendants de la taille et du thème : une seule fois, dans la première configuration
+      [ "$PREMIERE" = "$largeur-$theme" ] || continue
+      rapport="tests/rapports/$banc.txt" ;;
+    esac
+    if [ "$banc" = recherche ]; then   # Playwright (npm ci), avec ses propres tailles d'écran
+      if node tests/recherche-melange.js > "$rapport.tmp" 2>&1; then r="0 échec"; else r="ÉCHEC"; fi
+      { echo "RÉSUMÉ : $(grep -c '^OK' "$rapport.tmp") contrôle(s) réussi(s) ; $r"; cat "$rapport.tmp"; } > "$rapport"; rm -f "$rapport.tmp"
+    elif [ "$banc" = calculs ] || [ "$banc" = familles ] || [ "$banc" = banques ]; then
+      python3 "tests/grand_test_$banc.py" "$rapport" > /dev/null   # hors navigateur (Node.js)
     elif [ "$banc" = hors-ligne ]; then
       python3 tests/hors_ligne.py "$largeur,$hauteur" "$theme" "$rapport"   # service worker, serveur coupé en cours de banc
     elif [ "$banc" = csp ]; then
@@ -70,6 +83,8 @@ echo "$CONFIGS" | while read -r largeur theme; do
       python3 tests/chrome.py "http://localhost:8000/$page?l=$largeur&h=$hauteur" "$largeur,$hauteur" "$theme" "$rapport"
     fi
     echo "== $banc, $largeur px, $theme : $(grep -m1 '^RÉSUMÉ' "$rapport" || head -1 "$rapport")"
+    python3 tests/verdict.py "$rapport" || ECHECS="$ECHECS $banc-$largeur-$theme"
   done
-done
+done <<< "$CONFIGS"
 echo "Rapports complets : $RACINE/tests/rapports/"
+[ -z "$ECHECS" ] || { echo "Bancs en échec :$ECHECS"; exit 1; }
