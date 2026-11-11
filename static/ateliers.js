@@ -44,6 +44,14 @@ function svg(balise, attributs) {
   return e;
 }
 
+// Dessins fixes écrits en SVG (PICTOS, TRAITS_ENTITE), faits d'éléments sans enfant « <balise a="v"/> » : chacun est
+// recréé par svg(), sans insérer de HTML (la politique Trusted Types le refuse)
+function dessinerSvg(parent, source) {
+  for (const [, balise, attributs] of source.matchAll(/<(\w+)([^>]*?)\s*\/>/g))
+    parent.appendChild(svg(balise, Object.fromEntries([...attributs.matchAll(/([\w-]+)="([^"]*)"/g)].map(m => [m[1], m[2]]))));
+  return parent;
+}
+
 // Texte SVG, avec la typographie française
 function texteSvg(x, y, contenu, attributs) {
   const t = svg("text", Object.assign({ x, y }, attributs || {}));
@@ -178,7 +186,7 @@ function derouler(zone, elements, afficher, bilan, libelle) {
   let i = 0;
   const resultats = [];
   function etape() {
-    zone.innerHTML = "";
+    zone.replaceChildren();
     if (i >= elements.length) return bilan(resultats);
     entete(zone, i + 1, elements.length, libelle);
     afficher(elements[i], zone, (resultat, conteneur) => {
@@ -390,8 +398,7 @@ const PICTOS = {
 
 function pictogramme(nom) {
   const s = svg("svg", { viewBox: "0 0 48 48", class: "picto", "aria-hidden": "true" });
-  s.innerHTML = PICTOS[nom] || PICTOS.livre;   // dessins fixes définis ci-dessus, sans donnée extérieure
-  return s;
+  return dessinerSvg(s, PICTOS[nom] || PICTOS.livre);
 }
 
 // ===================== Ateliers liés aux fiches =====================
@@ -475,7 +482,7 @@ function atelierConseille() {
 
 function afficherAteliers() {
   const zone = $("vue-ateliers");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   zone.append(el("h1", "page-titre", "Ateliers"),
     el("p", "page-intro", T("{0} : estimer le monde réel, mesurer sa confiance, éprouver sa perception et refaire les expériences classiques. Répondez spontanément : c'est la première réaction qui est intéressante.", pluriel(tousLesAteliers().length, "atelier"))));
 
@@ -582,7 +589,7 @@ function basculerSection(bloc, ouvrir, defiler, memoriser = true) {
 
 // Page d'un atelier : lien de retour, titre, puis le jeu lui-même
 function ouvrirAtelier(conteneur, atelier, adresseCourante) {
-  conteneur.innerHTML = "";
+  conteneur.replaceChildren();
   const tous = tousLesAteliers();
   const rang = tous.findIndex(a => a.atelier === atelier);
   const nav = el("div", "nav-atelier");
@@ -619,7 +626,7 @@ function reussiteAtelier(id) {
 
 function afficherPortrait() {
   const zone = $("vue-portrait");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   zone.appendChild(lienVers("#ateliers", "← Ateliers", "lien retour"));
   zone.append(el("h1", "page-titre", "Votre portrait"),
     el("p", "page-intro", "Ce que vos réponses aux ateliers révèlent de votre façon de juger. Chaque mesure s'affine à mesure que vous jouez ; tout reste dans votre navigateur."));

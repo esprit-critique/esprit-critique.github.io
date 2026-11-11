@@ -454,6 +454,21 @@ f.onload = async () => {
     const apres = JSON.parse(w.localStorage.getItem("sauvegardesAuto") || "[]");
     ok("sauvegardes automatiques : la copie d'avant l'import est restaurée, l'état remplacé est gardé",
       ["acquis", "memoire", "modeQuiz"].every(c => (w.localStorage.getItem(c) ?? "absente") === valeurDe(c)) && apres.some(s => s.motif === "avant restauration") && apres.length <= 4);
+    // Pictogrammes des ateliers et traits des personnages du Grand test, dessinés par dessinerSvg() sans insérer de HTML :
+    // même arbre SVG que l'ancienne insertion par innerHTML (possible ici, la copie des bancs n'a pas de CSP)
+    const dessins = { ...w.eval("PICTOS"), ...Object.fromEntries(Object.entries(w.eval("TRAITS_ENTITE")).map(([k, v]) => ["trait-" + k, v])) };
+    const differents = Object.entries(dessins).filter(([, source]) => {
+      const a = w.eval("dessinerSvg")(w.eval("svg")("svg", { viewBox: "0 0 48 48" }), source);
+      const b = w.eval("svg")("svg", { viewBox: "0 0 48 48" });
+      b.innerHTML = source;
+      return a.outerHTML !== b.outerHTML;
+    }).map(([k]) => k);
+    ok("dessins fixes : " + Object.keys(dessins).length + " pictogrammes et traits identiques à l'ancienne insertion", Object.keys(dessins).length > 30 && !differents.length, differents.join(", "));
+    // La progression réelle de la copie d'avant import (quiz, révisions, duels, certitudes…) passe la validation profonde sans perte
+    const validee = w.validerSauvegarde(JSON.parse(JSON.stringify(avantImport.cles)));
+    const perdues = Object.keys(avantImport.cles).filter(c => JSON.stringify(validee.valides[c]) !== JSON.stringify(avantImport.cles[c]));
+    ok("sauvegarde : la progression du banc passe la validation sans perte (" + Object.keys(avantImport.cles).length + " clés)", !perdues.length && validee.ecartees === 0,
+      perdues.map(c => c + " : " + JSON.stringify(avantImport.cles[c]).slice(0, 200)).join(" | "));
   } catch (e) {
     lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
   }

@@ -75,7 +75,7 @@ function blocProblemeStockage(zone, charge) {
 function afficherGrandTest(zone) {
   GT.zone = zone;
   GT.focaliser = false;
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const charge = chargerGrandTest();
   if (charge.probleme && !charge.etat) { blocProblemeStockage(zone, charge); return; }
   GT.etat = charge.etat;
@@ -196,7 +196,7 @@ function sauver(etat) {
 
 function rafraichir() {
   const zone = GT.zone;
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const t = passationEnCours(GT.etat);
   if (!t) { accueilGrandTest(zone); return; }
   const ecran = ecranCourant(t);
@@ -282,7 +282,7 @@ function accueilGrandTest(zone) {
     const p = el("p", "conseil");
     p.appendChild(texteNoeud(pluriel(faits.length, "test terminé", "tests terminés") + ". "));
     const b = el("button", "lien-bouton", "Voir vos résultats");
-    b.addEventListener("click", () => { zone.innerHTML = ""; afficherProfil(zone, faits[faits.length - 1].id); });
+    b.addEventListener("click", () => { zone.replaceChildren(); afficherProfil(zone, faits[faits.length - 1].id); });
     p.appendChild(b);
     zone.appendChild(p);
   }
@@ -822,7 +822,7 @@ function terminerEtAfficher(t) {
   const niveau = niveauObserve(r.etat);
   fini.niveau = { id: niveau.id, statut: niveau.statut, calculeLe: maintenantISO() };
   sauver(r.etat);
-  GT.zone.innerHTML = "";
+  GT.zone.replaceChildren();
   afficherProfil(GT.zone, t.id);
 }
 
@@ -1121,7 +1121,7 @@ function blocAteliersConseilles(t) {
 // Deux ateliers nouveaux, issus de l'audit des manques : la mémoire (aucun atelier n'existait) et la sur-correction.
 // Leur contenu est à relire : ils ne sont inscrits que si le Grand test est visible (copie d'essai seulement).
 function atelierFauxSouvenirs(zone) {
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const graine = Math.floor(Math.random() * 4294967295) >>> 0;
   const demo = demonstrationDRM(Math.floor(Math.random() * LISTES_DRM_GT.length), graine);
   zone.appendChild(paragraphe("Lisez cette liste de dix mots, sans vous presser. Vous devrez ensuite reconnaître ceux qui y figuraient."));
@@ -1129,7 +1129,7 @@ function atelierFauxSouvenirs(zone) {
   demo.liste.forEach(m => ul.appendChild(el("li", null, m)));
   zone.appendChild(ul);
   zone.appendChild(boutonSuivant("J'ai lu la liste", () => {
-    zone.innerHTML = "";
+    zone.replaceChildren();
     const reponses = demo.test.map(() => null);
     const valider = boutonValider();
     demo.test.forEach((x, k) => zone.appendChild(groupeChoix(T("« {0} » était-il dans la liste ?", x.mot), [T("Oui"), T("Non")], null, j => { reponses[k] = j === 0; valider.disabled = reponses.some(r => r === null); }).element));
@@ -1147,7 +1147,7 @@ function atelierFauxSouvenirs(zone) {
 }
 
 function atelierDouterJuste(zone) {
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const graine = Math.floor(Math.random() * 4294967295) >>> 0, alea = generateur(graine);
   const familles = melanger(FAMILLES_GT.filter(f => f.surCorrection), alea).slice(0, 4);
   const items = familles.map(f => instanceGT(f, Math.floor(alea() * tailleFamille(f)), graine));
@@ -1181,8 +1181,7 @@ const TRAITS_ENTITE = {
 };
 function dessinEntite(e, fiche) {
   const s = svg("svg", { viewBox: "0 0 48 48", class: "picto", role: "img", "aria-label": T("{0} : métaphore du mécanisme « {1} »", e[1], fiche.nom) });
-  s.innerHTML = '<path d="M10 24h28"/>' + e[2].map(t => TRAITS_ENTITE[t]).join("");   // dessins fixes, aucune donnée extérieure
-  return s;
+  return dessinerSvg(s, '<path d="M10 24h28"/>' + e[2].map(t => TRAITS_ENTITE[t]).join(""));
 }
 const ficheDeCle = cle => { const [type, id] = cle.split(":"); return { type, id, fiche: trouverFiche(type, id) }; };
 const premierePhrase = t => (String(t).match(/^.*?[.!?](\s|$)/) || [t])[0].trim();

@@ -23,15 +23,22 @@
 // ===================== Vérification du chargement =====================
 // Sur une connexion instable, un fichier peut ne pas arriver : on le dit clairement plutôt que d'afficher une page cassée.
 (function verifierChargement() {
+  // typeof dans une fonction protégée : une constante dont la déclaration a planté (fichier suivant d'un fichier
+  // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
-    [typeof BIAIS, "donnees.js"], [typeof NS_SVG, "schemas.js"], [typeof PAYS, "pays.js"], [typeof MONDE, "jeux-donnees.js"],
-    [typeof PICTOS, "ateliers.js"], [typeof NOMS_NIVEAUX, "niveaux.js"], [typeof EXPERIENCES, "experiences.js"], [typeof JEUX, "chiffres.js"], [typeof gauss, "perception.js"], [typeof DEBATS, "debattre.js"], [typeof SYLLOGISMES, "raisonner.js"], [typeof testT, "pratiques.js"], [typeof INDICES, "indices.js"]
-  ].filter(([type]) => type === "undefined").map(([, fichier]) => fichier);
+    [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"]
+  ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
-  const main = document.querySelector("main");
-  main.innerHTML = '<section class="vue"><article class="carte"><h2>Chargement incomplet</h2>' +
-    '<p>' + T("Une partie de l'application n'a pas pu être chargée ({0}). Vérifiez votre connexion à Internet, puis rechargez la page.", manquants.join(", ")) + '</p>' +
-    '<button class="bouton" onclick="location.reload()">Recharger</button></article></section>';
+  // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
+  const creer = (balise, classe, texte) => { const e = document.createElement(balise); if (classe) e.className = classe; if (texte) e.textContent = texte; return e; };
+  const section = creer("section", "vue"), carte = creer("article", "carte"), bouton = creer("button", "bouton", T("Recharger"));
+  bouton.type = "button";
+  bouton.addEventListener("click", () => location.reload());
+  carte.append(creer("h2", "", T("Chargement incomplet")),
+    creer("p", "", T("Une partie de l'application n'a pas pu être chargée ({0}). Vérifiez votre connexion à Internet, puis rechargez la page.", manquants.join(", "))), bouton);
+  section.appendChild(carte);
+  document.querySelector("main").replaceChildren(section);
   throw new Error("Fichiers manquants : " + manquants.join(", "));
 })();
 
@@ -168,8 +175,15 @@ function lire(cle, defaut) {
   }
 }
 
+// Échec d'écriture (stockage plein ou refusé) : prévenu une fois par visite, sans bloquer le site
+let ecritureEchouee = false;
 function ecrire(cle, valeur) {
-  try { localStorage.setItem(cle, JSON.stringify(valeur)); } catch (e) { /* rien */ }
+  try { localStorage.setItem(cle, JSON.stringify(valeur)); } catch (e) {
+    if (ecritureEchouee) return;
+    ecritureEchouee = true;
+    // annoncer() est défini plus bas dans app.js : différé, pour le cas d'un échec pendant le chargement
+    setTimeout(() => annoncer("Votre progression n'a pas pu être enregistrée : le stockage du navigateur est plein ou bloqué. Enregistrez-la dans un fichier (guide, « Vos données ») pour ne pas la perdre."), 0);
+  }
 }
 
 function effacer(cle) {
@@ -437,7 +451,7 @@ function boutonIndice(carte, q) {
     if (courant) morceaux.push(courant);
     // Phrase sans ponctuation intérieure : un passage par mot
     if (morceaux.length < 3) morceaux.splice(0, morceaux.length, ...texte.match(/\S+\s*/g));
-    p.innerHTML = "";
+    p.replaceChildren();
     let pos = 0;
     const passages = morceaux.map(m => {
       const s = el("button", "passage");
@@ -448,7 +462,7 @@ function boutonIndice(carte, q) {
       s.addEventListener("click", () => {
         const touche = Number(s.dataset.debut) < fin && Number(s.dataset.fin) > debut;
         // La situation, avec l'indice surligné
-        p.innerHTML = "";
+        p.replaceChildren();
         p.append(document.createTextNode(texte.slice(0, debut)), el("mark", "indice"), document.createTextNode(texte.slice(fin)));
         p.querySelector("mark").textContent = texte.slice(debut, fin);
         consigne.replaceWith(el("p", "verdict " + (touche ? "juste" : "faux"), touche ? "Bien vu : l'indice est surligné." : "Ce passage-là ne trahit pas la notion ; l'indice est surligné."));
@@ -468,7 +482,7 @@ function boutonIndice(carte, q) {
 function journalReperage(cle) {
   const bloc = el("div", "reperage");
   const dessiner = () => {
-    bloc.innerHTML = "";
+    bloc.replaceChildren();
     const miens = lire("reperages", []).filter(r => r.cle === cle);
     const bouton = el("button", "bouton secondaire", "Je l'ai repéré");
     const note = el("input", "champ");
@@ -549,7 +563,7 @@ function rendreQuestionLibre(carte, q, reponseDejaDonnee, surReponse, actions) {
   const montrerSuggestions = () => {
     proposees = suggestionsFiches(champ.value);
     active = -1;
-    liste.innerHTML = "";
+    liste.replaceChildren();
     proposees.forEach((r, k) => {
       const li = el("li", null, r.fiche.nom);
       li.id = idListe + "-" + k;
@@ -643,7 +657,7 @@ function carteDefiDuJour() {
   const memo = lire("defiJour", null);
 
   const resultat = score => {
-    carte.innerHTML = "";
+    carte.replaceChildren();
     carte.append(el("p", "surtitre", "Défi du jour"), el("p", "grand-score", score + " / 10"),
       el("p", "source", "Un nouveau défi demain, le même pour tout le monde."));
     const partager = el("button", "bouton secondaire", "Partager mon résultat");
@@ -667,7 +681,7 @@ function carteDefiDuJour() {
   const commencer = el("button", "bouton", "Relever le défi");
   commencer.addEventListener("click", () => {
     const zone = el("div");
-    carte.innerHTML = "";
+    carte.replaceChildren();
     carte.append(el("p", "surtitre", "Défi du jour"), zone);
     derouler(zone, questionsDuDefi(jour), (q, zone, fini) => {
       zone.appendChild(el("p", "cas", q.texte));
@@ -731,7 +745,7 @@ function ouverture() {
 
 function afficherAccueil() {
   const zone = $("vue-accueil");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const date = new Date().toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
   zone.append(el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1)), el("h1", "page-titre", "Aujourd'hui"));
   zone.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
@@ -953,7 +967,7 @@ function fichesFiltrees(type) {
 
 function afficherSegment(type) {
   const zone = $("segment-type");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   Object.entries(TYPES).forEach(([t, conf]) => {
     const a = lienVers("#" + t, undefined, t === type ? "actif" : "");
     a.append(texteNoeud(conf.pluriel + " "), el("small", null, String(conf.fiches.length)));
@@ -964,7 +978,7 @@ function afficherSegment(type) {
 
 function afficherFiltres(type) {
   const zone = $("filtres");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   ["Toutes", ...TYPES[type].categories.map(c => c.nom), "À revoir"].forEach(nom => {
     const puce = el("button", "puce" + (etat.categorie[type] === nom ? " active" : ""));
     if (COULEURS[nom]) {
@@ -984,7 +998,7 @@ function afficherFiltres(type) {
 
 function afficherListe(type) {
   const zone = $("liste");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const fiches = fichesFiltrees(type);
 
   if (fiches.length === 0) {
@@ -1092,7 +1106,7 @@ function afficherFiche(type, fiche) {
   const cle = cleFiche(type, fiche);
   const conf = TYPES[type];
   const zone = $("liste");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   zone.appendChild(lienVers("#" + type, "← " + conf.pluriel, "lien retour"));
 
   const carte = el("article", "carte carte-fiche");
@@ -1311,7 +1325,7 @@ function lancerQuiz(mode) {
 
 function afficherFiltresQuiz() {
   const zone = $("filtres-quiz");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   document.querySelectorAll(".option-certitude").forEach(o => o.remove());
   MODES_QUIZ.forEach(([mode, libelle]) => {
     const texte = mode === "reviser" ? T("{0} ({1})", T(libelle), clesAReviser().length) : libelle;
@@ -1332,7 +1346,7 @@ function afficherFiltresQuiz() {
 function afficherQuiz() {
   afficherFiltresQuiz();
   const zone = $("zone-quiz");
-  zone.innerHTML = "";
+  zone.replaceChildren();
   // Mode chrono : situations tirées au hasard, quatre propositions, 60 secondes
   if (quiz.mode === "chrono") {
     const fiches = [...INDEX.values()];
@@ -1638,16 +1652,17 @@ function sauvegarderAuto(motif) {
   ecrire("sauvegardesAuto", liste.slice(-MAX_SAUVEGARDES_AUTO));
 }
 
-// Remplace la progression par celle d'une copie, en ne gardant que les clés valides
+// Remplace la progression par celle d'une copie, nettoyée en profondeur (sauvegarde.js) : seuls les éléments valides restent
 function remplacerProgression(cles) {
+  const { valides } = validerSauvegarde(cles);
   CLES_SAUVEGARDE.forEach(effacer);
-  Object.entries(cles).forEach(([cle, valeur]) => { if (CLES_SAUVEGARDE.includes(cle) && formeValide(cle, valeur)) ecrire(cle, valeur); });
+  Object.entries(valides).forEach(([cle, valeur]) => ecrire(cle, valeur));
 }
 
 function afficherSauvegardesAuto() {
   const zone = $("sauvegardes-auto");
   if (!zone) return;
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const liste = sauvegardesAuto();
   zone.appendChild(el("p", "source", liste.length
     ? "Sauvegardes automatiques, gardées dans ce navigateur :"
@@ -1710,14 +1725,13 @@ $("fichier-import").addEventListener("change", e => {
       annoncer("Ce fichier n'est pas une sauvegarde d'Esprit critique.");
       return;
     }
-    // Seules les clés connues, de la forme attendue, sont reprises
-    const valides = Object.entries(donnees.cles).filter(([cle, valeur]) => CLES_SAUVEGARDE.includes(cle) && formeValide(cle, valeur));
-    const ecartees = Object.keys(donnees.cles).length - valides.length;
+    // Seules les clés connues, de la forme attendue, sont reprises, et dans chacune les seuls éléments valides
+    const { valides, ecartees } = validerSauvegarde(donnees.cles);
     const date = new Date(donnees.date);
     if (!confirm(T("Remplacer votre progression actuelle par celle du fichier{0} ?", isNaN(date) ? "" : " (" + date.toLocaleDateString(LOCALE) + ")")
       + (ecartees ? " " + T("{0} élément(s) illisible(s) seront ignorés.", ecartees) : ""))) return;
     sauvegarderAuto("avant import");
-    remplacerProgression(Object.fromEntries(valides));
+    remplacerProgression(valides);
     location.hash = "accueil";
     location.reload();
   };
@@ -1783,7 +1797,13 @@ majLiensLangue();
 // Mode hors ligne : le service worker garde une copie du site (sw.js). Seulement en HTTPS ou en local.
 // Seulement pour la page elle-même, pas dans un cadre (les bancs d'essai chargent le site dans un cadre)
 if ("serviceWorker" in navigator && window.top === window && (location.protocol === "https:" || location.hostname === "localhost")) {
-  navigator.serviceWorker.register(LANGUE === "en" ? "../sw.js" : "sw.js").catch(() => { /* hors ligne indisponible : le site fonctionne normalement */ });
+  // Trusted Types (CSP « trusted-types esprit-critique ») : l'adresse d'un script passe par une règle nommée, qui
+  // n'accepte que celle du service worker
+  const adresse = LANGUE === "en" ? "../sw.js" : "sw.js";
+  const adresseSure = window.trustedTypes
+    ? trustedTypes.createPolicy("esprit-critique", { createScriptURL: u => { if (u !== adresse) throw new TypeError("Adresse de script refusée : " + u); return u; } }).createScriptURL(adresse)
+    : adresse;
+  navigator.serviceWorker.register(adresseSure).catch(() => { /* hors ligne indisponible : le site fonctionne normalement */ });
 }
 
 // Verdicts longs (plus d'une ligne environ) : italique en 17 px au lieu de 19, moins fatigant à lire

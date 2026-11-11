@@ -5,7 +5,9 @@
   <!-- English version of ../index.html. Same structure, same ids, same scripts: only the text differs.
        Content security policy: the site only loads its own files. The only inline script (theme, below) is allowed
        by its hash: if you change it, recompute the hash (tests/lancer.sh csp reports it). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <!-- Aucune adresse de page transmise aux sites vers lesquels pointent les liens (GitHub Pages ne permet pas l'en-tête) -->
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -374,6 +376,7 @@
   <script src="grand-test.js"></script>
   <script src="../grand-test-interface.js"></script>
   <script src="fiches.js"></script>
+  <script src="../sauvegarde.js"></script>
   <script src="../app.js"></script>
   <script src="../recherche.js"></script>
 </body>

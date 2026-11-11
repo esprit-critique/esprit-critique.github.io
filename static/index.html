@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <!-- Politique de sécurité : le site ne charge que ses propres fichiers. Le seul script en ligne (thème, plus bas)
        est autorisé par son empreinte : si on le modifie, recalculer l'empreinte (tests/lancer.sh csp le signale). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2kIPIJtJiIOEXZ5gvBoTdS5n/bpjKQu/dPA8rQHusQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2kIPIJtJiIOEXZ5gvBoTdS5n/bpjKQu/dPA8rQHusQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <!-- Aucune adresse de page transmise aux sites vers lesquels pointent les liens (GitHub Pages ne permet pas l'en-tête) -->
+  <meta name="referrer" content="no-referrer">
   <!-- Adapte la page à la largeur de l'écran du téléphone -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <!-- Réglages pour l'ajout à l'écran d'accueil de l'iPhone -->
@@ -358,6 +360,7 @@
   <script src="grand-test-donnees.js"></script>
   <script src="grand-test.js"></script>
   <script src="grand-test-interface.js"></script>
+  <script src="sauvegarde.js"></script>
   <script src="app.js"></script>
   <script src="recherche.js"></script>
 </body>

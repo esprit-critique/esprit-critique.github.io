@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Génère les pages fixes du site (mentions légales, confidentialité, conditions d'utilisation, page 404)
-à partir d'un gabarit commun : même en-tête, même pied, même politique de sécurité que index.html.
+à partir d'un gabarit commun : même en-tête, même pied, même politique de sécurité que index.html (Trusted Types
+compris), même politique de référent.
 python3 tests/pages/generer_pages.py   (réécrit les fichiers dans static/)"""
 import os, re, html, base64, hashlib
 
@@ -49,7 +50,8 @@ def page(fichier, titre, description, corps, racine="", indexer=True, langue="fr
 <html lang="{langue}">
 <head>
   <meta charset="UTF-8">
-{CSP}  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+{CSP}  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>{html.escape(titre)} · Esprit critique</title>
   <meta name="description" content="{html.escape(description)}">
 {'' if indexer else '  <meta name="robots" content="noindex">' + chr(10)}  <link rel="canonical" href="https://esprit-critique.github.io/{dossier}{fichier if indexer else ''}">
@@ -176,7 +178,7 @@ page("404.html", "Page introuvable", "Cette adresse n'existe pas sur Esprit crit
           <li><a href="/#biais">Les 51 biais cognitifs</a></li>
           <li><a href="/#sophismes">Les 39 sophismes</a></li>
           <li><a href="/#quiz">Le quiz</a></li>
-          <li><a href="/#ateliers">Les 48 ateliers</a></li>
+          <li><a href="/#ateliers">Les 49 ateliers</a></li>
           <li><a href="/#guide">Le guide</a></li>
         </ul>''', racine="/", indexer=False)
 # ---------------------------------------------------------------- pages anglaises (static/en/)
