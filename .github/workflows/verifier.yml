@@ -24,10 +24,12 @@ jobs:
         run: python3 tests/noms_globaux.py
       - name: Version anglaise complète
         run: python3 tests/en/controle.py
+      - name: Contrôle statique de sécurité
+        run: python3 tests/securite.py
       - name: Verdict des rapports
         run: python3 tests/verdict.py
 
-  # Bancs indépendants de la taille d'écran : Grand test hors navigateur (Node.js) et Playwright
+  # Bancs indépendants de la taille d'écran : Grand test hors navigateur (Node.js), Playwright, données aléatoires
   hors-configuration:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -36,7 +38,7 @@ jobs:
         with:
           persist-credentials: false
       - run: npm ci --no-audit --no-fund
-      - run: tests/lancer.sh calculs familles banques recherche
+      - run: tests/lancer.sh calculs familles banques recherche aleatoire
         env:
           CONFIGS: 390 clair
       - if: failure()

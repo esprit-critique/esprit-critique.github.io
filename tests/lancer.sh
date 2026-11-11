@@ -4,7 +4,7 @@
 #
 #   tests/lancer.sh                       tous les bancs, dans les quatre configurations
 #   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux, items, csp, grand, hors-ligne, calculs,
-#                                         familles, banques ou recherche)
+#                                         familles, banques, recherche ou aleatoire)
 #   CONFIGS="390 clair" tests/lancer.sh   une seule configuration
 #
 # Les bancs sont copiés dans static/ le temps du test, puis enlevés ; le serveur local est arrêté à la fin.
@@ -12,13 +12,13 @@
 # Code de sortie 1 si un banc échoue (tests/verdict.py), pour l'intégration continue.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire"}
 export CHROME=${CHROME:-$(python3 tests/navigateur.py)}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair
 1280 sombre"}
-COPIES="_affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js _grand-test.html"
+COPIES="_aleatoire.html _affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js _grand-test.html"
 # Les bancs chargent _site.html : la page du site sans sa politique de sécurité (CSP), qui interdit eval,
 # dont les bancs se servent pour lire l'état du site. La vraie page est contrôlée par le banc « csp ».
 mkdir -p tests/rapports
@@ -42,6 +42,8 @@ for f in static/*.js static/en/*.js; do
 done
 # Noms globaux en double entre les scripts du site (une fonction redéclarée en remplacerait une autre sans message)
 python3 tests/noms_globaux.py || ERREUR_SYNTAXE=1
+# Contrôle statique de sécurité (insertion de HTML, CSP, liste du service worker…)
+python3 tests/securite.py || ERREUR_SYNTAXE=1
 [ -n "$ERREUR_SYNTAXE" ] && { echo "Bancs non lancés : corriger d'abord la syntaxe."; exit 1; }
 
 for f in $COPIES; do cp "tests/$f" static/; done
@@ -65,7 +67,7 @@ while read -r largeur theme; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
     page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
     [ "$banc" = grand ] && page="_grand-test.html"
-    case $banc in recherche|calculs|familles|banques)
+    case $banc in recherche|calculs|familles|banques|aleatoire)
       # Bancs indépendants de la taille et du thème : une seule fois, dans la première configuration
       [ "$PREMIERE" = "$largeur-$theme" ] || continue
       rapport="tests/rapports/$banc.txt" ;;
