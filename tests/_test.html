@@ -233,6 +233,80 @@ f.onload = async () => {
     ok("thème : clair choisi à la main", w.getComputedStyle(d.body).backgroundColor === "rgb(246, 244, 239)");
     d.querySelector('[data-theme-choix="auto"]').click();
     ok("thème : retour à l'automatique", !d.documentElement.dataset.theme && w.localStorage.getItem("theme") === null);
+    // ---------- Relancer le hasard (tirage.js, lot 3) ----------
+    const sac = w.sacDeTirage([1, 2, 3, 4, 5, 6, 7]);
+    const deuxCycles = Array.from({ length: 14 }, () => sac.tirer());
+    ok("sac : sur deux cycles, chaque élément sort exactement deux fois", [1, 2, 3, 4, 5, 6, 7].every(x => deuxCycles.filter(y => y === x).length === 2), deuxCycles.join());
+    let repetes = 0;
+    [[1, 2], [1, 2, 3], [1, 2, 3, 4, 5, 6, 7]].forEach(liste => {
+      const s2 = w.sacDeTirage(liste);
+      let avant = null;
+      for (let k = 0; k < 3000; k++) { const x = s2.tirer(); if (x === avant) repetes++; avant = x; }
+    });
+    ok("sac : jamais deux fois de suite le même élément, même à la jonction de deux cycles (9 000 tirages)", repetes === 0, String(repetes));
+    await aller("biais");
+    d.getElementById("btn-hasard").click();
+    await pause(150);
+    const premiere = w.location.hash;
+    ok("tirage : depuis la liste, une fiche tirée avec son bandeau", /^#biais\//.test(premiere) && !!vue().querySelector(".bandeau-tirage"), premiere);
+    touche("r");
+    await pause(150);
+    const deuxieme = w.location.hash;
+    ok("tirage : la touche R tire une autre carte", deuxieme !== premiere && !!vue().querySelector(".bandeau-tirage"), premiere + " → " + deuxieme);
+    ok("tirage : le compte « carte 2 sur 51 »", /2 sur 51/.test(vue().querySelector(".bandeau-tirage-titre").textContent), vue().querySelector(".bandeau-tirage-titre").textContent);
+    [...vue().querySelectorAll(".bandeau-tirage button")].find(b => /précédente/.test(b.textContent)).click();
+    await pause(150);
+    ok("tirage : « Carte précédente » revient à la première carte tirée", w.location.hash === premiere);
+    // Les tirages remplacent l'entrée d'historique : « retour » ramène à la liste, pas à la carte d'avant
+    // (history.length, plafonné à 50 par Chrome, ne peut servir ici)
+    w.history.back();
+    await pause(200);
+    ok("tirage : « retour » ramène à la liste", w.location.hash === "#biais", w.location.hash);
+    await aller("biais/ancrage");
+    ok("tirage : le bandeau disparaît quand on arrive sur une fiche autrement", !vue().querySelector(".bandeau-tirage") && w.eval("TIRAGE.actif") === false);
+    // L'observateur de visibilité dépend du rendu, que le cadre sans fenêtre ne produit pas toujours : la fonction
+    // qu'il appelle est vérifiée directement (inscription, sans doublon)
+    w.noterFicheLue("biais:ancrage");
+    w.noterFicheLue("biais:ancrage");
+    ok("fiches lues : noterFicheLue inscrit la fiche une seule fois dans fichesLues", JSON.parse(w.localStorage.getItem("fichesLues") || "[]").filter(c => c === "biais:ancrage").length === 1);
+    await aller("cartes/biais");
+    ok("cartes : le recto montre une situation", !!vue().querySelector(".carte-recto-verso .cas") && !vue().querySelector(".carte-verso-nom"));
+    touche(" ");
+    await pause(60);
+    ok("cartes : espace retourne la carte (nom et définition au verso)", !!vue().querySelector(".carte-verso-nom") && !!vue().querySelector(".carte-recto-verso .fiche-definition"));
+    touche("r");
+    await pause(60);
+    ok("cartes : R tire une autre carte, au recto", !!vue().querySelector(".carte-recto-verso .cas"));
+    const questionsDefi = graine => JSON.stringify(w.questionsDuDefi(0, graine).map(q => q.texte));
+    ok("défi libre : même graine, mêmes questions ; autre graine, autres questions", questionsDefi(123) === questionsDefi(123) && questionsDefi(123) !== questionsDefi(124));
+    await aller("defi/123");
+    ok("défi libre : #defi/123 ouvre la page du défi libre n° 123", vue().querySelector(".page-titre").textContent === "Défi libre" && /123/.test(vue().textContent));
+    await aller("defi/pas-un-nombre");
+    ok("défi libre : une graine invalide est remplacée par une graine valide", /^#defi\/\d+$/.test(w.location.hash), w.location.hash);
+    // Passer : les identifiants inscrits dans « vus » par la question passée en sont retirés (la suivante y inscrit les
+    // siens). Chaque passage rétablit « vus » tel qu'avant la première question : la référence reste vus0. Certains jeux
+    // n'inscrivent rien (données tirées au hasard) : on passe jusqu'à dix questions, et l'une au moins doit avoir inscrit.
+    const vus0 = JSON.parse(w.localStorage.getItem("vus") || "{}");
+    await aller("chiffres/melange");
+    await pause(100);
+    let verifiees = 0, fautes = [], passagesGalton = 0;
+    for (let k = 0; k < 10; k++) {
+      const vusQ = JSON.parse(w.localStorage.getItem("vus") || "{}");
+      const ajoutes = Object.entries(vusQ).flatMap(([cle, l]) => l.filter(x => !(vus0[cle] || []).includes(x)).map(x => [cle, x]));
+      const jeu = vue().querySelector(".melange-jeu a").textContent;
+      vue().querySelector(".melange-passer").click();
+      passagesGalton++;
+      await pause(100);
+      const vusN = JSON.parse(w.localStorage.getItem("vus") || "{}");
+      const jeuSuivant = vue().querySelector(".melange-jeu a").textContent;
+      if (ajoutes.length) verifiees++;
+      // Les identifiants du jeu passé (sa clé dans « vus ») ne doivent plus y être, sauf retour du même jeu (exclu par le tirage)
+      ajoutes.forEach(([cle, x]) => { if ((vusN[cle] || []).includes(x) && jeuSuivant !== jeu) fautes.push(cle + ":" + x); });
+    }
+    ok("Planche de Galton : passer une question ne la marque pas comme vue, et compte les questions passées",
+      verifiees > 0 && !fautes.length && new RegExp("passées\\s*:\\s*" + passagesGalton).test(vue().querySelector(".melange-score").textContent),
+      verifiees + " question(s) vérifiée(s) ; " + fautes.join(", ") + " | " + vue().querySelector(".melange-score").textContent);
+
     // Mouvement (DESIGN.md) : la révélation de l'illusion du jour se termine dans son état final ; le réglage « Animations :
     // réduites » arrête les transitions CSS et animer() ; aucune animation ne tourne en boucle
     await aller("accueil");
