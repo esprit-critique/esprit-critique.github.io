@@ -1603,12 +1603,12 @@ h3.titre-bloc {
 .bandeau-tirage { margin: 0 0 14px; padding: 12px 14px; border: 1px dashed var(--trait); border-radius: var(--rayon-carte); background: var(--encadre); }
 .bandeau-tirage-titre { margin: 0 0 8px; font-family: var(--titre); font-size: 16px; font-weight: 650; }
 .bandeau-tirage-reglages { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; font-size: 14px; }
-.champ-perimetre { min-height: 44px; padding: 6px 10px; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); max-width: 100%; }
+.champ-perimetre { flex: 1 1 240px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); max-width: 100%; }
 .case-tirage { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
 .bandeau-tirage .bouton kbd, .melange-passer kbd { margin-left: 8px; font-family: var(--police); font-size: 11px; opacity: 0.7; }
 @media (hover: none) { .bandeau-tirage .bouton kbd { display: none; } }
 .carte-recto-verso { min-height: 240px; }
-.carte-verso-nom { font-family: var(--titre); font-size: 30px; line-height: 1.1; margin: 4px 0 8px; }
+.carte .carte-verso-nom { font-family: var(--titre); font-size: 30px; line-height: 1.1; margin: 4px 0 8px; }
 .actions-cartes { margin-bottom: 18px; }
 .melange-passer { margin-top: 10px; }
 .atelier-hasard { margin-top: 12px; }

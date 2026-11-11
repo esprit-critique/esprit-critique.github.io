@@ -10,7 +10,8 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | 0 — Filet de sécurité | `refonte/lot-0` | #6 | fusionné |
 | 1 — Protéger le site | `refonte/lot-1` | #7 | fusionné (alerte CodeQL « certitudes » classée faux positif par le propriétaire) |
 | 2 — Identité visuelle | `refonte/lot-2` | #8 | fusionné (captures : branche `captures`, dossier `lot-2`) |
-| 3 à 8 | — | — | à faire |
+| 3 — Relancer le hasard | `refonte/lot-3` | #9 | fusionné (captures : branche `captures`, dossier `lot-3`) |
+| 4 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
 
@@ -111,6 +112,25 @@ Captures des PR : branche orpheline `captures` (dossier par lot), liées depuis 
 Bancs rendus déterministes : la révélation est menée à sa fin (`finish()`) avant lecture ; la Planche de Galton du banc
 Playwright joue jusqu'à dix questions comptées (échec intermittent ancien, dépendant du tirage).
 Reporté aux lots 3 et 4 : bouton de profil et graphiques (lot 4), carte « Au hasard » de l'accueil (lot 3).
+
+### Lot 3
+
+- `static/tirage.js` : `sacDeTirage()` (tire par la fin ; au remélange, échange si le premier tiré est le dernier du
+  cycle précédent) ; `TIRAGE` (session) ; un sac par contenu de périmètre (`cles.join()`), pour que le compte
+  « 3 sur 51 » continue d'une carte à l'autre (défaut trouvé par le banc : le sac était recréé à chaque carte).
+- Périmètres : toutes, même type, même catégorie, non acquises, à réviser ; « Privilégier les cartes jamais lues ».
+  Écart : le brief dit « jamais ouvertes » ; le site ne retenait pas les fiches ouvertes. Nouvelle clé `fichesLues`
+  (pied de fiche atteint, IntersectionObserver), dont le lot 4 a besoin (points, distinction « Cartographe ») ; le
+  tirage privilégie les fiches jamais lues.
+- Historique : premier tirage = nouvelle entrée (`location.hash`), suivants = `location.replace` ; vérifié par
+  « retour » qui ramène à la liste (`history.length` est plafonné à 50 par Chrome, inutilisable dans le banc).
+- Touches : R pour tout bouton `[data-tirer]`, espace pour `[data-retourner]` (app.js, gestionnaire global).
+- Mode « Cartes » : `#cartes/<type>`, respecte les filtres de la liste, n'enregistre rien.
+- Défi libre : `#defi/<graine>` (1 à 9 chiffres ; une graine invalide est remplacée), `questionsDuDefi(jour, graine)`,
+  `questionDeDefi()` extraite du défi du jour. Le lot 4 y ajoutera les points (2 défis par jour).
+- Planche de Galton : « Passer cette question » rétablit `vus` tel qu'avant le tirage, désactivé dès qu'on répond.
+- Limite des bancs : l'observateur de visibilité, comme les transitions de vue, dépend du rendu, que le cadre sans
+  fenêtre ne produit pas toujours ; le banc vérifie `noterFicheLue()` directement.
 
 ## État des lieux (lot 0, commit cb90ed8)
 

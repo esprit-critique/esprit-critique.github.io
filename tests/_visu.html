@@ -196,6 +196,11 @@ f.onload = async () => {
       zone.appendChild(grille);
       await pause(900);
     },
+    // Lot 3 : fiche tirée au hasard (bandeau), cartes recto et verso, défi libre
+    "tirage": async () => { await aller("biais"); d.getElementById("btn-hasard").click(); await pause(700); w.scrollTo(0, 0); },
+    "cartes": async () => { await aller("cartes/biais"); await pause(500); },
+    "cartes-verso": async () => { await aller("cartes/biais"); vue().querySelector("[data-retourner]").click(); await pause(500); },
+    "defi-libre": async () => { await aller("defi/123"); },
     "embleme": async () => { await aller("accueil"); d.querySelector(".marque").click(); await pause(700); },
     "donnees": async () => { await aller("guide/donnees"); },
     "quiz": async () => { await aller("quiz"); },
