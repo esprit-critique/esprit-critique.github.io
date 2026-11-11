@@ -114,7 +114,7 @@ function afficherRecherche() {
   const liste = $("resultats-globaux");
   const bilan = $("bilan-globale");
   const q = champ.value.trim();
-  liste.innerHTML = "";
+  liste.replaceChildren();
   // Sur la liste des fiches, la barre filtre la liste (app.js) : pas de menu déroulant
   if (rechercheDansFiches() || comparable(q).length < 2 && !rechercheNumero(comparable(q))) {
     RECHERCHE.resultats = [];

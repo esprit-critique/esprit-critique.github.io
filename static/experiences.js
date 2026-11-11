@@ -460,7 +460,7 @@ const EXPERIENCES = [
     titre: "Trois questions faciles",
     resume: T("Le test de réflexion cognitive : des problèmes simples dont la première réponse qui vient à l'esprit est fausse. {0} questions, trois par partie.", QUESTIONS_CRT.length),
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       // Questions toutes affichées ensemble : le niveau s'ajuste d'une partie à l'autre. Le niveau 1 réunit
       // les trois questions originales (Frederick, 2005), le niveau 2 celles de Thomson et Oppenheimer (2016).
       const niveau = niveauAtelier("crt").niveau;
@@ -535,7 +535,7 @@ const EXPERIENCES = [
     titre: "Quatre cartes",
     resume: "La tâche de sélection de Wason : quelles cartes faut-il retourner pour vérifier une règle ? Abstraite, elle est presque toujours ratée.",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       const abstraite = melanger(WASON_ABSTRAITES)[0]();
       const concrete = melanger(WASON_CONCRETES)[0];
       const resultats = [];
@@ -610,7 +610,7 @@ const EXPERIENCES = [
     titre: "Trouver la règle",
     resume: "La suite 2, 4, 6 respecte une règle cachée. Proposez des suites pour la découvrir. La règle change à chaque partie.",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       // Première partie : la règle de Wason (1960) ; ensuite, une règle tirée au hasard
       // Le niveau s'ajuste d'une partie à l'autre ; première partie : la règle de Wason (1960)
       const niveau = niveauAtelier("regle-246").niveau;
@@ -704,7 +704,7 @@ const EXPERIENCES = [
     titre: "Le problème de Monty Hall",
     resume: "Trois portes, une voiture, deux chèvres. Faut-il changer de porte ? Jouez, puis essayez la version à dix portes.",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       const stats = lire("montyHall", { 3: { garder: [0, 0], changer: [0, 0] }, 10: { garder: [0, 0], changer: [0, 0] } });
       let nbPortes = 3;
       let partie;
@@ -731,9 +731,9 @@ const EXPERIENCES = [
       }
 
       function dessiner() {
-        portes.innerHTML = "";
+        portes.replaceChildren();
         portes.className = "portes" + (nbPortes > 3 ? " nombreuses" : "");
-        actions.innerHTML = "";
+        actions.replaceChildren();
         for (let i = 0; i < nbPortes; i++) {
           let texte = String(i + 1);
           let classe = "porte";
@@ -762,7 +762,7 @@ const EXPERIENCES = [
           simuler.addEventListener("click", simulation);
           actions.append(rejouer, simuler);
         }
-        tableau.innerHTML = "";
+        tableau.replaceChildren();
         const s = stats[nbPortes];
         if (s.garder[1] + s.changer[1] > 0) {
           const entete = el("tr");
@@ -1045,7 +1045,7 @@ const EXPERIENCES = [
     titre: "Le paradoxe des anniversaires",
     resume: "Combien de personnes faut-il réunir pour que deux d'entre elles aient probablement le même anniversaire ? Devinez, puis simulez.",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       zone.appendChild(el("p", "cas", "Combien de personnes faut-il réunir pour avoir plus d'une chance sur deux que deux d'entre elles aient le même anniversaire (jour et mois) ?"));
       const ligne = el("div", "ligne");
       const champ = el("input", "champ");
@@ -1236,7 +1236,7 @@ function simulationMaternites() {
       return compte;
     };
     const grande = jours(45), petite = jours(15);
-    sortie.innerHTML = "";
+    sortie.replaceChildren();
     barresComparees(sortie, [
       { nom: "Petite maternité (15 naissances par jour)", valeur: petite, texte: petite + " jours", forte: true },
       { nom: "Grande maternité (45 naissances par jour)", valeur: grande, texte: grande + " jours" }
@@ -1378,7 +1378,7 @@ function simulationAnniversaires() {
     const jours = Array.from({ length: n }, () => Math.floor(Math.random() * 365));
     const compte = {};
     jours.forEach(j => { compte[j] = (compte[j] || 0) + 1; });
-    annee.innerHTML = "";
+    annee.replaceChildren();
     for (let j = 0; j < 365; j++) {
       const c = el("span", compte[j] > 1 ? "double" : compte[j] ? "simple" : null);
       annee.appendChild(c);
