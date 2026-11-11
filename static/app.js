@@ -816,7 +816,7 @@ function afficherAccueil() {
     b.addEventListener("click", () => lancerQuiz("reviser"));
     carteRevision.appendChild(b);
   } else if (Object.keys(memoire).length === 0) {
-    carteRevision.appendChild(el("h2", null, "Pas encore de révision"));
+    carteRevision.append(dessinVide(), el("h2", null, "Pas encore de révision"));
     carteRevision.appendChild(el("p", "source", "Chaque notion rencontrée au quiz est ensuite reprogrammée : plus tôt si vous vous trompez, plus tard si vous répondez juste."));
     const b = el("button", "bouton", "Commencer une série");
     b.addEventListener("click", () => lancerQuiz("tout"));
@@ -888,8 +888,9 @@ function afficherAccueil() {
     const [, r] = nonAcquises[Math.floor(generateur(aujourdHui())() * nonAcquises.length)];
     suggestions.push(["#" + r.type + "/" + r.fiche.id, "Une fiche à découvrir", r.fiche.nom, COULEURS[r.fiche.categorie]]);
   }
+  // Sous les deux colonnes : sur téléphone, après l'illusion, les révisions et la progression (ordre du brief)
   if (suggestions.length) {
-    principal.appendChild(el("h3", "titre-bloc", "À explorer"));
+    zone.appendChild(el("h3", "titre-bloc", "À explorer"));
     const grille = el("div", "cartes-grille");
     suggestions.forEach(([adresse, surtitre, titre, couleur]) => {
       const carte = lienVers(adresse, undefined, "carte entree");
@@ -898,7 +899,7 @@ function afficherAccueil() {
       carte.lastChild.style.margin = "4px 0 0";
       grille.appendChild(carte);
     });
-    principal.appendChild(grille);
+    zone.appendChild(grille);
   }
 }
 
@@ -1462,7 +1463,7 @@ function afficherQuiz() {
   if (quiz.serie.length === 0) {
     const carte = el("article", "carte");
     if (quiz.mode === "reviser") {
-      carte.appendChild(el("h2", null, "Rien à réviser aujourd'hui"));
+      carte.append(dessinVide(), el("h2", null, "Rien à réviser aujourd'hui"));
       const prochaine = prochaineRevision();
       carte.appendChild(el("p", null, prochaine === null
         ? "Les notions rencontrées au quiz reviendront ici au bon moment : le lendemain en cas d'erreur, puis après 3, 7, 14 et 30 jours."
@@ -1597,6 +1598,13 @@ function afficherPage() {
   let adresse = location.hash.slice(1);
   try { adresse = decodeURIComponent(adresse); } catch (erreur) { /* adresse laissée telle quelle */ }
   let [vue, id] = adresse.split("/");
+  // Raccourcis de l'application installée (manifest.webmanifest) : une fiche au hasard, le défi du jour
+  if (vue === "hasard") {
+    const [, r] = melanger([...INDEX.entries()])[0];
+    location.replace("#" + r.type + "/" + r.fiche.id);
+    return;
+  }
+  const versDefi = vue === "defi" && !id;
   if (!ONGLET_DE[vue]) vue = "accueil";
   // Sans identifiant, les jeux et les expériences renvoient à la liste des ateliers
   if ((vue === "chiffres" || vue === "tests") && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id)) vue = "ateliers";
@@ -1623,7 +1631,10 @@ function afficherPage() {
   let titre = "";
   let defilement = 0;
 
-  if (vue === "accueil") afficherAccueil();
+  if (vue === "accueil") {
+    afficherAccueil();
+    if (versDefi) setTimeout(() => { const c = document.querySelector(".defi-jour"); if (c) c.scrollIntoView({ block: "start" }); }, 0);
+  }
 
   if (vue === "biais" || vue === "sophismes") {
     if (etat.type !== vue) {
@@ -1864,6 +1875,14 @@ $("btn-partager").addEventListener("click", async () => {
     annoncer(T("Lien du site : {0}", adresse));
   }
 });
+
+// ===================== États vides (DESIGN.md) =====================
+// Un petit dessin au trait de la grammaire de l'emblème : deux traits en pointillé, ailettes à peine tracées, en
+// attente de contenu. Décoratif : la phrase qui suit dit pourquoi c'est vide et l'action qui le remplira.
+function dessinVide() {
+  const s = svg("svg", { viewBox: "0 0 120 48", class: "dessin-vide", "aria-hidden": "true" });
+  return dessinerSvg(s, '<path d="M30 14h60M30 34h60" class="pointille"/><path d="M30 14 22 7M30 14l-8 7M90 14l8-7M90 14l8 7M30 34l8-7M30 34l8 7M90 34l-8-7M90 34l-8 7" class="ailettes"/><circle cx="60" cy="24" r="2.5"/>');
+}
 
 // ===================== Glyphes de catégorie (DESIGN.md) =====================
 // Quatorze glyphes au trait, dans le vocabulaire de l'emblème (lignes, ailettes, points) : en-têtes de catégorie,

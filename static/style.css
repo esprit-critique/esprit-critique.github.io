@@ -1580,3 +1580,21 @@ h3.titre-bloc {
 .glyphe { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--c-fort, currentColor); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; margin-right: 7px; }
 .glyphe .pointille { stroke-dasharray: 2 2.5; }
 .glyphe .epais { stroke-width: 3; }
+
+/* Ateliers sur ordinateur large : page de 1 120 px, cartes sur deux colonnes, textes d'introduction à 68 caractères */
+@media (min-width: 1040px) {
+  #vue-ateliers > .page-intro { max-width: 68ch; }
+  #vue-ateliers .corps-section { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; align-items: start; }
+  #vue-ateliers .corps-section > :not(.atelier) { grid-column: 1 / -1; }
+  /* « Par où commencer » et le Grand test côte à côte ; le reste sur toute la largeur */
+  #vue-ateliers:not([hidden]) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; align-items: stretch; }
+  #vue-ateliers > * { grid-column: 1 / -1; }
+  #vue-ateliers > .bilan-ateliers, #vue-ateliers > .gt-vedette { grid-column: auto; margin-top: 0; }
+}
+
+/* États vides dessinés (app.js, dessinVide) */
+.dessin-vide { display: block; width: 120px; height: 48px; margin: 4px 0 10px; fill: none; stroke: var(--discret); stroke-width: 2; stroke-linecap: round; }
+.dessin-vide .pointille { stroke-dasharray: 4 5; }
+.dessin-vide .ailettes { opacity: 0.45; }
+.dessin-vide circle { fill: var(--c-fort, var(--accent)); stroke: none; }
+@media (min-width: 1040px) { #vue-accueil > .cartes-grille { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; } }

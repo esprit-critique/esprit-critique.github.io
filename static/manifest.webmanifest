@@ -8,6 +8,11 @@
   "display": "standalone",
   "background_color": "#f6f4ef",
   "theme_color": "#f6f4ef",
+  "shortcuts": [
+    { "name": "Quiz", "short_name": "Quiz", "url": "./#quiz", "icons": [{ "src": "icone.png?v=3", "sizes": "180x180" }] },
+    { "name": "Une fiche au hasard", "short_name": "Au hasard", "url": "./#hasard", "icons": [{ "src": "icone.png?v=3", "sizes": "180x180" }] },
+    { "name": "Défi du jour", "short_name": "Défi", "url": "./#defi", "icons": [{ "src": "icone.png?v=3", "sizes": "180x180" }] }
+  ],
   "icons": [
     { "src": "icone.png?v=3", "sizes": "180x180", "type": "image/png" },
     { "src": "icone-512.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "any" },
