@@ -8,7 +8,7 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | Lot | Branche | Pull request | État |
 |---|---|---|---|
 | 0 — Filet de sécurité | `refonte/lot-0` | #6 | fusionné |
-| 1 — Protéger le site | `refonte/lot-1` | à venir | en cours |
+| 1 — Protéger le site | `refonte/lot-1` | #7 | fusionné (alerte CodeQL « certitudes » classée faux positif par le propriétaire) |
 | 2 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
