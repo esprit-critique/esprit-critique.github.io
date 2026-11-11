@@ -137,18 +137,26 @@ anglais “ ”, apostrophe ’, titres en minuscules (sauf noms propres), nombr
 
 ## Tests
 
-Les bancs d'essai s'exécutent dans Chrome sans fenêtre (macOS, Chrome installé, aucune autre dépendance) :
+Les bancs d'essai tournent sous macOS comme sous Linux, avec Chrome (variable `CHROME`, sinon cherché par
+`tests/navigateur.py`), Python 3 et Node.js. Ils tournent aussi dans l'intégration continue
+(`.github/workflows/verifier.yml`) à chaque pull request et avant chaque publication : un site dont les contrôles
+échouent n'est pas publié.
 
 ```
-tests/lancer.sh                        # tous les bancs, à 390 et 1 280 px, en clair et en sombre
+npm ci                                 # Playwright, outil de test seulement (rien n'est publié hors de static/)
+tests/lancer.sh                        # tous les bancs, à 390 et 1 280 px, en clair et en sombre (≈ 1 h)
 tests/lancer.sh affichage              # un seul banc : affichage, ateliers, test, niveaux, items, csp,
-                                       # grand, hors-ligne, calculs, familles ou banques
+                                       # grand, hors-ligne, calculs, familles, banques ou recherche
 CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 ```
 
+`tests/lancer.sh` sort en erreur si un banc échoue (`tests/verdict.py` lit la ligne « RÉSUMÉ » de chaque rapport).
+Les bancs `calculs`, `familles`, `banques` et `recherche` ne dépendent ni de la taille ni du thème : ils ne tournent
+que dans la première configuration.
+
 | Fichier | Rôle |
 |---|---|
-| `tests/recherche-melange.js` | recherche, sections pliables et « Question au hasard » dans Chromium (Playwright) : `node tests/recherche-melange.js`, serveur local lancé |
+| `tests/recherche-melange.js` | banc `recherche` : recherche, sections pliables et Planche de Galton, par Playwright avec le Chrome du système |
 | `tests/_test.html` | fiches, quiz, révisions, navigation, clavier, reprise des anciennes données |
 | `tests/_ateliers.html` | joue chaque atelier jusqu'au bilan ; contrôle l'affichage à chaque étape |
 | `tests/_niveaux.html` | moteur de progression : joueurs simulés, records par niveau, migration |
@@ -161,9 +169,10 @@ CONFIGS="390 clair" tests/lancer.sh    # une seule configuration
 | `tests/capturer.py`, `tests/_visu.html` | captures d'écran de scénarios : `python3 tests/capturer.py 390,844 sombre accueil` |
 | `tests/pays/` | `telecharger.sh` puis `generer_pays.py` : régénère `static/pays.js` (Banque mondiale, HCR) |
 | `tests/hors_ligne.py`, `tests/_hors-ligne.html` | service worker : installe le cache, coupe le serveur, recharge chaque fichier depuis le cache |
+| `tests/navigateur.py`, `tests/verdict.py` | chemin de Chrome ; verdict d'un rapport (sans argument : contrôle du script) |
 | `tests/noms_globaux.py` | noms globaux déclarés deux fois entre les scripts du site (lancé avant tous les bancs) |
 | `tests/_grand-test.html` | Grand test : drapeaux, stockage, migration, parcours simulés, reprise, graphiques à 0/1/3/20 tests, rappels |
-| `tests/grand_test_*.py` | Grand test hors navigateur (moteur JavaScript de macOS) : calculs contre un oracle Python, familles d'items, banques |
+| `tests/grand_test_*.py` | Grand test hors navigateur (Node.js) : calculs contre un oracle Python, familles d'items, banques |
 
 Les rapports et les captures vont dans `tests/rapports/`, qui n'est pas versionné.
 
