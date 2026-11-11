@@ -7,5 +7,6 @@ EN_AJOUTER([
   ["Par catégorie : la part de bonnes réponses. Questions passées : {0}.", "By category: the share of correct answers. Questions skipped: {0}."],
   ["{0} : {1} bonne(s) réponse(s) sur {2}, soit {3} %", "{0}: {1} correct out of {2}, that is {3}%"],
   ["Bilan : {0} bonne(s) réponse(s) sur {1}.", "Summary: {0} correct out of {1}."],
+  ["Vingt questions, une à la fois, tirées au hasard dans les jeux les plus rapides, puis un bilan par catégorie. Vous ne savez pas à l'avance quel jeu viendra.", "Twenty questions, one at a time, drawn at random from the quickest games, then a summary by category. You never know which game comes next."],
   ["Douze questions, une à la fois, tirées au hasard dans les jeux les plus rapides, puis un bilan par catégorie. Vous ne savez pas à l'avance quel jeu viendra.", "Twelve questions, one at a time, drawn at random from the quickest games, then a summary by category. You never know which game comes next."]
 ]);

@@ -11,8 +11,8 @@ const MELANGE_JEUX = ["monde", "mortalite", "pays", "nord", "chronologie", "vrai
 
 // Session en cours, en mémoire seulement (perdue au rechargement)
 const melange = { dernier: null, juste: 0, total: 0, passees: 0, parSection: {} };
-// Une partie : douze questions répondues (les questions passées ne comptent pas), puis le bilan par catégorie
-const MELANGE_LONGUEUR = 12;
+// Une partie : vingt questions répondues (les questions passées ne comptent pas), puis le bilan par catégorie
+const MELANGE_LONGUEUR = 20;
 
 // Tire un jeu au hasard, différent du précédent
 function jeuAuHasard() {
@@ -117,7 +117,7 @@ JEUX.push({
   couleur: "#1d4f91",
   duree: "1 min",
   titre: "Planche de Galton",
-  resume: "Douze questions, une à la fois, tirées au hasard dans les jeux les plus rapides, puis un bilan par catégorie. Vous ne savez pas à l'avance quel jeu viendra.",
+  resume: "Vingt questions, une à la fois, tirées au hasard dans les jeux les plus rapides, puis un bilan par catégorie. Vous ne savez pas à l'avance quel jeu viendra.",
   lancer(zone) {
     zone.replaceChildren();
     melange.dernier = null;

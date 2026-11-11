@@ -91,7 +91,8 @@ const ok = (libelle, condition, detail = '') => {
   const jeux = [];
   // Chaque jeu demande une ou plusieurs actions (choisir, certitude, valider, saisir) avant « Question suivante »
   // Jusqu'à dix questions comptées dans le score de session (certains jeux demandent plusieurs gestes par question)
-  // Jusqu'au bilan, qui vient après douze questions répondues
+  const jauges = [];
+  // Jusqu'au bilan, qui vient après vingt questions répondues
   for (let tour = 0, questions = 0; tour < 400 && !(await p.$('.melange-bilan')); tour++) {
     const suivant = p.locator('.melange-partie button[data-suivant]').first();
     if (await suivant.count()) {
@@ -100,6 +101,8 @@ const ok = (libelle, condition, detail = '') => {
       await p.waitForTimeout(60);
       continue;
     }
+    const largeur = await p.$eval('.melange-question .jauge > div', e => parseFloat(e.style.width)).catch(() => null);
+    if (largeur !== null && jauges[jauges.length - 1] !== largeur) jauges.push(largeur);
     const titre = await p.textContent('.melange-jeu a').catch(() => '');
     if (titre && jeux[jeux.length - 1] !== titre) jeux.push(titre);
     const actions = ['.melange-partie button.choix:not([disabled])', '.melange-partie .certitude-boutons button:not([disabled])', '.melange-partie button.bouton:not([disabled]):not([data-suivant])'];
@@ -115,11 +118,12 @@ const ok = (libelle, condition, detail = '') => {
     await p.waitForTimeout(60);
   }
   ok('le mélange tire des jeux différents', new Set(jeux).size >= 4, [...new Set(jeux)].join(' | '));
-  ok('partie de douze questions : le bilan affiche « x / 12 »', / \/ 12$/.test((await p.textContent('.melange-bilan .grand-score')).trim()));
+  ok('la jauge avance avec la partie (« Question n / 20 »)', jauges.length > 2 && jauges[jauges.length - 1] > jauges[0], JSON.stringify(jauges.slice(0, 4)));
+  ok('partie de vingt questions : le bilan affiche « x / 20 »', / \/ 20$/.test((await p.textContent('.melange-bilan .grand-score')).trim()));
   const total = await p.evaluate(() => melange.total);
-  ok('le score de session compte les questions jouées', total === 12, String(total));
+  ok('le score de session compte les questions jouées', total === 20, String(total));
   const anneaux = await p.$$eval('.melange-bilan .anneau', l => l.map(a => a.querySelector('figcaption').textContent + ' ' + a.querySelector('svg').getAttribute('aria-label')));
-  ok('bilan après douze questions : un anneau par catégorie, avec sa part de bonnes réponses', anneaux.length >= 2 && anneaux.every(a => /sur \d+/.test(a)), JSON.stringify(anneaux));
+  ok('bilan après vingt questions : un anneau par catégorie, avec sa part de bonnes réponses', anneaux.length >= 2 && anneaux.every(a => /sur \d+/.test(a)), JSON.stringify(anneaux));
   const resultatsAteliers = await p.evaluate(() => lire('resultatsAteliers', {}));
   ok('le mélange n\'enregistre aucune partie', !('melange' in resultatsAteliers));
   await p.goto(SITE + '#chiffres/monde', { waitUntil: 'load' });

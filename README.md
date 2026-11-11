@@ -19,7 +19,7 @@ pour l'utiliser comme une application.
   passage de la situation qui trahit la notion. Chaque fiche a quatre situations : les révisions utilisent en priorité
   les deux dernières, pour ne pas reconnaître un texte déjà lu.
 - **Une recherche dans tout le site** (en haut de chaque page) : fiches, ateliers, expériences de pensée, guide et lexique ; accents et casse ignorés, « B 10 » ouvre une fiche, flèches et Entrée au clavier.
-- **Planche de Galton** (section « Mélanges ») : douze questions, une à la fois, tirées au hasard dans les jeux les plus rapides (une question peut être passée), puis un bilan avec un anneau par catégorie. Les réponses ne sont pas enregistrées.
+- **Planche de Galton** (section « Mélanges ») : vingt questions, une à la fois, tirées au hasard dans les jeux les plus rapides (une question peut être passée), puis un bilan avec un anneau par catégorie. Les réponses ne sont pas enregistrées.
 - **Un défi du jour** : dix questions difficiles, les mêmes pour tout le monde, une tentative par jour.
 - **49 ateliers**, en six sections, dont le Grand test :
   - *le monde en chiffres* : état du monde, causes de décès, duels entre 155 pays (démographie, économie,
