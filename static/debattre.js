@@ -870,7 +870,7 @@ EXPERIENCES.push(
       const niveau = niveauAtelier("debat-truque").niveau;
       const debat = tirerSelonNiveau("debats", DEBATS, 1, niveau)[0];
       const relancer = () => EXPERIENCES.find(e => e.id === "debat-truque").lancer(zone);
-      zone.innerHTML = "";
+      zone.replaceChildren();
       derouler(zone, debat.repliques, (r, zone, fini) => {
         if (r === debat.repliques[0]) {
           zone.insertBefore(choixNiveau("debat-truque", relancer), zone.firstChild);
@@ -1133,7 +1133,7 @@ EXPERIENCES.push(
     titre: "Le débat à deux",
     resume: "Sur un seul téléphone, pour deux personnes : un sujet et des camps tirés au sort, des temps de parole minutés, des reformulations à faire valider, puis chacun défend l'autre camp.",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       let minuteur = null;
       const arreter = () => { if (minuteur) clearInterval(minuteur); minuteur = null; };
       zone.appendChild(paragraphe("Posez le téléphone entre vous. Deux personnes, A et B ; le site tire le sujet et les camps, puis vous guide étape par étape. Pas de score : le but est de se comprendre."));
@@ -1171,7 +1171,7 @@ EXPERIENCES.push(
         const cartes = melanger(CARTES_CONTRAINTE);
         const afficher = () => {
           arreter();
-          zone.innerHTML = "";
+          zone.replaceChildren();
           if (i >= etapes.length) return bilan();
           entete(zone, i + 1, etapes.length, "Étape");
           zone.appendChild(el("p", "consigne", sujet));

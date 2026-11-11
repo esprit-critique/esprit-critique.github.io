@@ -201,7 +201,7 @@ EXPERIENCES.push(
     titre: "Fabriquer un résultat",
     resume: "Une tisane sans aucun effet, quarante participants. Changez de mesure, de sous-groupe, retirez des valeurs, ajoutez des participants… jusqu'à obtenir un résultat « significatif ».",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       const donnees = { tisane: Array.from({ length: 20 }, participantTisane), temoin: Array.from({ length: 20 }, participantTisane) };
       const choix = { mesure: "sommeil", groupe: "tous", extremes: false };
       let ajouts = 0, analyses = 0;
@@ -225,7 +225,7 @@ EXPERIENCES.push(
         return bloc;
       };
       const dessiner = () => {
-        controles.innerHTML = "";
+        controles.replaceChildren();
         controles.append(puces("Mesure", MESURES_TISANE.map(([m, l]) => [m, T(l).replace(/^(la|le|l')\s?/, "")]), "mesure"),
           puces("Participants", [["tous", "Tous"], ["femmes", "Femmes seulement"], ["hommes", "Hommes seulement"]], "groupe"),
           puces("Valeurs extrêmes (au-delà de 2 écarts-types)", [[false, "Gardées"], [true, "Retirées"]], "extremes"));
@@ -240,7 +240,7 @@ EXPERIENCES.push(
         const r = analyseTisane(donnees, choix);
         const cle = JSON.stringify(choix) + ajouts;
         if (!essais.has(cle)) { essais.add(cle); analyses++; }
-        resultat.innerHTML = "";
+        resultat.replaceChildren();
         if (!r) { resultat.appendChild(paragraphe("Trop peu de participants dans ce sous-groupe.")); return; }
         const sig = r.p < 0.05;
         resultat.append(el("p", "grand-score p-valeur" + (sig ? " significatif" : ""), "p = " + fr(Number(r.p.toFixed(3)))),
@@ -253,7 +253,7 @@ EXPERIENCES.push(
       };
       const bilan = publie => {
         noterPartie("fabriquer", publie ? 1 : 0, 1);
-        zone.innerHTML = "";
+        zone.replaceChildren();
         zone.appendChild(el("p", "consigne", "Bilan"));
         zone.appendChild(paragraphe(publie
           ? T("Vous avez obtenu un résultat « significatif » en {0}, sans fraude : seulement des choix d'analyse, chacun défendable isolément.", pluriel(analyses, "analyse"))
@@ -282,7 +282,7 @@ EXPERIENCES.push(
     lancer(zone) {
       const questions = tirerNouveaux("foule", ETALONNAGE.filter(q => !estAnnee(q)), 6);
       const premieres = [];
-      zone.innerHTML = "";
+      zone.replaceChildren();
       // Tour 1 : premières estimations, puis tour 2 : estimations « dialectiques »
       const etapes = [...questions.map(q => ({ q, tour: 1 })), ...questions.map(q => ({ q, tour: 2 }))];
       derouler(zone, etapes, (e, zone, fini) => {
@@ -344,7 +344,7 @@ EXPERIENCES.push(
     titre: "La cécité au choix",
     resume: "Donnez votre avis sur douze affirmations sans enjeu, puis expliquez quelques-unes de vos réponses. À ne faire qu'une fois : le principe se dévoile à la fin.",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       const dejaFait = lire("ceciteFaite", false);
       const reponses = [];
       const commencer = () => derouler(zone, AFFIRMATIONS_CECITE, (a, zone, fini) => {
@@ -366,7 +366,7 @@ EXPERIENCES.push(
         const choisies = melanger(nettes.length >= 4 ? nettes : AFFIRMATIONS_CECITE.map((a, k) => k)).slice(0, 4);
         const inversees = new Set(choisies.filter(k => reponses[k] !== 5).slice(0, 2));
         const signalees = new Set();
-        zone.innerHTML = "";
+        zone.replaceChildren();
         zone.appendChild(el("p", "consigne", "Vos réponses"));
         zone.appendChild(paragraphe("Voici quatre de vos réponses. Pour chacune, expliquez en une phrase pourquoi vous pensez cela."));
         choisies.forEach(k => {
@@ -392,7 +392,7 @@ EXPERIENCES.push(
         ecrire("ceciteFaite", true);
         const reperees = [...inversees].filter(k => signalees.has(k)).length;
         noterPartie("cecite", reperees, inversees.size);
-        zone.innerHTML = "";
+        zone.replaceChildren();
         zone.appendChild(el("p", "consigne", "Révélation"));
         zone.appendChild(el("p", "grand-score", reperees + " / " + inversees.size));
         zone.appendChild(paragraphe(T("Deux des quatre réponses affichées avaient été inversées : on vous montrait l'avis contraire du vôtre. Vous en avez signalé {0}.", reperees)));
@@ -430,7 +430,7 @@ function afficherBingo(zone, graine) {
   const fiches = grilleBingo(graine);
   const memo = lire("bingo", {});
   const cochees = new Set(memo.graine === graine ? memo.cochees : []);
-  zone.innerHTML = "";
+  zone.replaceChildren();
   zone.appendChild(paragraphe("Pendant un débat, une émission ou un repas, cochez chaque sophisme que vous entendez. Une ligne, une colonne ou une diagonale complète : bingo. Avec la même adresse, chacun a la même grille."));
   const grille = el("div", "bingo-grille");
   grille.setAttribute("role", "group");
@@ -650,7 +650,7 @@ EXPERIENCES.push(
       const auj = aujourdHui();
       const dateDe = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
       const relancer = () => EXPERIENCES.find(x => x.id === "decision").lancer(zone);
-      zone.innerHTML = "";
+      zone.replaceChildren();
       // Bilans arrivés à échéance : on sépare la qualité de la décision de celle du résultat
       decisions().filter(d => !d.bilanFait && d.bilan <= auj).forEach(d => {
         const bloc = el("div", "prevision a-resoudre");
@@ -725,7 +725,7 @@ EXPERIENCES.push(
             l.push({ id: Date.now().toString(36), texte: sujet, creee: auj, bilan: jour, reponses });
             ecrire("decisions", l.slice(-50));
             noterActivite();
-            zone.innerHTML = "";
+            zone.replaceChildren();
             zone.appendChild(el("p", "verdict juste", T("Décision enregistrée. Bilan prévu le {0}.", dateDe(jour))));
             const agenda = el("button", "bouton secondaire", "Ajouter le bilan à mon agenda");
             agenda.addEventListener("click", () => fichierAgenda("bilan-decision.ics", [{ jour, titre: T("Bilan de décision : {0}", sujet), description: T("Faites le bilan sur {0}", URL_SITE + "#tests/decision"), url: URL_SITE + "#tests/decision" }]));
@@ -1188,7 +1188,7 @@ EXPERIENCES.push(
     resume: "Vingt situations à identifier maintenant, vingt autres sur les mêmes notions dans quelques semaines : avez-vous progressé ?",
     lancer(zone) {
       const passe = lire("bilanFormes", {});
-      zone.innerHTML = "";
+      zone.replaceChildren();
       const dateDe = j => new Date(j * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric" });
       zone.appendChild(paragraphe("La forme A se passe au début ; la forme B, sur les mêmes vingt notions avec d'autres situations, après quelques semaines de pratique. Ces deux formes n'ont pas été validées : rien ne garantit qu'elles soient de même difficulté, et un écart de quelques points peut tenir au hasard.", "consigne-longue"));
       ["A", "B"].forEach(f => {
@@ -1233,7 +1233,7 @@ EXPERIENCES.push(
         }, resultats => {
           const score = resultats.filter(Boolean).length;
           ecrire("bilanFormes", { ...lire("bilanFormes", {}), [forme]: { jour: aujourdHui(), score } });
-          zone.innerHTML = "";
+          zone.replaceChildren();
           zone.appendChild(el("p", "consigne", T("Forme {0}", forme)));
           zone.appendChild(el("p", "grand-score", score + " / 20"));
           if (forme === "A") {

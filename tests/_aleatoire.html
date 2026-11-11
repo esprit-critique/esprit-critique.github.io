@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/_site.html#accueil" style="border: 0; display: block"></iframe>
+<script>
+// Banc « aleatoire » : 1 000 sauvegardes déformées passent par validerSauvegarde() (sauvegarde.js), puis le site est
+// rechargé avec le résultat ; 1 000 adresses aléatoires après le « # ». Le site doit toujours démarrer et afficher une
+// page, sans erreur JavaScript. Tirages reproductibles (graine fixe) : un échec se rejoue. Taille : ?l=390&h=844&n=1000
+const params = new URLSearchParams(location.search);
+const N = Number(params.get("n")) || 1000;
+const f = document.getElementById("f");
+f.style.width = (params.get("l") || 390) + "px";
+f.style.height = (params.get("h") || 844) + "px";
+const lignes = [];
+const ok = (nom, cond, detail) => { const l = (cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail); lignes.push(l); console.log("BANC: " + l); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+
+// Générateur reproductible (mulberry32, comme generateur() dans app.js)
+let graine = 20261111;
+const alea = () => { graine = (graine + 0x6D2B79F5) >>> 0; let t = graine; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+const choix = t => t[Math.floor(alea() * t.length)];
+
+// Une progression réaliste, de la forme qu'écrit le site
+const AUJ = Math.round(Date.now() / 86400000);
+const BASE = () => ({
+  acquis: ["biais:ancrage", "biais:halo"],
+  memoire: { "biais:ancrage": { b: 3, d: AUJ + 2, n: 5, j: 4 }, "sophismes:post-hoc": { b: 1, d: AUJ - 1, n: 2, j: 0 } },
+  records: { tout: 8, biais: 7 }, activite: [AUJ - 9, AUJ - 8, AUJ - 1], jour: { jour: AUJ, choix: "biais:ancrage" },
+  derniereFiche: "biais:ancrage", modeQuiz: "tout", typeFiches: "biais", experiencesFaites: ["crt"], jeuxFaits: ["monde"],
+  points: { rapport: 1.2, avecRepere: true },
+  resultatsAteliers: { monde: { n: 3, record: 8, sur: 10, historique: [6, 7, 8], jour: AUJ, niveaux: { 1: { n: 3, record: 8, sur: 10, historique: [6, 7, 8], reussites90: 0 } } }, crt: { n: 1, record: 2, sur: 3, historique: [2], jour: AUJ } },
+  vus: { monde: ["a", "b"], crt: [1, 2] }, confiance: { 50: [3, 2], 90: [4, 3] }, fourchettes: [10, 7],
+  illusions: [{ j: AUJ, avant: 0.2, apres: 0.05 }], montyHall: { 3: { garder: [1, 3], changer: [2, 3] }, 10: { garder: [0, 0], changer: [0, 0] } },
+  reponsesPensee: { tramway: 1 }, ancrages: [{ j: AUJ, h: 1.3, b: 0.8 }], hasardEcrit: [{ j: AUJ, c: 40, l: 4 }], themePays: "tout",
+  vfJour: { j: AUJ, id: "x", r: true }, duels: { "biais:ancrage": [2, 1] }, certitudeQuiz: true,
+  certitudes: { sur: [5, 4], plutot: [3, 2], hasard: [2, 1] }, erreursSures: [{ cle: "biais:halo", j: AUJ - 1 }],
+  debats: [{ j: AUJ, d: 1.2, det: 3, s: 4, fa: 1, r: 5 }], logique: [{ j: AUJ, l: 0.5, c: 0.5, rejet: true, fautif: false }],
+  etudes: [{ j: AUJ, avant: 2, apres: 3 }], previsions: [{ id: "k1", texte: "Il pleuvra", p: 0.7, echeance: AUJ + 20, creee: AUJ, issue: null }],
+  niveaux: { monde: { niveau: 2, mode: "auto", parties: 4, serie: 1 } }, defiJour: { jour: AUJ, score: 7 }, chrono: { quiz: 5 },
+  theme: "dark", reperages: [{ cle: "biais:halo", j: AUJ, note: "publicité" }], ceciteFaite: true, bingo: { graine: 12345, cochees: [0, 5, 12] },
+  decisions: [{ id: "d1", texte: "Changer de travail", creee: AUJ, bilan: AUJ - 1, reponses: ["a", "b"] }], bilanFormes: { A: { jour: AUJ, score: 6 } }
+});
+
+// Valeurs hostiles : types inattendus, bornes, textes énormes, identifiants inconnus, imbrication profonde
+const profond = n => n ? [profond(n - 1)] : 1;
+const HOSTILES = () => [null, -1, 0, 3.7, 1e308, -1e308, "", "NaN", "x".repeat(30000), [], {}, true, false, "biais:inexistant",
+  [null, "a", 5], { b: "3" }, profond(40), [[1, 2, 3]], { length: 3 }, "__proto__", AUJ * 1000, -AUJ];
+function deformer(racine) {
+  const chemins = [];
+  (function parcourir(v, chemin) {
+    chemins.push(chemin);
+    if (v && typeof v === "object") Object.keys(v).forEach(k => parcourir(v[k], chemin.concat(k)));
+  })(racine, []);
+  const coups = 1 + Math.floor(alea() * 6);
+  for (let i = 0; i < coups; i++) {
+    const chemin = choix(chemins);
+    if (!chemin.length) continue;
+    let parent = racine;
+    for (const k of chemin.slice(0, -1)) { parent = parent && parent[k]; }
+    if (!parent || typeof parent !== "object") continue;
+    const k = chemin[chemin.length - 1], geste = alea();
+    if (geste < 0.55) parent[k] = choix(HOSTILES());
+    else if (geste < 0.7) delete parent[k];
+    else if (geste < 0.85) Object.defineProperty(parent, choix(["__proto__", "constructor", "prototype"]), { value: { pollue: 1 }, enumerable: true, configurable: true, writable: true });
+    else parent[choix(["inconnu", "1", "biais:nouveau"])] = choix(HOSTILES());
+  }
+  if (alea() < 0.05) return choix(HOSTILES());   // la sauvegarde entière remplacée
+  return racine;
+}
+
+let lance = false;
+f.onload = async () => {
+  if (lance) return;
+  lance = true;
+  const erreurs = [];
+  const ecouter = w => {
+    w.addEventListener("error", e => erreurs.push(e.message + (e.error && e.error.stack ? " [" + e.error.stack.split("\n").slice(1, 3).join(" ; ").trim() + "]" : "")));
+    w.addEventListener("unhandledrejection", e => erreurs.push("promesse : " + (e.reason && e.reason.message || e.reason)));
+  };
+  const recharger = () => new Promise(res => { f.onload = res; f.contentWindow.location.reload(); });
+  const pageAffichee = d => { const v = d.querySelector("main > section:not([hidden])"); return !!v && v.textContent.trim().length > 20; };
+  try {
+    let w = f.contentWindow;
+    ecouter(w);
+    // Contrôles directs du validateur
+    const V = c => w.validerSauvegarde(c);
+    const base = BASE();
+    const r0 = V(JSON.parse(JSON.stringify(base)));
+    ok("validateur : une progression réaliste passe sans perte", JSON.stringify(r0.valides) === JSON.stringify(base) && r0.ecartees === 0,
+      Object.keys(base).filter(k => JSON.stringify(r0.valides[k]) !== JSON.stringify(base[k])).join(", "));
+    const CLES = w.eval("CLES_SAUVEGARDE"), SCHEMAS = w.eval("SCHEMAS_SAUVEGARDE");
+    ok("validateur : chaque clé de CLES_SAUVEGARDE a un schéma", CLES.every(c => c in SCHEMAS) && Object.keys(SCHEMAS).every(c => CLES.includes(c)),
+      CLES.filter(c => !(c in SCHEMAS)).join(", "));
+    const pollue = V(JSON.parse('{"__proto__": {"pollue": 1}, "memoire": {"__proto__": {"pollue": 1}, "constructor": {"b": 1}, "biais:ancrage": {"b": 2, "d": 1, "n": 1, "j": 1}}}'));
+    ok("validateur : __proto__ et constructor écartés, sans toucher aux objets de base",
+      w.Object.keys(pollue.valides.memoire).join() === "biais:ancrage" && ({}).pollue === undefined && w.eval("({}).pollue") === undefined && pollue.ecartees === 1);
+    const melange = V({ acquis: ["biais:ancrage", 5, "biais:inexistant", "biais:halo"], memoire: { "biais:halo": { b: 2, d: 1, n: 1, j: 1 }, "biais:faux": { b: 1 }, "biais:ancrage": "texte" },
+      reperages: [{ cle: "biais:halo", j: 3, note: "x".repeat(30000) }, { cle: "biais:halo", j: 4 }], fourchettes: [1, -2], inconnue: 3 });
+    ok("validateur : un élément invalide est écarté seul, le reste est gardé",
+      melange.valides.acquis.join() === "biais:ancrage,biais:halo" && Object.keys(melange.valides.memoire).join() === "biais:halo"
+      && melange.valides.reperages.length === 2 && !("note" in melange.valides.reperages[0]) && !("fourchettes" in melange.valides) && melange.ecartees === 2);
+
+    // 1 000 sauvegardes déformées
+    let echecs = [], vides = 0;
+    for (let i = 0; i < N; i++) {
+      const deformee = deformer(BASE());
+      let texte;
+      try { texte = JSON.stringify(deformee); } catch (e) { continue; }
+      const { valides } = V(JSON.parse(texte));
+      w.localStorage.clear();
+      Object.entries(valides).forEach(([c, v]) => w.localStorage.setItem(c, JSON.stringify(v)));
+      w.location.hash = choix(["accueil", "portrait", "quiz", "ateliers", "biais", "biais/ancrage", "guide"]);
+      await recharger();
+      w = f.contentWindow;
+      ecouter(w);
+      await pause(60);
+      const d = f.contentDocument;
+      if (!pageAffichee(d)) vides++;
+      // Une seconde page, atteinte par la navigation
+      w.location.hash = choix(["portrait", "accueil", "quiz/reviser", "chiffres/monde", "tests/crt"]);
+      await pause(60);
+      if (!pageAffichee(d)) vides++;
+      if (erreurs.length) { echecs.push("sauvegarde " + i + " : " + erreurs.join(" | ") + " — " + texte.slice(0, 300)); erreurs.length = 0; }
+      if (echecs.length >= 10) break;
+    }
+    ok(N + " sauvegardes déformées : le site démarre sans erreur", !echecs.length, echecs.join("\n"));
+    ok(N + " sauvegardes déformées : une page s'affiche à chaque fois", vides === 0, vides + " page(s) vide(s)");
+
+    // 1 000 adresses aléatoires
+    w.localStorage.clear();
+    await recharger();
+    w = f.contentWindow;
+    ecouter(w);
+    const d = f.contentDocument;
+    const PREFIXES = ["", "biais/", "sophismes/", "chiffres/", "tests/", "quiz/", "guide/", "bingo/", "defi/", "portrait/", "ateliers/", "parcours/", "profil/"];
+    const CAR = "abcdefghijklmnopqrstuvwxyz0123456789-_/%#?&=.:~éà€  <>\"'`";
+    echecs = []; vides = 0;
+    for (let i = 0; i < N; i++) {
+      let h = choix(PREFIXES);
+      const n = Math.floor(alea() * 24);
+      for (let k = 0; k < n; k++) h += alea() < 0.1 ? "%" + Math.floor(alea() * 256).toString(16).toUpperCase().padStart(2, "0") : CAR[Math.floor(alea() * CAR.length)];
+      w.location.hash = h;
+      await pause(30);
+      if (!pageAffichee(d)) vides++;
+      if (erreurs.length) { echecs.push("#" + h + " : " + erreurs.join(" | ")); erreurs.length = 0; }
+      if (echecs.length >= 10) break;
+    }
+    ok(N + " adresses aléatoires : aucune erreur JavaScript", !echecs.length, echecs.join("\n"));
+    ok(N + " adresses aléatoires : une page s'affiche à chaque fois", vides === 0, vides + " page(s) vide(s)");
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
+  }
+  const echecs = lignes.filter(l => !l.startsWith("OK")).length;
+  lignes.unshift("RÉSUMÉ : " + (lignes.length - echecs) + " / " + lignes.length + " vérifications réussies");
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+  console.log("RAPPORT-FIN");
+  f.remove();
+};
+</script>

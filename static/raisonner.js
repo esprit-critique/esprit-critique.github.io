@@ -254,7 +254,7 @@ EXPERIENCES.push(
         const cinq = melanger([...quatre, { ...propre, propre: true }]);
         const prenoms = melanger(["Joueur 1", "Joueur 2", "Joueur 3", "Joueur 4", "Joueur 5"]);
         const jugements = [];
-        zone.innerHTML = "";
+        zone.replaceChildren();
         derouler(zone, cinq, (x, zone, fini) => {
           zone.appendChild(el("p", "consigne", "Le raisonnement d'un autre joueur"));
           zone.appendChild(blocSyllogisme(x.s));
@@ -475,7 +475,7 @@ EXPERIENCES.push(
     titre: "Résoudre à plusieurs",
     resume: "De 2 à 6 joueurs autour d'un téléphone : chacun répond en secret, puis le groupe discute et répond ensemble. Le groupe fait-il mieux que ses membres ?",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       zone.appendChild(paragraphe("Un seul téléphone, qu'on se passe. Chacun répond en secret ; le site montre ensuite la répartition des réponses, sans les noms, puis le groupe discute trois minutes et donne une réponse commune."));
       zone.appendChild(el("p", "consigne", "Prénoms des joueurs (2 à 6)"));
       const grille = el("div", "grille-joueurs");
@@ -501,7 +501,7 @@ EXPERIENCES.push(
       function tourDeTable(joueurs, poser, quandTousOntRepondu) {
         let k = 0;
         const suivant = () => {
-          zone.innerHTML = "";
+          zone.replaceChildren();
           if (k >= joueurs.length) return quandTousOntRepondu();
           const nom = joueurs[k];
           zone.appendChild(el("p", "consigne", T("Passez le téléphone à {0}", nom)));
@@ -509,7 +509,7 @@ EXPERIENCES.push(
           const pret = el("button", "bouton large", T("Je suis {0}", nom));
           pret.dataset.suivant = "1";
           pret.addEventListener("click", () => {
-            zone.innerHTML = "";
+            zone.replaceChildren();
             poser(k, nom, () => { k++; suivant(); remonter(); });
           });
           zone.appendChild(pret);
@@ -568,7 +568,7 @@ EXPERIENCES.push(
             zone.appendChild(liste);
             zone.appendChild(paragraphe("Discutez : chacun explique son raisonnement, puis mettez-vous d'accord sur une réponse commune.", "source"));
             discussion(zone, 180, () => {
-              zone.innerHTML = "";
+              zone.replaceChildren();
               entete(zone, i + 1, PROBLEMES_GROUPE.length, "Problème");
               zone.appendChild(el("p", "cas", p.enonce));
               zone.appendChild(el("p", "consigne", "La réponse du groupe"));
@@ -593,7 +593,7 @@ EXPERIENCES.push(
           });
         };
         const bilanProblemes = () => {
-          zone.innerHTML = "";
+          zone.replaceChildren();
           const indiv = Math.round(100 * resultats.reduce((t, r) => t + r.individuels, 0) / resultats.length);
           const groupe = resultats.filter(r => r.groupe).length;
           afficherScore(zone, "plusieurs", groupe, resultats.length);
@@ -650,7 +650,7 @@ EXPERIENCES.push(
           });
         };
         const bilanEstimations = () => {
-          zone.innerHTML = "";
+          zone.replaceChildren();
           noterPartie("plusieurs");
           // Diversité : écart-type des logarithmes des estimations, en moyenne sur les questions de la manche
           const diversite = m => {
@@ -692,7 +692,7 @@ JEUX.push({
     const enregistrer = l => ecrire("previsions", l);
     const auj = aujourdHui();
     const dateDe = jour => new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-    zone.innerHTML = "";
+    zone.replaceChildren();
 
     // Formulaire
     const form = el("div", "carnet-formulaire");

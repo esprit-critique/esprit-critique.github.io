@@ -1,0 +1,11 @@
+# Tient à jour les empreintes des actions GitHub (désignées par commit, voir les workflows) et l'outil de test
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly

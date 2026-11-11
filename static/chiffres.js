@@ -340,7 +340,7 @@ const JEUX = [
     titre: "Ordres de grandeur",
     resume: "Combien d'arbres sur Terre ? De neurones dans un cerveau ? Placez huit quantités sur une échelle logarithmique.",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       deroulerNiveaux(zone, {
         id: "grandeurs", n: 8, relancer: () => JEUX.find(j => j.id === "grandeurs").lancer(zone),
         // Niveau 3 : une question sur deux suit la méthode de Fermi (décomposer avant d'estimer)
@@ -589,7 +589,7 @@ const JEUX = [
     titre: "Êtes-vous sûr à 90 % ?",
     resume: "Pour dix quantités, donnez une fourchette dont vous êtes sûr à 90 %. Combien contiendront la bonne réponse ?",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       // Questions toutes affichées ensemble : le niveau s'ajuste d'une partie à l'autre
       const niveau = niveauAtelier("intervalles").niveau;
       zone.appendChild(choixNiveau("intervalles", () => JEUX.find(j => j.id === "intervalles").lancer(zone)));
@@ -645,7 +645,7 @@ const JEUX = [
           valider.textContent = "Chaque fourchette à 50 % doit tenir dans celle à 90 %";
           return;
         }
-        zone.innerHTML = "";
+        zone.replaceChildren();
         let dedans = 0;
         const liste = el("div");
         questions.forEach((q, k) => {
@@ -714,7 +714,7 @@ const JEUX = [
       let i = 0;
 
       function afficher() {
-        zone.innerHTML = "";
+        zone.replaceChildren();
         if (i >= tours.length) return bilan();
         const t = tours[i];
         entete(zone, i + 1, tours.length);
@@ -818,7 +818,7 @@ const JEUX = [
     titre: "Combien de points ?",
     resume: "Un nuage de points s'affiche une seconde et demie. Estimez leur nombre. Votre perception est-elle fidèle ?",
     lancer(zone) {
-      zone.innerHTML = "";
+      zone.replaceChildren();
       zone.appendChild(paragraphe("Huit nuages de points vont s'afficher, chacun pendant une seconde et demie. Donnez à chaque fois votre estimation, sans compter."));
       const precedents = lire("points", null);
       const sans = el("button", "bouton large", "Commencer");
@@ -1375,7 +1375,7 @@ function partiePoints(zone, avecRepere) {
   }
 
   function repere() {
-    zone.innerHTML = "";
+    zone.replaceChildren();
     zone.appendChild(choixNiveau("points", () => JEUX.find(j => j.id === "points").lancer(zone)));
     zone.appendChild(el("p", "consigne", "Repère : ce nuage contient 30 points"));
     zone.appendChild(nuage(30));
@@ -1386,7 +1386,7 @@ function partiePoints(zone, avecRepere) {
   }
 
   function essai() {
-    zone.innerHTML = "";
+    zone.replaceChildren();
     if (i >= nombres.length) return bilan();
     entete(zone, i + 1, nombres.length, "Nuage");
     const n = nombres[i];
@@ -1394,7 +1394,7 @@ function partiePoints(zone, avecRepere) {
     cadre.appendChild(nuage(n));
     zone.appendChild(cadre);
     setTimeout(() => {
-      cadre.innerHTML = "";
+      cadre.replaceChildren();
       cadre.appendChild(el("p", "cas", "Combien de points ?"));
       const ligne = el("div", "ligne");
       const champ = el("input", "champ");

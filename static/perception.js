@@ -93,7 +93,7 @@ JEUX.push(
       let i = 0;
 
       function etape() {
-        zone.innerHTML = "";
+        zone.replaceChildren();
         if (i >= etapes.length) return bilan();
         const e = etapes[i];
         entete(zone, i + 1, etapes.length, "Figure");
@@ -254,7 +254,7 @@ JEUX.push(
     lancer(zone) {
       const N = 50;
       const suite = [];
-      zone.innerHTML = "";
+      zone.replaceChildren();
       zone.appendChild(paragraphe("Imaginez que vous lancez une pièce 50 fois et notez les résultats, sans pièce réelle. Essayez d'écrire une suite qu'on ne pourrait pas distinguer d'une vraie."));
       const compteur = el("p", "consigne");
       const affichage = el("div", "suite-cases saisie");
@@ -270,7 +270,7 @@ JEUX.push(
 
       function maj() {
         compteur.textContent = typo(T("Lancer {0} / {1}", Math.min(suite.length + 1, N), N));
-        affichage.innerHTML = "";
+        affichage.replaceChildren();
         suite.forEach(v => affichage.appendChild(el("span", v ? "pile" : "face", v ? "P" : "F")));
         annuler.disabled = suite.length === 0;
         if (suite.length === N) analyser();
@@ -292,7 +292,7 @@ JEUX.push(
       function analyser() {
         document.removeEventListener("keydown", clavier);
         noterPartie("ecrire-hasard");
-        zone.innerHTML = "";
+        zone.replaceChildren();
         const { plusLongue, changements } = series(suite);
         const piles = suite.reduce((s, v) => s + v, 0);
         const suites = lire("hasardEcrit", []);
@@ -512,7 +512,7 @@ function figureIllusion(e) {
     const dessiner = () => {
       [haut, bas].forEach((t, k) => {
         const g = groupes[k];
-        g.innerHTML = "";
+        g.replaceChildren();
         const x1 = 160 - t.long / 2, x2 = 160 + t.long / 2;
         g.appendChild(svg("line", Object.assign({ x1, y1: t.y, x2, y2: t.y }, encre)));
         const d = t.exterieur ? -1 : 1;            // sens des pointes

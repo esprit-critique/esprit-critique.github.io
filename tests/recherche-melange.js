@@ -145,6 +145,39 @@ const ok = (libelle, condition, detail = '') => {
   ok('version anglaise : libellé traduit', placeholder === 'Search everything…', placeholder);
   await p.close();
 
+  // ---------- Sécurité de la vraie page (CSP en balise meta) ----------
+  for (const page of ['', 'en/']) {
+    p = await nouvellePage();
+    await p.goto(SITE + page + '#accueil', { waitUntil: 'load' });
+    await p.waitForTimeout(200);
+    const sw = await p.evaluate(() => Promise.race([navigator.serviceWorker.ready.then(() => true), new Promise(r => setTimeout(() => r(false), 5000))]));
+    ok('service worker enregistré malgré Trusted Types (' + (page || 'fr') + ')', sw);
+    const avant = erreurs.length;
+    const tt = await p.evaluate(() => { try { document.createElement('div').innerHTML = '<b>x</b>'; return false; } catch (e) { return true; } });
+    await p.waitForTimeout(50);
+    erreurs.length = avant;   // le refus provoqué ici est écrit dans la console : attendu
+    ok('Trusted Types actif (' + (page || 'fr') + ') : innerHTML refusé', tt);
+    const referent = await p.getAttribute('meta[name=referrer]', 'content');
+    ok('politique de référent (' + (page || 'fr') + ') : no-referrer', referent === 'no-referrer', String(referent));
+    await p.close();
+  }
+  // Un script qui n'arrive pas : message « Chargement incomplet », et le bouton « Recharger » recharge vraiment
+  // (l'ancien onclick en ligne était bloqué par la CSP)
+  p = await nouvellePage();
+  let bloquer = true;
+  await p.route('**/pays.js', route => bloquer ? route.abort() : route.continue());
+  const erreursAvant = erreurs.length;
+  await p.goto(SITE + '#accueil', { waitUntil: 'load' });
+  await p.waitForTimeout(200);
+  const message = await p.textContent('main h2').catch(() => '');
+  ok('script manquant : message « Chargement incomplet »', message === 'Chargement incomplet', message);
+  erreurs.length = erreursAvant;   // l'échec de chargement et l'arrêt volontaire du script sont attendus ici
+  bloquer = false;
+  await Promise.all([p.waitForNavigation({ waitUntil: 'load' }), p.click('main button')]);
+  await p.waitForTimeout(300);
+  ok('script manquant : « Recharger » recharge la page, qui s\'affiche', await p.evaluate(() => !!document.querySelector('main > section:not([hidden]) .carte') && !/Chargement incomplet/.test(document.querySelector('main').textContent)));
+  await p.close();
+
   ok('aucune erreur JavaScript ni violation de la politique de sécurité', erreurs.length === 0, erreurs.slice(0, 5).join(' ; '));
   await navigateur.close();
   console.log(echecs ? echecs + ' contrôle(s) en échec' : 'Tous les contrôles sont passés');

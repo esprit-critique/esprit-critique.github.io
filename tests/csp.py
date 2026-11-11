@@ -10,7 +10,7 @@ ADRESSES = ["accueil", "biais/ancrage", "sophismes/post-hoc", "quiz", "ateliers"
             "tests/demonter", "tests/laterale", "bingo/12345", "portrait", "guide/methode", "adresse-inconnue", "biais/%E0",
             # Pages fixes (adresses commençant par « / »)
             "/mentions-legales.html", "/confidentialite.html", "/cgu.html", "/404.html"]
-SIGNES = re.compile(r"Content Security Policy|Refused to|Uncaught|TypeError|ReferenceError|SyntaxError|URIError")
+SIGNES = re.compile(r"Content Security Policy|Refused to|Uncaught|TypeError|ReferenceError|SyntaxError|URIError|Trusted|requires 'Trusted")
 taille, theme, sortie = sys.argv[1:4]
 
 problemes = []

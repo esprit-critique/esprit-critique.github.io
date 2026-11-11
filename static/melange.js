@@ -26,11 +26,11 @@ function jeuAuHasard() {
 function questionMelangee(zone) {
   const jeu = jeuAuHasard();
   const bandeau = zone.querySelector(".melange-jeu");
-  bandeau.innerHTML = "";
+  bandeau.replaceChildren();
   bandeau.append(el("span", "melange-etiquette", T("Jeu tiré au hasard")), texteNoeud(" : "),
     lienVers(tousLesAteliers().find(a => a.atelier === jeu).adresse, jeu.titre, "lien-texte"));
   const partie = zone.querySelector(".melange-partie");
-  partie.innerHTML = "";
+  partie.replaceChildren();
   // Le jeu s'affiche dans sa propre zone : il la vide à chaque étape, sans toucher au bandeau
   const jeuZone = el("div", "melange-question");
   partie.appendChild(jeuZone);
@@ -67,7 +67,7 @@ JEUX.push({
   titre: "Planche de Galton",
   resume: "Une question à la fois, tirée au hasard dans les jeux les plus rapides. Vous ne savez pas à l'avance quel jeu viendra.",
   lancer(zone) {
-    zone.innerHTML = "";
+    zone.replaceChildren();
     melange.dernier = null;
     melange.juste = 0;
     melange.total = 0;

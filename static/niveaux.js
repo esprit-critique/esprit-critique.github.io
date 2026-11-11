@@ -130,7 +130,7 @@ function deroulerNiveaux(zone, options, afficher, bilan) {
   let niveau = niveauAtelier(id).niveau;
   const resultats = [], niveaux = [];
   function etape() {
-    zone.innerHTML = "";
+    zone.replaceChildren();
     if (i >= n) {
       if (melange) return melange(resultats[0], estJuste(resultats[0]));
       PARTIES_EN_COURS[id] = { niveaux, justes: resultats.map(estJuste) };
@@ -190,7 +190,7 @@ function noterPartieEntiere(id, niveau, justes) {
 // jauge qui défile : le temps restant s'affiche seulement en texte.
 // options : { cle, titre, tirer() → { texte, options, juste, explication }, relancer() }
 function partieChrono(zone, options) {
-  zone.innerHTML = "";
+  zone.replaceChildren();
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let score = 0, bonnes = 0, erreurs = 0, reste = 60, termine = false;
   const temps = el("p", "chrono-temps"), points = el("p", "chrono-points");
@@ -210,7 +210,7 @@ function partieChrono(zone, options) {
     if (jauge) jauge.firstChild.style.width = (100 * reste / 60) + "%";
   };
   const question = () => {
-    zoneQ.innerHTML = "";
+    zoneQ.replaceChildren();
     const q = options.tirer();
     zoneQ.appendChild(el("p", "cas", q.texte));
     q.options.forEach((o, k) => {
@@ -233,7 +233,7 @@ function partieChrono(zone, options) {
     const nouveau = ancien === undefined || score > ancien;
     if (nouveau) { records[options.cle] = score; ecrire("chrono", records); }
     noterActivite();
-    zone.innerHTML = "";
+    zone.replaceChildren();
     zone.append(el("p", "consigne", "Temps écoulé"), el("p", "grand-score", typo(signe(score) + " points")),
       paragraphe(T("{0}, {1} (chaque erreur retire 2 points).", pluriel(bonnes, "bonne réponse", "bonnes réponses"), pluriel(erreurs, "erreur"))),
       el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", ancien === undefined ? "Premier record enregistré." : nouveau ? T("Nouveau record ! L'ancien était de {0} points.", signe(ancien)) : T("Votre record : {0} points.", signe(ancien))));
@@ -264,7 +264,7 @@ function classementInteractif(zone, elements, libelle, surValidation) {
   const liste = el("ol", "classement");
   liste.setAttribute("aria-live", "polite");
   const dessiner = focus => {
-    liste.innerHTML = "";
+    liste.replaceChildren();
     ordre.forEach((e, k) => {
       const li = el("li");
       const haut = el("button", "bouton-pas", "↑"), bas = el("button", "bouton-pas", "↓");

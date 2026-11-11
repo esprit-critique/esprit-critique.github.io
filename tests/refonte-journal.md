@@ -8,7 +8,8 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | Lot | Branche | Pull request | État |
 |---|---|---|---|
 | 0 — Filet de sécurité | `refonte/lot-0` | #6 | fusionné |
-| 1 à 8 | — | — | à faire |
+| 1 — Protéger le site | `refonte/lot-1` | #7 | fusionné (alerte CodeQL « certitudes » classée faux positif par le propriétaire) |
+| 2 à 8 | — | — | à faire |
 
 ## Écarts entre le brief et le code
 
@@ -19,7 +20,25 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
   (macOS) pour lire la largeur d'une image : remplacé par la lecture de l'en-tête PNG.
 - `main` n'était pas au vert au commit `cb90ed8` : les bancs `test`, `grand` et `hors-ligne` échouaient tous les trois
   sur `JSON.parse` de la liste `FICHIERS` de `sw.js`, où un commentaire avait été ajouté le 6 novembre (c991b73).
-  Corrigé au lot 0 (commentaire sorti du tableau).
+  Corrigé au lot 0 (commentaire sorti du tableau). Le `main` local était en retard d'un commit sur GitHub : `8a86cf0`
+  (commit de référence du brief) contenait déjà e70eacc, qui corrigeait autrement la lecture dans les bancs et le
+  compte des ateliers (49). La fusion du lot 0 réunit les deux ; les mesures « avant » ci-dessous sont à `cb90ed8`.
+- Lot 1 : le brief prescrit `trusted-types 'none'`. Or `navigator.serviceWorker.register()` est un point d'injection
+  « TrustedScriptURL » : avec `'none'`, le service worker ne s'enregistrait plus (mode hors ligne cassé), et le banc
+  `csp` ne le voyait pas (message « This document requires 'TrustedScriptURL' assignment » non reconnu). Choix :
+  `trusted-types esprit-critique`, une seule règle, qui n'accepte que l'adresse du service worker ; le banc `csp`
+  reconnaît désormais ces messages ; le banc Playwright vérifie l'enregistrement du service worker sur la vraie page.
+- Lot 1 : `PICTOS` et `TRAITS_ENTITE` ne sont pas réécrits en listes d'objets : les chaînes SVG (fixes, internes) sont
+  gardées et lues par `dessinerSvg()`, qui recrée chaque élément par `svg()`. Même résultat (aucun HTML inséré), diff
+  bien plus court, dessins toujours lisibles. Contrôle : arbre SVG identique à l'ancienne insertion pour les 35 dessins
+  (banc `test`), plus strict qu'une comparaison de captures.
+- Lot 1, défaut ancien trouvé par le nouveau test : si `pays.js` manque, `chiffres.js` plante au milieu de la
+  déclaration de `JEUX`, et `typeof JEUX` lève alors une erreur (zone morte temporelle) : `verifierChargement()`
+  plantait elle-même et le message « Chargement incomplet » n'apparaissait jamais. Chaque `typeof` est maintenant protégé.
+- Lot 1 : la page 404 générée annonçait « 48 ateliers » (le générateur avait 48 en dur, la page avait été corrigée à la
+  main à 49) : générateur corrigé.
+- Lot 1 : deux ateliers (`demonter`, `laterale`) écrivent `null` dans `vus` (identifiant absent) ; le schéma de `vus`
+  admet donc toute valeur simple, pour ne rien perdre.
 
 ## Décisions et hypothèses
 
@@ -45,6 +64,23 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 - `publier.yml` : permissions au niveau de la tâche (`pages: write`, `id-token: write` seulement pour la publication),
   `needs: verifier`.
 - Le brief est copié dans `tests/refonte-brief.md` pour qu'une nouvelle session le retrouve.
+
+### Lot 1
+
+- Validation profonde dans un nouveau fichier, `static/sauvegarde.js` (chargé avant `app.js`) : `SCHEMAS_SAUVEGARDE`,
+  une petite grammaire (entier, jour, nombre, texte, paire, fiche, liste, dico, objet à champs nommés avec champs
+  obligatoires `"!"`). Les champs non décrits sont gardés comme valeurs « libres » bornées : écarter un champ inconnu
+  ferait perdre des données légitimes. La forme de premier niveau (`FORMES_SAUVEGARDE`, `formeValide`) reste exigée.
+- Champs obligatoires trouvés par le banc à données aléatoires (plantages du portrait) : `montyHall` exige ses
+  tableaux à 3 et 10 portes, chacun avec `garder` et `changer` ; un niveau de `resultatsAteliers` exige `historique`.
+- Bancs : `_aleatoire.html` (nouveau, une fois, hors configuration : 1 000 sauvegardes, 1 000 adresses, graine fixe) ;
+  `_test` et `_ateliers` vérifient que la progression réellement écrite par le site passe la validation sans perte ;
+  le banc Playwright vérifie Trusted Types, le référent, le service worker et « Recharger » sur la vraie page.
+- `ecrire()` : un échec (stockage plein ou bloqué) est annoncé une fois par visite (`annoncer()`, différé car défini
+  plus bas dans `app.js`).
+- `tests/securite.py` : éprouvé sur un fichier piégé (14 problèmes relevés sur 14) et sur une CSP faussée.
+- `security.txt` expire le 1er novembre 2027 ; le contrôle échoue à partir du 2 octobre 2027.
+- CodeQL v4.39.3, Dependabot (actions chaque semaine, npm chaque mois).
 
 ## État des lieux (lot 0, commit cb90ed8)
 

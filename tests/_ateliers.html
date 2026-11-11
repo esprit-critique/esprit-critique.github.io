@@ -788,6 +788,16 @@ f.onload = async () => {
     await aller("chiffres/monde");
     ok("lien vers l'atelier suivant", !!vue().querySelector(".atelier-suivant"));
     ok("titre de l'onglet", d.title.startsWith("Le monde en chiffres"));
+
+    // ---------- Validation des sauvegardes (sauvegarde.js) ----------
+    // Après tous les ateliers joués : la progression réelle passe la validation profonde sans rien perdre
+    const progression = Object.fromEntries(w.eval("CLES_SAUVEGARDE").filter(c => w.localStorage.getItem(c) !== null).map(c => [c, JSON.parse(w.localStorage.getItem(c))]));
+    const validee = w.validerSauvegarde(JSON.parse(JSON.stringify(progression)));
+    const perdues = Object.keys(progression).filter(c => JSON.stringify(validee.valides[c]) !== JSON.stringify(progression[c]));
+    ok("sauvegarde : la progression de tous les ateliers passe la validation sans perte (" + Object.keys(progression).length + " clés)",
+      !perdues.length && validee.ecartees === 0, perdues.map(c => c + " : " + (progression[c] && typeof progression[c] === "object"
+        ? Object.keys(progression[c]).filter(k => JSON.stringify((validee.valides[c] || {})[k]) !== JSON.stringify(progression[c][k])).map(k => k + " = " + JSON.stringify(progression[c][k]).slice(0, 150)).join(", ")
+        : JSON.stringify(progression[c]))).join(" | "));
   } catch (e) {
     lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
   }
