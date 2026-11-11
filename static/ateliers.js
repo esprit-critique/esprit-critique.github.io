@@ -86,6 +86,8 @@ function calculEnDetail(lignes, titre) {
 // En-tête d'une question : « Question 3 / 10 » et jauge d'avancement
 // « niveau » (facultatif) : niveau de la question, affiché discrètement
 function entete(zone, numero, total, libelle, niveau) {
+  // Planche de Galton (melange.js) : le jeu ne joue qu'une question, la jauge suit donc la partie entière
+  if (typeof MELANGE !== "undefined" && MELANGE.actif && total === 1) { numero = melange.total + 1; total = MELANGE_LONGUEUR; }
   const e = el("div", "quiz-entete");
   // Une seule question (mode « Question au hasard ») : pas de compteur « 1 / 1 »
   const compte = total > 1 ? " " + numero + " / " + total : "";
