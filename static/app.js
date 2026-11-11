@@ -1316,6 +1316,11 @@ function afficherFiche(type, fiche) {
   hasard.type = "button";
   hasard.addEventListener("click", () => tirerCarte(TIRAGE.actif ? undefined : "tout"));
   rail.appendChild(hasard);
+  // Image de la carte, à partager (profil.js)
+  const partage = el("button", "bouton secondaire large", "Partager cette carte");
+  partage.type = "button";
+  partage.addEventListener("click", () => partagerFiche(type, fiche).catch(e => annoncer(e.message)));
+  pied.appendChild(partage);
   const miseEnPage = el("div", "fiche-mise-en-page");
   const colonne = el("div", "fiche-colonne");
   // Arrivée par un tirage au hasard (tirage.js) : bandeau de tirage et retournement ; sinon le tirage s'arrête
@@ -2106,6 +2111,7 @@ document.addEventListener("keydown", e => {
     return;
   }
   if (cible.matches && cible.matches("input, textarea, select")) return;
+  if (e.key === "?") { e.preventDefault(); afficherRaccourcis(); return; }
   const section = document.querySelector("main > section:not([hidden])");
   if (!section) return;
   // Certitude au quiz : 7 Sûr, 8 Plutôt sûr, 9 Au hasard (les touches 1 à 4 restent aux réponses)
@@ -2129,6 +2135,43 @@ document.addEventListener("keydown", e => {
     if (suite && !cible.matches("a, button")) { e.preventDefault(); suite.click(); }
   }
 });
+
+// Aide des raccourcis clavier (touche « ? ») : une boîte de dialogue native, fermée par Échap ou par son bouton
+const RACCOURCIS = [["1 à 4", "Choisir une réponse"], ["7, 8, 9", "Certitude : sûr, plutôt sûr, au hasard"], ["Entrée ou →", "Question suivante, valider"],
+  ["R", "Tirer une autre carte, un autre défi"], ["Espace", "Retourner une carte (mode « Cartes »)"], ["?", "Afficher cette aide"]];
+function afficherRaccourcis() {
+  let boite = document.querySelector(".aide-raccourcis");
+  if (!boite) {
+    boite = el("dialog", "aide-raccourcis");
+    boite.setAttribute("aria-labelledby", "titre-raccourcis");
+    const titre = el("h2", null, "Raccourcis clavier");
+    titre.id = "titre-raccourcis";
+    const liste = el("dl", "liste-raccourcis");
+    RACCOURCIS.forEach(([touche, action]) => liste.append(el("dt", null, touche), el("dd", null, action)));
+    const fermer = el("button", "bouton", "Fermer");
+    fermer.type = "button";
+    fermer.addEventListener("click", () => boite.close());
+    boite.append(titre, liste, fermer);
+    document.body.appendChild(boite);
+  }
+  if (!boite.open) boite.showModal();
+}
+
+// Installation : quand le navigateur la propose (beforeinstallprompt), un bouton discret dans les réglages du profil
+let invitationInstallation = null;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); invitationInstallation = e; });
+function boutonInstallation() {
+  if (!invitationInstallation) return null;
+  const b = el("button", "bouton secondaire", "Installer l'application");
+  b.type = "button";
+  b.addEventListener("click", async () => {
+    invitationInstallation.prompt();
+    await invitationInstallation.userChoice.catch(() => null);
+    invitationInstallation = null;
+    b.remove();
+  });
+  return b;
+}
 
 // Applique la typographie française au texte fixe de la page (guide, titres)
 (function typographierPage() {

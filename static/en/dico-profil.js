@@ -20,6 +20,7 @@ EN_AJOUTER([
   ["Vers le grade « {0} »", "Towards the rank “{0}”"],
   ["Encore {0} points de maîtrise. Le jeu qui rapporterait le plus : {1}.", "{0} more mastery points. The game that would help most: {1}."],
   ["Votre portrait : ce que vos réponses révèlent de votre façon de juger →", "Your portrait: what your answers reveal about how you judge →"],
+  ["Partager mon grade", "Share my rank"],
   ["une série de quiz", "a quiz series"],
   ["Votre maîtrise, jour après jour", "Your mastery, day by day"],
   ["La courbe commence le {0}, jour de la mise à jour qui a introduit la maîtrise : les jours d'avant ne peuvent pas être recalculés.", "The curve starts on {0}, the day of the update that introduced mastery: earlier days cannot be recalculated."],
@@ -70,5 +71,7 @@ EN_AJOUTER([
   ["En répondant au hasard, on obtient {0} sur {1} ou mieux environ {2} fois sur 100.", "Answering at random, you get {0} out of {1} or better about {2} times in 100."],
   ["En répondant au hasard, on obtient {0} sur {1} ou mieux environ {2} fois sur 1 000 ({3} %).", "Answering at random, you get {0} out of {1} or better about {2} times in 1,000 ({3}%)."],
   ["moins d'une", "fewer than one"],
-  ["Votre score face au hasard : les scores qu'on obtiendrait en répondant au hasard", "Your score against chance: the scores you would get answering at random"]
+  ["Votre score face au hasard : les scores qu'on obtiendrait en répondant au hasard", "Your score against chance: the scores you would get answering at random"],
+  ["Image enregistrée : {0}", "Image saved: {0}"],
+  ["La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence.", "Mastery measures success in the site’s games, not intelligence."]
 ]);

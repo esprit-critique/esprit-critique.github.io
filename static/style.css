@@ -1764,3 +1764,20 @@ h3.titre-bloc {
 .segment-indice.juste { border-style: solid; border-color: var(--vert); }
 .segment-indice.faux { border-style: solid; border-color: var(--rouge); text-decoration: line-through; text-decoration-color: var(--rouge); }
 .choix.mot-de-passe { font-family: var(--mono); overflow-wrap: anywhere; }
+
+/* Noms des seuils de grade sur la courbe : liseré de la couleur de la carte, au-dessus du tracé */
+.graphique { --fond-graphique: var(--fond); }
+.carte .graphique { --fond-graphique: var(--carte); }
+.nom-seuil { paint-order: stroke; stroke: var(--fond-graphique); stroke-width: 4px; stroke-linejoin: round; }
+.valeur-graphique { paint-order: stroke; stroke: var(--fond-graphique); stroke-width: 3px; stroke-linejoin: round; }
+
+/* Aide des raccourcis clavier (touche « ? ») */
+.aide-raccourcis { max-width: min(440px, calc(100% - 32px)); padding: 18px 20px; border: 1px solid var(--trait); border-radius: var(--rayon-carte); background: var(--carte-haute); color: var(--texte); box-shadow: var(--ombre-2); }
+.aide-raccourcis::backdrop { background: rgba(0, 0, 0, 0.35); }
+.aide-raccourcis h2 { font-family: var(--titre); margin: 0 0 10px; }
+.liste-raccourcis { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0 0 14px; }
+.liste-raccourcis dt { font-family: var(--mono); font-weight: 700; }
+.liste-raccourcis dd { margin: 0; }
+
+.bouton-partage { margin: 10px 0 0; display: block; }
+.pied-fiche .bouton.large { margin-top: 10px; }

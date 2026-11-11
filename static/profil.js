@@ -192,6 +192,10 @@ function afficherPageProfil(onglet) {
     T("Encore {0} points de maîtrise. Le jeu qui rapporterait le plus : {1}.", grade.suivant[0] - etat.meilleure, jeuConseille(m))));
   zone.appendChild(el("p", "source avertissement-maitrise", "La maîtrise mesure votre réussite dans les jeux de ce site, pas votre intelligence."));
   zone.appendChild(lienVers("#portrait", "Votre portrait : ce que vos réponses révèlent de votre façon de juger →", "lien-discret"));
+  const partage = el("button", "bouton secondaire bouton-partage", "Partager mon grade");
+  partage.type = "button";
+  partage.addEventListener("click", () => partagerGrade().catch(e => annoncer(e.message)));
+  zone.appendChild(partage);
 
   const onglets = el("div", "onglets-profil");
   onglets.setAttribute("role", "tablist");
@@ -364,6 +368,8 @@ function ongletReglages(p) {
   const place = el("div");
   p.appendChild(place);
   blocSynchro().then(b => { if (b) place.appendChild(b); }).catch(() => {});
+  const installer = boutonInstallation();
+  if (installer) p.appendChild(installer);
   p.appendChild(lienVers("#guide/maitrise", "Comment votre maîtrise est calculée", "lien-discret"));
   p.appendChild(el("br"));
   p.appendChild(lienVers("#guide/motivation", "Comment ce site essaie de vous motiver", "lien-discret"));
@@ -449,4 +455,79 @@ function blocFaceAuHasard(score, n, p) {
     : T("En répondant au hasard, on obtient {0} sur {1} ou mieux environ {2} fois sur 1 000 ({3} %).", score, n, sur1000 < 1 ? T("moins d'une") : Math.round(sur1000), (auMoins * 100).toLocaleString(LOCALE, { maximumFractionDigits: 2 }));
   bloc.append(graphiqueHasard(T("Votre score face au hasard : les scores qu'on obtiendrait en répondant au hasard"), proba, score), el("p", null, phrase));
   return bloc;
+}
+
+// ===================== Images à partager (lot 8) =====================
+// Une image portrait (1 080 × 1 350) dessinée dans un canvas sur l'appareil ; partagée par navigator.share quand il
+// accepte les fichiers, sinon téléchargée. Rien n'est envoyé à un serveur. Toujours en thème clair (papier et encre).
+function lignesAJuster(ctx, texte, largeur) {
+  const mots = String(texte).split(" "), lignes = [];
+  let ligne = "";
+  mots.forEach(m => { const essai = ligne ? ligne + " " + m : m; if (ctx.measureText(essai).width > largeur && ligne) { lignes.push(ligne); ligne = m; } else ligne = essai; });
+  if (ligne) lignes.push(ligne);
+  return lignes;
+}
+async function partagerImage(nomFichier, dessiner) {
+  await document.fonts.ready;
+  const toile = document.createElement("canvas");
+  toile.width = 1080; toile.height = 1350;
+  const ctx = toile.getContext("2d");
+  ctx.fillStyle = "#f6f4ef"; ctx.fillRect(0, 0, 1080, 1350);
+  dessiner(ctx);
+  ctx.fillStyle = "#6b6862"; ctx.font = "34px -apple-system, Helvetica, Arial, sans-serif"; ctx.textAlign = "left";
+  ctx.fillText("esprit-critique.github.io" + (LANGUE === "en" ? "/en/" : ""), 96, 1270);
+  const blob = await new Promise(ok => toile.toBlob(ok, "image/png"));
+  const fichier = new File([blob], nomFichier, { type: "image/png" });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [fichier] })) { await navigator.share({ files: [fichier] }); return; }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  const lien = el("a");
+  lien.href = URL.createObjectURL(blob);
+  lien.download = nomFichier;
+  document.body.appendChild(lien);
+  lien.click();
+  lien.remove();
+  setTimeout(() => URL.revokeObjectURL(lien.href), 2000);
+  annoncer(T("Image enregistrée : {0}", nomFichier));
+}
+const policeTitre = taille => "700 " + taille + "px Newsreader, Georgia, serif";
+const policeTexte = taille => taille + "px -apple-system, Helvetica, Arial, sans-serif";
+
+function partagerFiche(type, fiche) {
+  return partagerImage("esprit-critique-" + fiche.id + ".png", ctx => {
+    ctx.fillStyle = COULEURS[fiche.categorie]; ctx.fillRect(0, 0, 28, 1350);
+    ctx.fillStyle = COULEURS[fiche.categorie]; ctx.font = policeTitre(44); ctx.textAlign = "right";
+    ctx.fillText((type === "biais" ? "B " : "S ") + fiche.num, 984, 150);
+    ctx.textAlign = "left"; ctx.font = "650 34px Newsreader, Georgia, serif";
+    ctx.fillText((TYPES[type].singulier + " · " + fiche.categorie).toUpperCase(), 96, 150);
+    ctx.fillStyle = "#1c1b19"; ctx.font = policeTitre(96);
+    let y = 300;
+    lignesAJuster(ctx, fiche.nom, 888).forEach(l => { ctx.fillText(l, 96, y); y += 104; });
+    ctx.font = "400 46px Newsreader, Georgia, serif"; y += 30;
+    lignesAJuster(ctx, fiche.definition, 888).slice(0, 12).forEach(l => { ctx.fillText(l, 96, y); y += 64; });
+  });
+}
+
+function partagerGrade() {
+  const { m, etat } = majMaitrise(false);
+  const grade = gradeDe(etat.meilleure || 0);
+  return partagerImage("esprit-critique-grade.png", ctx => {
+    ctx.strokeStyle = "#1d4f91"; ctx.lineWidth = 10; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    for (let k = 0; k < Math.min(3, grade.rang); k++) { ctx.beginPath(); ctx.moveTo(96, 210 + k * 40); ctx.lineTo(156, 170 + k * 40); ctx.lineTo(216, 210 + k * 40); ctx.stroke(); }
+    if (!grade.rang) { ctx.fillStyle = "#1d4f91"; ctx.beginPath(); ctx.arc(156, 200, 14, 0, 2 * Math.PI); ctx.fill(); }
+    ctx.fillStyle = "#1c1b19"; ctx.font = policeTitre(84); ctx.fillText(T(grade.nom), 260, 230);
+    ctx.font = policeTitre(200); ctx.fillText(String(m.globale), 96, 470);
+    ctx.font = policeTexte(38); ctx.fillStyle = "#6b6862"; ctx.fillText(T("de maîtrise, sur 1 000"), 96, 530);
+    // La toile des six domaines, valeurs écrites
+    const c = [540, 870], r = 190, n = DOMAINES.length;
+    const pt = (i, v) => [c[0] + r * v / 1000 * Math.cos(-Math.PI / 2 + 2 * Math.PI * i / n), c[1] + r * v / 1000 * Math.sin(-Math.PI / 2 + 2 * Math.PI * i / n)];
+    ctx.strokeStyle = "#dcd7cc"; ctx.lineWidth = 2;
+    [500, 1000].forEach(v => { ctx.beginPath(); DOMAINES.forEach((_, i) => { const [x, y] = pt(i, v); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.stroke(); });
+    ctx.beginPath(); DOMAINES.forEach(([d], i) => { const [x, y] = pt(i, m.domaines[d]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath();
+    ctx.fillStyle = "rgba(29, 79, 145, 0.18)"; ctx.fill(); ctx.strokeStyle = "#1d4f91"; ctx.lineWidth = 5; ctx.stroke();
+    ctx.font = policeTexte(27); ctx.fillStyle = "#1c1b19";
+    DOMAINES.forEach(([d, nom], i) => { const [x, y] = pt(i, 1200); ctx.textAlign = x < c[0] - 20 ? "right" : x > c[0] + 20 ? "left" : "center"; ctx.fillText(T(nom) + " : " + m.domaines[d], x, y); });
+    ctx.textAlign = "left"; ctx.font = "italic 30px Newsreader, Georgia, serif"; ctx.fillStyle = "#6b6862";
+    ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1200);
+  });
 }

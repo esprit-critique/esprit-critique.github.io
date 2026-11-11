@@ -16,7 +16,7 @@ cours dans `tests/refonte-plan.md` et `tests/refonte-brief.md`.
 | 5 — Parcours | `refonte/lot-5` | #12 | fusionné |
 | 6 — Synchronisation chiffrée | `refonte/lot-6` | #13 | fusionné, drapeau vide ; mise en service : étape manuelle du propriétaire (serveur/README.md) |
 | 7 — Cybersécurité | `refonte/lot-7` | #14 | fusionné |
-| 8 — Finitions | — | — | **à faire : reprendre ici** |
+| 8 — Finitions (1re partie) | `refonte/lot-8` | #15 | fusionné ; reste : voir « Lot 8 » |
 
 ## Écarts entre le brief et le code
 
@@ -220,11 +220,19 @@ donc toujours vide) : `entete()` (ateliers.js) suit la partie quand `MELANGE.act
 - Comptes en dur mis à jour : `_ateliers` (8 sections), `_grand-test` (51), `_test` (51 cartes), Playwright (8).
 - Captures du lot 7 non publiées sur la branche `captures` (manque de temps) : à faire au lot 8.
 
-### Lot 8 — à faire (prochaine session)
+### Lot 8
 
-Accueil du nouveau visiteur en trois écrans ; cartes à partager (canvas → PNG, fiche et grade) ; aide des raccourcis (`?`) ;
-bouton « Installer l'application » ; relecture d'ensemble aux deux largeurs ; accessibilité clavier ; mesure du poids
-comparée à l'état des lieux ; README, DESIGN.md, images d'aperçu ; `tests/a-verifier.md` ; bilan final du journal.
+Fait (PR #15) : courbe de maîtrise, noms des grades au-dessus du tracé avec un liseré de la couleur du fond (signalé par
+le propriétaire) ; aide des raccourcis (touche `?`, `<dialog>` natif) ; bouton « Installer l'application »
+(`beforeinstallprompt`, réglages du profil) ; images à partager (canvas 1 080 × 1 350, fiche et grade ; partage natif
+sinon téléchargement). Chromium sans fenêtre déclare savoir partager des fichiers : pour vérifier l'image, le banc
+manuel remplace `navigator.canShare` (scratchpad, non versionné).
+
+**Reste à faire (prochaine session, reprendre ici)** : accueil du nouveau visiteur en trois écrans (illusion, choix de
+l'objectif, premier pas), qu'on peut passer ; captures des lots 7 et 8 sur la branche `captures` ; relecture
+d'ensemble aux deux largeurs et dans les deux thèmes ; contrôle clavier des parcours principaux ; mesure du poids de
+`static/` comparée à l'état des lieux ; README et DESIGN.md (sections lots 4 à 8) ; bilan final du journal
+(fait, écarté, restant).
 
 ## État des lieux (lot 0, commit cb90ed8)
 
