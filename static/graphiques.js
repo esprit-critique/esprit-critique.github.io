@@ -104,6 +104,8 @@ function graphiqueToile(titre, axes, valeurs, anciennes, max) {
   if (anciennes) s.appendChild(svg("polygon", { points: anciennes.map((v, i) => pt(i, v).join(",")).join(" "), class: "toile-ancienne" }));
   s.appendChild(svg("polygon", { points: valeurs.map((v, i) => pt(i, v).join(",")).join(" "), class: "toile-actuelle" }));
   valeurs.forEach((v, i) => {
+    // Les zéros se superposeraient au centre : non écrits ici, ils restent dans le tableau des données
+    if (v === 0) return;
     const [x, y] = pt(i, Math.max(v, max * 0.12));
     s.appendChild(texteSvg(x, y + 4, String(v), { class: "valeur-graphique", "text-anchor": "middle" }));
   });
