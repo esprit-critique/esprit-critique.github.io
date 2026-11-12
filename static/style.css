@@ -322,6 +322,10 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
   .recherche-globale { order: 2; flex: 1 1 200px; margin: 0; }
 }
 
+/* Avant les scripts, les vues sont vides : la hauteur réservée garde le pied de page sous l'écran, sans saut à
+   l'arrivée du contenu (100svh plutôt que 100vh, qui déborde sous la barre d'adresse de Safari sur iPhone) */
+main { min-height: 100svh; }
+
 /* ===================== Titres de page ===================== */
 
 .vue { animation: entree 0.18s ease-out; }

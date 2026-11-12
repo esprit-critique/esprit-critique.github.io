@@ -22,8 +22,20 @@ const MARQUEUR = "marqueur-prive-7f3a";
     if (!navigator.serviceWorker.controller) await new Promise(r => navigator.serviceWorker.addEventListener("controllerchange", r, { once: true }));
     ok("service worker installé, la page est contrôlée", !!navigator.serviceWorker.controller);
     const cache = await caches.open(CACHE);
-    const presents = await Promise.all(FICHIERS.map(async f => !!(await cache.match(f))));
-    ok("cache " + CACHE + " : les " + FICHIERS.length + " fichiers sont préchargés", presents.every(Boolean), FICHIERS.filter((f, k) => !presents[k]).join(", "));
+    // Installation depuis une page française : seuls les fichiers français et communs sont préchargés (même règle que sw.js)
+    const fichiersDe = en => FICHIERS.filter(f => f.startsWith("en/") ? en : f === "./" || /^[^/]+\.html$/.test(f) ? !en : true);
+    const absents = async liste => (await Promise.all(liste.map(async f => (await cache.match(f)) ? null : f))).filter(Boolean);
+    const fr = fichiersDe(false), anglais = FICHIERS.filter(f => f.startsWith("en/"));
+    ok("cache " + CACHE + " : les " + fr.length + " fichiers français et communs sont préchargés", !(await absents(fr)).length, (await absents(fr)).join(", "));
+    const absentsEn = await absents(anglais);
+    ok("la version anglaise n'est pas préchargée pour un visiteur français", absentsEn.length === anglais.length, (anglais.length - absentsEn.length) + " fichiers anglais préchargés");
+    // Première visite de la version anglaise (cadre) : ses fichiers rejoignent le cache
+    const cadre = document.createElement("iframe");
+    cadre.src = "en/";
+    document.body.appendChild(cadre);
+    for (let k = 0; k < 40 && (await absents(FICHIERS)).length; k++) await pause(250);
+    ok("après une visite de la version anglaise, les " + FICHIERS.length + " fichiers sont dans le cache", !(await absents(FICHIERS)).length, (await absents(FICHIERS)).join(", "));
+    cadre.remove();
     ok("un seul cache, celui de la version courante", (await caches.keys()).join() === CACHE, (await caches.keys()).join());
     console.log("PRET");
     // Attend que le serveur soit coupé : la sonde, inconnue du cache, échoue alors

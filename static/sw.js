@@ -1,7 +1,7 @@
 // sw.js : mode hors ligne. Stratégie « réseau d'abord » : en ligne, on sert toujours la version publiée (et l'on met
 // le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Seuls les fichiers du site sont mis en cache.
 // À chaque nouveau fichier du site : l'ajouter à FICHIERS et changer le numéro de version du cache.
-const CACHE = "esprit-critique-v25";
+const CACHE = "esprit-critique-v26";
 // Liste lue en JSON par les bancs (_test, _grand-test, _hors-ligne) : pas de commentaire à l'intérieur. Version anglaise :
 // la page et ses dictionnaires (liste complète : python3 tests/en/controle.py).
 const FICHIERS = [
@@ -12,8 +12,22 @@ const FICHIERS = [
   "polices/newsreader-latin-opsz-normal.woff2", "polices/newsreader-latin-wght-italic.woff2", "polices/OFL.txt"
 ];
 
+// Fichiers d'une langue : en/… pour l'anglais, les pages françaises (« ./ » et les .html de la racine) pour le
+// français, et tout le reste (scripts, styles, polices) pour les deux
+const fichiersDe = en => FICHIERS.filter(f => f.startsWith("en/") ? en : f === "./" || /^[^/]+\.html$/.test(f) ? !en : true);
+const estAnglais = adresse => new URL(adresse, location.href).pathname.includes("/en/");
+// Ajoute au cache les fichiers de la langue qui y manquent (hors ligne : rien, sans erreur)
+const completer = en => caches.open(CACHE).then(async c => {
+  const manquants = [];
+  for (const f of fichiersDe(en)) if (!(await c.match(f))) manquants.push(f);
+  if (manquants.length) await c.addAll(manquants);
+}).catch(() => {});
+
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FICHIERS)).then(() => self.skipWaiting()));
+  // Seulement la langue de la page qui installe : un visiteur français ne télécharge pas la version anglaise
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true })
+    .then(pages => caches.open(CACHE).then(c => c.addAll(fichiersDe(pages.some(p => estAnglais(p.url))))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
@@ -25,6 +39,8 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   // Seulement les fichiers du site, en lecture ; jamais les pages de test (« _… »)
   if (e.request.method !== "GET" || url.origin !== location.origin || url.pathname.split("/").pop().startsWith("_")) return;
+  // Première visite d'une langue : ses fichiers rejoignent le cache, pour qu'elle fonctionne aussi hors ligne
+  if (e.request.mode === "navigate") e.waitUntil(completer(estAnglais(url)));
   e.respondWith(
     fetch(e.request)
       .then(reponse => {
