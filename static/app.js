@@ -1678,6 +1678,11 @@ function afficherPage() {
   if (!((vue === "biais" || vue === "sophismes") && id)) TIRAGE.actif = false;
   const versDefi = vue === "defi" && !id;
   const defiLibre = vue === "defi" && id !== undefined ? id : null;
+  // Adresse inconnue (#inexistant, #biais/inexistant, #tests/inexistant) : la page la plus proche, et un message
+  // dans la zone d'annonce, lue par les lecteurs d'écran
+  const inconnue = (vue && vue !== "defi" && !ONGLET_DE[vue]) || ((vue === "biais" || vue === "sophismes") && id && !trouverFiche(vue, id))
+    || ((vue === "chiffres" || vue === "tests") && id && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id));
+  if (inconnue) setTimeout(() => annoncer(T("Cette page n'existe pas.")), 0);
   if (!ONGLET_DE[vue]) vue = "accueil";
   // Sans identifiant, les jeux et les expériences renvoient à la liste des ateliers
   if ((vue === "chiffres" || vue === "tests") && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id)) vue = "ateliers";

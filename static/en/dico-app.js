@@ -185,6 +185,7 @@ EN_AJOUTER([
   ["Les erreurs commises en étant sûr reviennent dès demain : on les corrige mieux que les autres (Butterfield et Metcalfe, 2001), mais elles réapparaissent si la correction est oubliée (Butler, Fazio et Marsh, 2011).", "Mistakes made while feeling sure come back as early as tomorrow: they are corrected better than others (Butterfield and Metcalfe, 2001), but they reappear if the correction is forgotten (Butler, Fazio and Marsh, 2011)."],
   ["Nouvelle série", "New set"],
   ["Réviser ({0})", "Review ({0})"],
+  ["Cette page n'existe pas.", "This page does not exist."],
   ["Défi libre", "Free challenge"],
   ["Profil", "Profile"],
   ["Parcours", "Paths"],
