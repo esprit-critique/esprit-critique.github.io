@@ -1662,6 +1662,9 @@ label[for] { display: block; margin: 0 0 8px; }
   border-radius: 999px; background: var(--carte); color: var(--texte); text-decoration: none; position: relative; }
 .bouton-profil .blason { position: absolute; left: 12px; top: 9px; }
 .bouton-profil .anneau-profil { margin-right: 2px; }
+/* Ni le bouton ni ses dessins ne rétrécissent dans l'en-tête serré : Safari ramène sinon un SVG à presque rien
+   (bouton quasi invisible et impossible à viser), là où Chrome garde sa largeur */
+.bouton-profil, .bouton-profil > svg { flex: none; }
 .bouton-profil-maitrise { font-family: var(--titre); font-weight: 700; font-size: 15px; font-variant-numeric: oldstyle-nums; }
 @media (max-width: 759px) { .entete .bouton-profil { position: absolute; top: calc(env(safe-area-inset-top) + 12px); right: 74px; } }
 .anneau-mini .anneau-fond { fill: none; stroke: var(--trait); stroke-width: 4; }
