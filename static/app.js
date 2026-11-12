@@ -1688,12 +1688,12 @@ function afficherPage() {
     if (actif) o.setAttribute("aria-current", "page"); else o.removeAttribute("aria-current");
   });
   Object.values(SECTION_DE).forEach(s => { $(s).hidden = s !== SECTION_DE[vue]; });
-  // Relance la petite animation d'apparition
+  // Relance la petite animation d'apparition, seulement là où elle existe : avec les transitions de vue, le navigateur
+  // fait le fondu et l'animation CSS est désactivée (style.css). Sans lecture de géométrie (offsetWidth forçait une
+  // mise en page au milieu des écritures) : le même mouvement que @keyframes entree, par animer().
   const section = $(SECTION_DE[vue]);
-  if (precedent.vue !== vue || precedent.id !== id) {
-    section.classList.remove("vue");
-    void section.offsetWidth;
-    section.classList.add("vue");
+  if ((precedent.vue !== vue || precedent.id !== id) && typeof document.startViewTransition !== "function") {
+    animer(section, [{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }], { duration: 180, easing: "ease-out" });
   }
 
   let titre = "";
