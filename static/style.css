@@ -445,7 +445,7 @@ h3.titre-bloc {
 }
 .segment a + a { border-left: 1px solid var(--trait); }
 .segment a.actif { background: var(--texte); color: var(--fond); }
-.segment small { font-weight: 400; opacity: 0.8; }
+.segment small { font-weight: 400; }   /* sans transparence : 4,5:1 sur l'onglet inactif */
 
 .recherche {
   width: 100%;
@@ -1720,7 +1720,8 @@ label[for] { display: block; margin: 0 0 8px; }
 .codex .graduation-graphique { font-size: 12px; }
 .case-calendrier { fill: var(--trait-doux); }
 .case-calendrier.active { fill: color-mix(in srgb, var(--vert) calc(var(--intensite) * 100%), var(--trait-doux)); }
-.bille { fill: var(--trait); transform-box: fill-box; transform-origin: bottom; animation: chute var(--duree-longue) var(--courbe) both; animation-delay: var(--retard); }
+.bille { fill: var(--discret);   /* 3:1 au moins sur la carte, dans les deux thèmes */
+  transform-box: fill-box; transform-origin: bottom; animation: chute var(--duree-longue) var(--courbe) both; animation-delay: var(--retard); }
 .bille.score-joueur { fill: var(--accent); }
 .score-joueur-texte { font-weight: 700; fill: var(--texte); }
 @keyframes chute { from { transform: translateY(-60px); opacity: 0; } }
