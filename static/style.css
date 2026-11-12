@@ -1545,10 +1545,12 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* En-tête sur ordinateur large : marque, navigation, recherche et langue sur une seule ligne */
 @media (min-width: 1040px) {
-  .entete { flex-wrap: nowrap; gap: 28px; padding-top: 12px; padding-bottom: 10px; }
+  /* Onglets sans icône et écarts resserrés : la recherche garde 260 px dès 1 040 px de large */
+  .entete { flex-wrap: nowrap; gap: 14px; padding-top: 12px; padding-bottom: 10px; }
   .marque { flex: none; white-space: nowrap; }
-  .navigation { order: 1; flex-basis: auto; margin-top: 0; }
-  .recherche-globale { order: 2; flex: 0 1 300px; margin: 0 0 0 auto; }
+  .navigation { order: 1; flex-basis: auto; margin-top: 0; gap: 12px; }
+  .onglet svg { display: none; }
+  .recherche-globale { order: 2; flex: 0 1 340px; margin: 0 0 0 auto; }
 }
 
 /* L'illusion du jour (illusions.js) : leurres et repères ; « revele » joue la révélation par l'opacité seule */

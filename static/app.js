@@ -1777,7 +1777,7 @@ function afficherPage() {
     champ.setAttribute("aria-expanded", "false");
     champ.removeAttribute("aria-activedescendant");
     champ.value = etat.recherche;
-    champ.placeholder = vue === "biais" ? "Rechercher un biais, un auteur, un cas…" : "Rechercher un sophisme, un auteur, un cas…";
+    champ.placeholder = vue === "biais" ? "Chercher un biais, un cas…" : "Chercher un sophisme, un cas…";
   } else {
     if (rechercheEnFiches) champ.value = "";
     champ.placeholder = "Chercher partout…";
