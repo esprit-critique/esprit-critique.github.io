@@ -1591,6 +1591,10 @@ label[for] { display: block; margin: 0 0 8px; }
 .barre-fiche { position: sticky; bottom: calc(var(--hauteur-nav) + env(safe-area-inset-bottom) + 8px); z-index: 5; display: flex; gap: 8px;
   margin: 12px -4px 0; padding: 8px; background: var(--carte); border: 1px solid var(--trait); border-radius: var(--rayon-carte); box-shadow: var(--ombre-2); }
 .barre-fiche > * { flex: 1 1 0; min-width: 0; padding-left: 8px; padding-right: 8px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* L'espace entre la barre et les onglets est couvert du fond de page : aucun texte n'y défile ; la notification
+   (« +2 points ») passe au-dessus de la barre au lieu de la recouvrir (--au-dessus, posée par annoncer()) */
+.barre-fiche { box-shadow: var(--ombre-2), 0 12px 0 4px var(--fond); }
+@media (max-width: 759px) { .annonce { bottom: max(calc(var(--hauteur-nav) + 14px + env(safe-area-inset-bottom)), var(--au-dessus, 0px)); } }
 @media (min-width: 760px) { .barre-fiche { display: none; } }
 @media (min-width: 1040px) {
   .fiche-mise-en-page { display: grid; grid-template-columns: minmax(0, var(--largeur-lecture)) 260px; gap: 40px; justify-content: center; align-items: start; }

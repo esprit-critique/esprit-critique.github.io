@@ -1934,15 +1934,24 @@ $("fichier-import").addEventListener("change", e => {
 
 // Petit message temporaire en bas de l'écran
 let minuterieAnnonce;
+// Sur une fiche, la notification se tient au-dessus de la barre d'actions, qu'elle soit collée ou non : position
+// relue au défilement tant que la notification est affichée
+function placerAnnonce() {
+  const barre = document.querySelector("#vue-fiches:not([hidden]) .barre-fiche");
+  const haut = barre && barre.getClientRects().length ? barre.getBoundingClientRect().top : Infinity;
+  $("annonce").style.setProperty("--au-dessus", haut < innerHeight ? (innerHeight - haut + 8) + "px" : "0px");
+}
 function annoncer(texte) {
   const a = $("annonce");
   a.textContent = typo(texte);
+  placerAnnonce();
+  window.addEventListener("scroll", placerAnnonce, { passive: true });
   a.hidden = false;
   a.classList.remove("visible");
   void a.offsetWidth;
   a.classList.add("visible");
   clearTimeout(minuterieAnnonce);
-  minuterieAnnonce = setTimeout(() => { a.classList.remove("visible"); setTimeout(() => { a.hidden = true; }, 300); }, 3200);
+  minuterieAnnonce = setTimeout(() => { a.classList.remove("visible"); setTimeout(() => { a.hidden = true; window.removeEventListener("scroll", placerAnnonce); }, 300); }, 3200);
 }
 
 // Partager le site : menu de partage du téléphone, ou copie du lien
