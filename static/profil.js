@@ -155,8 +155,9 @@ function blason(pseudo, taille) {
 function majBoutonProfil(m, etat) {
   const b = document.querySelector(".bouton-profil");
   if (!b) return;
-  b.hidden = modeSobre();
-  if (b.hidden) return;
+  // Mode sobre : bouton neutre (blason seul), pour que le profil et ses réglages restent atteignables
+  b.classList.toggle("sobre", modeSobre());
+  if (modeSobre()) { b.replaceChildren(blason((lire("profil", {}) || {}).pseudo, 26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
   etat = etat || lire("maitrise", { meilleure: 0, jours: {} });
   const globale = m ? m.globale : (Object.entries(etat.jours || {}).sort((a, x) => x[0] - a[0])[0] || [0, [0]])[1][0];
   const grade = gradeDe(etat.meilleure || 0);

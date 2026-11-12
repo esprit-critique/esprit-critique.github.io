@@ -268,7 +268,10 @@ function majStatutSynchro(statut, detail) {
   if (pastille) {
     pastille.hidden = statut === "inactif";
     pastille.dataset.statut = statut;
-    pastille.setAttribute("aria-label", T(STATUTS_SYNCHRO[statut]) + (detail ? " : " + detail : ""));
+    // Un role=status n'annonce que son texte : libellé dans un texte invisible, infobulle pour la souris
+    const libelle = T(STATUTS_SYNCHRO[statut]) + (detail ? " : " + detail : "");
+    pastille.replaceChildren(el("span", "invisible", libelle));
+    pastille.title = libelle;
   }
   const p = document.querySelector(".statut-synchro");
   if (p) p.textContent = typo(T(STATUTS_SYNCHRO[statut]) + (detail ? " (" + detail + ")" : ""));

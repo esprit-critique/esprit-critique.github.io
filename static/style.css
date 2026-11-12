@@ -1725,6 +1725,8 @@ h3.titre-bloc {
   .bouton-profil .insigne { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
   .entete .bouton-profil { right: 74px; }
 }
+.bouton-profil.sobre { flex: none; width: 44px; padding: 0; justify-content: center; }
+.bouton-profil.sobre .blason { display: block; position: static; }
 
 /* Parcours (parcours.js) */
 .chemin-parcours { list-style: none; margin: 18px 0; padding: 0 0 0 18px; border-left: 2px solid var(--trait); }
@@ -1743,7 +1745,7 @@ h3.titre-bloc {
 .carte-parcours .barre-maitrise > div { background: var(--vert); }
 
 /* Synchronisation (coffre.js) */
-.etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 14px); right: 122px; width: 10px; height: 10px; border-radius: 50%; background: var(--discret); }
+.etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 29px); right: 124px; width: 10px; height: 10px; border-radius: 50%; background: var(--discret); }
 .etat-synchro[data-statut="a-jour"] { background: var(--vert); }
 .etat-synchro[data-statut="erreur"] { background: var(--rouge); }
 .etat-synchro[data-statut="en-cours"], .etat-synchro[data-statut="en-attente"] { background: var(--orange); }

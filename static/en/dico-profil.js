@@ -9,6 +9,7 @@ EN_AJOUTER([
   ["Nouveau grade : {0}", "New rank: {0}"],
   ["La maîtrise mesure votre réussite dans les jeux de ce site, pas votre intelligence.", "Mastery measures your success in this site’s games, not your intelligence."],
   ["Insigne : {0}", "Badge: {0}"],
+  ["Profil et réglages", "Profile and settings"],
   ["Profil : {0}, maîtrise {1} ; {2} points sur {3} pour l'objectif du jour", "Profile: {0}, mastery {1}; {2} of {3} points for the daily goal"],
   ["Vue d'ensemble", "Overview"],
   ["Jeux", "Games"],
