@@ -69,9 +69,10 @@ const ok = (libelle, condition, detail = '') => {
   await p.waitForTimeout(300);
   const nSections = await p.$$eval('.section-ateliers', s => s.length);
   ok('huit sections d\'ateliers', nSections === 8, String(nSections));
-  const pliees = await p.$$eval('.section-ateliers .pliant', b => b.every(x => x.getAttribute('aria-expanded') === 'false'));
-  const masquees = await p.$$eval('.section-ateliers .corps-section', c => c.every(x => x.hidden));
-  ok('toutes les sections sont pliées par défaut', pliees && masquees);
+  // Par défaut, seule la section de l'atelier conseillé (atelierConseille) est dépliée
+  const etat = await p.evaluate(() => ({ conseil: atelierConseille().atelier.section,
+    ouvertes: [...document.querySelectorAll('.section-ateliers')].filter(s => s.querySelector('.pliant').getAttribute('aria-expanded') === 'true' && !s.querySelector('.corps-section').hidden).map(s => s.dataset.section) }));
+  ok('par défaut, seule la section de l\'atelier conseillé est dépliée', etat.ouvertes.length === 1 && etat.ouvertes[0] === etat.conseil, JSON.stringify(etat));
   await p.click('#section-melange .pliant');
   const ouverte = await p.getAttribute('#section-melange .pliant', 'aria-expanded');
   const visible = await p.isVisible('#section-melange .cartes-grille');
