@@ -431,12 +431,14 @@ JEUX.push(
     titre: "Graphiques trompeurs",
     resume: "Axe tronqué, fenêtre choisie, double échelle, moyenne trompeuse… Huit graphiques à lire sans se faire piéger.",
     lancer(zone) {
-      // Niveau 3 : une question sur deux montre un graphique qui combine deux procédés, à trouver tous les deux
+      // Niveau 3 : deux graphiques sur huit (2e et 6e) combinent deux procédés, à trouver tous les deux ; il n'en existe
+      // que deux, chacun une fois par partie, et leurs graphiques ne reviennent pas parmi les questions simples
+      const doubles = melanger(Object.keys(DOUBLES_PIEGES));
       deroulerNiveaux(zone, {
         id: "graphiques", n: 8, relancer: () => JEUX.find(j => j.id === "graphiques").lancer(zone),
-        tirer: (niveau, i) => niveau === 3 && i % 2 === 1
-          ? (id => Object.assign(PIEGES_GRAPHIQUES.find(x => x.id === id).creer(), { double: id }))(melanger(Object.keys(DOUBLES_PIEGES))[0])
-          : tirerSelonNiveau("graphiques", PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer()
+        tirer: (niveau, i) => niveau === 3 && i % 4 === 1
+          ? (id => Object.assign(PIEGES_GRAPHIQUES.find(x => x.id === id).creer(), { double: id }))(doubles[(i - 1) / 4])
+          : tirerSelonNiveau("graphiques", niveau === 3 ? PIEGES_GRAPHIQUES.filter(x => !DOUBLES_PIEGES[x.id]) : PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer()
       }, (p, zone, fini) => {
         if (p.double) return afficherDoublePiege(p, zone, fini);
         zone.appendChild(el("p", "consigne", p.titre));
