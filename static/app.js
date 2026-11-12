@@ -1175,6 +1175,9 @@ function ajouterGroupe(parent, titre, sections) {
   if (!presentes.length) return null;
   const groupe = el(titre ? "section" : "div", titre ? "groupe-fiche" : "tete-fiche");
   if (titre) groupe.appendChild(el("h2", null, titre));
+  // Groupe de tête : intertitre réservé aux lecteurs d'écran (h1, h2, puis h3), placé dans la première section pour
+  // ne rien changer aux marges
+  else presentes[0].prepend(el("h2", "invisible", "L'essentiel"));
   groupe.append(...presentes);
   parent.appendChild(groupe);
   return groupe;
@@ -1308,7 +1311,7 @@ function afficherFiche(type, fiche) {
   rail.setAttribute("aria-label", "Sommaire de la fiche");
   rail.appendChild(el("p", "surtitre", "Sur cette fiche"));
   const sommaire = el("ul", "sommaire-fiche");
-  carte.querySelectorAll("h2").forEach(h => {
+  carte.querySelectorAll("h2:not(.invisible)").forEach(h => {
     const b = el("button", "lien", h.textContent);
     b.type = "button";
     b.addEventListener("click", allerA(h));

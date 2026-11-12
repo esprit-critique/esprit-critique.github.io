@@ -211,6 +211,8 @@ function afficherPageProfil(onglet) {
   zone.appendChild(onglets);
   const panneau = el("div", "panneau-profil");
   panneau.setAttribute("role", "tabpanel");
+  // Titre de l'onglet, pour les lecteurs d'écran : les blocs du panneau (h3) viennent ainsi après un h2
+  panneau.appendChild(el("h2", "invisible", ONGLETS_PROFIL.find(([o]) => o === ongletProfil)[1]));
   zone.appendChild(panneau);
   // Onglet tiré de l'adresse : choix fermé, la vue d'ensemble par défaut
   switch (ongletProfil) {

@@ -122,6 +122,7 @@ EN_AJOUTER([
   ["Aucune fiche ne correspond.", "No entry matches."],
   ["{0} parmi les {1} →", "{0} among the {1} →"],
   ["résultat", "result"],
+  ["L'essentiel", "The essentials"],
   ["✓ Acquise", "✓ Learned"],
   ["Illustration", "Illustration"],
   ["Schéma de l'argument", "Argument diagram"],
