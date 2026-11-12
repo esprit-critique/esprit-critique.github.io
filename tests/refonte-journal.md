@@ -273,6 +273,22 @@ courbe de maîtrise lisible).
 - Contrôle avec un vrai lecteur d'écran (VoiceOver) des parcours principaux : non fait (les bancs vérifient noms
   accessibles, focus et contraste, pas l'écoute réelle) ; partage natif des images sur un vrai téléphone : non vérifié.
 
+## Corrections de l'audit d'affichage (12 novembre 2026, branche `corrections-audit`)
+
+Audit du site rendu (Chrome, 375 / 768 / 1 440 px) : 13 corrections, un commit chacune. Décisions et limites :
+
+- Espacement (4) : règle commune en fin de `style.css` (12 px entre un contrôle et le bloc voisin) et nouveau type de
+  défaut `controle-colle` dans `tests/controle-affichage.js` (échoue sous 8 px). Il ignore les barres collantes, les
+  groupes de puces, les liens dans une phrase, le contenu d'un `details` replié et les éléments en cours d'animation.
+- En-tête (5, 6) : onglets sans icône dès 1 040 px pour laisser 260 px à la recherche ; de 760 à 1 039 px, profil et
+  langue dans le flux (plus de position absolue). Bouton de profil et ses dessins en `flex: none` : Safari les
+  réduisait à presque rien.
+- Cibles tactiles (10) : échelles à 7 et 9 points sur deux rangées sous 760 px (44 px de large par bouton).
+- Service worker (11) : préchargement de la seule langue de la page qui l'installe (`clients.matchAll`), l'autre langue
+  complétée à sa première navigation. Banc hors ligne adapté (cadre `en/`).
+- Tailles de texte (13l) : 22 → 17 tailles ; l'objectif de dix demandait de toucher à la hiérarchie des titres.
+- Échec aléatoire connu du banc `ateliers` (« énoncés visibles après Suivant ») : vu deux fois, non reproduit ensuite.
+
 ## État des lieux (lot 0, commit cb90ed8)
 
 ### Poids de `static/`
