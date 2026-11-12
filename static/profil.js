@@ -370,6 +370,26 @@ function ongletReglages(p) {
   caseSobre.addEventListener("change", () => { ecrire("reglages", { ...lire("reglages", {}), sobre: caseSobre.checked }); majBoutonProfil(); afficherPageProfil(); });
   sobre.append(caseSobre, texteNoeud(" " + T("Mode sobre : cacher la maîtrise, les grades, les points et les distinctions (tout continue d'être compté)")));
   p.appendChild(sobre);
+  // Thème et animations : les choix du pied de page, repris ici ; un clic actionne le bouton du pied, qui applique le
+  // réglage et met à jour l'état (aria-pressed) des deux rangées
+  [["Thème", "theme-choix", [["auto", "Auto"], ["light", "Clair"], ["dark", "Sombre"]]],
+    ["Animations", "animations-choix", [["auto", "Automatiques"], ["reduites", "Réduites"]]]].forEach(([titre, attribut, choix]) => {
+    p.appendChild(el("p", "consigne", titre));
+    const groupe = el("div", "puces");
+    groupe.setAttribute("role", "group");
+    groupe.setAttribute("aria-label", T(titre));
+    choix.forEach(([valeur, libelle]) => {
+      const pied = document.querySelector(".pied [data-" + attribut + '="' + valeur + '"]');
+      const b = el("button", "puce", libelle);
+      b.type = "button";
+      b.setAttribute("data-" + attribut, valeur);
+      b.setAttribute("aria-pressed", pied ? pied.getAttribute("aria-pressed") : "false");
+      if (pied) b.addEventListener("click", () => pied.click());
+      groupe.appendChild(b);
+    });
+    p.appendChild(groupe);
+  });
+  p.appendChild(lienVers("#guide/donnees", "Vos données : sauvegarde, import, effacement", "lien-discret"));
   // Synchronisation chiffrée (coffre.js), seulement si elle est en service
   const place = el("div");
   p.appendChild(place);

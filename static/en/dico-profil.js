@@ -50,6 +50,13 @@ EN_AJOUTER([
   ["Objectif du jour", "Daily goal"],
   ["{0} points", "{0} points"],
   ["Mode sobre : cacher la maîtrise, les grades, les points et les distinctions (tout continue d'être compté)", "Plain mode: hide mastery, ranks, points and distinctions (everything is still counted)"],
+  ["Thème", "Theme"],
+  ["Clair", "Light"],
+  ["Sombre", "Dark"],
+  ["Animations", "Animations"],
+  ["Automatiques", "Automatic"],
+  ["Réduites", "Reduced"],
+  ["Vos données : sauvegarde, import, effacement", "Your data: backup, import, deletion"],
   ["Comment votre maîtrise est calculée", "How your mastery is calculated"],
   ["Comment ce site essaie de vous motiver", "How this site tries to motivate you"],
   ["Votre maîtrise", "Your mastery"],
@@ -57,7 +64,6 @@ EN_AJOUTER([
   ["Encore {0} points de maîtrise.", "{0} more mastery points."],
   ["Objectif du jour : {0} sur {1} points de lucidité", "Daily goal: {0} of {1} clarity points"],
   ["Votre progression passée vaut {0} points.", "Your past progress is worth {0} points."],
-  ["Le codex des notions", "The codex of concepts"],
   ["Votre profil →", "Your profile →"],
   ["La semaine écoulée", "The past week"],
   ["{0} points de lucidité ({1} la semaine d'avant).", "{0} clarity points ({1} the week before)."],
@@ -86,5 +92,6 @@ EN_AJOUTER([
   ["« Premiers pas » fait le tour du site en trois quarts d'heure : une illusion, deux fiches, un test de réflexion, un quiz. Rien n'est verrouillé : tout reste ouvert.", "“First steps” tours the site in three quarters of an hour: an illusion, two cards, a reflection test, a quiz. Nothing is locked: everything stays open."],
   ["Plutôt le quiz", "The quiz instead"],
   ["Passer l'accueil", "Skip the welcome"],
+  ["Le codex des notions", "The codex of concepts"],
   ["Ces deux traits ont la même longueur", "These two lines are the same length"]
 ]);

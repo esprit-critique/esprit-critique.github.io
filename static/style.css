@@ -430,9 +430,9 @@ h3.titre-bloc {
   border-radius: var(--rayon);
   background: transparent;
 }
-.puce.active { background: var(--c, var(--texte)); border-color: var(--c, var(--texte)); color: var(--sur-c, var(--fond)); }
+.puce.active, .puce[aria-pressed="true"] { background: var(--c, var(--texte)); border-color: var(--c, var(--texte)); color: var(--sur-c, var(--fond)); }
 /* Dans une carte, la couleur assombrie (clair) ou éclaircie (sombre), seule assez contrastée avec --sur-c */
-.carte .puce.active { background: var(--c-fort); border-color: var(--c-fort); }
+.carte .puce.active, .carte .puce[aria-pressed="true"] { background: var(--c-fort); border-color: var(--c-fort); }
 
 .pastille { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; vertical-align: 1px; }
 .puce.active .pastille { background: var(--sur-c); }
