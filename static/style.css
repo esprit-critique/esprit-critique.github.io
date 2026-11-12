@@ -789,6 +789,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .champ-texte { width: 100%; }
 .champ[type="date"] { width: 12em; max-width: 100%; }
 
+.consigne-tache { font-style: italic; }
 .cartes-wason { display: flex; gap: 10px; margin: 14px 0; }
 .carte-wason {
   flex: 1;

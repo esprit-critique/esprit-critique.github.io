@@ -9,6 +9,7 @@ EN_AJOUTER([
   ["Niveau automatique", "Automatic level"],
   ["Auto adapte la difficulté à vos réponses.", "Auto adjusts the difficulty to your answers."],
   ["Niveau {0} ({1}) choisi : il reste fixe.", "Level {0} ({1}) selected: it stays fixed."],
+  ["Points : × 1,5 au niveau 2, × 2 au niveau 3.", "Points: ×1.5 at level 2, ×2 at level 3."],
   ["Partie jouée au niveau {0} ({1}), jusqu'au niveau {2}.", "Game played at level {0} ({1}), up to level {2}."],
   ["Partie jouée au niveau {0} ({1}).", "Game played at level {0} ({1})."],
   ["niveau {0} : {1} / {2}", "level {0}: {1} / {2}"],

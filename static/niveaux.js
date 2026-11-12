@@ -62,10 +62,16 @@ function tirerSelonNiveau(cle, elements, n, niveau, idDe = e => e.id, niveauDe =
   const prendre = liste => liste.forEach(e => { if (pris.length < n && !pris.includes(e)) pris.push(e); });
   ordre.forEach(niv => prendre(melanger(elements.filter(e => niveauDe(e) === niv && !dejaVus.has(idDe(e))))));
   if (pris.length < n) {
-    // Tout a été vu à ces niveaux : nouveau cycle pour le niveau demandé
-    const deNiveau = elements.filter(e => niveauDe(e) === niveau);
-    vus[cle] = (vus[cle] || []).filter(i => !deNiveau.some(e => idDe(e) === i));
-    ordre.forEach(niv => prendre(melanger(elements.filter(e => niveauDe(e) === niv))));
+    // Tout a été vu à ces niveaux : on remet en jeu les plus anciens d'abord. Une question ne revient ainsi qu'après
+    // toutes les autres, et jamais dans la partie en cours (remettre tout le stock en jeu la faisait revenir)
+    const liste = vus[cle] || [];
+    const ids = new Set(elements.filter(e => ordre.includes(niveauDe(e))).map(idDe));
+    for (let k = 0; k < liste.length && pris.length < n; k++) {
+      if (!ids.has(liste[k])) continue;
+      const e = elements.find(x => idDe(x) === liste[k]);
+      if (e && !pris.includes(e)) { pris.push(e); liste.splice(k--, 1); }
+    }
+    vus[cle] = liste;
   }
   vus[cle] = [...new Set([...(vus[cle] || []), ...pris.map(idDe)])];
   ecrire("vus", vus);
@@ -92,9 +98,10 @@ function choixNiveau(id, relancer) {
     });
     puces.appendChild(b);
   });
-  bloc.append(puces, el("p", "source", actuel.mode === "auto"
-    ? "Auto adapte la difficulté à vos réponses."
-    : T("Niveau {0} ({1}) choisi : il reste fixe.", actuel.niveau, NOMS_NIVEAUX[actuel.niveau])));
+  // Points de lucidité multipliés selon le niveau (barème « atelier-note », progression.js) ; rien en mode sobre
+  bloc.append(puces, el("p", "source", (actuel.mode === "auto"
+    ? T("Auto adapte la difficulté à vos réponses.")
+    : T("Niveau {0} ({1}) choisi : il reste fixe.", actuel.niveau, NOMS_NIVEAUX[actuel.niveau])) + (modeSobre() ? "" : " " + T("Points : × 1,5 au niveau 2, × 2 au niveau 3."))));
   return bloc;
 }
 

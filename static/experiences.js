@@ -546,8 +546,9 @@ const EXPERIENCES = [
         const bloc = el("div", "etape-wason");
         bloc.appendChild(el("p", "consigne", T("Version {0} sur 2", numero)));
         bloc.appendChild(paragraphe(config.consigne));
+        // La tâche, dite avant la règle : sans elle, on ne sait pas ce qu'on attend de soi
+        bloc.appendChild(paragraphe("Votre tâche : vérifier si la règle ci-dessous est respectée par ces quatre cartes. Vous ne voyez qu'une face de chacune. Touchez les cartes qu'il faudrait retourner pour en avoir le cœur net, et seulement celles-là, puis validez.", "consigne-tache"));
         bloc.appendChild(paragraphe(config.regle, "encadre"));
-        bloc.appendChild(paragraphe("Touchez les cartes qu'il faut retourner, et seulement celles-là.", "source"));
         const rangee = el("div", "cartes-wason" + (config.petites ? " petites" : ""));
         const choisies = new Set();
         const cartes = ordre.map(k => {
