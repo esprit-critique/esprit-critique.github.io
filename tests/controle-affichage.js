@@ -241,6 +241,8 @@
       if (animes.some(a => a.contains(e))) return;
       if (e.closest(".puces, .segment") && !e.matches(".puces, .segment")) return;
       if (e.closest("svg, [aria-hidden=true], .invisible, .reperes-curseur")) return;   // repères : la graduation du curseur
+      // Contenu d'un bloc replié : Chrome lui garde une boîte (content-visibility), mais rien ne s'affiche
+      const replie = e.closest("details:not([open])"); if (replie && !e.closest("summary")) return;
       const ctrl = e.matches(CONTROLE) && !(e.matches("a, button.lien") && e.parentElement.closest("p, li") && [...e.parentElement.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()));
       const texte = !e.matches(CONTROLE) && !e.closest(CONTROLE + ", label") && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
       const groupeEntier = e.matches(".puces, .segment");

@@ -1554,7 +1554,7 @@ label[for] { display: block; margin: 0 0 8px; }
   /* Onglets sans icône et écarts resserrés : la recherche garde 260 px dès 1 040 px de large */
   .entete { flex-wrap: nowrap; gap: 14px; padding-top: 12px; padding-bottom: 10px; }
   .marque { flex: none; white-space: nowrap; }
-  .navigation { order: 1; flex-basis: auto; margin-top: 0; gap: 12px; }
+  .navigation { order: 1; flex-basis: auto; margin-top: 0; gap: 8px; }
   .onglet svg { display: none; }
   .recherche-globale { order: 2; flex: 0 1 340px; margin: 0 0 0 auto; }
 }
@@ -1593,7 +1593,8 @@ label[for] { display: block; margin: 0 0 8px; }
   .rail-fiche { display: block; position: sticky; top: 110px; }
   .rail-fiche .bouton { margin-top: 10px; font-size: 14px; }
   .sommaire-fiche { list-style: none; margin: 0 0 14px; padding: 0 0 0 12px; border-left: 2px solid var(--trait); }
-  .sommaire-fiche li { margin: 0 0 6px; }
+  .sommaire-fiche li { margin: 0 0 8px; }
+  .rail-fiche .surtitre { margin-bottom: 8px; }
   .sommaire-fiche .lien { font-size: 14px; text-align: left; }
   #vue-fiches.large .lien.retour { display: inline-block; margin-left: calc((100% - var(--largeur-lecture) - 300px) / 2); }
 }
@@ -1819,3 +1820,22 @@ label[for] { display: block; margin: 0 0 8px; }
 /* Même écart après un bloc qui se termine par un contrôle (rangée d'actions, formulaire…) */
 :has(> :is(.bouton, .champ, .curseur-ligne, .puces, .choix):last-child) + :is(p, ul, ol, div, button.lien) { margin-top: 12px; }
 :has(> :is(p, ul, ol):last-child) + :is(.bouton, .champ, .lien-bouton, button.lien) { margin-top: 12px; }
+
+/* Cibles tactiles : 44 × 44 px au moins, en agrandissant la zone (hauteur minimale, marge intérieure) sans changer
+   le dessin ; les liens placés dans une phrase n'en ont pas besoin */
+.puce, .langue-entete, .marque, .segment a, .bouton-acquis, .champ, .lien.retour, button.lien, .lien-discret,
+  .voir-aussi a, .sommaire a, .pied a, .pied button, .option-certitude, .suivantes a, p.contre a, .guide p > a:only-child,
+  .verif label { min-height: 44px; }
+.puce, .lien.retour, button.lien, .voir-aussi a, .sommaire a, .pied a, .pied button, .suivantes a, p.contre a,
+  .guide p > a:only-child { display: inline-flex; align-items: center; }
+.segment a { display: flex; align-items: center; justify-content: center; }
+.lien-discret { display: flex; align-items: center; }
+.pied button, .choix-theme button { min-width: 44px; justify-content: center; }
+.bouton-pas { width: 44px; height: 44px; }
+.curseur { height: 44px; }
+@media (min-width: 760px) { .onglet { min-height: 44px; min-width: 44px; justify-content: center; } }
+/* Échelles à 7 et 9 points sur téléphone : deux rangées (4 + 3, 5 + 4), pour des boutons de 44 px de large */
+@media (max-width: 759px) {
+  .echelle-sept-boutons { grid-template-columns: repeat(4, minmax(44px, 1fr)); }
+  .echelle-neuf .echelle-sept-boutons { grid-template-columns: repeat(5, minmax(44px, 1fr)); }
+}
