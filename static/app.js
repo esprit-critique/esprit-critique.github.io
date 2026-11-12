@@ -872,7 +872,9 @@ function afficherAccueil() {
     carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
   [carteProgressionAccueil(), carteBilanSemaine()].forEach(c => { if (c) laterale.appendChild(c); });
-  laterale.append(carteIllusionDuJour(), carteAuHasard(), carteRevision);
+  // « Au hasard » dans la colonne principale : les deux colonnes finissent à peu près ensemble sur ordinateur
+  principal.appendChild(carteAuHasard());
+  laterale.append(carteIllusionDuJour(), carteRevision);
 
   // Progression
   const stats = statistiques();
