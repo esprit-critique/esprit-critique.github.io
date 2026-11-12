@@ -20,6 +20,7 @@
 //   contraste-faible            un texte trop peu contrasté avec son fond (WCAG AA : 4,5:1, 3:1 en grands caractères),
 //                               y compris le texte saisi dans un champ (input, textarea, select)
 //   controle-colle              un bouton ou un champ à moins de 8 px d'un texte ou d'un contrôle voisin
+//   controles-decales           deux contrôles côte à côte dans une rangée, alignés ni par le haut, ni par le centre, ni par le bas
 
 (function () {
   const MARGE = 0.5; // tolérance, en pixels ou en unités du viewBox
@@ -216,6 +217,22 @@
     });
     // Espacement : un bouton ou un champ à moins de 8 px du texte ou du contrôle voisin (au-dessus, au-dessous, à côté)
     defauts.push(...controlesColles(vue));
+    // Alignement : deux contrôles voisins d'une même rangée (flex ou grille) doivent partager le haut, le centre ou le bas.
+    // Une rangée en cours d'animation (apparition, soulèvement) est jugée une fois immobile
+    const enMouvement = document.getAnimations().filter(a => a.playState === "running").map(a => a.effect && a.effect.target).filter(Boolean);
+    vue.querySelectorAll("*").forEach(p => {
+      const cs = getComputedStyle(p);
+      if (!/flex|grid/.test(cs.display) || /column/.test(cs.flexDirection) || p.closest("svg")) return;
+      if (enMouvement.some(t => t.contains(p) || p.contains(t))) return;
+      const enfants = [...p.children].filter(e => e.matches(CONTROLE + ", .puce") && e.getClientRects().length).map(e => [e, e.getBoundingClientRect()]);
+      for (let k = 1; k < enfants.length; k++) {
+        const [a, ra] = enfants[k - 1], [b, rb] = enfants[k];
+        if (Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top) <= 1) continue;   // pas sur la même ligne
+        const proche = (x, y) => Math.abs(x - y) <= 1;
+        if (proche(ra.top, rb.top) || proche(ra.bottom, rb.bottom) || proche(ra.top + ra.height / 2, rb.top + rb.height / 2)) continue;
+        defauts.push({ type: "controles-decales", ou: p.tagName.toLowerCase() + "." + [...p.classList].join("."), texte: ((a.innerText || "") + " / " + (b.innerText || "")).trim().slice(0, 80), detail: "hauts à " + Math.round(ra.top) + " et " + Math.round(rb.top) + " px" });
+      }
+    });
     // Identifiants en double dans toute la page
     const vus = new Set();
     document.querySelectorAll("[id]").forEach(e => {
