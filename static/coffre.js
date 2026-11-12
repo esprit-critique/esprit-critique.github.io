@@ -292,7 +292,7 @@ async function blocSynchro() {
       const code = await creerCompteSynchro().catch(e => { annoncer(e.message); return null; });
       if (code) { montrerCode(bloc, code); }
     });
-    const champ = el("input", "champ");
+    const champ = el("input", "champ champ-texte");
     champ.id = "code-synchro";
     champ.autocomplete = "off";
     champ.setAttribute("autocapitalize", "characters");

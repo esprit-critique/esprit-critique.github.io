@@ -750,6 +750,13 @@ h3.titre-bloc {
 }
 
 .ligne { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+/* Libellé d'un champ (label for=…) : au-dessus du champ, ou à côté dans une ligne ; lignes de champs espacées */
+label[for] { display: block; margin: 0 0 8px; }
+.ligne > label[for] { margin: 0; }
+.ligne + .ligne, .ligne + .source { margin-top: 8px; }
+/* Texte libre : toute la largeur ; date : place pour « 19/11/2026 » et l'icône du calendrier */
+.champ-texte { width: 100%; }
+.champ[type="date"] { width: 12em; max-width: 100%; }
 
 .cartes-wason { display: flex; gap: 10px; margin: 14px 0; }
 .carte-wason {

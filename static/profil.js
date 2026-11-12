@@ -340,7 +340,7 @@ function ongletDistinctions(p) {
 
 function ongletReglages(p) {
   const profil = lire("profil", {}) || {};
-  const champ = el("input", "champ");
+  const champ = el("input", "champ champ-texte");
   champ.maxLength = 24;
   champ.value = profil.pseudo || "";
   champ.id = "pseudo-profil";
