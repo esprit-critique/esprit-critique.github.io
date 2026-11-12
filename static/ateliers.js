@@ -591,7 +591,8 @@ function afficherAteliers() {
     corps.appendChild(grille);
     bloc.appendChild(corps);
     zone.appendChild(bloc);
-    basculerSection(bloc, ouvertes[section.id] === true, false, false);
+    // Ouverte : si le visiteur l'a dépliée ; sinon, celle du prochain atelier conseillé, sauf s'il l'a repliée lui-même
+    basculerSection(bloc, ouvertes[section.id] === true || (ouvertes[section.id] === undefined && !!conseil && conseil.atelier.section === section.id), false, false);
   });
 }
 
