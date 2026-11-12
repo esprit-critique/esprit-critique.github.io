@@ -1500,7 +1500,7 @@ function afficherQuiz() {
   if (quiz.mode === "chrono") {
     const fiches = [...INDEX.values()];
     partieChrono(zone, {
-      cle: "quiz", titre: "Quiz chrono", relancer: () => lancerQuiz("tout"),
+      cle: "quiz", titre: "Quiz chrono", relancer: () => lancerQuiz("tout"), retour: "Revenir au quiz", demarrer: true,
       tirer: () => {
         const r = fiches[Math.floor(Math.random() * fiches.length)];
         const q = creerQuestion(r.type, r.fiche);

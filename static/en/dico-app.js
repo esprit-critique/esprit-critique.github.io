@@ -162,6 +162,7 @@ EN_AJOUTER([
   ["Laquelle de ces deux notions proches décrit la situation ?", "Which of these two similar concepts describes the situation?"],
   [" Indiquer ma certitude", "Rate my certainty"],
   ["Quiz chrono", "Timed quiz"],
+  ["Revenir au quiz", "Back to the quiz"],
   ["Rien à réviser aujourd'hui", "Nothing to review today"],
   ["Les notions rencontrées au quiz reviendront ici au bon moment : le lendemain en cas d'erreur, puis après 3, 7, 14 et 30 jours.", "Concepts you meet in the quiz will come back here at the right moment: the next day after a mistake, then after 3, 7, 14 and 30 days."],
   ["Aucune question disponible.", "No question available."],
