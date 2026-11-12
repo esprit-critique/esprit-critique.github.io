@@ -975,7 +975,7 @@ label[for] { display: block; margin: 0 0 8px; }
 }
 .curseur:disabled { opacity: 0.6; cursor: default; }
 .curseur-ligne { display: flex; align-items: center; gap: 8px; }
-.curseur-ligne .curseur { flex: 1; min-width: 0; }
+.curseur-ligne .curseur { flex: 1; min-width: 0; margin: 0; }
 .bouton-pas {
   flex: none;
   width: 40px; height: 40px;
@@ -1846,13 +1846,14 @@ label[for] { display: block; margin: 0 0 8px; }
 .bienvenue-nav .lien { font-size: 14px; }
 
 /* Écart commun entre un contrôle (bouton, champ, curseur, groupe de puces) et le bloc qui le suit ou le précède :
-   12 px à la verticale ; en fin de feuille pour l'emporter sur les marges nulles des paragraphes de carte */
-:is(.bouton, .champ, .curseur-ligne, .puces, .lien-bouton, button.lien, .lien-discret, .grille-joueurs, .echelle-sept-boutons, .certitude-boutons, .actions)
+   12 px à la verticale ; en fin de feuille pour l'emporter sur les marges nulles des paragraphes de carte. Jamais dans
+   une rangée d'éléments côte à côte (actions, ligne de champs…) : la marge y décalerait un élément vers le bas */
+:not(.actions, .barre-outils, .ligne, .barre-fiche, .certitude-boutons, .gt-modes, .grille-joueurs, .appel-action, .curseur-ligne) > :is(.bouton, .champ, .curseur-ligne, .puces, .lien-bouton, button.lien, .lien-discret, .grille-joueurs, .echelle-sept-boutons, .certitude-boutons, .actions)
   + :is(p, ul, ol, div, .bouton, .champ, .curseur-ligne, .ligne, .retour-quiz, button.lien, .lien-bouton, .lien-discret) { margin-top: 12px; }
-:is(p, ul, ol) + :is(.bouton, .champ, .curseur-ligne, .ligne, .puces, .programme-cases, .grille-joueurs, button.lien, .lien-bouton, .choix) { margin-top: 12px; }
+:not(.actions, .barre-outils, .ligne, .barre-fiche, .certitude-boutons, .gt-modes, .grille-joueurs, .appel-action, .curseur-ligne) > :is(p, ul, ol) + :is(.bouton, .champ, .curseur-ligne, .ligne, .puces, .programme-cases, .grille-joueurs, button.lien, .lien-bouton, .choix) { margin-top: 12px; }
 /* Même écart après un bloc qui se termine par un contrôle (rangée d'actions, formulaire…) */
-:has(> :is(.bouton, .champ, .curseur-ligne, .puces, .choix):last-child) + :is(p, ul, ol, div, button.lien) { margin-top: 12px; }
-:has(> :is(p, ul, ol):last-child) + :is(.bouton, .champ, .lien-bouton, button.lien) { margin-top: 12px; }
+:not(.actions, .barre-outils, .ligne, .barre-fiche, .certitude-boutons, .gt-modes, .grille-joueurs, .appel-action, .curseur-ligne) > :has(> :is(.bouton, .champ, .curseur-ligne, .puces, .choix):last-child) + :is(p, ul, ol, div, button.lien) { margin-top: 12px; }
+:not(.actions, .barre-outils, .ligne, .barre-fiche, .certitude-boutons, .gt-modes, .grille-joueurs, .appel-action, .curseur-ligne) > :has(> :is(p, ul, ol):last-child) + :is(.bouton, .champ, .lien-bouton, button.lien) { margin-top: 12px; }
 
 /* Cibles tactiles : 44 × 44 px au moins, en agrandissant la zone (hauteur minimale, marge intérieure) sans changer
    le dessin ; les liens placés dans une phrase n'en ont pas besoin */
@@ -1861,7 +1862,7 @@ label[for] { display: block; margin: 0 0 8px; }
   .verif label { min-height: 44px; }
 .puce, .lien.retour, button.lien, .voir-aussi a, .sommaire a, .pied a, .pied button, .suivantes a, p.contre a,
   .guide p > a:only-child { display: inline-flex; align-items: center; }
-.segment a { display: flex; align-items: center; justify-content: center; }
+.segment a { display: flex; align-items: center; justify-content: center; gap: 0.3em; }   /* gap : l'espace avant le compteur, que flex supprime */
 .lien-discret { display: flex; align-items: center; }
 .pied button, .choix-theme button { min-width: 44px; justify-content: center; }
 .bouton-pas { width: 44px; height: 44px; }

@@ -467,10 +467,13 @@ f.onload = async () => {
     const double = w.document.createElement("span"); double.id = "vue-tests"; double.textContent = "x";
     const pale = w.document.createElement("p"); pale.textContent = "Texte trop pâle"; pale.style.cssText = "color: #c8c8c8; background: #ffffff";
     const colle = w.document.createElement("button"); colle.className = "bouton"; colle.textContent = "Collé"; colle.style.cssText = "display: block; margin-top: 0";
-    vue().append(piege, double, pale, colle);
+    // Rangée de deux boutons dont le second est décalé de 12 px vers le bas
+    const rangee = w.document.createElement("div"); rangee.style.cssText = "display: flex; gap: 8px; align-items: flex-start";
+    ["Un", "Deux"].forEach((t, k) => { const b = w.document.createElement("button"); b.className = "bouton"; b.textContent = t; if (k) b.style.marginTop = "12px"; rangee.appendChild(b); });
+    vue().append(piege, double, pale, colle, rangee);
     const signales = w.controleAffichage().map(x => x.type);
-    piege.remove(); double.remove(); pale.remove(); colle.remove();
-    ok("contrôle d'affichage : bouton sans nom, identifiant en double, texte pâle et bouton collé au texte détectés", signales.includes("a11y-sans-nom") && signales.includes("id-double") && signales.includes("contraste-faible") && signales.includes("controle-colle"), signales.join(","));
+    piege.remove(); double.remove(); pale.remove(); colle.remove(); rangee.remove();
+    ok("contrôle d'affichage : bouton sans nom, identifiant en double, texte pâle, bouton collé et boutons décalés détectés", signales.includes("a11y-sans-nom") && signales.includes("id-double") && signales.includes("contraste-faible") && signales.includes("controle-colle") && signales.includes("controles-decales"), signales.join(","));
     // Comprenez-vous vraiment ? Notes 6, puis 3 après l'explication, puis 2 après la question
     await aller("accueil"); await aller("tests/comprendre");
     for (let k = 0; k < 5; k++) { visibles(".choix")[5].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }
