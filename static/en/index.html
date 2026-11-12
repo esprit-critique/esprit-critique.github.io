@@ -45,6 +45,7 @@
 <body>
   <noscript><p class="sans-script">This site needs JavaScript to work: please turn it on in your browser settings. Without an account, no data is sent.</p></noscript>
   <div class="conteneur">
+    <a class="lien-evitement" href="#contenu">Skip to content</a>
     <header class="entete">
       <a class="marque" href="#accueil" title="The two lines are the same length">
         <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
@@ -99,7 +100,7 @@
     <div id="annonce" class="annonce" role="status" aria-live="polite" hidden></div>
 
     <!-- The views: only one is visible at a time, depending on the address (#accueil, #biais, #quiz…) -->
-    <main>
+    <main id="contenu" tabindex="-1">
       <section id="vue-accueil" class="vue" hidden></section>
       <section id="vue-profil" class="vue" hidden></section>
       <section id="vue-parcours" class="vue" hidden></section>

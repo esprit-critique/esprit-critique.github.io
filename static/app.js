@@ -1809,6 +1809,9 @@ function afficherPage() {
 
 // ===================== Branchements =====================
 
+// Lien d'évitement : le focus passe au contenu, sans toucher à l'adresse (« #contenu » n'est pas une page)
+document.querySelector(".lien-evitement").addEventListener("click", e => { e.preventDefault(); $("contenu").focus(); });
+
 // Transition de vue entre deux pages quand le navigateur la connaît (amélioration progressive, DESIGN.md « Mouvement »)
 window.addEventListener("hashchange", () => transitionDeVue(afficherPage));
 

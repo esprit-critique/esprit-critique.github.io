@@ -47,6 +47,7 @@
 <body>
   <noscript><p class="sans-script">Ce site a besoin de JavaScript pour fonctionner : activez-le dans les réglages de votre navigateur. Sans compte, aucune donnée n'est envoyée.</p></noscript>
   <div class="conteneur">
+    <a class="lien-evitement" href="#contenu">Aller au contenu</a>
     <header class="entete">
       <a class="marque" href="#accueil" title="Les deux traits ont la même longueur">
         <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
@@ -101,7 +102,7 @@
     <div id="annonce" class="annonce" role="status" aria-live="polite" hidden></div>
 
     <!-- Les vues : une seule est visible à la fois, selon l'adresse (#accueil, #biais, #quiz…) -->
-    <main>
+    <main id="contenu" tabindex="-1">
       <section id="vue-accueil" class="vue" hidden></section>
       <section id="vue-profil" class="vue" hidden></section>
       <section id="vue-parcours" class="vue" hidden></section>

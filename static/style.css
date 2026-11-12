@@ -128,6 +128,12 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
 
 [hidden] { display: none !important; }
 
+/* Lien d'évitement : premier arrêt du clavier, visible seulement quand il a le focus */
+.lien-evitement { position: absolute; left: 16px; top: -200px; z-index: 100; padding: 12px 16px; min-height: 44px;
+  background: var(--carte); color: var(--texte); border: 2px solid var(--accent); border-radius: var(--rayon-bouton); font-weight: 600; }
+.lien-evitement:focus { top: calc(env(safe-area-inset-top) + 8px); }
+main:focus { outline: none; }
+
 /* Texte réservé aux lecteurs d'écran */
 .invisible {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
