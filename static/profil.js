@@ -372,7 +372,6 @@ function ongletReglages(p) {
   const installer = boutonInstallation();
   if (installer) p.appendChild(installer);
   p.appendChild(lienVers("#guide/maitrise", "Comment votre maîtrise est calculée", "lien-discret"));
-  p.appendChild(el("br"));
   p.appendChild(lienVers("#guide/motivation", "Comment ce site essaie de vous motiver", "lien-discret"));
 }
 

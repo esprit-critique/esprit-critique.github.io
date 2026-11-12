@@ -923,7 +923,7 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Certitude au quiz : demandée entre le choix et la correction */
 .certitude { margin-top: 12px; animation: apparition 0.2s ease-out; }
-.certitude .consigne { margin-bottom: 6px; }
+.certitude .consigne { margin-bottom: 8px; }
 .certitude-boutons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .certitude-boutons .bouton { display: flex; align-items: center; justify-content: center; gap: 6px; padding-left: 6px; padding-right: 6px; }
 .certitude-boutons kbd { font-size: 11px; color: var(--discret); }
@@ -1245,9 +1245,9 @@ label[for] { display: block; margin: 0 0 8px; }
 .conclusion-syllogisme { font-weight: 700; border-top: 1px solid var(--trait); padding-top: 4px; margin-top: 6px !important; }
 .erreur-liste { color: var(--rouge); }
 .note-vol { font-family: var(--titre); font-size: 40px; font-weight: 700; margin: 2px 0 4px; font-variant-numeric: tabular-nums; }
-.echelle-sept-boutons { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.echelle-sept-boutons { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
 .echelle-sept-boutons .choix { justify-content: center; padding: 12px 0; margin: 0; font-weight: 600; min-height: 46px; }
-.echelle-sept-bornes { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--discret); margin: 6px 0 4px; }
+.echelle-sept-bornes { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--discret); margin: 8px 0 4px; }
 .carnet-formulaire .champ-texte { width: 100%; resize: vertical; font: inherit; }
 .carnet-formulaire .modeles { flex-wrap: wrap; overflow: visible; margin: 8px 0; }
 .carnet-formulaire .modeles .puce { font-size: 13px; }
@@ -1267,7 +1267,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .choix-niveau { margin: 0 0 12px; }
 .choix-niveau .puces-niveau { flex-wrap: wrap; overflow: visible; margin: 0; }
 .choix-niveau .puces-niveau .puce { min-width: 44px; justify-content: center; }
-.choix-niveau .source { margin: 4px 0 0; }
+.choix-niveau .source { margin: 8px 0 0; }
 .bilan-niveaux p { margin: 4px 0; }
 .tableau-niveaux { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
 .tableau-niveaux th, .tableau-niveaux td { border-bottom: 1px solid var(--trait-doux); padding: 6px 4px; text-align: right; vertical-align: top; }
@@ -1330,14 +1330,14 @@ label[for] { display: block; margin: 0 0 8px; }
 .reperage .champ { flex: 1; min-width: 0; }
 
 /* Lot 5 : ateliers pratiques */
-.echelle-neuf .echelle-sept-boutons { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
+.echelle-neuf .echelle-sept-boutons { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 8px; }
 .controles-tisane .puces { flex-wrap: wrap; overflow: visible; margin: 0 0 6px; }
 .controles-tisane .bouton { margin: 6px 0 4px; }
 .p-valeur { font-variant-numeric: tabular-nums; }
 .p-valeur.significatif { color: var(--rouge); }
 .consigne-longue { color: var(--discret); }
 /* Bingo des sophismes */
-.bingo-grille { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 10px 0; }
+.bingo-grille { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
 .bingo-case { min-height: 74px; padding: 6px; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); font: inherit; font-size: 13px; line-height: 1.25; color: var(--texte); cursor: pointer; overflow-wrap: anywhere; hyphens: auto; }
 .bingo-case.cochee { background: var(--c-clair, var(--accent-doux)); border-color: var(--c-fort, var(--accent)); font-weight: 700; }
 .bingo-adresse { overflow-wrap: anywhere; }
@@ -1464,7 +1464,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .gt-mode .titre-section { margin-top: 0; }
 .gt-groupe { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
 .gt-groupe legend { padding: 0; margin-bottom: 8px; }
-.gt-certitude { display: flex; flex-wrap: wrap; gap: 6px; }
+.gt-certitude { display: flex; flex-wrap: wrap; gap: 8px; }
 .gt-certitude legend { width: 100%; }
 .gt-progression { margin-bottom: 14px; }
 .gt-progression .source { margin-top: 6px; }
@@ -1563,13 +1563,13 @@ label[for] { display: block; margin: 0 0 8px; }
 .repere, .repere-forme { fill: none; stroke: var(--vert); stroke-width: 2.5; stroke-dasharray: 6 5; }
 .illusion-dessin.revele .leurre { opacity: 0.12; }
 .illusion-dessin.revele .repere, .illusion-dessin.revele .repere-forme, .illusion-dessin.revele .repere-plein { opacity: 1; }
-.lien-discret { display: inline-block; margin-top: 10px; font-size: 14px; }
+.lien-discret { display: block; width: fit-content; margin-top: 10px; font-size: 14px; }
 
 /* Page d'une fiche : indice en coin, rail sur ordinateur large, barre d'actions collante sur téléphone */
 .carte-fiche .entete-carte { padding-right: 48px; }
 .carte-fiche .indice-coin { top: 16px; right: 18px; font-size: 16px; }
 .rail-fiche { display: none; }
-.barre-fiche { position: sticky; bottom: calc(var(--hauteur-nav) + env(safe-area-inset-bottom) + 8px); z-index: 5; display: flex; gap: 6px;
+.barre-fiche { position: sticky; bottom: calc(var(--hauteur-nav) + env(safe-area-inset-bottom) + 8px); z-index: 5; display: flex; gap: 8px;
   margin: 12px -4px 0; padding: 8px; background: var(--carte); border: 1px solid var(--trait); border-radius: var(--rayon-carte); box-shadow: var(--ombre-2); }
 .barre-fiche > * { flex: 1 1 0; min-width: 0; padding-left: 8px; padding-right: 8px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (min-width: 760px) { .barre-fiche { display: none; } }
@@ -1702,7 +1702,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .grand-nombre { display: block; font-family: var(--titre); font-size: clamp(64px, 2vw + 56px, 80px); font-weight: 700; line-height: 1; font-variant-numeric: oldstyle-nums; }
 .grand-nombre.petit { font-size: 34px; margin-left: auto; display: inline; }
 .avertissement-maitrise { font-style: italic; }
-.onglets-profil { display: flex; flex-wrap: wrap; gap: 6px; margin: 20px 0 6px; border-bottom: 1px solid var(--trait); }
+.onglets-profil { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 6px; border-bottom: 1px solid var(--trait); }
 .onglet-profil { min-height: 44px; padding: 8px 12px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--discret); font-weight: 600; }
 .onglet-profil[aria-selected="true"] { color: var(--texte); border-bottom-color: var(--accent); }
 .codex-cadre { display: flex; justify-content: center; }
@@ -1768,7 +1768,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .message-canal { margin: 0 0 6px; font-size: 13px; color: var(--discret); overflow-wrap: anywhere; }
 .message-morceau { margin: 0 0 4px; overflow-wrap: anywhere; }
 .message-morceau.indice-revele { background: color-mix(in srgb, var(--orange) 22%, transparent); border-radius: var(--rayon); }
-.indices-message { display: grid; gap: 6px; margin: 6px 0 10px; }
+.indices-message { display: grid; gap: 8px; margin: 6px 0 10px; }
 .segment-indice { text-align: left; min-height: 44px; padding: 8px 12px; border: 1px dashed var(--trait); border-radius: var(--rayon-bouton); background: var(--carte); overflow-wrap: anywhere; }
 .segment-indice.juste { border-style: solid; border-color: var(--vert); }
 .segment-indice.faux { border-style: solid; border-color: var(--rouge); text-decoration: line-through; text-decoration-color: var(--rouge); }
@@ -1796,3 +1796,12 @@ label[for] { display: block; margin: 0 0 8px; }
 .carte-bienvenue h2:focus { outline: none; }
 .bienvenue-nav { margin-top: 14px; align-items: center; }
 .bienvenue-nav .lien { font-size: 14px; }
+
+/* Écart commun entre un contrôle (bouton, champ, curseur, groupe de puces) et le bloc qui le suit ou le précède :
+   12 px à la verticale ; en fin de feuille pour l'emporter sur les marges nulles des paragraphes de carte */
+:is(.bouton, .champ, .curseur-ligne, .puces, .lien-bouton, button.lien, .lien-discret, .grille-joueurs, .echelle-sept-boutons, .certitude-boutons, .actions)
+  + :is(p, ul, ol, div, .bouton, .champ, .curseur-ligne, .ligne, .retour-quiz, button.lien, .lien-bouton, .lien-discret) { margin-top: 12px; }
+:is(p, ul, ol) + :is(.bouton, .champ, .curseur-ligne, .ligne, .puces, .programme-cases, .grille-joueurs, button.lien, .lien-bouton, .choix) { margin-top: 12px; }
+/* Même écart après un bloc qui se termine par un contrôle (rangée d'actions, formulaire…) */
+:has(> :is(.bouton, .champ, .curseur-ligne, .puces, .choix):last-child) + :is(p, ul, ol, div, button.lien) { margin-top: 12px; }
+:has(> :is(p, ul, ol):last-child) + :is(.bouton, .champ, .lien-bouton, button.lien) { margin-top: 12px; }

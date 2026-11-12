@@ -264,7 +264,6 @@ JEUX.push(
       face.classList.add("piece");
       rangee.append(pile, face);
       const annuler = el("button", "lien", "Effacer le dernier");
-      annuler.style.marginTop = "6px";
       zone.append(compteur, affichage, rangee, annuler);
       zone.appendChild(paragraphe("Raccourcis : touches P et F, ou 1 et 2.", "source"));
 
