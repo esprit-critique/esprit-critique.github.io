@@ -1829,6 +1829,8 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Accueil du nouveau visiteur (profil.js) */
 .carte-bienvenue { border-left-color: var(--accent); }
+/* Tant que la carte d'accueil est là, elle porte seule « Commencer : Premiers pas » (pas de doublon dessous) */
+.accueil-tete:has(.carte-bienvenue) .appel-action { display: none; }
 .carte-bienvenue h2:focus { outline: none; }
 .bienvenue-nav { margin-top: 14px; align-items: center; }
 .bienvenue-nav .lien { font-size: 14px; }
