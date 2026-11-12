@@ -21,7 +21,7 @@ signature ; l'illusion du jour ; quatorze glyphes de catégorie ; des états vid
   Taille optique automatique (`font-optical-sizing: auto`) sur les titres.
 - **`--police`** : police système, pour tout le texte courant, les boutons et les champs.
 - **Étiquettes** (surtitres, étiquettes de catégorie, intertitres de fiche, consignes) : capitales du caractère de
-  titre, 12,5 px, graisse 650, espacement 0,07 em. Newsreader n'a pas de glyphes de petites capitales : ne pas
+  titre, 13 px, graisse 650, espacement 0,07 em. Newsreader n'a pas de glyphes de petites capitales : ne pas
   utiliser `font-variant-caps: all-small-caps`, que chaque navigateur fabriquerait différemment.
 - **Chiffres elzéviriens** (`oldstyle-nums`) pour les scores, les nombres des tuiles et les numéros de fiche.
 - Un caractère absent du sous-ensemble latin (≈, →, exposants ⁴ à ⁹…) est pris dans la police suivante de `--titre`.

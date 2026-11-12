@@ -134,6 +134,9 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
 .lien-evitement:focus { top: calc(env(safe-area-inset-top) + 8px); }
 main:focus { outline: none; }
 
+/* Échelle de texte : pas deux tailles à moins de 1 px l'une de l'autre (13 px au plus petit, « small » compris) */
+small { font-size: 13px; }
+
 /* Texte réservé aux lecteurs d'écran */
 .invisible {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
@@ -183,7 +186,7 @@ main:focus { outline: none; }
   border: 1px solid var(--trait);
   border-radius: var(--rayon);
   font-family: var(--titre);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 650;
   letter-spacing: 0.07em;
   color: var(--discret);
@@ -315,7 +318,7 @@ main:focus { outline: none; }
 .resultat-genre {
   display: block;
   font-family: var(--titre);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 650;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -353,7 +356,7 @@ main { min-height: 100svh; }
 .page-intro { color: var(--discret); font-size: 15px; margin: 0 0 18px; }
 
 .surtitre {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -520,7 +523,7 @@ h3.titre-bloc {
 .carte > :last-child { margin-bottom: 0; }
 
 .etiquette {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -528,7 +531,7 @@ h3.titre-bloc {
 }
 
 .entete-carte { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
-.badge { font-size: 12px; font-weight: 600; color: var(--vert); white-space: nowrap; }
+.badge { font-size: 13px; font-weight: 600; color: var(--vert); white-space: nowrap; }
 
 .encadre { background: var(--encadre); padding: 10px 12px; border-left: 3px solid var(--trait); }
 
@@ -543,7 +546,7 @@ h3.titre-bloc {
 
 .groupe-entete { margin: 0 0 8px; }
 .groupe-nom {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -597,7 +600,7 @@ h3.titre-bloc {
 
 .section { border-top: 1px solid var(--trait); margin-top: 16px; padding-top: 12px; }
 .section h3 {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -607,7 +610,7 @@ h3.titre-bloc {
 .section p { margin: 0; font-size: 15.5px; }
 .section p + p { margin-top: 8px; }
 
-.forme { font-family: var(--mono); font-size: 13.5px; background: var(--encadre); padding: 10px 12px; }
+.forme { font-family: var(--mono); font-size: 13px; background: var(--encadre); padding: 10px 12px; }
 .celebre { background: var(--c-clair, var(--accent-doux)); padding: 10px 12px; border-left: 3px solid var(--c-fort, var(--accent)); }
 .distinction { border: 1px dashed var(--trait); padding: 10px 12px; }
 .distinction a { font-weight: 600; color: var(--c-texte, var(--accent)); }
@@ -618,7 +621,7 @@ h3.titre-bloc {
 
 .schema { margin: 0; }
 .schema svg { display: block; width: 100%; height: auto; max-width: 440px; margin: 2px auto 8px; overflow: visible; }
-.schema figcaption { font-size: 13.5px; color: var(--discret); }
+.schema figcaption { font-size: 13px; color: var(--discret); }
 /* Téléphone : le schéma (320 unités de large) gagne 10 px de chaque côté sur la marge de la carte, pour ne pas être
    réduit (ses plus petits textes restent à 11 px) */
 @media (max-width: 759px) { .carte .schema svg { width: calc(100% + 20px); max-width: none; margin-left: -10px; margin-right: -10px; } }
@@ -690,7 +693,7 @@ h3.titre-bloc {
 .tuiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 14px; }
 .tuile { border: 1px solid var(--trait); border-radius: var(--rayon); padding: 10px 10px 8px; background: var(--fond); }
 .tuile-nombre { display: block; font-family: var(--titre); font-size: 26px; font-weight: 700; line-height: 1.1; }
-.tuile-libelle { display: block; font-size: 12px; color: var(--discret); line-height: 1.3; margin-top: 2px; }
+.tuile-libelle { display: block; font-size: 13px; color: var(--discret); line-height: 1.3; margin-top: 2px; }
 
 .cartes-grille { display: grid; gap: 10px; }
 @media (min-width: 560px) { .cartes-grille { grid-template-columns: 1fr 1fr; } .cartes-grille .carte { margin: 0; } }
@@ -716,7 +719,7 @@ h3.titre-bloc {
 }
 
 .consigne {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -740,7 +743,7 @@ h3.titre-bloc {
   border-radius: var(--rayon-bouton);
   background: var(--carte);
 }
-.choix kbd { font-family: var(--police); font-size: 12px; color: var(--discret); min-width: 14px; }
+.choix kbd { font-family: var(--police); font-size: 13px; color: var(--discret); min-width: 14px; }
 @media (hover: none) { .choix kbd { display: none; } }
 @media (hover: hover) { .choix:not(:disabled):hover { border-color: var(--discret); } }
 .choix:disabled { cursor: default; }
@@ -842,7 +845,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .barre { height: 100%; background: var(--discret); }
 .barre.forte, .barre-fond.centre .barre { background: var(--c-fort, var(--accent)); }
 .barre-fond.centre::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: var(--texte); }
-.barre-source { font-size: 12px; color: var(--discret); margin-top: 3px; }
+.barre-source { font-size: 13px; color: var(--discret); margin-top: 3px; }
 
 .intervalle { position: relative; height: 18px; background: var(--encadre); }
 .intervalle-plage { position: absolute; top: 5px; height: 8px; background: var(--c-fort, var(--accent)); }
@@ -869,7 +872,7 @@ label[for] { display: block; margin: 0 0 8px; }
 
 .section-ateliers { margin-top: 26px; }
 .titre-section { font-family: var(--titre); font-size: 22px; line-height: 1.2; margin: 0 0 2px; }
-.intro-section { font-size: 14.5px; color: var(--discret); margin: 0 0 12px; }
+.intro-section { font-size: 14px; color: var(--discret); margin: 0 0 12px; }
 
 /* Sections d'ateliers pliables : un bouton par section, fermé par défaut sauf si on l'a ouvert */
 .pliant {
@@ -889,7 +892,7 @@ label[for] { display: block; margin: 0 0 8px; }
 }
 .pliant:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .pliant-titre { flex: 1 1 auto; font-family: var(--titre); font-size: 22px; line-height: 1.2; font-weight: 700; }
-.pliant-compte { font-size: 13.5px; color: var(--discret); white-space: nowrap; }
+.pliant-compte { font-size: 13px; color: var(--discret); white-space: nowrap; }
 .pliant-fleche { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s ease; }
 .pliant[aria-expanded="true"] .pliant-fleche { transform: rotate(180deg); }
 .section-ateliers .titre-section { margin: 0; }
@@ -902,7 +905,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .melange-jeu { margin: 0 0 14px; font-size: 15px; }
 .melange-etiquette {
   font-family: var(--titre);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 650;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -912,7 +915,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .atelier { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: start; }
 .atelier .atelier-corps { min-width: 0; }
 .atelier h2 { font-size: 19px; }
-.atelier p { font-size: 14.5px; }
+.atelier p { font-size: 14px; }
 
 .picto-cadre {
   width: 52px; height: 52px;
@@ -938,7 +941,7 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Historique des parties */
 .historique { margin: 10px 0 4px; }
-.historique-titre { display: block; font-size: 12px; color: var(--discret); margin-bottom: 4px; }
+.historique-titre { display: block; font-size: 13px; color: var(--discret); margin-bottom: 4px; }
 .historique-barres { display: flex; align-items: flex-end; gap: 4px; height: 44px; }
 .historique-barres span { flex: 1; max-width: 22px; background: var(--trait); transform-origin: bottom; animation: monte 0.5s ease-out both; }
 .historique-barres span.actuelle { background: var(--c-fort, var(--accent)); }
@@ -991,7 +994,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .section-ateliers { scroll-margin-top: 12px; }
 @media (min-width: 760px) { .section-ateliers { scroll-margin-top: 90px; } }
 .valeur-curseur { font-family: var(--titre); font-size: 19px; font-weight: 700; margin: 4px 0 0; min-height: 1.5em; }
-.reperes-curseur { display: flex; justify-content: space-between; font-size: 12px; color: var(--discret); margin: 0 48px 12px; }
+.reperes-curseur { display: flex; justify-content: space-between; font-size: 13px; color: var(--discret); margin: 0 48px 12px; }
 
 /* Échelle logarithmique */
 .echelle-log { position: relative; height: 34px; margin: 0 59px 16px; border-top: 1px solid var(--trait); }
@@ -1024,13 +1027,13 @@ label[for] { display: block; margin: 0 0 8px; }
   background: var(--c-clair, var(--accent-doux));
   border-left: 3px solid var(--c-fort, var(--accent));
 }
-.tirage-libelle { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-texte, var(--accent)); }
+.tirage-libelle { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-texte, var(--accent)); }
 .tirage-nombre { font-family: var(--titre); font-size: 30px; font-weight: 700; animation: score 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.2) both; }
 
 /* Frise chronologique */
 .frise { margin: 6px 0 8px; }
 .frise-svg { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; }
-.frise-liste { margin: 4px 0 0; padding-left: 20px; font-size: 14.5px; }
+.frise-liste { margin: 4px 0 0; padding-left: 20px; font-size: 14px; }
 .frise-liste li { margin-bottom: 2px; }
 .sch-clair-fort { fill: var(--orange); }
 
@@ -1100,7 +1103,7 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Graphiques trompeurs */
 .figure-piege { margin: 0 0 12px; }
-.figure-piege figcaption { font-size: 12.5px; color: var(--discret); }
+.figure-piege figcaption { font-size: 13px; color: var(--discret); }
 .figure-piege.honnete { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--trait); }
 .barre-svg { fill: var(--discret); }
 .barre-svg.forte { fill: var(--c-fort, var(--accent)); }
@@ -1143,7 +1146,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .annee-anniversaires .double { background: var(--rouge); box-shadow: 0 0 0 1px var(--rouge); }
 
 /* Expériences de pensée */
-.auteur-pensee { font-size: 13.5px; font-style: italic; color: var(--discret); margin: -4px 0 10px; }
+.auteur-pensee { font-size: 13px; font-style: italic; color: var(--discret); margin: -4px 0 10px; }
 .question-pensee { font-weight: 700; margin: 0 0 10px; }
 
 /* ===================== Fiches : ateliers liés ; portrait ===================== */
@@ -1198,7 +1201,7 @@ label[for] { display: block; margin: 0 0 8px; }
   width: max-content;
   max-width: min(520px, calc(100% - 32px));
   padding: 10px 14px;
-  font-size: 14.5px;
+  font-size: 14px;
   line-height: 1.4;
   color: var(--fond);
   background: var(--texte);
@@ -1259,7 +1262,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .replique .cas { margin: 2px 0 0; }
 .replique.precedente { border-left-color: var(--trait); margin: 6px 0; }
 .replique.precedente .replique-qui { color: var(--discret); }
-.replique.precedente p { font-size: 14.5px; color: var(--discret); margin: 1px 0 0; }
+.replique.precedente p { font-size: 14px; color: var(--discret); margin: 1px 0 0; }
 .replique.replique-fiche p, .replique-fiche-texte { font-family: var(--titre); font-size: 17px; line-height: 1.45; margin: 4px 0 10px; }
 .titre-etape { margin: 6px 0 2px; font-family: var(--titre); font-size: 21px; }
 .minuteur { font-family: var(--titre); font-size: 46px; font-weight: 700; text-align: center; margin: 10px 0 6px; font-variant-numeric: tabular-nums; }
@@ -1296,11 +1299,11 @@ label[for] { display: block; margin: 0 0 8px; }
 .choix-niveau .puces-niveau .puce { min-width: 44px; justify-content: center; }
 .choix-niveau .source { margin: 8px 0 0; }
 .bilan-niveaux p { margin: 4px 0; }
-.tableau-niveaux { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.tableau-niveaux { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
 .tableau-niveaux th, .tableau-niveaux td { border-bottom: 1px solid var(--trait-doux); padding: 6px 4px; text-align: right; vertical-align: top; }
-.tableau-niveaux th { font-size: 12.5px; color: var(--discret); font-weight: 600; }
+.tableau-niveaux th { font-size: 13px; color: var(--discret); font-weight: 600; }
 .tableau-niveaux th:first-child, .tableau-niveaux td:first-child { text-align: left; }
-.tableau-niveaux .bloc { display: block; font-size: 12.5px; }
+.tableau-niveaux .bloc { display: block; font-size: 13px; }
 
 /* Le calcul, en détail : bloc repliable des bilans */
 .calcul-detail { border: 1px solid var(--trait); border-radius: var(--rayon); padding: 8px 12px; margin: 12px 0; background: var(--carte); }
@@ -1416,7 +1419,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .surtitre, .etiquette, .groupe-nom, .section h3, .consigne, .tirage-libelle {
   font-family: var(--titre);
   text-transform: uppercase;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 650;
   letter-spacing: 0.07em;
 }
@@ -1458,7 +1461,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .ouverture-dessin { flex: none; padding: 4px; margin: 0; border: 0; background: none; border-radius: var(--rayon); }
 .ouverture .embleme { width: 76px; height: 54px; display: block; }
 .ouverture p { margin: 0; font-family: var(--titre); font-size: 18px; line-height: 1.35; }
-.ouverture small { display: block; font-family: var(--police); font-size: 13.5px; color: var(--discret); margin-top: 4px; }
+.ouverture small { display: block; font-family: var(--police); font-size: 13px; color: var(--discret); margin-top: 4px; }
 /* Page d'une fiche, en quatre temps : le trait sépare l'en-tête et les groupes, pas les sections d'un groupe */
 .groupe-fiche { margin-top: 26px; }
 .groupe-fiche::before { margin: 0 0 12px; }
@@ -1468,7 +1471,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .tete-fiche .section:first-child { margin-top: 14px; }
 .carte-fiche .section p { font-size: 16px; line-height: 1.55; }
 /* .section p (0,1,1) l'emportait sur .consigne et .source (0,1,0) : consignes et source retrouvent leur taille */
-.carte-fiche .section p.consigne { font-size: 12.5px; margin: 0 0 8px; }
+.carte-fiche .section p.consigne { font-size: 13px; margin: 0 0 8px; }
 .carte-fiche .section p.source { font-size: 14px; }
 /* Le pied de fiche (acquise, mémorisation, repérages) est du suivi personnel : un simple filet, sans trait */
 .carte-fiche .pied-fiche { border-top: 1px solid var(--trait); margin-top: 26px; padding-top: 16px; }
@@ -1543,14 +1546,14 @@ label[for] { display: block; margin: 0 0 8px; }
 .accueil-tete { margin-bottom: 28px; }
 .accueil-tete .page-intro { max-width: 62ch; }
 .serie-jours { display: inline-block; margin-left: 10px; padding: 1px 8px; border: 1px solid var(--trait); border-radius: 999px;
-  font-size: 12px; font-weight: 600; color: var(--texte); background: var(--carte); }
+  font-size: 13px; font-weight: 600; color: var(--texte); background: var(--carte); }
 .programme { margin: 0 0 22px; }
 .programme-cases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .programme-case { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 64px; padding: 10px 12px;
   text-align: left; background: var(--carte); border: 1px solid var(--trait); border-radius: var(--rayon-bouton);
   box-shadow: var(--ombre-1); transition: box-shadow var(--duree-courte) var(--courbe), transform var(--duree-courte) var(--courbe); }
 .programme-titre { font-family: var(--titre); font-size: 15px; font-weight: 650; line-height: 1.2; }
-.programme-etat { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--discret); }
+.programme-etat { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--discret); }
 /* Fait : coche dessinée en plus du mot (la couleur ne porte jamais seule l'information) */
 .programme-case.fait { border-color: color-mix(in srgb, var(--vert) 45%, var(--trait)); }
 .programme-case.fait .programme-etat { color: var(--vert); }
@@ -1782,7 +1785,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .chemin-parcours .etape::before { content: ""; position: absolute; left: -25px; top: 6px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--trait); background: var(--fond); }
 .chemin-parcours .etape.faite::before { background: var(--vert); border-color: var(--vert); }
 .chemin-parcours .etape.suivante::before { border-color: var(--accent); background: var(--accent); }
-.etape-etat { flex-basis: 100%; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--discret); }
+.etape-etat { flex-basis: 100%; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--discret); }
 .etape.faite .etape-etat { color: var(--vert); }
 .etape.faite .etape-etat::before { content: "✓ "; }
 .conclusion-parcours { text-align: left; }
