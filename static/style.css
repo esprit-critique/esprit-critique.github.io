@@ -1271,7 +1271,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .echelle-sept-bornes { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--discret); margin: 8px 0 4px; }
 .carnet-formulaire .champ-texte { width: 100%; resize: vertical; font: inherit; }
 .carnet-formulaire .modeles { flex-wrap: wrap; overflow: visible; margin: 8px 0; }
-.carnet-formulaire .modeles .puce { font-size: 13px; }
+.carnet-formulaire .modeles .puce { font-size: 13px; white-space: normal; text-align: left; max-width: 100%; }   /* modèle long : retour à la ligne dans la puce */
 .titre-carnet { font-family: var(--titre); font-size: 20px; margin: 22px 0 8px; }
 .prevision { border: 1px solid var(--trait); border-radius: var(--rayon); padding: 10px 12px; margin: 0 0 10px; }
 .prevision .cas { margin: 0 0 2px; }
