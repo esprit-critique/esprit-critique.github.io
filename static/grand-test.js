@@ -1148,9 +1148,9 @@ function grandeurGT(id) {
   const annee = (p.annees && p.annees[k]) || ANNEES_PAYS[k];
   const v = Math.round(p[k] * ind.facteur * 10 ** ind.decimales) / 10 ** ind.decimales;
   if (LANGUE === "en") return { id, q: p.nom + ": " + ind.libelle + " in " + annee, v, unite: ind.unite, annee,
-    source: "World Bank, World Development Indicators (" + annee + "), site data (pays.js)" };
+    source: "World Bank, World Development Indicators (" + annee + ")" };
   return { id, q: p.nom + " : " + ind.libelle + " en " + annee, v, unite: ind.unite, annee,
-    source: "Banque mondiale, World Development Indicators (" + annee + "), données du site (pays.js)" };
+    source: "Banque mondiale, World Development Indicators (" + annee + ")" };
 }
 
 // ===================== Démonstrations de mémoire (jamais notées) =====================
