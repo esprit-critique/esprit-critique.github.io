@@ -261,10 +261,18 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
   }
   .onglet svg { width: 18px; height: 18px; }
   .onglet.actif { border-bottom-color: var(--c, var(--texte)); }
-  /* La marque et la navigation remplissent déjà la ligne : le bouton prend le coin haut droit, la navigation passe dessous */
-  .langue-entete { top: 14px; right: 16px; }
-  .navigation { order: 3; flex-basis: 100%; margin-top: 6px; }
+  /* Deux lignes au plus : marque, recherche, profil et langue sur la première (dans le flux, sans chevauchement),
+     la navigation dessous */
+  .entete { column-gap: 12px; }
+  .langue-entete, .etat-synchro { position: static; flex: none; }
+  .entete .bouton-profil { position: relative; flex: none; }   /* repère du blason */
+  .etat-synchro { order: 3; }
+  .entete .bouton-profil { order: 4; }
+  .langue-entete { order: 5; }
+  .navigation { order: 6; flex-basis: 100%; margin-top: 6px; }
 }
+/* Fenêtre basse (téléphone en paysage) : l'en-tête défile avec la page, pour laisser la place au contenu */
+@media (min-width: 760px) and (max-height: 499px) { .entete { position: relative; } }
 
 /* Recherche dans tout le site (en-tête). Téléphone : sous la marque ; ordinateur : à droite de la marque, à gauche du bouton de langue */
 .recherche-globale { position: relative; order: 2; margin: 14px 0 0; }
@@ -311,7 +319,7 @@ a { color: var(--accent); -webkit-tap-highlight-color: transparent; }
 .resultat-extrait { display: block; margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--discret); }
 .resultat-vide { padding: 10px 8px; font-size: 14px; color: var(--discret); }
 @media (min-width: 760px) {
-  .recherche-globale { order: 2; flex: 0 1 340px; margin: 0 132px 0 auto; }
+  .recherche-globale { order: 2; flex: 1 1 200px; margin: 0; }
 }
 
 /* ===================== Titres de page ===================== */
@@ -1541,7 +1549,6 @@ label[for] { display: block; margin: 0 0 8px; }
   .marque { flex: none; white-space: nowrap; }
   .navigation { order: 1; flex-basis: auto; margin-top: 0; }
   .recherche-globale { order: 2; flex: 0 1 300px; margin: 0 0 0 auto; }
-  .langue-entete { position: static; order: 3; }
 }
 
 /* L'illusion du jour (illusions.js) : leurres et repères ; « revele » joue la révélation par l'opacité seule */
@@ -1639,8 +1646,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .bouton-profil .blason { position: absolute; left: 12px; top: 9px; }
 .bouton-profil .anneau-profil { margin-right: 2px; }
 .bouton-profil-maitrise { font-family: var(--titre); font-weight: 700; font-size: 15px; font-variant-numeric: oldstyle-nums; }
-.entete .bouton-profil { position: absolute; top: calc(env(safe-area-inset-top) + 12px); right: 86px; }
-@media (min-width: 1040px) { .entete .bouton-profil { position: relative; top: auto; right: auto; order: 3; } .langue-entete { order: 4; } }
+@media (max-width: 759px) { .entete .bouton-profil { position: absolute; top: calc(env(safe-area-inset-top) + 12px); right: 74px; } }
 .anneau-mini .anneau-fond { fill: none; stroke: var(--trait); stroke-width: 4; }
 .anneau-mini .anneau-valeur { fill: none; stroke: var(--vert); stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray var(--duree) var(--courbe); }
 .insigne { flex: none; }
@@ -1730,7 +1736,6 @@ label[for] { display: block; margin: 0 0 8px; }
   .bouton-profil { padding: 0; width: 44px; justify-content: center; }
   .bouton-profil .blason, .bouton-profil-maitrise { display: none; }
   .bouton-profil .insigne { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-  .entete .bouton-profil { right: 74px; }
 }
 .bouton-profil.sobre { flex: none; width: 44px; padding: 0; justify-content: center; }
 .bouton-profil.sobre .blason { display: block; position: static; }
@@ -1752,11 +1757,12 @@ label[for] { display: block; margin: 0 0 8px; }
 .carte-parcours .barre-maitrise > div { background: var(--vert); }
 
 /* Synchronisation (coffre.js) */
-.etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 29px); right: 124px; width: 10px; height: 10px; border-radius: 50%; background: var(--discret); }
+@media (max-width: 759px) { .etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 29px); right: 124px; } }
+.etat-synchro { width: 10px; height: 10px; border-radius: 50%; background: var(--discret); }
 .etat-synchro[data-statut="a-jour"] { background: var(--vert); }
 .etat-synchro[data-statut="erreur"] { background: var(--rouge); }
 .etat-synchro[data-statut="en-cours"], .etat-synchro[data-statut="en-attente"] { background: var(--orange); }
-@media (min-width: 1040px) { .etat-synchro { position: static; order: 3; flex: none; } }
+@media (min-width: 760px) { .etat-synchro { margin-right: -10px; } }   /* à 4 px du bouton de profil */
 .bloc-synchro { margin-top: 22px; }
 .actions-synchro { flex-wrap: wrap; }
 .code-synchro { margin-top: 14px; padding: 12px 14px; border: 1px dashed var(--trait); border-radius: var(--rayon-carte); }
