@@ -287,19 +287,22 @@ function etatCodex(cle) {
   if (m) return 2;
   return lire("fichesLues", []).includes(cle) ? 1 : 0;
 }
-function codex(taille) {
+// mini : dessin décoratif de l'accueil (un seul lien autour, vers le profil) : ni lien par point, ni texte
+function codex(taille, mini) {
   // Dans l'ordre des catégories : les points d'une même couleur forment un arc
   const cles = Object.keys(TYPES).flatMap(t => ORDRE[t].map(f => [t, f]));
-  const s = svg("svg", { viewBox: "0 0 300 300", class: "codex", width: taille, height: taille, role: "img", "aria-label": T("Le codex : {0} notions maîtrisées sur {1}", cles.filter(([t, f]) => etatCodex(cleFiche(t, f)) === 4).length, cles.length) });
+  const s = svg("svg", { viewBox: "0 0 300 300", class: "codex", width: taille, height: taille, role: "img", ...(mini ? { "aria-hidden": "true" } : {}), "aria-label": T("Le codex : {0} notions maîtrisées sur {1}", cles.filter(([t, f]) => etatCodex(cleFiche(t, f)) === 4).length, cles.length) });
   const n = cles.length;
   cles.forEach(([type, f], i) => {
     const a = -Math.PI / 2 + 2 * Math.PI * i / n, etat = etatCodex(cleFiche(type, f));
     const lien = svg("a", { href: "#" + type + "/" + f.id, "aria-label": f.nom + " : " + T(ETATS_CODEX[etat]) });
     const point = svg("circle", { cx: 150 + 122 * Math.cos(a), cy: 150 + 122 * Math.sin(a), r: 3 + etat * 1.1, class: "codex-point etat-" + etat });
     point.style.setProperty("--c", COULEURS[f.categorie]);
+    if (mini) { s.appendChild(point); return; }
     lien.appendChild(point);
     s.appendChild(lien);
   });
+  if (mini) return s;
   const maitrisees = cles.filter(([t, f]) => etatCodex(cleFiche(t, f)) === 4).length;
   s.append(texteSvg(150, 150, String(maitrisees), { class: "codex-nombre", "text-anchor": "middle" }), texteSvg(150, 172, T("notions maîtrisées sur {0}", n), { class: "graduation-graphique", "text-anchor": "middle" }));
   return s;
@@ -397,8 +400,9 @@ function carteProgressionAccueil() {
   }
   const roue = el("a", "codex-mini");
   roue.href = "#profil/notions";
-  roue.setAttribute("aria-label", T("Le codex des notions"));
-  roue.appendChild(codex(120));
+  const dessin = codex(120, true);
+  roue.setAttribute("aria-label", dessin.getAttribute("aria-label"));
+  roue.appendChild(dessin);
   carte.append(roue, lienVers("#profil", "Votre profil →", "lien-discret"));
   return carte;
 }
