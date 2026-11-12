@@ -194,7 +194,27 @@ f.onload = async () => {
     vue().querySelector("[data-suivant]").click();
     await pause(5);
     ok("notions proches : bilan", /Bilan de la série/.test(vue().textContent));
+    // Paragraphe d'analyse du portrait (analysePortrait) : trois profils types et le texte attendu pour chacun
+    const PROFILS_PORTRAIT = {
+      vide: [{ memoire: {}, duels: {}, certitudes: {}, activite: [], revisions: 0, aReviser: 0, ateliers: [], aujourdhui: 20000, conseil: null },
+        "Vos réponses sont encore trop peu nombreuses pour en tirer un bilan : chaque mesure en demande au moins 5. | #quiz → Pour commencer : une série de dix situations au quiz"],
+      debutant: [{ memoire: { "biais:ancrage": { b: 1, d: 0, n: 2, j: 1 }, "biais:confirmation": { b: 2, d: 0, n: 2, j: 2 } },
+        duels: { "biais:ancrage": [1, 0] }, certitudes: { sur: [3, 2] }, activite: [19998, 20000], revisions: 0, aReviser: 1,
+        ateliers: [{ nom: "Trois questions faciles", adresse: "#tests/crt", n: 3, j: 2 }], aujourdhui: 20000, conseil: null },
+        "Vos réponses sont encore trop peu nombreuses pour en tirer un bilan : chaque mesure en demande au moins 5. Sur les 30 derniers jours : 2 jours d'activité ; depuis le début, 0 révision faite le jour prévu. | #quiz/reviser → Suggestion : 1 révision à faire aujourd'hui"],
+      avance: [{ memoire: { "biais:ancrage": { b: 5, d: 0, n: 12, j: 11 }, "biais:confirmation": { b: 4, d: 0, n: 8, j: 7 }, "sophismes:ad-hominem": { b: 2, d: 0, n: 10, j: 5 } },
+        duels: { "biais:ancrage": [6, 2], "biais:confirmation": [5, 5] }, certitudes: { sur: [20, 14], plutot: [10, 6] },
+        activite: [19960, 19990, 19995, 19998, 19999, 20000], revisions: 7, aReviser: 0,
+        ateliers: [{ nom: "Quatre cartes", adresse: "#tests/wason", n: 30, j: 24 }], aujourdhui: 20000, conseil: null },
+        "Le plus solide : les fiches « Décision » au quiz, avec 92 % de bonnes réponses (11 sur 12). Le plus fragile : vos réponses confondent « Effet d'ancrage » et « Effet de cadrage » (4 erreurs sur 6 duels). Quand vous répondez « Sûr » au quiz, vos réponses sont justes 14 fois sur 20 (70 %) : la certitude dépasse la réussite. Sur les 30 derniers jours : 5 jours d'activité ; depuis le début, 7 révisions faites le jour prévu. | #quiz/proches → Suggestion : une série « Notions proches » au quiz"]
+    };
+    Object.entries(PROFILS_PORTRAIT).forEach(([nom, [donnees, attendu]]) => {
+      const a = w.analysePortrait(donnees), texte = a.phrases.join(" ") + " | " + a.lien.join(" → ");
+      ok("portrait, analyse du profil « " + nom + " » : texte attendu, 5 phrases au plus", texte === attendu && a.phrases.length + 1 <= 5, texte);
+    });
     await aller("portrait");
+    ok("portrait : paragraphe d'analyse sous le titre", !!vue().querySelector("h1 + .page-intro + .analyse-portrait a"));
+    ok("portrait : une paire n'est signalée qu'à partir de 5 duels (la série ci-dessus n'en joue qu'un par paire)", !/Les paires que vous confondez/.test(vue().textContent));
     ok("portrait : notions proches et certitude", /Les notions proches/.test(vue().textContent) && /Certitude au quiz/.test(vue().textContent) && /Erreurs commises en étant sûr/.test(vue().textContent));
     await aller("quiz/tout");
 

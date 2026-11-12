@@ -650,12 +650,91 @@ function reussiteAtelier(id) {
   return { taux: moyenne(r.historique) / r.sur, parties: r.historique.length, record: r.record, sur: r.sur };
 }
 
+// ===================== Portrait : paragraphe d'analyse =====================
+// Écrit à partir des seules données du navigateur, par des règles et des gabarits de phrases (aucun serveur, aucun
+// modèle de langage). Aucune phrase sur une mesure de moins de SEUIL_PORTRAIT réponses ; chaque chiffre avec son effectif ;
+// des constats (« vos réponses… »), jamais un trait de personnalité.
+const SEUIL_PORTRAIT = 5;
+
+// Données du navigateur, dans la forme qu'attend analysePortrait (les bancs lui passent des profils types)
+function donneesPortrait() {
+  const ateliers = tousLesAteliers().map(({ atelier, adresse }) => {
+    const r = reussiteAtelier(atelier.id);
+    return r && { nom: atelier.titre, adresse, n: r.parties * r.sur, j: Math.round(r.taux * r.parties * r.sur) };
+  }).filter(Boolean);
+  return { memoire, duels: lire("duels", {}), certitudes: lire("certitudes", {}), activite: lire("activite", []),
+    revisions: ((lire("lucidite", {}) || {}).cumuls || {}).revisionsALHeure || 0, aReviser: clesAReviser().length,
+    ateliers, aujourdhui: aujourdHui(), conseil: atelierConseille() };
+}
+
+// → { phrases: [texte…], lien: [adresse, texte] }
+function analysePortrait(d) {
+  const pct = (j, n) => Math.round(100 * j / n) + PC;
+  const assez = x => x && x.n >= SEUIL_PORTRAIT;
+  // Mesures comparables : catégories de fiches au quiz, ateliers, notions proches
+  const parCategorie = {};
+  Object.entries(d.memoire || {}).forEach(([cle, m]) => {
+    const e = INDEX.get(cle);
+    if (!e || !m.n) return;
+    const c = parCategorie[e.fiche.categorie] = parCategorie[e.fiche.categorie] || { n: 0, j: 0 };
+    c.n += m.n; c.j += m.j || 0;
+  });
+  const duels = Object.entries(d.duels || {}).filter(([cle, x]) => INDEX.has(cle) && x[0]);
+  const totalDuels = duels.reduce((t, [, [n, j]]) => ({ n: t.n + n, j: t.j + j }), { n: 0, j: 0 });
+  const mesures = [
+    ...Object.entries(parCategorie).map(([cat, x]) => ({ ...x, nom: T("les fiches « {0} » au quiz", T(cat)), adresse: "#quiz" })),
+    ...(d.ateliers || []).map(a => ({ ...a, nom: T("l'atelier « {0} »", T(a.nom)) })),
+    { ...totalDuels, nom: T("les notions proches au quiz"), adresse: "#quiz/proches" }
+  ].filter(assez).sort((a, b) => b.j / b.n - a.j / a.n || b.n - a.n);
+  const sur = d.certitudes && d.certitudes.sur && { n: d.certitudes.sur[0], j: d.certitudes.sur[1] };
+  const paire = duels.filter(([, [n, j]]) => n >= SEUIL_PORTRAIT && j < n).sort((a, b) => a[1][1] / a[1][0] - b[1][1] / b[1][0])[0];
+  const jours = (d.activite || []).filter(j => j > d.aujourdhui - 30).length;
+  const regularite = () => T("Sur les 30 derniers jours : {0} ; depuis le début, {1}.", pluriel(jours, "jour d'activité", "jours d'activité"),
+    pluriel(d.revisions || 0, "révision faite le jour prévu", "révisions faites le jour prévu"));
+  if (!mesures.length && !assez(sur)) {
+    return { phrases: [T("Vos réponses sont encore trop peu nombreuses pour en tirer un bilan : chaque mesure en demande au moins {0}.", SEUIL_PORTRAIT), ...(jours ? [regularite()] : [])],
+      lien: d.aReviser ? ["#quiz/reviser", T("Suggestion : {0} à faire aujourd'hui", pluriel(d.aReviser, "révision"))] : ["#quiz", T("Pour commencer : une série de dix situations au quiz")] };
+  }
+  const phrases = [];
+  // 1. Le plus solide
+  if (mesures.length) { const m = mesures[0]; phrases.push(T("Le plus solide : {0}, avec {1} de bonnes réponses ({2} sur {3}).", m.nom, pct(m.j, m.n), m.j, m.n)); }
+  // 2. Le plus fragile : une paire confondue, sinon la mesure la moins réussie
+  if (paire) {
+    const [cle, [n, j]] = paire, f = INDEX.get(cle).fiche, v = INDEX.get(f.distinction[0]).fiche;
+    phrases.push(T("Le plus fragile : vos réponses confondent « {0} » et « {1} » ({2} sur {3}).", f.nom, v.nom, pluriel(n - j, "erreur"), pluriel(n, "duel")));
+  } else if (mesures.length > 1 && mesures[mesures.length - 1].j / mesures[mesures.length - 1].n < mesures[0].j / mesures[0].n) {
+    const m = mesures[mesures.length - 1];
+    phrases.push(T("Le plus fragile : {0}, avec {1} de bonnes réponses ({2} sur {3}).", m.nom, pct(m.j, m.n), m.j, m.n));
+  }
+  // 3. Étalonnage : certitude déclarée et réussite
+  if (assez(sur)) {
+    phrases.push(sur.j / sur.n < 0.8
+      ? T("Quand vous répondez « Sûr » au quiz, vos réponses sont justes {0} fois sur {1} ({2}) : la certitude dépasse la réussite.", sur.j, sur.n, pct(sur.j, sur.n))
+      : T("Quand vous répondez « Sûr » au quiz, vos réponses sont justes {0} fois sur {1} ({2}).", sur.j, sur.n, pct(sur.j, sur.n)));
+  }
+  // 4. Régularité
+  if (jours) phrases.push(regularite());
+  // 5. Une seule suggestion
+  let lien;
+  if (paire) lien = ["#quiz/proches", T("Suggestion : une série « Notions proches » au quiz")];
+  else if (d.aReviser) lien = ["#quiz/reviser", T("Suggestion : {0} à faire aujourd'hui", pluriel(d.aReviser, "révision"))];
+  else if (assez(sur) && sur.j / sur.n < 0.8) lien = ["#chiffres/vrai-faux", T("Suggestion : mesurer votre confiance dans « Vrai ou faux ? »")];
+  else if (mesures.length > 1) lien = [mesures[mesures.length - 1].adresse || "#quiz", T("Suggestion : retravailler {0}", mesures[mesures.length - 1].nom)];
+  else lien = d.conseil ? [d.conseil.adresse, T("Suggestion : l'atelier « {0} »", T(d.conseil.atelier.titre))] : ["#quiz", T("Suggestion : une série au quiz")];
+  return { phrases: phrases.slice(0, 4), lien };
+}
+
 function afficherPortrait() {
   const zone = $("vue-portrait");
   zone.replaceChildren();
   zone.appendChild(lienVers("#ateliers", "← Ateliers", "lien retour"));
   zone.append(el("h1", "page-titre", "Votre portrait"),
     el("p", "page-intro", "Ce que vos réponses aux ateliers révèlent de votre façon de juger. Chaque mesure s'affine à mesure que vous jouez ; tout reste dans votre navigateur."));
+  // Vue d'ensemble : trois à cinq phrases tirées des mesures ci-dessous, et une suggestion
+  const analyse = analysePortrait(donneesPortrait());
+  const resume = el("p", "analyse-portrait", analyse.phrases.join(" ") + " ");
+  resume.appendChild(lienVers(analyse.lien[0], analyse.lien[1] + " →", "lien-texte"));
+  zone.appendChild(resume);
 
   const blocs = [];
   const ajouter = (titre, couleur, adresse, contenu, aMesurer) => blocs.push({ titre, couleur, adresse, contenu, aMesurer });
@@ -749,10 +828,12 @@ function afficherPortrait() {
   // 10. Notions proches (quiz)
   const duels = Object.entries(lire("duels", {})).filter(([cle, [n]]) => n && INDEX.has(cle));
   if (duels.length) {
-    const confondues = duels.filter(([, [n, j]]) => j < n).sort((a, b) => a[1][1] / a[1][0] - b[1][1] / b[1][0]);
+    // Une paire n'est signalée qu'à partir de SEUIL_PORTRAIT duels : « 1 erreur sur 1 » ne dit rien
+    const confondues = duels.filter(([, [n, j]]) => j < n && n >= SEUIL_PORTRAIT).sort((a, b) => a[1][1] / a[1][0] - b[1][1] / b[1][0]);
+    const erreursIsolees = !confondues.length && duels.some(([, [n, j]]) => j < n);
     const bloc = el("div");
     const total = duels.reduce((t, [, [n]]) => t + n, 0), justes = duels.reduce((t, [, [, j]]) => t + j, 0);
-    bloc.appendChild(paragraphe(T("{0} de bonnes réponses sur {1} entre notions proches.", pct(justes / total), pluriel(total, "duel")) + (confondues.length ? "" : " " + T("Aucune paire confondue pour l'instant."))));
+    bloc.appendChild(paragraphe(T("{0} de bonnes réponses sur {1} entre notions proches.", pct(justes / total), pluriel(total, "duel")) + (confondues.length ? "" : " " + (erreursIsolees ? T("Aucune paire n'a encore {0} duels : rien à signaler pour l'instant.", SEUIL_PORTRAIT) : T("Aucune paire confondue pour l'instant.")))));
     if (confondues.length) {
       const liste = el("ul", "liste-simple");
       confondues.slice(0, 8).forEach(([cle, [n, j]]) => {
@@ -770,7 +851,7 @@ function afficherPortrait() {
 
   // 11. Certitude au quiz
   const certitudes = lire("certitudes", {});
-  const niveaux = NIVEAUX_CERTITUDE.filter(([k]) => certitudes[k] && certitudes[k][0]);
+  const niveaux = NIVEAUX_CERTITUDE.filter(([k]) => certitudes[k] && certitudes[k][0] >= SEUIL_PORTRAIT);   // pas de taux sur 1 réponse
   if (niveaux.length) {
     const bloc = el("div");
     const liste = el("ul", "liste-simple");
