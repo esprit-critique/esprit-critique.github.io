@@ -400,6 +400,12 @@ h3.titre-bloc {
   scrollbar-width: none;
 }
 .puces::-webkit-scrollbar { display: none; }
+/* Rangée qui défile (téléphone) : un fondu au bord droit signale la suite ; la marge laisse sortir la dernière puce
+   du fondu en fin de défilement. Dès 760 px, les puces passent à la ligne : tout est visible. */
+.puces { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); padding-right: 28px; }
+.carte-bienvenue .puces { flex-wrap: wrap; overflow: visible; }
+:is(#filtres-quiz, .puces-theme, .choix-niveau .puces-niveau, .controles-tisane .puces, .carnet-formulaire .modeles, .carte-bienvenue .puces) { -webkit-mask-image: none; mask-image: none; padding-right: 0; }
+@media (min-width: 760px) { .puces { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; padding-right: 0; } }
 
 .puce {
   flex: none;
