@@ -6,7 +6,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Politique de confidentialité · Esprit critique</title>
-  <meta name="description" content="Esprit critique ne collecte pas de données personnelles : sans compte par défaut, sans cookie ni mesure d&#x27;audience ; synchronisation facultative chiffrée sur l&#x27;appareil.">
+  <meta name="description" content="Esprit critique : progression gardée dans le navigateur, sans cookie ni mesure d&#x27;audience ; synchronisation facultative, chiffrée sur l&#x27;appareil.">
   <link rel="canonical" href="https://esprit-critique.github.io/confidentialite.html">
   <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="icone-32.png?v=3" sizes="32x32" type="image/png">
@@ -32,9 +32,10 @@
     <main>
       <article class="carte texte-fixe">
         <h1>Politique de confidentialité</h1>
-        <p class="source">Mise à jour le 11 novembre 2026.</p>
-        <p><strong>En bref : l'éditeur ne collecte aucune donnée personnelle.</strong> Sans compte par défaut : votre progression
-        reste dans votre navigateur. Pas de cookie, de mesure d'audience, de publicité ni de ressource extérieure (polices,
+        <p class="source">Mise à jour le 12 novembre 2026.</p>
+        <p><strong>En bref : sans synchronisation, aucune donnée ne quitte votre navigateur.</strong> Si vous activez la
+        synchronisation, une copie chiffrée de votre progression est gardée chez Cloudflare sous un identifiant dérivé de
+        votre code : ce sont des données pseudonymisées, donc des données personnelles au sens du RGPD (détail plus bas). Pas de cookie, de mesure d'audience, de publicité ni de ressource extérieure (polices,
         scripts ou images d'autres sites). Si vous activez la synchronisation, une copie chiffrée sur votre appareil est
         conservée chez un hébergeur ; personne d'autre que vous ne peut la lire, pas même l'éditeur.</p>
         <h2>Ce qui reste dans votre navigateur</h2>
@@ -49,19 +50,38 @@
         <p>Pour lire le site hors connexion, votre navigateur garde aussi une copie des fichiers du site (service worker).
         Elle ne contient aucune donnée vous concernant.</p>
         <h2>Vos droits sur ces données</h2>
+        <p>Vous les exercez depuis le site, sans compte : l'éditeur ne peut ni lire votre copie en ligne ni la retrouver sans
+        votre code.</p>
         <ul>
-          <li>Les emporter : « Enregistrer dans un fichier », dans <a href="./#guide/donnees">Vos données</a>.</li>
+          <li>Accès et portabilité : « Enregistrer dans un fichier », dans <a href="./#guide/donnees">Vos données</a>.</li>
+          <li>Suppression de la copie en ligne : « Supprimer la copie en ligne », dans
+          <a href="./#profil/reglages">Profil, Réglages</a> (suppression immédiate sur le serveur).</li>
           <li>Les effacer : « Effacer ma progression », au même endroit (les copies automatiques sont effacées aussi), ou en effaçant les données de navigation du site.</li>
           <li>Les fichiers que le site crée (sauvegarde, agenda .ics) sont fabriqués sur votre appareil et ne sont envoyés nulle part.</li>
         </ul>
         <h2>Synchronisation (facultative)</h2>
         <p>Si vous l'activez (Profil, Réglages), votre progression est chiffrée dans votre navigateur (AES-256-GCM) avant
-        d'être envoyée. Sont envoyés : ce contenu chiffré, illisible sans votre code ; sa taille ; un identifiant et un jeton
-        dérivés de votre code. L'hébergeur du serveur (Cloudflare) voit, comme tout hébergeur, l'adresse IP des requêtes.
-        Les données sont conservées dans une base située dans l'Union européenne, tant que vous les utilisez, et supprimées
-        automatiquement après 24 mois sans écriture. Vous pouvez les supprimer à tout moment : Profil, Réglages, « Supprimer
-        la copie en ligne ». Aucune adresse électronique, aucun nom, aucun mot de passe ne sont collectés ; le site ne peut
-        pas récupérer un code perdu. Le code est gardé sur vos appareils connectés, pour pouvoir être réaffiché.</p>
+        d'être envoyée. Le serveur garde, pour chaque copie : un identifiant de 32 caractères dérivé de votre code,
+        l'empreinte (SHA-256) d'un jeton lui aussi dérivé de votre code, le contenu chiffré (256 Ko au plus), un numéro de
+        version, et les dates de création et de dernière écriture. Ni votre code, ni votre pseudonyme, ni votre adresse IP
+        ne sont enregistrés dans cette base. Aucune adresse électronique, aucun nom, aucun mot de passe ne sont collectés ;
+        le site ne peut pas récupérer un code perdu. Le code est gardé sur vos appareils connectés, pour pouvoir être
+        réaffiché.</p>
+        <p>Ces éléments sont des données pseudonymisées : personne ne peut lire le contenu sans votre code, mais ils restent
+        des données personnelles au sens du RGPD.</p>
+        <ul>
+          <li>Base légale : votre consentement (article 6, paragraphe 1, a du RGPD). La synchronisation n'est activée que si
+          vous le demandez ; vous retirez votre consentement en supprimant la copie en ligne.</li>
+          <li>Où : dans une base Cloudflare D1 créée avec la juridiction « Union européenne » (stockage dans l'Union).</li>
+          <li>Combien de temps : tant que vous l'utilisez ; une purge quotidienne supprime toute copie restée 24 mois sans
+          écriture.</li>
+          <li>Sous-traitant : Cloudflare, Inc. (service Cloudflare Workers et base D1), selon son contrat de traitement des
+          données. Comme tout hébergeur, Cloudflare voit l'adresse IP des requêtes, que le serveur du site n'enregistre pas.</li>
+          <li>Transfert hors de l'Union : Cloudflare est une société américaine, et les requêtes peuvent être traitées par
+          ses centres de données hors de l'Union européenne. Ces transferts sont encadrés par la certification de Cloudflare
+          au cadre de protection des données UE–États-Unis (Data Privacy Framework) et, à défaut, par les clauses
+          contractuelles types de la Commission européenne (décision 2021/914).</li>
+        </ul>
         <h2>L'hébergeur</h2>
         <p>Le site est hébergé par GitHub Pages. Comme tout hébergeur, GitHub reçoit les demandes de pages : selon sa
         documentation, l'adresse IP des visiteurs est enregistrée et conservée pour des raisons de sécurité. L'éditeur n'a pas
@@ -73,7 +93,8 @@
         <p>Installer le site comme une application (écran d'accueil) ne transmet rien non plus : votre appareil garde la page
         et ses fichiers.</p>
         <h2>Contact et réclamation</h2>
-        <p>Pour toute question : <a href="https://github.com/esprit-critique/esprit-critique.github.io/issues">tickets du dépôt</a>. Vous pouvez aussi adresser une réclamation à la
+        <p>Pour toute question : <a href="https://github.com/esprit-critique/esprit-critique.github.io/issues">tickets du dépôt</a> (un compte GitHub est nécessaire ; vos droits,
+        eux, s'exercent sans compte, depuis le site). Vous pouvez aussi adresser une réclamation à la
         CNIL (<a href="https://www.cnil.fr">cnil.fr</a>).</p>
       </article>
       <p class="retour-site"><a class="bouton" href="./">Retour au site</a></p>
