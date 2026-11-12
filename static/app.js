@@ -391,6 +391,7 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
     });
     bloc.appendChild(rangee);
     carte.appendChild(bloc);
+    montrer(bloc);
   }
 
   function corriger(option) {
@@ -425,6 +426,7 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
     actions(zoneActions);
     retour.appendChild(zoneActions);
     carte.appendChild(retour);
+    if (!reponseDejaDonnee) montrer(retour);   // le verdict à l'écran sans défiler ; pas au réaffichage d'une réponse
   }
 
   if (reponseDejaDonnee) corriger(reponseDejaDonnee);
@@ -1569,9 +1571,15 @@ function afficherQuiz() {
     suivante.addEventListener("click", () => {
       quiz.index++;
       afficherQuiz();
-      // Immédiat : interrompt le défilement doux vers la correction, qui cacherait la nouvelle situation
-      window.scrollTo({ top: 0, behavior: "instant" });
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "instant" }));
+      // Haut de la nouvelle question, sous l'en-tête collant : le titre et les filtres restent au-dessus, hors du chemin.
+      // Immédiat, et répété à l'image suivante : interrompt le défilement doux vers la correction.
+      const aligner = () => {
+        const entete = document.querySelector(".entete");
+        const haut = entete && getComputedStyle(entete).position === "sticky" ? entete.getBoundingClientRect().bottom : 0;
+        window.scrollTo({ top: window.scrollY + $("zone-quiz").getBoundingClientRect().top - haut - 8, behavior: "instant" });
+      };
+      aligner();
+      requestAnimationFrame(aligner);
     });
     actions.appendChild(suivante);
   });
