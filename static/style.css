@@ -287,6 +287,7 @@ small { font-size: 13px; }
 .recherche-globale { position: relative; order: 2; margin: 14px 0 0; }
 .recherche-champ {
   width: 100%;
+  height: 44px;   /* même hauteur que les boutons de l'en-tête */
   padding: 9px 12px;
   font-size: 16px; /* 16px minimum : évite le zoom automatique de Safari */
   border: 1px solid var(--trait);
@@ -390,7 +391,7 @@ h3.titre-bloc {
 .bouton-danger { color: var(--rouge); border-color: var(--rouge); margin-top: 10px; }
 .bouton:disabled { opacity: 0.4; cursor: default; }
 .bouton.secondaire { background: transparent; color: var(--c-texte, var(--accent)); border-color: var(--c-texte, var(--accent)); }
-.bouton.large { display: block; width: 100%; padding: 13px; font-size: 16px; }
+.bouton.large { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; padding: 8px 13px; font-size: 16px; }   /* 48 px sur une ligne */
 
 .lien {
   border: 0;
