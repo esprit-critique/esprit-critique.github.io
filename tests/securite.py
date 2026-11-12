@@ -93,10 +93,10 @@ if len(set(csps.values())) > 1:
 # ---------- Liste du service worker ----------
 sw = open(os.path.join(STATIC, "sw.js"), encoding="utf-8").read()
 fichiers_sw = {f.split("?")[0] for f in json.loads(re.search(r"const FICHIERS = (\[[\s\S]*?\]);", sw).group(1))}
-# Fichiers volontairement hors du cache : pages fixes (consultées en ligne), fichiers pour les moteurs de recherche et
+# Fichiers volontairement hors du cache : fichiers pour les moteurs de recherche et
 # les aperçus de partage, le service worker lui-même
 HORS_CACHE = {"sw.js", "robots.txt", "sitemap.xml", "google94b657f6d0442a2f.html", "apercu.png", "apercu-en.png",
-              "404.html", "mentions-legales.html", "confidentialite.html", "cgu.html", ".well-known/security.txt"}
+              ".well-known/security.txt"}
 for chemin in publies("*"):
     if os.path.isdir(chemin) or os.path.basename(chemin) == ".DS_Store":
         continue

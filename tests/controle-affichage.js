@@ -19,6 +19,7 @@
 //   image-sans-texte            une image ou un dessin SVG non décoratif sans texte alternatif
 //   contraste-faible            un texte trop peu contrasté avec son fond (WCAG AA : 4,5:1, 3:1 en grands caractères),
 //                               y compris le texte saisi dans un champ (input, textarea, select)
+//   controle-colle              un bouton ou un champ à moins de 8 px d'un texte ou d'un contrôle voisin
 
 (function () {
   const MARGE = 0.5; // tolérance, en pixels ou en unités du viewBox
@@ -213,6 +214,8 @@
       const decrit = s.getAttribute("aria-label") || s.getAttribute("aria-labelledby") || s.querySelector(":scope > title");
       if (!decrit) defauts.push({ type: "image-sans-texte", ou: nomDuDessin(s), texte: "", detail: "dessin SVG ni décoratif (aria-hidden) ni décrit (aria-label)" });
     });
+    // Espacement : un bouton ou un champ à moins de 8 px du texte ou du contrôle voisin (au-dessus, au-dessous, à côté)
+    defauts.push(...controlesColles(vue));
     // Identifiants en double dans toute la page
     const vus = new Set();
     document.querySelectorAll("[id]").forEach(e => {
@@ -221,6 +224,50 @@
     });
     return defauts;
   };
+
+  // Boîtes visibles d'une vue : contrôles (bouton, champ, lien-bouton) et éléments qui portent du texte en propre.
+  // Ne comptent pas : ce qui est dans un dessin, un groupe de puces ou de segments (serrés à dessein,
+  // contrôlés comme un seul bloc), un lien dans une phrase.
+  const CONTROLE = "button, a.bouton, input:not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea, select";
+  function controlesColles(vue) {
+    // Barre fixe ou collante : elle passe par-dessus le reste en défilant ; on ne compare que ce qui est dans la même
+    const flottant = e => { for (let p = e; p && p !== vue; p = p.parentElement) if (/fixed|sticky/.test(getComputedStyle(p).position)) return p; return null; };
+    const visible = e => { const cs = getComputedStyle(e); if (cs.visibility === "hidden" || (cs.position === "absolute" && cs.clip !== "auto")) return null;
+      const r = e.getBoundingClientRect(); return r.width >= 2 && r.height >= 2 ? r : null; };
+    const boites = [];
+    // Une animation en cours (apparition, soulèvement) déplace les boîtes : on les juge une fois immobiles
+    const animes = vue.getAnimations({ subtree: true }).filter(a => a.playState === "running").map(a => a.effect && a.effect.target).filter(Boolean);
+    vue.querySelectorAll("*").forEach(e => {
+      if (animes.some(a => a.contains(e))) return;
+      if (e.closest(".puces, .segment") && !e.matches(".puces, .segment")) return;
+      if (e.closest("svg, [aria-hidden=true], .invisible, .reperes-curseur")) return;   // repères : la graduation du curseur
+      // Contenu d'un bloc replié : Chrome lui garde une boîte (content-visibility), mais rien ne s'affiche
+      const replie = e.closest("details:not([open])"); if (replie && !e.closest("summary")) return;
+      const ctrl = e.matches(CONTROLE) && !(e.matches("a, button.lien") && e.parentElement.closest("p, li") && [...e.parentElement.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()));
+      const texte = !e.matches(CONTROLE) && !e.closest(CONTROLE + ", label") && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
+      const groupeEntier = e.matches(".puces, .segment");
+      if (!ctrl && !texte && !groupeEntier) return;
+      const r = visible(e); if (!r) return;
+      boites.push({ e, r, ctrl: ctrl || groupeEntier, f: flottant(e) });
+    });
+    const defauts = [];
+    const nom = e => e.tagName.toLowerCase() + (e.classList.length ? "." + [...e.classList].join(".") : "");
+    boites.filter(b => b.ctrl).forEach(c => {
+      for (const v of boites) {
+        if (v === c || c.e.contains(v.e) || v.e.contains(c.e) || v.f !== c.f) continue;
+        if (v.ctrl && boites.indexOf(v) < boites.indexOf(c)) continue;   // une paire de contrôles n'est signalée qu'une fois
+        const hx = Math.min(c.r.right, v.r.right) - Math.max(c.r.left, v.r.left);    // recouvrement horizontal
+        const hy = Math.min(c.r.bottom, v.r.bottom) - Math.max(c.r.top, v.r.top);    // recouvrement vertical
+        let ecart = null;
+        if (hx > 1 && hy <= 1) ecart = Math.max(v.r.top - c.r.bottom, c.r.top - v.r.bottom);
+        else if (hy > 1 && hx <= 1) ecart = Math.max(v.r.left - c.r.right, c.r.left - v.r.right);
+        if (ecart !== null && ecart > -1 && ecart < 8 - MARGE) {
+          defauts.push({ type: "controle-colle", ou: nom(c.e.parentElement) + " > " + nom(c.e) + " / " + nom(v.e.parentElement) + " > " + nom(v.e), texte: ((c.e.innerText || c.e.value || c.e.placeholder || "") + " / " + (v.e.innerText || "")).trim().replace(/\s+/g, " ").slice(0, 80), detail: Math.round(ecart) + " px" });
+        }
+      }
+    });
+    return defauts;
+  }
 
   // Toutes les variantes des dessins générés à partir des données
   window.controleDonnees = function () {

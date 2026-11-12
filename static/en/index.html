@@ -45,6 +45,7 @@
 <body>
   <noscript><p class="sans-script">This site needs JavaScript to work: please turn it on in your browser settings. Without an account, no data is sent.</p></noscript>
   <div class="conteneur">
+    <a class="lien-evitement" href="#contenu">Skip to content</a>
     <header class="entete">
       <a class="marque" href="#accueil" title="The two lines are the same length">
         <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
@@ -99,7 +100,7 @@
     <div id="annonce" class="annonce" role="status" aria-live="polite" hidden></div>
 
     <!-- The views: only one is visible at a time, depending on the address (#accueil, #biais, #quiz…) -->
-    <main>
+    <main id="contenu" tabindex="-1">
       <section id="vue-accueil" class="vue" hidden></section>
       <section id="vue-profil" class="vue" hidden></section>
       <section id="vue-parcours" class="vue" hidden></section>
@@ -362,7 +363,7 @@
 
     <footer class="pied">
       <p>Esprit critique · sourced content · your progress stays in your browser, unless you use encrypted sync</p>
-      <p><button class="lien" id="btn-partager">Share the site</button> · <a href="https://github.com/esprit-critique/esprit-critique.github.io">Source code</a> · <a href="#guide/donnees">Your data</a></p>
+      <p><button class="lien" id="btn-partager">Share the site</button> · <a href="https://github.com/esprit-critique/esprit-critique.github.io">Source code</a> · <a href="#guide/donnees">Your data</a> · <a href="#profil/reglages">Profile and settings</a></p>
       <p><a href="legal-notice.html">Legal notice</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms of use</a></p>
       <p class="choix-theme" role="group" aria-label="Display theme">Theme:
         <button type="button" data-theme-choix="auto">Auto</button>

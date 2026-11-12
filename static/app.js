@@ -391,6 +391,7 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
     });
     bloc.appendChild(rangee);
     carte.appendChild(bloc);
+    montrer(bloc);
   }
 
   function corriger(option) {
@@ -425,6 +426,7 @@ function rendreQuestion(carte, q, reponseDejaDonnee, surReponse, actions) {
     actions(zoneActions);
     retour.appendChild(zoneActions);
     carte.appendChild(retour);
+    if (!reponseDejaDonnee) montrer(retour);   // le verdict à l'écran sans défiler ; pas au réaffichage d'une réponse
   }
 
   if (reponseDejaDonnee) corriger(reponseDejaDonnee);
@@ -870,7 +872,9 @@ function afficherAccueil() {
     carteRevision.append(agenda, el("p", "source", "Le fichier reflète les révisions prévues aujourd'hui ; il ne se met pas à jour ensuite. Le refaire après quelques séries."));
   }
   [carteProgressionAccueil(), carteBilanSemaine()].forEach(c => { if (c) laterale.appendChild(c); });
-  laterale.append(carteIllusionDuJour(), carteAuHasard(), carteRevision);
+  // « Au hasard » dans la colonne principale : les deux colonnes finissent à peu près ensemble sur ordinateur
+  principal.appendChild(carteAuHasard());
+  laterale.append(carteIllusionDuJour(), carteRevision);
 
   // Progression
   const stats = statistiques();
@@ -1171,6 +1175,9 @@ function ajouterGroupe(parent, titre, sections) {
   if (!presentes.length) return null;
   const groupe = el(titre ? "section" : "div", titre ? "groupe-fiche" : "tete-fiche");
   if (titre) groupe.appendChild(el("h2", null, titre));
+  // Groupe de tête : intertitre réservé aux lecteurs d'écran (h1, h2, puis h3), placé dans la première section pour
+  // ne rien changer aux marges
+  else presentes[0].prepend(el("h2", "invisible", "L'essentiel"));
   groupe.append(...presentes);
   parent.appendChild(groupe);
   return groupe;
@@ -1304,7 +1311,7 @@ function afficherFiche(type, fiche) {
   rail.setAttribute("aria-label", "Sommaire de la fiche");
   rail.appendChild(el("p", "surtitre", "Sur cette fiche"));
   const sommaire = el("ul", "sommaire-fiche");
-  carte.querySelectorAll("h2").forEach(h => {
+  carte.querySelectorAll("h2:not(.invisible)").forEach(h => {
     const b = el("button", "lien", h.textContent);
     b.type = "button";
     b.addEventListener("click", allerA(h));
@@ -1500,7 +1507,7 @@ function afficherQuiz() {
   if (quiz.mode === "chrono") {
     const fiches = [...INDEX.values()];
     partieChrono(zone, {
-      cle: "quiz", titre: "Quiz chrono", relancer: () => lancerQuiz("tout"),
+      cle: "quiz", titre: "Quiz chrono", relancer: () => lancerQuiz("tout"), retour: "Revenir au quiz", demarrer: true,
       tirer: () => {
         const r = fiches[Math.floor(Math.random() * fiches.length)];
         const q = creerQuestion(r.type, r.fiche);
@@ -1569,9 +1576,15 @@ function afficherQuiz() {
     suivante.addEventListener("click", () => {
       quiz.index++;
       afficherQuiz();
-      // Immédiat : interrompt le défilement doux vers la correction, qui cacherait la nouvelle situation
-      window.scrollTo({ top: 0, behavior: "instant" });
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "instant" }));
+      // Haut de la nouvelle question, sous l'en-tête collant : le titre et les filtres restent au-dessus, hors du chemin.
+      // Immédiat, et répété à l'image suivante : interrompt le défilement doux vers la correction.
+      const aligner = () => {
+        const entete = document.querySelector(".entete");
+        const haut = entete && getComputedStyle(entete).position === "sticky" ? entete.getBoundingClientRect().bottom : 0;
+        window.scrollTo({ top: window.scrollY + $("zone-quiz").getBoundingClientRect().top - haut - 8, behavior: "instant" });
+      };
+      aligner();
+      requestAnimationFrame(aligner);
     });
     actions.appendChild(suivante);
   });
@@ -1665,6 +1678,11 @@ function afficherPage() {
   if (!((vue === "biais" || vue === "sophismes") && id)) TIRAGE.actif = false;
   const versDefi = vue === "defi" && !id;
   const defiLibre = vue === "defi" && id !== undefined ? id : null;
+  // Adresse inconnue (#inexistant, #biais/inexistant, #tests/inexistant) : la page la plus proche, et un message
+  // dans la zone d'annonce, lue par les lecteurs d'écran
+  const inconnue = (vue && vue !== "defi" && !ONGLET_DE[vue]) || ((vue === "biais" || vue === "sophismes") && id && !trouverFiche(vue, id))
+    || ((vue === "chiffres" || vue === "tests") && id && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id));
+  if (inconnue) setTimeout(() => annoncer(T("Cette page n'existe pas.")), 0);
   if (!ONGLET_DE[vue]) vue = "accueil";
   // Sans identifiant, les jeux et les expériences renvoient à la liste des ateliers
   if ((vue === "chiffres" || vue === "tests") && !(vue === "chiffres" ? JEUX : EXPERIENCES).some(a => a.id === id)) vue = "ateliers";
@@ -1680,12 +1698,12 @@ function afficherPage() {
     if (actif) o.setAttribute("aria-current", "page"); else o.removeAttribute("aria-current");
   });
   Object.values(SECTION_DE).forEach(s => { $(s).hidden = s !== SECTION_DE[vue]; });
-  // Relance la petite animation d'apparition
+  // Relance la petite animation d'apparition, seulement là où elle existe : avec les transitions de vue, le navigateur
+  // fait le fondu et l'animation CSS est désactivée (style.css). Sans lecture de géométrie (offsetWidth forçait une
+  // mise en page au milieu des écritures) : le même mouvement que @keyframes entree, par animer().
   const section = $(SECTION_DE[vue]);
-  if (precedent.vue !== vue || precedent.id !== id) {
-    section.classList.remove("vue");
-    void section.offsetWidth;
-    section.classList.add("vue");
+  if ((precedent.vue !== vue || precedent.id !== id) && typeof document.startViewTransition !== "function") {
+    animer(section, [{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }], { duration: 180, easing: "ease-out" });
   }
 
   let titre = "";
@@ -1777,7 +1795,7 @@ function afficherPage() {
     champ.setAttribute("aria-expanded", "false");
     champ.removeAttribute("aria-activedescendant");
     champ.value = etat.recherche;
-    champ.placeholder = vue === "biais" ? "Rechercher un biais, un auteur, un cas…" : "Rechercher un sophisme, un auteur, un cas…";
+    champ.placeholder = vue === "biais" ? "Chercher un biais, un cas…" : "Chercher un sophisme, un cas…";
   } else {
     if (rechercheEnFiches) champ.value = "";
     champ.placeholder = "Chercher partout…";
@@ -1790,6 +1808,9 @@ function afficherPage() {
 }
 
 // ===================== Branchements =====================
+
+// Lien d'évitement : le focus passe au contenu, sans toucher à l'adresse (« #contenu » n'est pas une page)
+document.querySelector(".lien-evitement").addEventListener("click", e => { e.preventDefault(); $("contenu").focus(); });
 
 // Transition de vue entre deux pages quand le navigateur la connaît (amélioration progressive, DESIGN.md « Mouvement »)
 window.addEventListener("hashchange", () => transitionDeVue(afficherPage));
@@ -1926,15 +1947,24 @@ $("fichier-import").addEventListener("change", e => {
 
 // Petit message temporaire en bas de l'écran
 let minuterieAnnonce;
+// Sur une fiche, la notification se tient au-dessus de la barre d'actions, qu'elle soit collée ou non : position
+// relue au défilement tant que la notification est affichée
+function placerAnnonce() {
+  const barre = document.querySelector("#vue-fiches:not([hidden]) .barre-fiche");
+  const haut = barre && barre.getClientRects().length ? barre.getBoundingClientRect().top : Infinity;
+  $("annonce").style.setProperty("--au-dessus", haut < innerHeight ? (innerHeight - haut + 8) + "px" : "0px");
+}
 function annoncer(texte) {
   const a = $("annonce");
   a.textContent = typo(texte);
+  placerAnnonce();
+  window.addEventListener("scroll", placerAnnonce, { passive: true });
   a.hidden = false;
   a.classList.remove("visible");
   void a.offsetWidth;
   a.classList.add("visible");
   clearTimeout(minuterieAnnonce);
-  minuterieAnnonce = setTimeout(() => { a.classList.remove("visible"); setTimeout(() => { a.hidden = true; }, 300); }, 3200);
+  minuterieAnnonce = setTimeout(() => { a.classList.remove("visible"); setTimeout(() => { a.hidden = true; window.removeEventListener("scroll", placerAnnonce); }, 300); }, 3200);
 }
 
 // Partager le site : menu de partage du téléphone, ou copie du lien

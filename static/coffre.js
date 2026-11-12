@@ -268,7 +268,10 @@ function majStatutSynchro(statut, detail) {
   if (pastille) {
     pastille.hidden = statut === "inactif";
     pastille.dataset.statut = statut;
-    pastille.setAttribute("aria-label", T(STATUTS_SYNCHRO[statut]) + (detail ? " : " + detail : ""));
+    // Un role=status n'annonce que son texte : libellé dans un texte invisible, infobulle pour la souris
+    const libelle = T(STATUTS_SYNCHRO[statut]) + (detail ? " : " + detail : "");
+    pastille.replaceChildren(el("span", "invisible", libelle));
+    pastille.title = libelle;
   }
   const p = document.querySelector(".statut-synchro");
   if (p) p.textContent = typo(T(STATUTS_SYNCHRO[statut]) + (detail ? " (" + detail + ")" : ""));
@@ -289,7 +292,7 @@ async function blocSynchro() {
       const code = await creerCompteSynchro().catch(e => { annoncer(e.message); return null; });
       if (code) { montrerCode(bloc, code); }
     });
-    const champ = el("input", "champ");
+    const champ = el("input", "champ champ-texte");
     champ.id = "code-synchro";
     champ.autocomplete = "off";
     champ.setAttribute("autocapitalize", "characters");

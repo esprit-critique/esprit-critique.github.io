@@ -448,6 +448,9 @@ f.onload = async () => {
 
     // ---------- Quiz chrono ----------
     await aller("quiz/chrono");
+    // Le compte à rebours attend « Démarrer » : rien ne décompte à l'ouverture
+    ok("quiz chrono : rien ne décompte avant « Démarrer »", !/Reste/.test(vue().textContent) && vue().querySelectorAll(".choix").length === 0);
+    [...vue().querySelectorAll("button")].find(b => /Démarrer/.test(b.textContent)).click(); await pause(5);
     ok("quiz chrono : chronomètre en texte, question à quatre propositions", /Reste : 60 s/.test(vue().textContent.replace(/[\u202f\u00a0]/g, " ")) && vue().querySelectorAll(".choix").length === 4);
     const qChrono = w.eval("quiz");
     vue().querySelectorAll(".choix")[0].click(); await pause(5);

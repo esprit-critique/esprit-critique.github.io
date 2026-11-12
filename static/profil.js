@@ -155,8 +155,9 @@ function blason(pseudo, taille) {
 function majBoutonProfil(m, etat) {
   const b = document.querySelector(".bouton-profil");
   if (!b) return;
-  b.hidden = modeSobre();
-  if (b.hidden) return;
+  // Mode sobre : bouton neutre (blason seul), pour que le profil et ses réglages restent atteignables
+  b.classList.toggle("sobre", modeSobre());
+  if (modeSobre()) { b.replaceChildren(blason((lire("profil", {}) || {}).pseudo, 26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
   etat = etat || lire("maitrise", { meilleure: 0, jours: {} });
   const globale = m ? m.globale : (Object.entries(etat.jours || {}).sort((a, x) => x[0] - a[0])[0] || [0, [0]])[1][0];
   const grade = gradeDe(etat.meilleure || 0);
@@ -210,6 +211,8 @@ function afficherPageProfil(onglet) {
   zone.appendChild(onglets);
   const panneau = el("div", "panneau-profil");
   panneau.setAttribute("role", "tabpanel");
+  // Titre de l'onglet, pour les lecteurs d'écran : les blocs du panneau (h3) viennent ainsi après un h2
+  panneau.appendChild(el("h2", "invisible", ONGLETS_PROFIL.find(([o]) => o === ongletProfil)[1]));
   zone.appendChild(panneau);
   // Onglet tiré de l'adresse : choix fermé, la vue d'ensemble par défaut
   switch (ongletProfil) {
@@ -286,19 +289,22 @@ function etatCodex(cle) {
   if (m) return 2;
   return lire("fichesLues", []).includes(cle) ? 1 : 0;
 }
-function codex(taille) {
+// mini : dessin décoratif de l'accueil (un seul lien autour, vers le profil) : ni lien par point, ni texte
+function codex(taille, mini) {
   // Dans l'ordre des catégories : les points d'une même couleur forment un arc
   const cles = Object.keys(TYPES).flatMap(t => ORDRE[t].map(f => [t, f]));
-  const s = svg("svg", { viewBox: "0 0 300 300", class: "codex", width: taille, height: taille, role: "img", "aria-label": T("Le codex : {0} notions maîtrisées sur {1}", cles.filter(([t, f]) => etatCodex(cleFiche(t, f)) === 4).length, cles.length) });
+  const s = svg("svg", { viewBox: "0 0 300 300", class: "codex", width: taille, height: taille, role: "img", ...(mini ? { "aria-hidden": "true" } : {}), "aria-label": T("Le codex : {0} notions maîtrisées sur {1}", cles.filter(([t, f]) => etatCodex(cleFiche(t, f)) === 4).length, cles.length) });
   const n = cles.length;
   cles.forEach(([type, f], i) => {
     const a = -Math.PI / 2 + 2 * Math.PI * i / n, etat = etatCodex(cleFiche(type, f));
     const lien = svg("a", { href: "#" + type + "/" + f.id, "aria-label": f.nom + " : " + T(ETATS_CODEX[etat]) });
     const point = svg("circle", { cx: 150 + 122 * Math.cos(a), cy: 150 + 122 * Math.sin(a), r: 3 + etat * 1.1, class: "codex-point etat-" + etat });
     point.style.setProperty("--c", COULEURS[f.categorie]);
+    if (mini) { s.appendChild(point); return; }
     lien.appendChild(point);
     s.appendChild(lien);
   });
+  if (mini) return s;
   const maitrisees = cles.filter(([t, f]) => etatCodex(cleFiche(t, f)) === 4).length;
   s.append(texteSvg(150, 150, String(maitrisees), { class: "codex-nombre", "text-anchor": "middle" }), texteSvg(150, 172, T("notions maîtrisées sur {0}", n), { class: "graduation-graphique", "text-anchor": "middle" }));
   return s;
@@ -339,7 +345,7 @@ function ongletDistinctions(p) {
 
 function ongletReglages(p) {
   const profil = lire("profil", {}) || {};
-  const champ = el("input", "champ");
+  const champ = el("input", "champ champ-texte");
   champ.maxLength = 24;
   champ.value = profil.pseudo || "";
   champ.id = "pseudo-profil";
@@ -364,6 +370,26 @@ function ongletReglages(p) {
   caseSobre.addEventListener("change", () => { ecrire("reglages", { ...lire("reglages", {}), sobre: caseSobre.checked }); majBoutonProfil(); afficherPageProfil(); });
   sobre.append(caseSobre, texteNoeud(" " + T("Mode sobre : cacher la maîtrise, les grades, les points et les distinctions (tout continue d'être compté)")));
   p.appendChild(sobre);
+  // Thème et animations : les choix du pied de page, repris ici ; un clic actionne le bouton du pied, qui applique le
+  // réglage et met à jour l'état (aria-pressed) des deux rangées
+  [["Thème", "theme-choix", [["auto", "Auto"], ["light", "Clair"], ["dark", "Sombre"]]],
+    ["Animations", "animations-choix", [["auto", "Automatiques"], ["reduites", "Réduites"]]]].forEach(([titre, attribut, choix]) => {
+    p.appendChild(el("p", "consigne", titre));
+    const groupe = el("div", "puces");
+    groupe.setAttribute("role", "group");
+    groupe.setAttribute("aria-label", T(titre));
+    choix.forEach(([valeur, libelle]) => {
+      const pied = document.querySelector(".pied [data-" + attribut + '="' + valeur + '"]');
+      const b = el("button", "puce", libelle);
+      b.type = "button";
+      b.setAttribute("data-" + attribut, valeur);
+      b.setAttribute("aria-pressed", pied ? pied.getAttribute("aria-pressed") : "false");
+      if (pied) b.addEventListener("click", () => pied.click());
+      groupe.appendChild(b);
+    });
+    p.appendChild(groupe);
+  });
+  p.appendChild(lienVers("#guide/donnees", "Vos données : sauvegarde, import, effacement", "lien-discret"));
   // Synchronisation chiffrée (coffre.js), seulement si elle est en service
   const place = el("div");
   p.appendChild(place);
@@ -371,7 +397,6 @@ function ongletReglages(p) {
   const installer = boutonInstallation();
   if (installer) p.appendChild(installer);
   p.appendChild(lienVers("#guide/maitrise", "Comment votre maîtrise est calculée", "lien-discret"));
-  p.appendChild(el("br"));
   p.appendChild(lienVers("#guide/motivation", "Comment ce site essaie de vous motiver", "lien-discret"));
 }
 
@@ -397,8 +422,9 @@ function carteProgressionAccueil() {
   }
   const roue = el("a", "codex-mini");
   roue.href = "#profil/notions";
-  roue.setAttribute("aria-label", T("Le codex des notions"));
-  roue.appendChild(codex(120));
+  const dessin = codex(120, true);
+  roue.setAttribute("aria-label", dessin.getAttribute("aria-label"));
+  roue.appendChild(dessin);
   carte.append(roue, lienVers("#profil", "Votre profil →", "lien-discret"));
   return carte;
 }

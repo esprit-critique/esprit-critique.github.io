@@ -95,11 +95,17 @@ function graphiqueToile(titre, axes, valeurs, anciennes, max) {
   axes.forEach((nom, i) => {
     s.appendChild(svg("line", { x1: c, y1: c, x2: pt(i, max)[0], y2: pt(i, max)[1], class: "grille-toile" }));
     const [lx, ly] = pt(i, max * 1.2);
-    s.appendChild(texteSvg(lx, ly, nom, { class: "libelle-graphique", "text-anchor": lx < c - 10 ? "end" : lx > c + 10 ? "start" : "middle" }));
+    // Nom long : sur deux lignes, coupé à l'espace le plus proche du milieu, pour tenir dans le cadre
+    const espaces = [...nom.matchAll(/ /g)].map(m => m.index);
+    const coupe = nom.length > 12 && espaces.length ? espaces.reduce((a, b) => Math.abs(b - nom.length / 2) < Math.abs(a - nom.length / 2) ? b : a) : -1;
+    const lignes = coupe < 0 ? [nom] : [nom.slice(0, coupe), nom.slice(coupe + 1)];
+    lignes.forEach((ligne, k) => s.appendChild(texteSvg(lx, ly + (k - (lignes.length - 1) / 2) * 17, ligne, { class: "libelle-graphique", "text-anchor": lx < c - 10 ? "end" : lx > c + 10 ? "start" : "middle" })));
   });
   if (anciennes) s.appendChild(svg("polygon", { points: anciennes.map((v, i) => pt(i, v).join(",")).join(" "), class: "toile-ancienne" }));
   s.appendChild(svg("polygon", { points: valeurs.map((v, i) => pt(i, v).join(",")).join(" "), class: "toile-actuelle" }));
   valeurs.forEach((v, i) => {
+    // Les zéros se superposeraient au centre : non écrits ici, ils restent dans le tableau des données
+    if (v === 0) return;
     const [x, y] = pt(i, Math.max(v, max * 0.12));
     s.appendChild(texteSvg(x, y + 4, String(v), { class: "valeur-graphique", "text-anchor": "middle" }));
   });

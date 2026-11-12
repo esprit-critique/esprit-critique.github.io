@@ -191,6 +191,14 @@ function noterPartieEntiere(id, niveau, justes) {
 // options : { cle, titre, tirer() → { texte, options, juste, explication }, relancer() }
 function partieChrono(zone, options) {
   zone.replaceChildren();
+  // demarrer : le compte à rebours attend un clic (le quiz rouvre ce mode au chargement de #quiz)
+  if (options.demarrer) {
+    const b = el("button", "bouton large", "Démarrer");
+    b.type = "button";
+    b.addEventListener("click", () => partieChrono(zone, { ...options, demarrer: false }));
+    zone.append(el("p", "consigne", T("{0} : 60 secondes", T(options.titre))), b);
+    return;
+  }
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let score = 0, bonnes = 0, erreurs = 0, reste = 60, termine = false;
   const temps = el("p", "chrono-temps"), points = el("p", "chrono-points");
@@ -230,15 +238,17 @@ function partieChrono(zone, options) {
     clearInterval(minuteur);
     const records = lire("chrono", {});
     const ancien = records[options.cle];
-    const nouveau = ancien === undefined || score > ancien;
+    const joue = bonnes + erreurs > 0;   // partie sans réponse : ni record, ni points, ni activité
+    const nouveau = joue && (ancien === undefined || score > ancien);
     if (nouveau) { records[options.cle] = score; ecrire("chrono", records); }
-    noterActivite();
-    if (options.cle === "quiz") gagner("chrono", score);
+    if (joue) noterActivite();
+    if (joue && options.cle === "quiz") gagner("chrono", score);
     zone.replaceChildren();
     zone.append(el("p", "consigne", "Temps écoulé"), el("p", "grand-score", typo(signe(score) + " points")),
       paragraphe(T("{0}, {1} (chaque erreur retire 2 points).", pluriel(bonnes, "bonne réponse", "bonnes réponses"), pluriel(erreurs, "erreur"))),
-      el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", ancien === undefined ? "Premier record enregistré." : nouveau ? T("Nouveau record ! L'ancien était de {0} points.", signe(ancien)) : T("Votre record : {0} points.", signe(ancien))));
-    boutonRejouer(zone, options.relancer, "Revenir à l'atelier");
+      el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", !joue ? "Aucune réponse : rien n'est enregistré." : ancien === undefined ? "Premier record enregistré." : nouveau ? T("Nouveau record ! L'ancien était de {0} points.", signe(ancien)) : T("Votre record : {0} points.", signe(ancien))));
+    if (options.retour) boutonRejouer(zone, () => partieChrono(zone, { ...options, demarrer: false }), "Rejouer le chrono");
+    boutonRejouer(zone, options.relancer, options.retour || "Revenir à l'atelier");
   };
   // Le temps restant se lit sur l'horloge : un navigateur ralentit les minuteurs d'un onglet en arrière-plan
   // (Safari, iPhone), et compter les déclenchements allongerait la partie au-delà de 60 secondes

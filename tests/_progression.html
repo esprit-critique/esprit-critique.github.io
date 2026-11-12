@@ -182,8 +182,11 @@ f.onload = async () => {
     w.location.hash = "accueil-sobre"; w.location.hash = "accueil";
     await pause(200);
     w.gagner("vf-jour", true);
-    ok("mode sobre : bouton de profil caché, carte de maîtrise absente, points toujours comptés",
-      d2.querySelector(".bouton-profil").hidden === true && !d2.querySelector(".carte-progression-v2") && JSON.parse(w.localStorage.getItem("lucidite")).total === avant + 13);
+    // Mode sobre : le bouton reste (blason seul, sans score ni grade) pour que le profil et ses réglages restent atteignables
+    const bp = d2.querySelector(".bouton-profil");
+    ok("mode sobre : bouton de profil neutre (sans maîtrise), carte de maîtrise absente, points toujours comptés",
+      !bp.hidden && bp.classList.contains("sobre") && !/maîtrise/.test(bp.getAttribute("aria-label")) && !bp.querySelector(".insigne, .anneau-profil")
+      && !d2.querySelector(".carte-progression-v2") && JSON.parse(w.localStorage.getItem("lucidite")).total === avant + 13);
     w.localStorage.setItem("reglages", JSON.stringify({}));
     w.location.hash = "profil/ensemble";
     await pause(300);
