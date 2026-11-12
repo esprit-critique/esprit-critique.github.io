@@ -6,7 +6,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Privacy policy · Esprit critique</title>
-  <meta name="description" content="Esprit critique collects no personal data: no account by default, no cookies or audience tracking; optional sync, encrypted on your device.">
+  <meta name="description" content="Esprit critique: progress kept in your browser, no cookies or audience tracking; optional sync, encrypted on your device.">
   <link rel="canonical" href="https://esprit-critique.github.io/en/privacy.html">
   <link rel="icon" href="../favicon.svg?v=3" type="image/svg+xml">
   <link rel="icon" href="../icone-32.png?v=3" sizes="32x32" type="image/png">
@@ -32,9 +32,10 @@
     <main>
       <article class="carte texte-fixe">
         <h1>Privacy policy</h1>
-        <p class="source">Last updated 11 November 2026.</p>
-        <p><strong>In short: the publisher collects no personal data.</strong> No account by default: your progress stays in your
-        browser. No cookies, audience tracking, advertising or external resources (fonts, scripts or images from other sites).
+        <p class="source">Last updated 12 November 2026.</p>
+        <p><strong>In short: without sync, no data leaves your browser.</strong> If you turn on sync, an encrypted copy of your
+        progress is kept by Cloudflare under an identifier derived from your code: this is pseudonymised data, and therefore
+        personal data under the GDPR (details below). No cookies, audience tracking, advertising or external resources (fonts, scripts or images from other sites).
         If you turn on sync, a copy encrypted on your device is kept by a host; no one but you can read it, not even the publisher.</p>
         <h2>What stays in your browser</h2>
         <p>Your progress is saved in your browser’s local storage (“localStorage”): entries marked as learned, quiz answers
@@ -48,19 +49,35 @@
         <p>To let you read the site offline, your browser also keeps a copy of the site’s files (a service worker).
         It contains no data about you.</p>
         <h2>Your rights over this data</h2>
+        <p>You exercise them from the site, with no account: the publisher can neither read your online copy nor find it
+        without your code.</p>
         <ul>
-          <li>Take it with you: “Save to a file”, in <a href="./#guide/donnees">Your data</a>.</li>
+          <li>Access and portability: “Save to a file”, in <a href="./#guide/donnees">Your data</a>.</li>
+          <li>Deleting the online copy: “Delete the online copy”, in <a href="./#profil/reglages">Profile, Settings</a>
+          (immediate deletion on the server).</li>
           <li>Erase it: “Erase my progress”, in the same place (the automatic copies are erased too), or by clearing the site’s browsing data.</li>
           <li>The files the site creates (backup, .ics calendar) are produced on your device and are not sent anywhere.</li>
         </ul>
         <h2>Sync (optional)</h2>
         <p>If you turn it on (Profile, Settings), your progress is encrypted in your browser (AES-256-GCM) before being sent.
-        What is sent: this encrypted content, unreadable without your code; its size; an identifier and a token derived from
-        your code. The server’s host (Cloudflare), like any host, sees the IP address of requests. The data is kept in a
-        database located in the European Union, for as long as you use it, and deleted automatically after 24 months without
-        a write. You can delete it at any time: Profile, Settings, “Delete the online copy”. No email address, name or
-        password is collected; the site cannot recover a lost code. The code is kept on your signed-in devices so that it
-        can be shown again.</p>
+        For each copy, the server keeps: a 32-character identifier derived from your code, the fingerprint (SHA-256) of a token
+        also derived from your code, the encrypted content (256 KB at most), a version number, and the dates of creation and
+        last write. Neither your code, nor your nickname, nor your IP address is recorded in this database. No email address,
+        name or password is collected; the site cannot recover a lost code. The code is kept on your signed-in devices so
+        that it can be shown again.</p>
+        <p>This is pseudonymised data: no one can read the content without your code, but it remains personal data under
+        the GDPR.</p>
+        <ul>
+          <li>Legal basis: your consent (Article 6(1)(a) GDPR). Sync is only turned on if you ask for it; you withdraw your
+          consent by deleting the online copy.</li>
+          <li>Where: in a Cloudflare D1 database created with the “European Union” jurisdiction (storage in the Union).</li>
+          <li>How long: as long as you use it; a daily purge deletes any copy left 24 months without a write.</li>
+          <li>Processor: Cloudflare, Inc. (Cloudflare Workers service and D1 database), under its data processing agreement.
+          Like any host, Cloudflare sees the IP address of requests, which the site’s server does not record.</li>
+          <li>Transfer outside the Union: Cloudflare is an American company, and requests may be handled by its data centres
+          outside the European Union. These transfers are covered by Cloudflare’s certification under the EU–US Data Privacy
+          Framework and, failing that, by the European Commission’s standard contractual clauses (Decision 2021/914).</li>
+        </ul>
         <h2>The host</h2>
         <p>The site is hosted by GitHub Pages. Like any host, GitHub receives requests for pages: according to its
         documentation, visitors’ IP addresses are recorded and kept for security reasons. The publisher has no
@@ -71,7 +88,8 @@
         to your files: they go through no server.</p>
         <p>Installing the site as an app (home screen) sends nothing either: your device keeps the page and its files.</p>
         <h2>Contact and complaints</h2>
-        <p>For any question: <a href="https://github.com/esprit-critique/esprit-critique.github.io/issues">the repository’s issues</a>. You may also lodge a complaint with the
+        <p>For any question: <a href="https://github.com/esprit-critique/esprit-critique.github.io/issues">the repository’s issues</a> (a GitHub account is required; your rights,
+        however, are exercised from the site, with no account). You may also lodge a complaint with the
         CNIL, the French data protection authority (<a href="https://www.cnil.fr/en">cnil.fr</a>).</p>
       </article>
       <p class="retour-site"><a class="bouton" href="./">Back to the site</a></p>

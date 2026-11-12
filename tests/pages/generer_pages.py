@@ -7,7 +7,7 @@ import os, re, html, base64, hashlib
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "..", "static")
-MAJ = "11 novembre 2026"
+MAJ = "12 novembre 2026"
 
 # Même CSP et même script de thème que la page principale de la langue (le script est autorisé par son empreinte) :
 # la page française redirige vers en/ si l'anglais a été choisi, la page anglaise non, d'où un gabarit par langue
@@ -108,18 +108,43 @@ page("mentions-legales.html", "Mentions légales", "Éditeur, hébergeur et lice
         <h2>Propriété intellectuelle</h2>
         <p>Le code du site est sous licence MIT ; les textes (fiches, questions, explications, guide) sous licence
         Creative Commons Attribution 4.0 (CC BY 4.0) : vous pouvez les reprendre et les adapter en citant « Esprit critique,
-        par GOATier ». Les données de la Banque mondiale sont sous licence CC BY 4.0 ; les autres chiffres proviennent des
-        sources publiques indiquées à côté de chacun. Détail : <a href="{DEPOT}/blob/main/LICENCE-CONTENU.md">licence des contenus</a>.
+        par GOATier ». Cette licence couvre les textes du site, pas les données d'autres organismes. Les données de la Banque
+        mondiale sont sous licence CC BY 4.0, à l'exception des indicateurs qu'elle reprend d'autres organismes (dépenses
+        militaires du SIPRI, réfugiés du HCR, chômage de l'OIT, sous-alimentation de la FAO, femmes au parlement de l'Union
+        interparlementaire), qui restent soumis aux conditions de leur producteur. Chaque chiffre reste soumis aux
+        conditions de la source indiquée à côté de lui. Détail : <a href="{DEPOT}/blob/main/LICENCE-CONTENU.md">licence des contenus</a>.
         Les titres sont composés en Newsreader (Production Type), sous <a href="polices/OFL.txt">licence SIL Open Font License 1.1</a>.</p>
+        <h2>Sources des chiffres et attribution</h2>
+        <p>Les chiffres du site viennent des sources suivantes, citées comme chacune le demande :</p>
+        <ul>
+          <li>Banque mondiale : « The World Bank, World Development Indicators » (licence CC BY 4.0).</li>
+          <li>SIPRI (dépenses militaires, reprises par la Banque mondiale) : « Information from the Stockholm International Peace
+          Research Institute (SIPRI) Military Expenditure Database », <a href="https://doi.org/10.55163/CQGC9685">doi.org/10.55163/CQGC9685</a>.
+          Usage non commercial, d'une petite partie du jeu de données (moins de 10 %), comme le permettent ses conditions.</li>
+          <li>HCR (réfugiés) : « UNHCR Refugee Population Statistics Database » (licence CC BY 4.0,
+          <a href="https://www.unhcr.org/terms-use-datasets">conditions d'utilisation</a>).</li>
+          <li>OIT (chômage) : base ILOSTAT de l'Organisation internationale du Travail (licence CC BY 4.0).</li>
+          <li>FAO (sous-alimentation, superficies, forêts) : « FAO, [année], [base de données], licence CC BY 4.0 ».</li>
+          <li>Union interparlementaire (femmes au parlement) : base Parline, via la Banque mondiale.</li>
+          <li>OMS (causes de décès, santé) : « OMS, [titre du jeu de données], [année], [date de consultation] », avec les pays
+          qui ont fourni les données. Ces données ne sont reprises qu'à des fins d'information sur la santé publique, sans
+          promotion ni vente ; le nom et l'emblème de l'OMS ne servent pas à présenter le site.</li>
+          <li>EM-DAT (catastrophes naturelles) : « EM-DAT, CRED / UCLouvain, Bruxelles, Belgique, www.emdat.be ». Seuls deux
+          chiffres agrégés sont cités ; la base n'est pas redistribuée.</li>
+          <li>Gapminder : « Based on free material from GAPMINDER.ORG, CC-BY LICENSE ».</li>
+          <li>Autres sources (ONU, Insee, NASA, Our World in Data, études scientifiques…) : citées à côté de chaque chiffre,
+          selon leurs propres conditions.</li>
+        </ul>
         <h2>Contenus fictifs</h2>
         <p>Les situations, dialogues, débats, sites et organismes des exercices sont fictifs ; toute ressemblance avec des
         personnes ou des organisations existantes serait fortuite. Les études et les chiffres réels sont signalés comme tels,
         avec leur source.</p>''')
 
-page("confidentialite.html", "Politique de confidentialité", "Esprit critique ne collecte pas de données personnelles : sans compte par défaut, sans cookie ni mesure d'audience ; synchronisation facultative chiffrée sur l'appareil.", f'''        <h1>Politique de confidentialité</h1>
+page("confidentialite.html", "Politique de confidentialité", "Esprit critique : progression gardée dans le navigateur, sans cookie ni mesure d'audience ; synchronisation facultative, chiffrée sur l'appareil.", f'''        <h1>Politique de confidentialité</h1>
         <p class="source">Mise à jour le {MAJ}.</p>
-        <p><strong>En bref : l'éditeur ne collecte aucune donnée personnelle.</strong> Sans compte par défaut : votre progression
-        reste dans votre navigateur. Pas de cookie, de mesure d'audience, de publicité ni de ressource extérieure (polices,
+        <p><strong>En bref : sans synchronisation, aucune donnée ne quitte votre navigateur.</strong> Si vous activez la
+        synchronisation, une copie chiffrée de votre progression est gardée chez Cloudflare sous un identifiant dérivé de
+        votre code : ce sont des données pseudonymisées, donc des données personnelles au sens du RGPD (détail plus bas). Pas de cookie, de mesure d'audience, de publicité ni de ressource extérieure (polices,
         scripts ou images d'autres sites). Si vous activez la synchronisation, une copie chiffrée sur votre appareil est
         conservée chez un hébergeur ; personne d'autre que vous ne peut la lire, pas même l'éditeur.</p>
         <h2>Ce qui reste dans votre navigateur</h2>
@@ -134,19 +159,38 @@ page("confidentialite.html", "Politique de confidentialité", "Esprit critique n
         <p>Pour lire le site hors connexion, votre navigateur garde aussi une copie des fichiers du site (service worker).
         Elle ne contient aucune donnée vous concernant.</p>
         <h2>Vos droits sur ces données</h2>
+        <p>Vous les exercez depuis le site, sans compte : l'éditeur ne peut ni lire votre copie en ligne ni la retrouver sans
+        votre code.</p>
         <ul>
-          <li>Les emporter : « Enregistrer dans un fichier », dans <a href="./#guide/donnees">Vos données</a>.</li>
+          <li>Accès et portabilité : « Enregistrer dans un fichier », dans <a href="./#guide/donnees">Vos données</a>.</li>
+          <li>Suppression de la copie en ligne : « Supprimer la copie en ligne », dans
+          <a href="./#profil/reglages">Profil, Réglages</a> (suppression immédiate sur le serveur).</li>
           <li>Les effacer : « Effacer ma progression », au même endroit (les copies automatiques sont effacées aussi), ou en effaçant les données de navigation du site.</li>
           <li>Les fichiers que le site crée (sauvegarde, agenda .ics) sont fabriqués sur votre appareil et ne sont envoyés nulle part.</li>
         </ul>
         <h2>Synchronisation (facultative)</h2>
         <p>Si vous l'activez (Profil, Réglages), votre progression est chiffrée dans votre navigateur (AES-256-GCM) avant
-        d'être envoyée. Sont envoyés : ce contenu chiffré, illisible sans votre code ; sa taille ; un identifiant et un jeton
-        dérivés de votre code. L'hébergeur du serveur (Cloudflare) voit, comme tout hébergeur, l'adresse IP des requêtes.
-        Les données sont conservées dans une base située dans l'Union européenne, tant que vous les utilisez, et supprimées
-        automatiquement après 24 mois sans écriture. Vous pouvez les supprimer à tout moment : Profil, Réglages, « Supprimer
-        la copie en ligne ». Aucune adresse électronique, aucun nom, aucun mot de passe ne sont collectés ; le site ne peut
-        pas récupérer un code perdu. Le code est gardé sur vos appareils connectés, pour pouvoir être réaffiché.</p>
+        d'être envoyée. Le serveur garde, pour chaque copie : un identifiant de 32 caractères dérivé de votre code,
+        l'empreinte (SHA-256) d'un jeton lui aussi dérivé de votre code, le contenu chiffré (256 Ko au plus), un numéro de
+        version, et les dates de création et de dernière écriture. Ni votre code, ni votre pseudonyme, ni votre adresse IP
+        ne sont enregistrés dans cette base. Aucune adresse électronique, aucun nom, aucun mot de passe ne sont collectés ;
+        le site ne peut pas récupérer un code perdu. Le code est gardé sur vos appareils connectés, pour pouvoir être
+        réaffiché.</p>
+        <p>Ces éléments sont des données pseudonymisées : personne ne peut lire le contenu sans votre code, mais ils restent
+        des données personnelles au sens du RGPD.</p>
+        <ul>
+          <li>Base légale : votre consentement (article 6, paragraphe 1, a du RGPD). La synchronisation n'est activée que si
+          vous le demandez ; vous retirez votre consentement en supprimant la copie en ligne.</li>
+          <li>Où : dans une base Cloudflare D1 créée avec la juridiction « Union européenne » (stockage dans l'Union).</li>
+          <li>Combien de temps : tant que vous l'utilisez ; une purge quotidienne supprime toute copie restée 24 mois sans
+          écriture.</li>
+          <li>Sous-traitant : Cloudflare, Inc. (service Cloudflare Workers et base D1), selon son contrat de traitement des
+          données. Comme tout hébergeur, Cloudflare voit l'adresse IP des requêtes, que le serveur du site n'enregistre pas.</li>
+          <li>Transfert hors de l'Union : Cloudflare est une société américaine, et les requêtes peuvent être traitées par
+          ses centres de données hors de l'Union européenne. Ces transferts sont encadrés par la certification de Cloudflare
+          au cadre de protection des données UE–États-Unis (Data Privacy Framework) et, à défaut, par les clauses
+          contractuelles types de la Commission européenne (décision 2021/914).</li>
+        </ul>
         <h2>L'hébergeur</h2>
         <p>Le site est hébergé par GitHub Pages. Comme tout hébergeur, GitHub reçoit les demandes de pages : selon sa
         documentation, l'adresse IP des visiteurs est enregistrée et conservée pour des raisons de sécurité. L'éditeur n'a pas
@@ -158,7 +202,8 @@ page("confidentialite.html", "Politique de confidentialité", "Esprit critique n
         <p>Installer le site comme une application (écran d'accueil) ne transmet rien non plus : votre appareil garde la page
         et ses fichiers.</p>
         <h2>Contact et réclamation</h2>
-        <p>Pour toute question : <a href="{DEPOT}/issues">tickets du dépôt</a>. Vous pouvez aussi adresser une réclamation à la
+        <p>Pour toute question : <a href="{DEPOT}/issues">tickets du dépôt</a> (un compte GitHub est nécessaire ; vos droits,
+        eux, s'exercent sans compte, depuis le site). Vous pouvez aussi adresser une réclamation à la
         CNIL (<a href="https://www.cnil.fr">cnil.fr</a>).</p>''')
 
 page("cgu.html", "Conditions d'utilisation", "Conditions d'utilisation du site Esprit critique : accès libre et gratuit, contenus pédagogiques sous licence libre.", f'''        <h1>Conditions d'utilisation</h1>
@@ -184,7 +229,8 @@ page("cgu.html", "Conditions d'utilisation", "Conditions d'utilisation du site E
         votre code de synchronisation, que le site ne peut pas récupérer.</p>
         <h2>Propriété intellectuelle</h2>
         <p>Code sous licence MIT, textes sous licence CC BY 4.0 : vous pouvez les réutiliser, y compris à des fins
-        commerciales, en citant la source. Voir les <a href="mentions-legales.html">mentions légales</a>.</p>
+        commerciales, en citant la source. Les chiffres et données d'autres organismes restent soumis aux conditions de leur
+        source, parfois plus strictes. Voir les <a href="mentions-legales.html">mentions légales</a>.</p>
         <h2>Liens vers d'autres sites</h2>
         <p>Les liens vers d'autres sites (sources, hébergeur) sont donnés à titre d'information ; l'éditeur n'est pas
         responsable de leur contenu.</p>
@@ -205,7 +251,7 @@ page("404.html", "Page introuvable", "Cette adresse n'existe pas sur Esprit crit
           <li><a href="/#guide">Le guide</a></li>
         </ul>''', racine="/", indexer=False)
 # ---------------------------------------------------------------- pages anglaises (static/en/)
-MAJ_EN = "11 November 2026"
+MAJ_EN = "12 November 2026"
 PIED_EN = ("legal-notice.html", "privacy.html", "terms.html")
 
 page("legal-notice.html", "Legal notice", "Publisher, host and licences of the Esprit critique website.", f'''        <h1>Legal notice</h1>
@@ -229,18 +275,43 @@ page("legal-notice.html", "Legal notice", "Publisher, host and licences of the E
         <h2>Intellectual property</h2>
         <p>The site’s code is released under the MIT licence; the texts (entries, questions, explanations, guide) under the
         Creative Commons Attribution 4.0 licence (CC BY 4.0): you may reuse and adapt them, crediting “Esprit critique,
-        by GOATier”. World Bank data are under the CC BY 4.0 licence; other figures come from the public sources given next to
-        each of them. Details: <a href="{DEPOT}/blob/main/LICENCE-CONTENU.md">content licence</a>.
+        by GOATier”. This licence covers the site’s texts, not data from other organisations. World Bank data are under the
+        CC BY 4.0 licence, except for the indicators it takes from other organisations (SIPRI military expenditure, UNHCR
+        refugees, ILO unemployment, FAO undernourishment, Inter-Parliamentary Union women in parliament), which remain subject
+        to their producer’s terms. Each figure remains subject to the terms of the source given next to it.
+        Details: <a href="{DEPOT}/blob/main/LICENCE-CONTENU.md">content licence</a>.
         Headings are set in Newsreader (Production Type), under the <a href="../polices/OFL.txt">SIL Open Font License 1.1</a>.</p>
+        <h2>Sources of figures and attribution</h2>
+        <p>The site’s figures come from the following sources, credited as each of them requires:</p>
+        <ul>
+          <li>World Bank: “The World Bank, World Development Indicators” (CC BY 4.0 licence).</li>
+          <li>SIPRI (military expenditure, taken up by the World Bank): “Information from the Stockholm International Peace
+          Research Institute (SIPRI) Military Expenditure Database”, <a href="https://doi.org/10.55163/CQGC9685">doi.org/10.55163/CQGC9685</a>.
+          Non-commercial use of a small part of the dataset (less than 10%), as its terms allow.</li>
+          <li>UNHCR (refugees): “UNHCR Refugee Population Statistics Database” (CC BY 4.0 licence,
+          <a href="https://www.unhcr.org/terms-use-datasets">terms of use</a>).</li>
+          <li>ILO (unemployment): ILOSTAT database of the International Labour Organization (CC BY 4.0 licence).</li>
+          <li>FAO (undernourishment, land area, forests): “FAO, [year], [database], licence CC BY 4.0”.</li>
+          <li>Inter-Parliamentary Union (women in parliament): Parline database, via the World Bank.</li>
+          <li>WHO (causes of death, health): “WHO, [dataset title], [year], [date of access]”, with the countries that provided
+          the data. These data are used only to inform about public health, with no promotion or sale; WHO’s name and emblem
+          are not used to present the site.</li>
+          <li>EM-DAT (natural disasters): “EM-DAT, CRED / UCLouvain, Brussels, Belgium, www.emdat.be”. Only two aggregate
+          figures are quoted; the database is not redistributed.</li>
+          <li>Gapminder: “Based on free material from GAPMINDER.ORG, CC-BY LICENSE”.</li>
+          <li>Other sources (UN, Insee, NASA, Our World in Data, scientific studies…): credited next to each figure, under their
+          own terms.</li>
+        </ul>
         <h2>Fictional content</h2>
         <p>The situations, dialogues, debates, websites and organisations in the exercises are fictional; any resemblance to
         real people or organisations would be coincidental. Real studies and figures are flagged as such,
         with their source.</p>''', langue="en", pied=PIED_EN)
 
-page("privacy.html", "Privacy policy", "Esprit critique collects no personal data: no account by default, no cookies or audience tracking; optional sync, encrypted on your device.", f'''        <h1>Privacy policy</h1>
+page("privacy.html", "Privacy policy", "Esprit critique: progress kept in your browser, no cookies or audience tracking; optional sync, encrypted on your device.", f'''        <h1>Privacy policy</h1>
         <p class="source">Last updated {MAJ_EN}.</p>
-        <p><strong>In short: the publisher collects no personal data.</strong> No account by default: your progress stays in your
-        browser. No cookies, audience tracking, advertising or external resources (fonts, scripts or images from other sites).
+        <p><strong>In short: without sync, no data leaves your browser.</strong> If you turn on sync, an encrypted copy of your
+        progress is kept by Cloudflare under an identifier derived from your code: this is pseudonymised data, and therefore
+        personal data under the GDPR (details below). No cookies, audience tracking, advertising or external resources (fonts, scripts or images from other sites).
         If you turn on sync, a copy encrypted on your device is kept by a host; no one but you can read it, not even the publisher.</p>
         <h2>What stays in your browser</h2>
         <p>Your progress is saved in your browser’s local storage (“localStorage”): entries marked as learned, quiz answers
@@ -254,19 +325,35 @@ page("privacy.html", "Privacy policy", "Esprit critique collects no personal dat
         <p>To let you read the site offline, your browser also keeps a copy of the site’s files (a service worker).
         It contains no data about you.</p>
         <h2>Your rights over this data</h2>
+        <p>You exercise them from the site, with no account: the publisher can neither read your online copy nor find it
+        without your code.</p>
         <ul>
-          <li>Take it with you: “Save to a file”, in <a href="./#guide/donnees">Your data</a>.</li>
+          <li>Access and portability: “Save to a file”, in <a href="./#guide/donnees">Your data</a>.</li>
+          <li>Deleting the online copy: “Delete the online copy”, in <a href="./#profil/reglages">Profile, Settings</a>
+          (immediate deletion on the server).</li>
           <li>Erase it: “Erase my progress”, in the same place (the automatic copies are erased too), or by clearing the site’s browsing data.</li>
           <li>The files the site creates (backup, .ics calendar) are produced on your device and are not sent anywhere.</li>
         </ul>
         <h2>Sync (optional)</h2>
         <p>If you turn it on (Profile, Settings), your progress is encrypted in your browser (AES-256-GCM) before being sent.
-        What is sent: this encrypted content, unreadable without your code; its size; an identifier and a token derived from
-        your code. The server’s host (Cloudflare), like any host, sees the IP address of requests. The data is kept in a
-        database located in the European Union, for as long as you use it, and deleted automatically after 24 months without
-        a write. You can delete it at any time: Profile, Settings, “Delete the online copy”. No email address, name or
-        password is collected; the site cannot recover a lost code. The code is kept on your signed-in devices so that it
-        can be shown again.</p>
+        For each copy, the server keeps: a 32-character identifier derived from your code, the fingerprint (SHA-256) of a token
+        also derived from your code, the encrypted content (256 KB at most), a version number, and the dates of creation and
+        last write. Neither your code, nor your nickname, nor your IP address is recorded in this database. No email address,
+        name or password is collected; the site cannot recover a lost code. The code is kept on your signed-in devices so
+        that it can be shown again.</p>
+        <p>This is pseudonymised data: no one can read the content without your code, but it remains personal data under
+        the GDPR.</p>
+        <ul>
+          <li>Legal basis: your consent (Article 6(1)(a) GDPR). Sync is only turned on if you ask for it; you withdraw your
+          consent by deleting the online copy.</li>
+          <li>Where: in a Cloudflare D1 database created with the “European Union” jurisdiction (storage in the Union).</li>
+          <li>How long: as long as you use it; a daily purge deletes any copy left 24 months without a write.</li>
+          <li>Processor: Cloudflare, Inc. (Cloudflare Workers service and D1 database), under its data processing agreement.
+          Like any host, Cloudflare sees the IP address of requests, which the site’s server does not record.</li>
+          <li>Transfer outside the Union: Cloudflare is an American company, and requests may be handled by its data centres
+          outside the European Union. These transfers are covered by Cloudflare’s certification under the EU–US Data Privacy
+          Framework and, failing that, by the European Commission’s standard contractual clauses (Decision 2021/914).</li>
+        </ul>
         <h2>The host</h2>
         <p>The site is hosted by GitHub Pages. Like any host, GitHub receives requests for pages: according to its
         documentation, visitors’ IP addresses are recorded and kept for security reasons. The publisher has no
@@ -277,7 +364,8 @@ page("privacy.html", "Privacy policy", "Esprit critique collects no personal dat
         to your files: they go through no server.</p>
         <p>Installing the site as an app (home screen) sends nothing either: your device keeps the page and its files.</p>
         <h2>Contact and complaints</h2>
-        <p>For any question: <a href="{DEPOT}/issues">the repository’s issues</a>. You may also lodge a complaint with the
+        <p>For any question: <a href="{DEPOT}/issues">the repository’s issues</a> (a GitHub account is required; your rights,
+        however, are exercised from the site, with no account). You may also lodge a complaint with the
         CNIL, the French data protection authority (<a href="https://www.cnil.fr/en">cnil.fr</a>).</p>''', langue="en", pied=PIED_EN)
 
 page("terms.html", "Terms of use", "Terms of use of the Esprit critique website: free and open access, educational content under a free licence.", f'''        <h1>Terms of use</h1>
@@ -302,7 +390,8 @@ page("terms.html", "Terms of use", "Terms of use of the Esprit critique website:
         code, which the site cannot recover.</p>
         <h2>Intellectual property</h2>
         <p>Code under the MIT licence, texts under the CC BY 4.0 licence: you may reuse them, including for
-        commercial purposes, crediting the source. See the <a href="legal-notice.html">legal notice</a>.</p>
+        commercial purposes, crediting the source. Figures and data from other organisations remain subject to the terms of
+        their source, which are sometimes stricter. See the <a href="legal-notice.html">legal notice</a>.</p>
         <h2>Links to other sites</h2>
         <p>Links to other sites (sources, host) are given for information; the publisher is not
         responsible for their content.</p>
