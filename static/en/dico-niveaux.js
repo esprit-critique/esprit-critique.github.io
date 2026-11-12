@@ -3,12 +3,14 @@
 EN_AJOUTER([
   ["découverte", "beginner"],
   ["confirmé", "intermediate"],
+  ["maître", "master"],
   ["Niveau de difficulté", "Difficulty level"],
   ["Auto", "Auto"],
   ["Niveau {0} : {1}", "Level {0}: {1}"],
   ["Niveau automatique", "Automatic level"],
   ["Auto adapte la difficulté à vos réponses.", "Auto adjusts the difficulty to your answers."],
   ["Niveau {0} ({1}) choisi : il reste fixe.", "Level {0} ({1}) selected: it stays fixed."],
+  ["Points : × 1,5 au niveau 2, × 2 au niveau 3, × 2,5 au niveau 4, × 3 au niveau 5.", "Points: ×1.5 at level 2, ×2 at level 3, ×2.5 at level 4, ×3 at level 5."],
   ["Points : × 1,5 au niveau 2, × 2 au niveau 3.", "Points: ×1.5 at level 2, ×2 at level 3."],
   ["Partie jouée au niveau {0} ({1}), jusqu'au niveau {2}.", "Game played at level {0} ({1}), up to level {2}."],
   ["Partie jouée au niveau {0} ({1}).", "Game played at level {0} ({1})."],
@@ -33,5 +35,6 @@ EN_AJOUTER([
   ["Le bon ordre", "The right order"],
   ["Paires inversées, dans le bon ordre : {0}.", "Pairs reversed, in the right order: {0}."],
   ["{0} avant {1}", "{0} before {1}"],
+  ["virtuose", "virtuoso"],
   ["expert", "expert"]
 ]);

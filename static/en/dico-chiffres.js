@@ -156,7 +156,7 @@ EN_AJOUTER([
   ["Répondre d'abord à la question « plus ou moins ? » renforce l'effet : on cherche des raisons pour lesquelles la réponse pourrait être proche de l'ancre.", "Answering the “more or less?” question first strengthens the effect: we look for reasons why the answer might be close to the anchor."],
   ["Combien de points ?", "How many dots?"],
   ["Un nuage de points s'affiche une seconde et demie. Estimez leur nombre. Votre perception est-elle fidèle ?", "A cloud of dots appears for a second and a half. Estimate their number. Is your perception accurate?"],
-  ["Huit nuages de points vont s'afficher, chacun pendant une seconde et demie. Donnez à chaque fois votre estimation, sans compter.", "Eight clouds of dots will appear, each for a second and a half. Give your estimate each time, without counting."],
+  ["Huit nuages de points vont s'afficher, chacun pendant une seconde et demie (moins aux niveaux élevés). Donnez à chaque fois votre estimation, sans compter.", "Eight clouds of dots will appear, each for a second and a half (less at higher levels). Give your estimate each time, without counting."],
   ["Commencer", "Start"],
   ["Recommencer avec un repère", "Start again with a reference"],
   ["La version « avec un repère » montre d'abord un nuage dont on vous donne le nombre, comme dans l'expérience d'Izard et Dehaene (2008).", "The “with a reference” version first shows a cloud whose number you are told, as in the experiment by Izard and Dehaene (2008)."],

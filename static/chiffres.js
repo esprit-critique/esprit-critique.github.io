@@ -819,7 +819,9 @@ const JEUX = [
     resume: "Un nuage de points s'affiche une seconde et demie. Estimez leur nombre. Votre perception est-elle fidèle ?",
     lancer(zone) {
       zone.replaceChildren();
-      zone.appendChild(paragraphe("Huit nuages de points vont s'afficher, chacun pendant une seconde et demie. Donnez à chaque fois votre estimation, sans compter."));
+      // Le niveau se choisit dès l'accueil de l'atelier (il ne l'était que dans la version avec repère)
+      zone.appendChild(choixNiveau("points", () => JEUX.find(j => j.id === "points").lancer(zone)));
+      zone.appendChild(paragraphe("Huit nuages de points vont s'afficher, chacun pendant une seconde et demie (moins aux niveaux élevés). Donnez à chaque fois votre estimation, sans compter."));
       const precedents = lire("points", null);
       const sans = el("button", "bouton large", "Commencer");
       sans.dataset.suivant = "1";
@@ -1351,13 +1353,16 @@ function ligneIntervalle(q, bas, haut, ok) {
 
 // Niveaux (d'une partie à l'autre) : 1, de 18 à 75 points ; 2, de 40 à 190 ; 3, de 100 à 300 points, plus serrés,
 // affichés 1 seconde au lieu de 1,5. Si l'appareil demande de réduire les animations, l'affichage reste de 1,5 seconde.
-const NOMBRES_POINTS = { 1: [18, 22, 27, 33, 40, 48, 60, 75], 2: [40, 55, 75, 90, 100, 120, 140, 190], 3: [100, 120, 140, 165, 190, 220, 260, 300] };
+const NOMBRES_POINTS = { 1: [18, 22, 27, 33, 40, 48, 60, 75], 2: [40, 55, 75, 90, 100, 120, 140, 190], 3: [100, 120, 140, 165, 190, 220, 260, 300],
+  4: [250, 290, 330, 380, 430, 480, 540, 600], 5: [400, 450, 500, 560, 620, 680, 740, 800] };
 function partiePoints(zone, avecRepere) {
   const niveau = niveauAtelier("points").niveau;
   const nombres = melanger(NOMBRES_POINTS[niveau]).map(n => n + Math.floor(Math.random() * 8));
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const duree = niveau === 3 && !reduit ? 1000 : 1500;
-  const ecartMinimal = niveau === 3 ? 36 : 81;   // carré de la distance minimale entre deux points
+  // Plus le niveau est haut, plus le nuage est dense et bref (1,5 s ; 1 s au niveau 3 et 4 ; 0,75 s au niveau 5)
+  const duree = reduit ? 1500 : { 3: 1000, 4: 1000, 5: 750 }[niveau] || 1500;
+  const ecartMinimal = niveau >= 3 ? 36 : 81;   // carré de la distance minimale entre deux points
+  const rayon = niveau >= 4 ? 2.5 : 3.5;          // points plus petits, pour que les nuages denses restent lisibles
   const essais = [];
   let i = 0;
 
@@ -1370,7 +1375,7 @@ function partiePoints(zone, avecRepere) {
       const x = 8 + Math.random() * 284, y = 8 + Math.random() * 284;
       if (points.every(([a, b]) => (a - x) ** 2 + (b - y) ** 2 > ecartMinimal)) points.push([x, y]);
     }
-    points.forEach(([x, y]) => s.appendChild(svg("circle", { cx: x, cy: y, r: 3.5 })));
+    points.forEach(([x, y]) => s.appendChild(svg("circle", { cx: x, cy: y, r: rayon })));
     return s;
   }
 
@@ -1420,18 +1425,21 @@ function partiePoints(zone, avecRepere) {
     const pct = Math.round((rapport - 1) * 100);
     ecrire("points", { rapport, avecRepere });
     // Pour l'ajustement du niveau : une estimation compte comme juste à moins de 25 % d'écart
-    noterPartieEntiere("points", niveau, essais.map(([n, v]) => Math.abs(v / n - 1) <= 0.25));
+    const justes = essais.map(([n, v]) => Math.abs(v / n - 1) <= 0.25);
+    noterPartieEntiere("points", niveau, justes);
     delete PARTIES_EN_COURS.points;
-    noterPartie("points");
+    // Partie notée (estimations à moins de 25 % d'écart), au niveau joué : les points suivent la réussite et la difficulté
+    noterPartie("points", justes.filter(Boolean).length, justes.length, niveau);
     zone.appendChild(el("p", "consigne", "Résultat"));
     zone.appendChild(el("p", "grand-score", (pct >= 0 ? "+" : "") + pct + PC));
     zone.appendChild(paragraphe(Math.abs(pct) < 5 ? T("En moyenne, vos estimations étaient très proches des vraies valeurs.") : pct < 0 ? T("En moyenne, vos estimations étaient inférieures de {0} % aux vraies valeurs.", -pct) : T("En moyenne, vos estimations étaient supérieures de {0} % aux vraies valeurs.", pct)));
 
     // Nuage de points (échelle logarithmique) : vraie valeur en abscisse, estimation en ordonnée
     const s = svg("svg", { viewBox: "0 0 320 320", class: "graphe", role: "img", "aria-label": "Vos estimations comparées aux vraies valeurs" });
-    const echelle = v => 30 + 270 * (Math.log(v) - Math.log(10)) / (Math.log(400) - Math.log(10));
+    const haut = niveau >= 4 ? 1000 : 400;   // les niveaux 4 et 5 vont jusqu'à 800 points
+    const echelle = v => 30 + 270 * (Math.log(v) - Math.log(10)) / (Math.log(haut) - Math.log(10));
     s.appendChild(svg("rect", { x: 30, y: 20, width: 270, height: 270, class: "graphe-fond" }));
-    [10, 20, 50, 100, 200, 400].forEach(v => {
+    (haut > 400 ? [10, 30, 100, 300, 1000] : [10, 20, 50, 100, 200, 400]).forEach(v => {
       const p = echelle(v);
       s.appendChild(svg("line", { x1: p, y1: 20, x2: p, y2: 290, class: "graphe-grille" }));
       s.appendChild(svg("line", { x1: 30, y1: 320 - p, x2: 300, y2: 320 - p, class: "graphe-grille" }));
@@ -1440,7 +1448,7 @@ function partiePoints(zone, avecRepere) {
     });
     s.appendChild(svg("line", { x1: 30, y1: 290, x2: 300, y2: 20, class: "graphe-diagonale" }));
     essais.forEach(([n, v]) => {
-      const y = Math.min(400, Math.max(10, v));
+      const y = Math.min(haut, Math.max(10, v));
       s.appendChild(svg("circle", { cx: echelle(n), cy: 320 - echelle(y), r: 5, class: "graphe-point" }));
     });
     zone.appendChild(s);

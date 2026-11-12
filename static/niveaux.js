@@ -2,12 +2,15 @@
 // Par défaut, le niveau s'ajuste tout seul (mode « auto ») ; on peut aussi le choisir à la main.
 // Stockage : niveaux[idAtelier] = { niveau, mode: "auto" | "choisi", parties, serie }.
 
-const NOMS_NIVEAUX = { 1: T("découverte"), 2: T("confirmé"), 3: T("expert") };
+const NOMS_NIVEAUX = { 1: T("découverte"), 2: T("confirmé"), 3: T("expert"), 4: T("maître"), 5: T("virtuose") };
+// Ateliers qui vont au-delà du niveau 3 (plus durs, et mieux payés : barème « atelier-note », progression.js)
+const NIVEAUX_MAX = { points: 5 };
+const niveauMax = id => NIVEAUX_MAX[id] || 3;
 
 function niveauAtelier(id) {
   const n = lire("niveaux", {})[id] || {};
   return {
-    niveau: [1, 2, 3].includes(n.niveau) ? n.niveau : 1,
+    niveau: Number.isInteger(n.niveau) && n.niveau >= 1 && n.niveau <= niveauMax(id) ? n.niveau : 1,
     mode: n.mode === "choisi" ? "choisi" : "auto",
     parties: n.parties || 0,
     serie: n.serie || 0
@@ -30,7 +33,7 @@ function suivreReponse(id, juste) {
   let { niveau, serie } = n;
   if (juste) {
     serie++;
-    if (serie >= 3) { niveau = Math.min(3, niveau + 1); serie = 0; }
+    if (serie >= 3) { niveau = Math.min(niveauMax(id), niveau + 1); serie = 0; }
   } else {
     niveau = Math.max(1, niveau - 1);
     serie = 0;
@@ -46,7 +49,7 @@ function suivrePartie(id, score, sur) {
   const n = niveauAtelier(id);
   if (n.mode !== "auto" || !sur) return n.niveau;
   const taux = score / sur;
-  const niveau = taux >= 0.8 ? Math.min(3, n.niveau + 1) : taux < 0.5 ? Math.max(1, n.niveau - 1) : n.niveau;
+  const niveau = taux >= 0.8 ? Math.min(niveauMax(id), n.niveau + 1) : taux < 0.5 ? Math.max(1, n.niveau - 1) : n.niveau;
   enregistrerNiveau(id, { niveau, serie: 0 });
   return niveau;
 }
@@ -85,7 +88,7 @@ function choixNiveau(id, relancer) {
   const puces = el("div", "puces puces-niveau");
   puces.setAttribute("role", "group");
   puces.setAttribute("aria-label", "Niveau de difficulté");
-  [["auto", "Auto"], [1, "1"], [2, "2"], [3, "3"]].forEach(([valeur, texte]) => {
+  [["auto", "Auto"], ...Array.from({ length: niveauMax(id) }, (_, k) => [k + 1, String(k + 1)])].forEach(([valeur, texte]) => {
     const actif = valeur === "auto" ? actuel.mode === "auto" : actuel.mode === "choisi" && actuel.niveau === valeur;
     const b = el("button", "puce" + (actif ? " active" : ""), texte);
     b.setAttribute("aria-pressed", String(actif));
@@ -101,7 +104,7 @@ function choixNiveau(id, relancer) {
   // Points de lucidité multipliés selon le niveau (barème « atelier-note », progression.js) ; rien en mode sobre
   bloc.append(puces, el("p", "source", (actuel.mode === "auto"
     ? T("Auto adapte la difficulté à vos réponses.")
-    : T("Niveau {0} ({1}) choisi : il reste fixe.", actuel.niveau, NOMS_NIVEAUX[actuel.niveau])) + (modeSobre() ? "" : " " + T("Points : × 1,5 au niveau 2, × 2 au niveau 3."))));
+    : T("Niveau {0} ({1}) choisi : il reste fixe.", actuel.niveau, NOMS_NIVEAUX[actuel.niveau])) + (modeSobre() ? "" : " " + (niveauMax(id) > 3 ? T("Points : × 1,5 au niveau 2, × 2 au niveau 3, × 2,5 au niveau 4, × 3 au niveau 5.") : T("Points : × 1,5 au niveau 2, × 2 au niveau 3.")).replace(/× ?/g, "×\u00a0"))));   // « × » jamais seul en fin de ligne
   return bloc;
 }
 
@@ -111,7 +114,7 @@ const PARTIES_EN_COURS = {};
 // Niveau d'une partie : le plus fréquent parmi les questions posées, le plus élevé en cas d'égalité
 function niveauDePartie(niveaux) {
   let meilleur = 1, compte = -1;
-  [1, 2, 3].forEach(n => {
+  [1, 2, 3, 4, 5].forEach(n => {
     const c = niveaux.filter(x => x === n).length;
     if (c >= compte && c > 0) { meilleur = n; compte = c; }
   });
@@ -169,7 +172,7 @@ function bilanNiveaux(id) {
   const bloc = el("div", "bilan-niveaux");
   const n = niveauDePartie(p.niveaux), max = Math.max(...p.niveaux);
   bloc.appendChild(el("p", null, (max > n ? T("Partie jouée au niveau {0} ({1}), jusqu'au niveau {2}.", n, NOMS_NIVEAUX[n], max) : T("Partie jouée au niveau {0} ({1}).", n, NOMS_NIVEAUX[n]))));
-  const lignes = [1, 2, 3].map(niv => {
+  const lignes = [1, 2, 3, 4, 5].map(niv => {
     const poses = p.niveaux.map((x, k) => [x, p.justes[k]]).filter(([x]) => x === niv);
     return poses.length ? T("niveau {0} : {1} / {2}", niv, poses.filter(([, j]) => j).length, poses.length) : null;
   }).filter(Boolean);

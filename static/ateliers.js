@@ -908,7 +908,9 @@ function afficherPortrait() {
   if (aNiveaux.length) {
     const table = el("table", "tableau-niveaux");
     const tete = el("tr");
-    ["Atelier", "Atteint", "1", "2", "3"].forEach(t => tete.appendChild(el("th", null, t)));
+    // Colonnes 4 et 5 seulement si un atelier qui va jusque-là y a été joué
+    const colonnes = [1, 2, 3, ...[4, 5].filter(n => aNiveaux.some(({ atelier }) => resultatAtelier(atelier.id).niveaux[n]))];
+    ["Atelier", "Atteint", ...colonnes.map(String)].forEach(t => tete.appendChild(el("th", null, t)));
     table.appendChild(tete);
     aNiveaux.forEach(({ atelier, adresse }) => {
       const r = resultatAtelier(atelier.id);
@@ -917,7 +919,7 @@ function afficherPortrait() {
       nom.appendChild(lienVers(adresse, atelier.titre));
       if (atelierMaitrise(atelier.id)) nom.appendChild(el("span", "source bloc", "maîtrisé"));
       tr.append(nom, el("td", null, String(niveauAtelier(atelier.id).niveau)));
-      [1, 2, 3].forEach(n => {
+      colonnes.forEach(n => {
         const x = r.niveaux[n];
         tr.appendChild(el("td", null, x && x.historique.length ? pct(moyenne(x.historique) / x.sur) : "—"));
       });
