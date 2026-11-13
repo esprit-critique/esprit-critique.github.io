@@ -302,8 +302,11 @@ Audit du site rendu (Chrome, 375 / 768 / 1 440 px) : 13 corrections, un commit c
 - Laissés à trois niveaux, et pourquoi : « Le monde en chiffres », « Vrai ou faux », « Citations » (nouveaux contenus
   à vérifier sur leur source primaire) ; « Fourchettes » ; les expériences de mesure (Wason, logique contre croyance,
   illusions, écrire le hasard, foule, comprendre, Wald), qu'une difficulté ajoutée fausserait ; les jeux de Débattre
-  sans niveaux (pyramide, démonter, lecture latérale, qui doit prouver, reformuler) ; débat truqué et réparer
-  (niveaux 4 et 5 possibles, mais ils demandent de nouveaux débats et arguments : à faire dans un lot dédié).
+  sans niveaux (pyramide, démonter, lecture latérale, qui doit prouver, reformuler).
+- Lot suivant (même jour) : débat truqué, niveaux 4 (« Des panneaux solaires sur le gymnase », sophismes discrets) et 5
+  (« Les téléphones au collège », nombre de sophismes non annoncé, une catégorie de plus que celles en jeu) ; réparer,
+  niveaux 4 (reconnaître le sophisme, non annoncé, puis réparer) et 5 (le reconnaître, prémisse cachée, réparer).
+  Banc `ateliers` : 12 débats attendus au lieu de 10.
 - Débattre : précision relue ; « toi aussi » accepté sous le nom « attaque personnelle » (`FORMES_PARTICULIERES`) ;
   le retour explique ce qui sépare la bonne réponse de l'option proche.
 - Bancs : l'illusion du jour peut n'avoir aucun leurre (Kanizsa, Jastrow) ; le banc `test` levait une exception ces

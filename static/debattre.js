@@ -678,7 +678,79 @@ DEBATS.push(
     ]
   }
 );
-// Niveaux des débats : 1, sophismes nets ; 2, sophismes plus discrets ; 3, les deux débats ci-dessus
+
+// ===================== Niveaux 4 et 5 du débat truqué =====================
+// Niveau 4 : sophismes discrets, sur un ton raisonnable, et répliques légitimes qui en ont l'air ; on nomme le
+// sophisme dans sa catégorie, comme au niveau 3. Niveau 5 : le nombre de sophismes d'une réplique n'est pas annoncé,
+// et les choix couvrent une catégorie de plus que celles en jeu. Débats fictifs.
+DEBATS.push(
+  {
+    id: "panneaux", niveau: 4,
+    titre: "Des panneaux solaires sur le gymnase",
+    contexte: "Conseil municipal. Faut-il couvrir le toit du gymnase de panneaux solaires ? Mme Lambert, adjointe, est pour ; M. Fabre, conseiller, est contre. Samia est ingénieure en électricité ; M. Brun préside le club de basket.",
+    repliques: [
+      { qui: "Mme Lambert", texte: "D'après le devis de l'installateur, les panneaux produiraient environ 40 % de l'électricité du gymnase ; le bureau d'études de la ville a refait le calcul et trouve le même ordre de grandeur.", sophisme: null,
+        pourquoi: "Un chiffre sourcé, vérifié par un tiers : c'est un élément solide du débat." },
+      { qui: "M. Fabre", texte: "L'installateur a intérêt à gonfler la production de ses panneaux. Je demande qu'un second bureau d'études, indépendant de lui, refasse l'estimation.", sophisme: null,
+        pourquoi: "Ce n'est pas une attaque personnelle : il signale un conflit d'intérêts et en tire une demande raisonnable, une vérification indépendante, sans conclure que le chiffre est faux." },
+      { qui: "M. Brun", texte: "Chaque fois qu'on touche à ce gymnase, c'est la catastrophe : la toiture en 2019 et le parquet l'an dernier ont pris des mois de retard. Ce chantier-là gâchera notre saison, c'est certain.", sophisme: "generalisation-hative",
+        pourquoi: "Deux chantiers passés ne permettent pas de prédire que celui-ci gâchera la saison : la pose se fait sur le toit, et peut être programmée pendant la fermeture d'été." },
+      { qui: "Samia", texte: "Je suis ingénieure en électricité. Sur un toit de cette surface, orienté plein sud, 40 % est plausible. Mais il faudrait d'abord vérifier que la charpente supporte le poids.", sophisme: null,
+        pourquoi: "Une expertise pertinente, qui précise elle-même ce qu'il reste à vérifier." },
+      { qui: "M. Fabre", texte: "Ces panneaux ne couvriront jamais tous les besoins du gymnase, et encore moins ceux de la ville : ce n'est donc pas la solution.", sophisme: "nirvana",
+        pourquoi: "Il rejette une amélioration réelle (40 % de l'électricité) parce qu'elle ne règle pas tout ; personne n'a présenté les panneaux comme la solution complète." },
+      { qui: "Mme Lambert", texte: "Toutes les communes voisines en installent sur leurs bâtiments : nous serions bientôt la seule à rester à l'écart.", sophisme: "popularite",
+        pourquoi: "Que d'autres communes le fassent ne dit pas si c'est rentable ici. Leurs résultats mesurés, eux, seraient un argument ; leur nombre ne l'est pas.",
+        proche: "La réplique ressemble à une comparaison utile, mais elle ne compare rien : elle invoque le nombre de communes, pas ce que les panneaux leur ont rapporté." },
+      { qui: "M. Brun", texte: "La mairie veut nous parler d'énergie propre, elle qui a fait goudronner tout le parking du gymnase l'an dernier ? Elle n'est pas crédible sur ce sujet.", sophisme: "tu-quoque",
+        pourquoi: "Il rejette le projet en opposant le discours de la mairie à ses actes passés, sans rien dire des panneaux eux-mêmes." },
+      { qui: "Samia", texte: "Le parking et les panneaux sont deux questions différentes. Pour la charpente, le rapport d'inspection de 2023 indique qu'elle supporte 25 kg par mètre carré ; ces panneaux en pèsent 12.", sophisme: null,
+        pourquoi: "Elle sépare les sujets et répond à sa propre réserve par un document vérifiable." },
+      { qui: "M. Fabre", texte: "Admettons pour la charpente. Mais l'électricité solaire n'est qu'une mode lancée par les fabricants de panneaux pour vendre leur marchandise.", sophisme: "genetique",
+        pourquoi: "Il juge le projet d'après l'origine supposée de l'idée, et non d'après ce que les panneaux produiraient sur ce toit." },
+      { qui: "Mme Lambert", texte: "Monsieur Fabre, avez-vous enfin renoncé à bloquer tous les projets de la majorité ?", sophisme: ["question-piege", "ad-hominem"],
+        pourquoi: "La question présuppose qu'il bloque tous les projets, de sorte que toute réponse semble l'admettre (question piège) ; et elle vise l'homme plutôt que ses objections (attaque personnelle)." },
+      { qui: "M. Brun", texte: "Si les travaux se font en juillet, pendant la fermeture du gymnase, je n'ai plus d'objection pour le club.", sophisme: null,
+        pourquoi: "Il précise à quelle condition son objection tombe : rien de fallacieux." },
+      { qui: "M. Fabre", texte: "Je garde des doutes sur le rendement. Votons le projet sous réserve de la contre-expertise.", sophisme: null,
+        pourquoi: "Un doute maintenu, mais un vote conditionné à une vérification : c'est recevable." }
+    ]
+  },
+  {
+    id: "telephones-college", niveau: 5,
+    titre: "Les téléphones au collège",
+    contexte: "Conseil d'administration d'un collège. Faut-il obliger les élèves à laisser leur téléphone dans un casier fermé pendant la journée ? M. Petit, le principal, et Mme Henry, professeure, sont pour ; Lucas, délégué des élèves, est contre ; Mme Roy est parent d'élève.",
+    repliques: [
+      { qui: "M. Petit", texte: "Depuis la rentrée, les surveillants ont relevé 14 incidents liés aux téléphones, dont 9 photos prises sans l'accord des personnes photographiées.", sophisme: null,
+        pourquoi: "Des faits précis, avec leur source : le relevé des surveillants." },
+      { qui: "Lucas", texte: "Quatorze incidents en deux mois, pour 600 élèves : c'est peu. Je ne vois pas pourquoi tous les élèves devraient perdre leur téléphone pour quelques-uns.", sophisme: null,
+        pourquoi: "Il rapporte les incidents au nombre d'élèves et pose une question de proportion : on peut lui répondre, mais l'argument est recevable." },
+      { qui: "Mme Henry", texte: "Jusqu'aux années 2000, les collégiens vivaient très bien sans téléphone, et ils apprenaient leurs leçons.", sophisme: "tradition",
+        pourquoi: "Que l'on s'en soit passé autrefois ne dit pas si l'interdiction est la meilleure solution aujourd'hui : elle invoque l'ancienneté d'une situation au lieu de ses effets." },
+      { qui: "Mme Roy", texte: "D'après le carnet de suivi, les élèves qui passent le plus de temps sur leur téléphone ont les moins bonnes notes de leur classe : le téléphone fait baisser les notes.", sophisme: "correlation",
+        pourquoi: "Les deux varient ensemble, mais le carnet ne dit pas lequel cause l'autre, ni si une troisième cause joue sur les deux (sommeil, difficultés familiales)." },
+      { qui: "Lucas", texte: "Le carnet ne dit pas ce qui cause quoi : un élève en difficulté peut aussi se réfugier sur son téléphone.", sophisme: null,
+        pourquoi: "Il conteste le lien de cause à effet avec une explication possible : une objection juste." },
+      { qui: "M. Petit", texte: "Soit on enferme les téléphones dans des casiers toute la journée, soit on accepte que les photos volées continuent.", sophisme: "faux-dilemme",
+        pourquoi: "D'autres options existent : interdire les téléphones seulement en classe et dans les vestiaires, sanctionner les photos, sensibiliser les élèves." },
+      { qui: "Mme Henry", texte: "Lucas défend les téléphones, mais il a toujours le sien à la main dans la cour : son avis ne compte pas.", sophisme: "ad-hominem",
+        pourquoi: "Elle écarte l'avis de Lucas à cause de son comportement, sans discuter ce qu'il dit.",
+        proche: "Ce n'est pas un « toi aussi » : Lucas ne critique pas l'usage du téléphone, il le défend, et il n'y a donc aucune contradiction entre ses paroles et ses actes. C'est une attaque personnelle ordinaire." },
+      { qui: "Mme Roy", texte: "Je ne suis pas spécialiste du sommeil, mais mon fils dort mal quand il garde son téléphone le soir. Cela dit, le soir ne relève pas du collège.", sophisme: null,
+        pourquoi: "Un témoignage présenté comme tel, dont elle reconnaît elle-même qu'il sort du sujet : rien de fallacieux." },
+      { qui: "Lucas", texte: "Interdire les téléphones, c'est comme interdire les livres parce que certains élèves lisent en cours. Et après les téléphones, ce seront les montres, puis les calculatrices.", sophisme: ["fausse-analogie", "pente-glissante"],
+        pourquoi: "Un livre ne permet pas de photographier ses camarades : la ressemblance ne porte pas sur le problème soulevé (fausse analogie). Puis il annonce une suite d'interdictions sans justifier aucune étape (pente glissante)." },
+      { qui: "M. Petit", texte: "Un collège voisin a installé des casiers et laisse un téléphone au bureau de la vie scolaire pour appeler les parents ; d'après son bilan, ses incidents ont baissé de moitié en un an.", sophisme: null,
+        pourquoi: "Un exemple sourcé, qui répond aussi à l'objection des appels aux parents. Un seul établissement ne prouve pas tout, mais c'est une information pertinente." },
+      { qui: "Lucas", texte: "Un collège, c'est un exemple, pas une preuve. Mais je veux bien qu'on essaie les casiers pendant un trimestre en comptant les incidents.", sophisme: null,
+        pourquoi: "Ce n'est pas un déplacement des poteaux : il ne rejette pas l'exemple en exigeant davantage, il en reconnaît la limite et accepte d'en mesurer l'effet ici." },
+      { qui: "M. Petit", texte: "Un bon élève, c'est un élève qui sait se passer de son téléphone. Ceux qui réclament de le garder ne sont donc pas de bons élèves.", sophisme: "definition-persuasive",
+        pourquoi: "Il redéfinit « bon élève » pour en exclure ceux qui ne partagent pas son avis, en gardant le prestige du mot : la définition tranche le débat à la place des arguments." }
+    ]
+  }
+);
+
+// Niveaux des débats : 1, sophismes nets ; 2, sophismes plus discrets ; 3, 4 et 5 : les débats ci-dessus
 ["trottinettes", "cantine", "teletravail", "vacances"].forEach(id => { DEBATS.find(d => d.id === id).niveau = 1; });
 ["barbecues", "football", "bibliotheque", "marche"].forEach(id => { DEBATS.find(d => d.id === id).niveau = 2; });
 
@@ -833,10 +905,12 @@ function corrigerReplique(retour, r, verdict, juste) {
 }
 
 // Niveau 3 : nommer le ou les sophismes parmi tous ceux de leur catégorie (choix multiple si deux sophismes)
-function nommerParmiCategories(zone, attendus, conclure) {
-  const categories = [...new Set(attendus.map(id => ficheSophisme(id).categorie))];
+// libre (niveau 5) : le nombre de sophismes n'est pas annoncé, et une catégorie de plus que celles en jeu est proposée
+function nommerParmiCategories(zone, attendus, conclure, options = {}) {
+  const enJeu = [...new Set(attendus.map(id => ficheSophisme(id).categorie))];
+  const categories = options.libre ? [...enJeu, melanger([...new Set(SOPHISMES.map(f => f.categorie))].filter(c => !enJeu.includes(c)))[0]] : enJeu;
   const candidats = SOPHISMES.filter(f => categories.includes(f.categorie));
-  zone.appendChild(el("p", "consigne", attendus.length > 1 ? T("Cette réplique en contient deux : lesquels ?") : T("Lequel ? (catégorie « {0} »)", T(categories[0]))));
+  zone.appendChild(el("p", "consigne", options.libre ? T("Lequel, ou lesquels ? Le nombre n'est pas donné.") : attendus.length > 1 ? T("Cette réplique en contient deux : lesquels ?") : T("Lequel ? (catégorie « {0} »)", T(categories[0]))));
   const choisis = new Set();
   const valider = el("button", "bouton large", "Valider");
   valider.dataset.valider = "1";
@@ -846,10 +920,10 @@ function nommerParmiCategories(zone, attendus, conclure) {
     b.setAttribute("aria-pressed", "false");
     b.addEventListener("click", () => {
       if (choisis.has(f.id)) choisis.delete(f.id);
-      else if (choisis.size < attendus.length) choisis.add(f.id);
+      else if (options.libre || choisis.size < attendus.length) choisis.add(f.id);
       else if (attendus.length === 1) { choisis.clear(); choisis.add(f.id); }
       boutons.forEach((x, j) => { const pris = choisis.has(candidats[j].id); x.classList.toggle("choisi", pris); x.setAttribute("aria-pressed", String(pris)); });
-      valider.disabled = choisis.size !== attendus.length;
+      valider.disabled = options.libre ? choisis.size === 0 : choisis.size !== attendus.length;
     });
     zone.appendChild(b);
     return b;
@@ -864,7 +938,9 @@ function nommerParmiCategories(zone, attendus, conclure) {
       else if (choisis.has(candidats[j].id) && !attendus.some(id => FORMES_PARTICULIERES[id] === candidats[j].id)) b.classList.add("faux");
     });
     // Chaque sophisme attendu doit être nommé, lui ou sa forme générale (FORMES_PARTICULIERES)
-    const nomme = attendus.every(id => [...choisis].some(c => nommeJuste(id, c)));
+    // En mode libre, un sophisme choisi en trop (ni attendu, ni forme générale d'un attendu) rend la réponse fausse
+    const enTrop = [...choisis].some(c => !attendus.some(id => nommeJuste(id, c)));
+    const nomme = attendus.every(id => [...choisis].some(c => nommeJuste(id, c))) && !enTrop;
     const exact = attendus.every(id => choisis.has(id));
     conclure(nomme, exact ? T("Juste : {0}.", nomsSophismes(attendus)) : nomme ? T("Juste, et plus précisément : {0}.", nomsSophismes(attendus)) : T("Sophisme repéré, mais il s'agit de : {0}.", nomsSophismes(attendus)), [...choisis]);
   });
@@ -940,13 +1016,13 @@ EXPERIENCES.push(
           choix[1].classList.add("juste");
           const attendus = sophismesDe(r);
           // Niveau 3 : choisir parmi tous les sophismes de la catégorie (ou des catégories) concernée(s)
-          if (debat.niveau === 3) return nommerParmiCategories(zone, attendus, (nomme, verdict, choisis) => {
+          if (debat.niveau >= 3) return nommerParmiCategories(zone, attendus, (nomme, verdict, choisis) => {
             const note = el("div");
             // Une note par sophisme attendu ; le choix du joueur n'y figure que s'il n'en attendait qu'un, ou s'il a nommé sa forme générale
             const cleDe = c => c ? cleSophisme(c) : null;
             attendus.forEach(id => note.appendChild(noteProche(id, cleDe(attendus.length === 1 ? choisis[0] : choisis.find(c => !attendus.includes(c) && FORMES_PARTICULIERES[id] === c)))));
             terminer({ sophisme: true, alerte: true, nomme }, verdict, nomme, note);
-          });
+          }, { libre: debat.niveau === 5 });
           zone.appendChild(el("p", "consigne", "Lequel ?"));
           const options = optionsSophisme(r.sophisme);
           const boutons = options.map((o, i) => {
@@ -1017,19 +1093,23 @@ EXPERIENCES.push(
         acc: "Simple accusation",
         concl: "Changement de conclusion"
       };
-      // Niveaux : 1 et 2, réparer ; 3, trouver d'abord la prémisse cachée dont dépend l'argument
+      // Niveaux : 1 et 2, réparer ; 3, trouver d'abord la prémisse cachée dont dépend l'argument ; 4, le sophisme n'est
+      // plus annoncé : le reconnaître (parmi quatre, dont son voisin), puis réparer ; 5, le reconnaître, trouver la
+      // prémisse cachée, puis réparer. Chaque étape compte pour une part égale.
       const niveauDe = x => NIVEAU_1_REPARATIONS.includes(x.s) && !x.id ? 1 : 2;
       deroulerNiveaux(zone, {
         id: "reparer", n: 10, libelle: "Argument", relancer: () => EXPERIENCES.find(e => e.id === "reparer").lancer(zone),
         estJuste: justeOuPresque,
-        tirer: niveau => niveau === 3
-          ? Object.assign({ premisse: true }, tirerSelonNiveau("reparer:3", REPARATIONS.filter(x => PREMISSES[x.s] && !x.id), 1, 3, x => x.s, () => 3)[0])
-          : tirerSelonNiveau("reparer", REPARATIONS, 1, niveau, x => x.id || x.s, niveauDe)[0]
+        tirer: niveau => niveau === 3 || niveau === 5
+          ? Object.assign({ premisse: true, identifier: niveau === 5 }, tirerSelonNiveau("reparer:" + niveau, REPARATIONS.filter(x => PREMISSES[x.s] && !x.id), 1, niveau, x => x.s, () => niveau)[0])
+          : niveau === 4
+            ? Object.assign({ identifier: true }, tirerSelonNiveau("reparer:4", REPARATIONS, 1, 4, x => x.id || x.s, () => 4)[0])
+            : tirerSelonNiveau("reparer", REPARATIONS, 1, niveau, x => x.id || x.s, niveauDe)[0]
       }, (x, zone, fini) => {
-        zone.appendChild(el("p", "consigne", T("Cet argument commet un sophisme : {0}", ficheSophisme(x.s).nom.toLowerCase())));
+        zone.appendChild(el("p", "consigne", x.identifier ? T("Cet argument commet un sophisme.") : T("Cet argument commet un sophisme : {0}", ficheSophisme(x.s).nom.toLowerCase())));
         zone.appendChild(el("p", "cas", x.arg));
-        // Niveau 3 : la prémisse cachée d'abord ; elle compte pour moitié
-        let pointsPremisse = null;
+        // Étapes avant la réparation (niveaux 3 à 5) : points obtenus à chacune, 0 ou 1
+        const pointsEtapes = [];
         const etapeReparation = () => {
         zone.appendChild(el("p", "consigne", "Quelle réécriture le répare ?"));
         const options = melanger([["rep", x.rep[0]], ["autre", x.autre[0]], ["acc", x.acc], ["concl", x.concl]]);
@@ -1059,14 +1139,43 @@ EXPERIENCES.push(
             if (x.autre[1] !== x.s) l.appendChild(lienSophisme(x.autre[1]));
             retour.appendChild(l);
             zone.appendChild(retour);
-            fini(pointsPremisse === null ? type === "rep" : (pointsPremisse + (type === "rep" ? 1 : 0)) / 2, retour);
+            fini(pointsEtapes.length ? (pointsEtapes.reduce((a, b) => a + b, 0) + (type === "rep" ? 1 : 0)) / (pointsEtapes.length + 1) : type === "rep", retour);
           });
           zone.appendChild(b);
           return b;
         });
         };
-        if (!x.premisse) return etapeReparation();
-        zone.appendChild(el("p", "consigne", "D'abord : de quelle prémisse cachée dépend cet argument ?"));
+        // Niveaux 4 et 5 : reconnaître le sophisme, parmi quatre dont son voisin ; la note dit ce qui les sépare
+        const etapeIdentifier = suite => {
+          zone.appendChild(el("p", "consigne", "D'abord : quel sophisme commet-il ?"));
+          const options = optionsSophisme(x.s);
+          const boutonsS = options.map((o, k) => {
+            const b = boutonChoix(o.fiche.nom, k);
+            b.addEventListener("click", () => {
+              boutonsS.forEach(y => { y.disabled = true; });
+              const bon = options.findIndex(y => y.cle === cleSophisme(x.s));
+              boutonsS[bon].classList.add("juste");
+              const nomme = nommeJuste(x.s, o.cle.startsWith("sophismes:") ? o.cle.slice(10) : null);
+              if (!nomme) b.classList.add("faux");
+              pointsEtapes.push(nomme ? 1 : 0);
+              const retourS = el("div", "retour-quiz");
+              retourS.append(el("p", "verdict " + (nomme ? "juste" : "faux"), T(nomme ? "Juste : {0}." : "Il s'agit de : {0}.", ficheSophisme(x.s).nom)), noteProche(x.s, o.cle));
+              zone.appendChild(retourS);
+              const bouton = el("button", "bouton", x.premisse ? "Trouver la prémisse cachée" : "Réparer l'argument");
+              bouton.dataset.suivant = "1";
+              bouton.addEventListener("click", () => { bouton.remove(); suite(); });
+              retourS.appendChild(bouton);
+              montrer(retourS);
+            });
+            zone.appendChild(b);
+            return b;
+          });
+        };
+        if (!x.premisse) return x.identifier ? etapeIdentifier(etapeReparation) : etapeReparation();
+        if (x.identifier) return etapeIdentifier(etapePremisse);
+        etapePremisse();
+        function etapePremisse() {
+        zone.appendChild(el("p", "consigne", x.identifier ? "Ensuite : de quelle prémisse cachée dépend cet argument ?" : "D'abord : de quelle prémisse cachée dépend cet argument ?"));
         const premisses = melanger(PREMISSES[x.s].map((t, k) => [t, k === 0]));
         const boutonsP = premisses.map(([t, bonne], k) => {
           const b = boutonChoix(t, k);
@@ -1074,7 +1183,7 @@ EXPERIENCES.push(
             boutonsP.forEach(y => { y.disabled = true; });
             boutonsP[premisses.findIndex(([, j]) => j)].classList.add("juste");
             if (!bonne) b.classList.add("faux");
-            pointsPremisse = bonne ? 1 : 0;
+            pointsEtapes.push(bonne ? 1 : 0);
             const retourP = el("div", "retour-quiz");
             retourP.append(el("p", "verdict " + (bonne ? "juste" : "faux"), bonne ? T("Juste.") : T("La prémisse cachée est : « {0} »", T(PREMISSES[x.s][0]))),
               paragraphe("C'est elle qui, une fois écrite, montre la faille : elle est fausse ou au moins discutable. Les autres propositions peuvent être vraies, mais l'argument n'en a pas besoin."));
@@ -1088,6 +1197,7 @@ EXPERIENCES.push(
           zone.appendChild(b);
           return b;
         });
+        }
       }, resultats => {
         const totalRep = Number(sommeResultats(resultats).toFixed(1));
         afficherScore(zone, "reparer", totalRep, resultats.length, fr(totalRep) + " / " + resultats.length);
