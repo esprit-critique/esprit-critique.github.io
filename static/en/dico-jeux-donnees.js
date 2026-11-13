@@ -341,6 +341,7 @@ EN_AJOUTER([
   ["Wikipedia (en), « Sahara »", "Wikipedia (en), “Sahara”"],
   ["Hauteur du Salto Ángel (Venezuela), plus haute chute d'eau du monde", "Height of Angel Falls (Venezuela), the world’s highest waterfall"],
   ["mesure de 1949, sans doute imprécise ; Wikipédia, « Salto Ángel »", "1949 measurement, probably imprecise; French Wikipedia, “Salto Ángel”"],
+  ["Longueur totale de la Grande Muraille de Chine, toutes sections comprises", "Total length of the Great Wall of China, all sections included"],
   ["relevé officiel chinois de 2012", "official Chinese survey of 2012"],
   ["Altitude du lac Titicaca", "Altitude of Lake Titicaca"],
   ["Wikipédia, « Lac Titicaca »", "French Wikipedia, “Lac Titicaca”"],
@@ -881,7 +882,7 @@ EN_AJOUTER([
   ["Volume d'eau d'un bassin olympique de 50 m sur 25 m et 2 m de profondeur, en litres", "Volume of water in an Olympic pool of 50 m by 25 m and 2 m deep, in litres"],
   ["calcul : 2 500 m³, soit 2,5 millions de litres", "calculation: 2,500 m³, or 2.5 million litres"],
   ["Nombre d'habitants de la ville de Paris", "Number of inhabitants of the city of Paris"],
-  ["Insee, population au 1er janvier 2023", "INSEE, population on 1 January 2023"],
+  ["Insee : environ 2,1 millions d'habitants au 1er janvier 2023", "Insee: about 2.1 million inhabitants on 1 January 2023"],
   ["Population mondiale en 1950", "World population in 1950"],
   ["ONU : environ 2,5 milliards", "UN: about 2.5 billion"],
   ["Nombre d'espèces de mammifères actuelles décrites", "Number of currently described mammal species"],
@@ -889,7 +890,7 @@ EN_AJOUTER([
   ["Nombre d'espèces d'oiseaux actuelles", "Number of currently living bird species"],
   ["plus de 11 000 espèces", "more than 11,000 species"],
   ["Nombre de globules rouges dans le corps d'un adulte", "Number of red blood cells in an adult body"],
-  ["20 000 à 30 000 milliards, environ 70 % des cellules du corps", "20,000 to 30,000 billion, about 70% of the body’s cells"],
+  ["20 000 à 30 000 milliards, environ 84 % des cellules humaines du corps (Sender, Fuchs et Milo, 2016)", "20,000 to 30,000 billion, about 84% of the body’s human cells (Sender, Fuchs and Milo, 2016)"],
   ["Diamètre de la Terre, en kilomètres", "Diameter of the Earth, in kilometres"],
   ["NASA : rayon moyen de 6 371 km", "NASA: mean radius of 6,371 km"],
   ["Temps écoulé depuis la disparition des dinosaures non aviens, en années", "Time elapsed since the non-avian dinosaurs died out, in years"],
@@ -1143,5 +1144,6 @@ EN_AJOUTER([
   ["Le hasard ne favorise que les esprits préparés.", "“Chance favours only the prepared mind.”"],
   ["Louis Pasteur", "Louis Pasteur"],
   ["Leçon inaugurale à l'université de Lille, en 1854 : « Dans les champs de l'observation, le hasard ne favorise que les esprits préparés. »", "Inaugural lecture at the University of Lille, in 1854: “In the fields of observation, chance favours only the prepared mind.”"],
-  ["Longueur totale de la Grande Muraille de Chine, toutes sections comprises", "Total length of the Great Wall of China, all sections included"]
+  ["Insee, population au 1er janvier 2023", "INSEE, population on 1 January 2023"],
+  ["20 000 à 30 000 milliards, environ 70 % des cellules du corps", "20,000 to 30,000 billion, about 70% of the body’s cells"]
 ]);

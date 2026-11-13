@@ -400,7 +400,7 @@ EXPERIENCES.push(
         [...inversees].forEach(k => liste.appendChild(el("li", null, T("« {0} » : vous aviez répondu {1}, on vous a montré {2}.", T(AFFIRMATIONS_CECITE[k]), reponses[k], 10 - reponses[k]) + " " + T(signalees.has(k) ? "Repéré." : "Non repéré."))));
         zone.appendChild(liste);
         ajouterExplication(zone, "Défendre un choix qu'on n'a pas fait", [
-          "Hall, Johansson et Strandberg (2012) ont fait remplir à 160 personnes un questionnaire d'opinions politiques, puis leur ont montré certaines réponses inversées en secret. 69 % n'ont pas repéré au moins une des deux inversions, et 53 % ont défendu sans ambiguïté l'avis opposé au leur.",
+          "Hall, Johansson et Strandberg (2012) ont fait remplir à 160 personnes un questionnaire d'opinions morales, puis leur ont montré certaines réponses inversées en secret. 69 % n'ont pas repéré au moins une des deux inversions, et 53 % ont défendu sans ambiguïté l'avis opposé au leur.",
           "Nous connaissons nos raisons moins bien que nous le croyons : face à une réponse qu'on nous attribue, nous construisons souvent une justification après coup. Ici, sur des sujets sans enjeu et avec un seul essai, le résultat ne mesure rien de précis : c'est une démonstration, pas un test.",
           "Cette expérience ne se fait qu'une fois : maintenant que vous en connaissez le principe, vous seriez sur vos gardes. Vous pouvez la proposer à quelqu'un d'autre."
         ], [["#biais/raisonnement-motive", "Raisonnement motivé"], ["#biais/perseverance", "Persévérance des croyances"]]);

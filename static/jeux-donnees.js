@@ -717,11 +717,11 @@ const GRANDEURS = [
   // Ajouts pour la progression
   { id: "secondes-an", niveau: 1, q: "Nombre de secondes dans une année de 365 jours", v: 31536000, source: "calcul : 365 × 24 × 60 × 60" },
   { id: "piscine", niveau: 1, q: "Volume d'eau d'un bassin olympique de 50 m sur 25 m et 2 m de profondeur, en litres", v: 2500000, source: "calcul : 2 500 m³, soit 2,5 millions de litres" },
-  { id: "paris", niveau: 1, q: "Nombre d'habitants de la ville de Paris", v: 2047602, source: "Insee, population au 1er janvier 2023" },
+  { id: "paris", niveau: 1, q: "Nombre d'habitants de la ville de Paris", v: 2.1e6, source: "Insee : environ 2,1 millions d'habitants au 1er janvier 2023" },
   { id: "pop-1950", niveau: 1, q: "Population mondiale en 1950", v: 2.5e9, source: "ONU : environ 2,5 milliards" },
   { id: "mammiferes", niveau: 2, q: "Nombre d'espèces de mammifères actuelles décrites", v: 6640, source: "environ 6 640 espèces (synthèse de Wikipédia, d'après la Mammal Diversity Database)" },
   { id: "oiseaux", niveau: 2, q: "Nombre d'espèces d'oiseaux actuelles", v: 11000, source: "plus de 11 000 espèces" },
-  { id: "globules", niveau: 2, q: "Nombre de globules rouges dans le corps d'un adulte", v: 25e12, source: "20 000 à 30 000 milliards, environ 70 % des cellules du corps" },
+  { id: "globules", niveau: 2, q: "Nombre de globules rouges dans le corps d'un adulte", v: 25e12, source: "20 000 à 30 000 milliards, environ 84 % des cellules humaines du corps (Sender, Fuchs et Milo, 2016)" },
   { id: "terre-diametre", niveau: 2, q: "Diamètre de la Terre, en kilomètres", v: 12742, source: "NASA : rayon moyen de 6 371 km" },
   { id: "dinosaures", niveau: 2, q: "Temps écoulé depuis la disparition des dinosaures non aviens, en années", v: 66e6, source: "extinction Crétacé-Paléogène, il y a environ 66 millions d'années" },
   { id: "masse-terre", niveau: 3, q: "Masse de la Terre, en kilogrammes", v: 5.97e24, source: "NASA : 5,97 × 10²⁴ kg" },

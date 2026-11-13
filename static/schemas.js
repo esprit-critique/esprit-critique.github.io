@@ -526,7 +526,7 @@ const SCHEMAS = {
     lignes[4].texte = "≈ 450";
     return {
       svg: barresHorizontales("Décès annuels dans le monde : accidents de la route environ 1 160 000, homicides 458 000, noyades 300 000, terrorisme 7 555, accidents d'avions de ligne environ 450, attaques de requins environ 6.", lignes, { max: 1300000 }),
-      legende: "Décès annuels dans le monde (OMS, ONUDC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File ; années 2021 à 2025). En orange, les causes les plus médiatisées : à part les homicides, leurs barres sont presque invisibles."
+      legende: "Décès annuels dans le monde (OMS, ONUDC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File ; années 2020 à 2025). En orange, les causes les plus médiatisées : à part les homicides, leurs barres sont presque invisibles."
     };
   },
 

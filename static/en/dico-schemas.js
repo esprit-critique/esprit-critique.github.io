@@ -115,7 +115,7 @@ EN_AJOUTER([
   ["P, car Q", "P, because Q"],
   ["Chaque affirmation sert de preuve à l'autre : le raisonnement tourne en rond et ne convainc que ceux qui acceptent déjà la conclusion.", "Each claim serves as proof for the other: the reasoning goes round in circles and convinces only those who already accept the conclusion."],
   ["Décès annuels dans le monde : accidents de la route environ 1 160 000, homicides 458 000, noyades 300 000, terrorisme 7 555, accidents d'avions de ligne environ 450, attaques de requins environ 6.", "Annual deaths worldwide: road accidents about 1,160,000, homicides 458,000, drownings 300,000, terrorism 7,555, airliner accidents about 450, shark attacks about 6."],
-  ["Décès annuels dans le monde (OMS, ONUDC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File ; années 2021 à 2025). En orange, les causes les plus médiatisées : à part les homicides, leurs barres sont presque invisibles.", "Annual deaths worldwide (WHO, UNODC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File; years 2021 to 2025). In orange, the most heavily covered causes: apart from homicides, their bars are almost invisible."],
+  ["Décès annuels dans le monde (OMS, ONUDC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File ; années 2020 à 2025). En orange, les causes les plus médiatisées : à part les homicides, leurs barres sont presque invisibles.", "Annual deaths worldwide (WHO, UNODC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File; years 2020 to 2025). In orange, the most heavily covered causes: apart from homicides, their bars are almost invisible."],
   ["Part des réponses hors de l'intervalle donné : attendue 2 %, observée 42 % pour des intervalles sûrs à 98 %.", "Share of answers outside the stated interval: expected 2%, observed 42% for intervals said to be 98% sure."],
   ["Hors de l'intervalle « sûr à 98 % » : attendu", "Outside the “98% sure” interval: expected"],
   ["Hors de l'intervalle « sûr à 98 % » : observé", "Outside the “98% sure” interval: observed"],
@@ -182,8 +182,9 @@ EN_AJOUTER([
   ["La personne", "The person"],
   ["Son argument", "Their argument"],
   ["(prémisses, conclusion)", "(premises, conclusion)"],
+  ["l'attaque", "the attack"],
   ["aucune réponse", "no answer"],
   ["sur le fond", "on the substance"],
   ["Schéma : critiquer la personne (son caractère, ses intérêts, son passé) ne dit rien de la validité de son argument, qui doit être examiné pour lui-même.", "Diagram: criticising the person (their character, interests or past) says nothing about the validity of their argument, which must be examined in its own right."],
-  ["l'attaque", "the attack"]
+  ["Décès annuels dans le monde (OMS, ONUDC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File ; années 2021 à 2025). En orange, les causes les plus médiatisées : à part les homicides, leurs barres sont presque invisibles.", "Annual deaths worldwide (WHO, UNODC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File; years 2021 to 2025). In orange, the most heavily covered causes: apart from homicides, their bars are almost invisible."]
 ]);

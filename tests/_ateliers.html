@@ -142,7 +142,7 @@ f.onload = async () => {
     const couverts = new Set(repliques.filter(r => r.sophisme).flatMap(r => [].concat(r.sophisme)));
     const inconnus = repliques.filter(r => r.sophisme).flatMap(r => [].concat(r.sophisme)).filter(id => !idsSoph.includes(id));
     const partRecevable = repliques.filter(r => !r.sophisme).length / repliques.length;
-    ok("débats : " + DEB.length + " débats de 10 à 14 répliques, les " + idsSoph.length + " sophismes couverts", DEB.length === 10 && DEB.every(x => x.repliques.length >= 10 && x.repliques.length <= 14) && idsSoph.every(i => couverts.has(i)) && !inconnus.length, idsSoph.filter(i => !couverts.has(i)).concat(inconnus).join(", "));
+    ok("débats : " + DEB.length + " débats de 10 à 14 répliques, les " + idsSoph.length + " sophismes couverts", DEB.length === 12 && DEB.every(x => x.repliques.length >= 10 && x.repliques.length <= 14) && idsSoph.every(i => couverts.has(i)) && !inconnus.length, idsSoph.filter(i => !couverts.has(i)).concat(inconnus).join(", "));
     ok("débats : " + Math.round(100 * partRecevable) + " % de répliques recevables (55 à 65 %)", partRecevable >= 0.55 && partRecevable <= 0.65);
     ok("débats : chaque réplique a son auteur, son texte et son explication", repliques.every(r => r.qui && r.texte && r.pourquoi && r.pourquoi.length > 20));
     const sansRep = idsSoph.filter(i => !REP.some(x => x.s === i));

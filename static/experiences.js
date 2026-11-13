@@ -139,7 +139,7 @@ const WASON_CONCRETES = [
   }
 ];
 
-// Règles cachées possibles pour le jeu 2, 4, 6 : toutes acceptent la suite 2, 4, 6
+// Règles cachées possibles pour le jeu 2, 4, 6 : chacune accepte sa suite d'exemple (2, 4, 6 par défaut, ou « graine »)
 // Règles cachées. graine : la suite donnée en exemple (2, 4, 6 par défaut) ; evidente : l'hypothèse que cette suite
 // suggère le plus, et qu'une suite « informative » doit pouvoir mettre en défaut en sortant de son cadre.
 // Niveaux : 1, la règle de Wason ; 2, autres règles larges ; 3, règles plus fines, avec un budget de 8 suites ;
@@ -440,14 +440,14 @@ const EXPERIENCES_PENSEE = [
     texte: "Les Athéniens conservent le navire de Thésée. Au fil des siècles, ils remplacent chaque planche pourrie par une neuve, jusqu'à ce qu'il ne reste aucune planche d'origine. Hobbes ajoute : et si quelqu'un avait gardé les vieilles planches pour reconstruire le navire ?",
     question: "Lequel est le navire de Thésée ?",
     options: ["Le navire réparé, qui n'a jamais cessé de naviguer", "Le navire reconstruit avec les planches d'origine", "Aucun fait ne tranche : tout dépend de ce qu'on appelle « le même »"],
-    discussion: "Les philosophes distinguent plusieurs critères d'identité : la continuité (le navire réparé), la matière (le navire reconstruit), la fonction ou la forme. La question reste ouverte, et se pose pour les personnes : presque toutes nos cellules se renouvellent, sommes-nous la même personne ?",
+    discussion: "Les philosophes distinguent plusieurs critères d'identité : la continuité (le navire réparé), la matière (le navire reconstruit), la fonction ou la forme. La question reste ouverte, et se pose pour les personnes : beaucoup de nos cellules se renouvellent (pas toutes : la plupart de nos neurones nous accompagnent toute la vie), sommes-nous la même personne ?",
     critique: "Pour l'esprit critique : beaucoup de désaccords portent sur des mots, pas sur des faits. Préciser ce que l'on entend par « le même », « naturel » ou « liberté » dissout bien des disputes.",
     liens: [["#sophismes/equivoque", "Équivoque"], ["#sophismes/definition-persuasive", "Définition persuasive"]] },
   { id: "theiere", titre: "La théière de Russell", auteur: "Bertrand Russell, « Is There a God? », écrit en 1952",
     texte: "Russell imagine affirmer qu'une théière de porcelaine tourne autour du Soleil, entre la Terre et Mars, trop petite pour être vue même par les plus puissants télescopes. Personne ne peut prouver le contraire.",
     question: "À qui revient la charge de la preuve ?",
     options: ["À celui qui affirme que la théière existe", "À celui qui en doute", "À personne : la question est indécidable"],
-    discussion: "Pour Russell, ce serait « une absurdité intolérable » d'exiger des sceptiques qu'ils prouvent l'inexistence de la théière. Christopher Hitchens a résumé le principe : « Ce qui peut être affirmé sans preuve peut être rejeté sans preuve. » Carl Sagan ajoutait que des affirmations extraordinaires demandent des preuves extraordinaires.",
+    discussion: "Russell ajoute que s'il soutenait, faute de pouvoir être réfuté, qu'il serait « d'une présomption intolérable » de douter de sa théière, on penserait à juste titre qu'il dit des absurdités : c'est à celui qui affirme de prouver. Christopher Hitchens a résumé le principe : « Ce qui peut être affirmé sans preuve peut être rejeté sans preuve. » Carl Sagan ajoutait que des affirmations extraordinaires demandent des preuves extraordinaires.",
     critique: "Pour l'esprit critique : « vous ne pouvez pas prouver que c'est faux » n'est pas un argument. C'est l'appel à l'ignorance.",
     liens: [["#sophismes/ignorance", "Appel à l'ignorance"]] },
   { id: "gettier", titre: "Le problème de Gettier", auteur: "Edmund Gettier, 1963",
