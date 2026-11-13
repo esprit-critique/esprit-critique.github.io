@@ -225,7 +225,7 @@ JEUX.push(
         const bonnes = resultats.filter(Boolean).length;
         afficherScore(zone, "hasard", bonnes, resultats.length);
         // Taux de réussite théorique d'un observateur qui applique une règle simple, par simulation
-        const taux = [1, 2, 3].map(n => [n, tauxObservateur(PARAMETRES_HASARD[n], "suite", 400), tauxObservateur(PARAMETRES_HASARD[n], "points", 150)]);
+        const taux = Object.keys(PARAMETRES_HASARD).map(Number).map(n => [n, tauxObservateur(PARAMETRES_HASARD[n], "suite", 400), tauxObservateur(PARAMETRES_HASARD[n], "points", 150)]);
         zone.appendChild(calculEnDetail([
           "Un observateur qui applique une règle simple fait mieux que le hasard (50 %) à chaque niveau. Pour les suites, il choisit celle qui change le moins souvent de face ; pour les nuages, celui dont les deux points les plus proches le sont le plus, car le vrai hasard forme des grappes.",
           ...taux.map(([n, ts, tp]) => T("= Niveau {0} ({1} lancers, {2} points) : suites {3} %, nuages {4} %", n, PARAMETRES_HASARD[n].suite, PARAMETRES_HASARD[n].points, Math.round(100 * ts), Math.round(100 * tp))),
@@ -353,6 +353,8 @@ JEUX.push(
     lancer(zone) {
       // Niveaux : 1, grands nuages (70 points), corrélations bien distinctes ; 2, 40 points ; 3, 25 points,
       // corrélations moyennes et proches les unes des autres, et souvent une valeur extrême à contre-courant.
+      // 4, 20 points, et souvent une valeur extrême, à contre-courant ou dans le prolongement ; 5, des nuages où r
+      // lui-même trompe : un lien fort mais courbe (r faible), ou deux groupes de tendance inverse à l'ensemble.
       // Le r affiché est toujours calculé exactement sur les points dessinés, valeur extrême comprise.
       deroulerNiveaux(zone, {
         id: "correlation", n: 8, libelle: "Nuage", relancer: () => JEUX.find(j => j.id === "correlation").lancer(zone),
@@ -361,13 +363,17 @@ JEUX.push(
           const signeAuHasard = Math.random() < 0.3 ? -1 : 1;
           if (niveau === 1) return { cible: signeAuHasard * melanger([0.05, 0.3, 0.6, 0.9])[0], n: 70 };
           if (niveau === 2) return { cible: signeAuHasard * melanger([0.2, 0.45, 0.6, 0.75])[0], n: 40 };
-          return { cible: signeAuHasard * (0.3 + 0.05 * Math.floor(Math.random() * 9)), n: 25, extreme: Math.random() < 0.7 };
+          if (niveau === 3) return { cible: signeAuHasard * (0.3 + 0.05 * Math.floor(Math.random() * 9)), n: 25, extreme: Math.random() < 0.7 };
+          const moyenne = signeAuHasard * (0.25 + 0.05 * Math.floor(Math.random() * 11));
+          const extreme = Math.random() < 0.8 ? (Math.random() < 0.5 ? "contre" : "prolongement") : false;
+          if (niveau === 4 || Math.random() < 0.2) return { cible: moyenne, n: 20, extreme };
+          return { cible: signeAuHasard, n: 30, forme: Math.random() < 0.5 ? "courbe" : "groupes" };
         }
       }, (tirage, zone, fini) => {
         const cible = tirage.cible;
-        const points = nuageCorrele(cible, tirage.n);
-        // Valeur extrême : un point loin du nuage, à l'opposé de la tendance
-        if (tirage.extreme) points.push([2.8, -2.8 * Math.sign(cible || 1)]);
+        const points = tirage.forme ? nuageForme(tirage.forme, tirage.n, Math.sign(cible)) : nuageCorrele(cible, tirage.n);
+        // Valeur extrême : un point loin du nuage, à l'opposé de la tendance (ou, au niveau 4, parfois dans son prolongement)
+        if (tirage.extreme) points.push([2.8, (tirage.extreme === "prolongement" ? 2.8 : -2.8) * Math.sign(cible || 1)]);
         const r = correlationDe(points);
         zone.appendChild(el("p", "consigne", "Estimez la corrélation"));
         const graphe = dessinCorrelation(points);
@@ -399,6 +405,14 @@ JEUX.push(
           retour.appendChild(el("p", "verdict " + (points3 ? "juste" : "faux"), T("Corrélation réelle : r = {0}.", signe(Number(r.toFixed(2))))));
           retour.appendChild(paragraphe(T("Écart : {0}.", fr(Number(erreur.toFixed(2)))) + " " + T(["Plus de 0,2 d'écart : aucun point.", "Moins de 0,2 d'écart : 1 point.", "Moins de 0,1 d'écart : 2 points."][points3]) +
             " " + T("La droite tracée est celle qui résume le mieux le nuage (moindres carrés).") + (Math.abs(r) < 0.5 ? " " + T("Avec r = {0}, la droite n'explique que {1} % de la dispersion.", signe(Number(r.toFixed(2))), Math.round(100 * r * r)) : "")));
+          if (tirage.extreme === "prolongement") retour.appendChild(paragraphe(T("Le point isolé, dans le prolongement du nuage, renforce r : sans lui, r = {0}.", signe(Number(correlationDe(points.slice(0, -1)).toFixed(2))))));
+          if (tirage.extreme === "contre") retour.appendChild(paragraphe(T("Le point isolé, à contre-courant, affaiblit r : sans lui, r = {0}.", signe(Number(correlationDe(points.slice(0, -1)).toFixed(2))))));
+          if (tirage.forme === "courbe") retour.appendChild(paragraphe("Le lien entre les deux variables est fort, mais il est courbe : r ne mesure que l'alignement sur une droite. Un r faible ne veut donc pas dire « pas de lien »."));
+          if (tirage.forme === "groupes") {
+            const moitie = points.length / 2;
+            retour.appendChild(paragraphe(T("Le nuage réunit deux groupes. Dans chacun, la tendance est inverse de l'ensemble (r = {0} et r = {1}) : mélanger deux groupes peut renverser une corrélation, c'est le paradoxe de Simpson.",
+              signe(Number(correlationDe(points.slice(0, moitie)).toFixed(2))), signe(Number(correlationDe(points.slice(moitie)).toFixed(2))))));
+          }
           zone.appendChild(retour);
           fini({ estime: lire(), reel: r, points: points3 }, retour);
         });
@@ -419,7 +433,8 @@ JEUX.push(
           "Les relations étudiées en sciences humaines sont souvent faibles : sur un siècle de psychologie sociale, l'effet typique correspond à r ≈ 0,21 (Richard, Bond et Stokes-Zoota, 2003). À l'œil, un tel nuage paraît presque informe.",
           "La présentation influence le jugement : un même nuage paraît plus corrélé quand on élargit les axes et qu'il occupe une plus petite partie du cadre (Cleveland, Diaconis et McGill, 1982).",
           "Une corrélation, même forte, ne dit rien de la cause : les deux variables peuvent dépendre d'une troisième, ou l'effet aller dans l'autre sens.",
-          "Une seule valeur extrême peut beaucoup changer r, surtout dans un petit nuage : un point isolé à contre-courant l'affaiblit nettement, un point isolé dans le prolongement le renforce. Au niveau 3, certains nuages en contiennent un : il faut le compter, comme le fait le calcul."
+          "Une seule valeur extrême peut beaucoup changer r, surtout dans un petit nuage : un point isolé à contre-courant l'affaiblit nettement, un point isolé dans le prolongement le renforce. Au niveau 3, certains nuages en contiennent un : il faut le compter, comme le fait le calcul.",
+          "Aux niveaux 4 et 5, r lui-même peut tromper : un lien fort mais courbe donne un r faible, et deux groupes réunis peuvent afficher une tendance opposée à celle de chacun (paradoxe de Simpson). D'où la règle : toujours regarder le nuage avant de croire le coefficient."
         ], [["#sophismes/correlation", "Corrélation et causalité"], ["#biais/regression-moyenne", "Régression vers la moyenne"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "correlation").lancer(zone));
       }, "Nuage");
@@ -441,11 +456,15 @@ JEUX.push(
       const doubles = melanger(Object.keys(DOUBLES_PIEGES));
       deroulerNiveaux(zone, {
         id: "graphiques", n: 8, relancer: () => JEUX.find(j => j.id === "graphiques").lancer(zone),
-        tirer: (niveau, i) => niveau === 3 && i % 4 === 1
+        // Niveaux 4 et 5 : tous les pièges, sans distinction de niveau ; on nomme le ou les procédés
+        tirer: (niveau, i) => niveau >= 4
+          ? (x => Object.assign(x.creer(), { id: x.id, nommer: niveau }))(tirerSelonNiveau("graphiques-procedes", PIEGES_GRAPHIQUES, 1, niveau, x => x.id, () => niveau)[0])
+          : niveau === 3 && i % 4 === 1
           ? (id => Object.assign(PIEGES_GRAPHIQUES.find(x => x.id === id).creer(), { double: id }))(doubles[(i - 1) / 4])
           : tirerSelonNiveau("graphiques", niveau === 3 ? PIEGES_GRAPHIQUES.filter(x => !DOUBLES_PIEGES[x.id]) : PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer()
       }, (p, zone, fini) => {
         if (p.double) return afficherDoublePiege(p, zone, fini);
+        if (p.nommer) return afficherProcedesNiveau(p, zone, fini, p.nommer);
         zone.appendChild(el("p", "consigne", p.titre));
         const figure = el("figure", "figure-piege");
         figure.appendChild(p.trompeur());
@@ -612,7 +631,11 @@ const suiteHasard = n => Array.from({ length: n }, () => (Math.random() < 0.5 ? 
 const PARAMETRES_HASARD = {
   1: { points: 40, ecart: 0.85, suite: 30, alternance: 0.67 },
   2: { points: 32, ecart: 0.7, suite: 24, alternance: 0.63 },
-  3: { points: 25, ecart: 0.6, suite: 20, alternance: 0.6 }
+  3: { points: 25, ecart: 0.6, suite: 20, alternance: 0.6 },
+  // Niveaux 4 et 5 : la règle de l'observateur réussit encore 71 % et 64 % des suites (simulation, 20 000 essais) ;
+  // les nuages imités respectent un écart minimal plus faible, donc se distinguent moins à l'œil
+  4: { points: 20, ecart: 0.45, suite: 16, alternance: 0.6 },
+  5: { points: 16, ecart: 0.35, suite: 12, alternance: 0.58 }
 };
 
 // Taux de réussite d'un observateur qui applique une règle simple, estimé par simulation :
@@ -664,6 +687,25 @@ function quadriller(s, points) {
 }
 
 // ===================== Corrélation =====================
+
+// Nuages des niveaux 4 et 5, où r trompe. sens : +1 ou −1, sens de la tendance d'ensemble.
+// « courbe » : y dépend fortement de x, mais en arc (parabole) ; r reste faible.
+// « groupes » : deux groupes décalés dans le sens de la tendance, chacun de pente opposée ; les n/2 premiers points
+// forment le premier groupe (le retour calcule r dans chaque groupe).
+function nuageForme(forme, n, sens) {
+  if (forme === "courbe") {
+    const penche = sens * (0.05 + 0.1 * Math.random());
+    // x répartis régulièrement (avec un léger désordre) : un tirage déséquilibré inclinerait l'arc et gonflerait r
+    return Array.from({ length: n }, (_, k) => {
+      const x = -2 + 4 * (k + 0.2 + 0.6 * Math.random()) / n;
+      return [x, -0.6 * x * x + penche * x + 0.3 * gauss()];
+    });
+  }
+  return Array.from({ length: n }, (_, k) => {
+    const c = k < n / 2 ? -1.2 : 1.2, x = c + 0.5 * gauss();
+    return [x, sens * c - sens * 0.7 * (x - c) + 0.25 * gauss()];
+  });
+}
 
 // Nuage de n points de corrélation proche de r (variables normales)
 function nuageCorrele(r, n) {
@@ -781,33 +823,61 @@ function grapheCourbe(series, xmin, xmax, ymin, ymax, options = {}) {
 const entier = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 
 // Chaque piège crée des données au hasard, une version trompeuse et une version honnête
+// Procédés trompeurs, nommés aux niveaux 3 à 5. Les cinq premiers servent au niveau 3 (graphiques à deux procédés) ;
+// les quatre suivants complètent la liste des niveaux 4 et 5, où chaque piège porte ses procédés (« procedes »), et
+// ceux qu'on ne compte pas faux s'ils sont cochés en plus (« toleres » : l'axe de la courbe inversée ne part pas de
+// zéro, ce qui n'est pas un défaut pour une courbe).
+const PROCEDES = ["Axe vertical qui ne commence pas à zéro", "Fenêtre de temps choisie", "Deux axes verticaux d'échelles différentes", "Valeurs cumulées", "Moyenne au lieu de la médiane",
+  "Axe vertical inversé", "Pourcentage au lieu de points de pourcentage", "Risque relatif sans le risque absolu", "Image agrandie dans les deux dimensions"];
 // Niveau 3 : graphiques qui cumulent deux procédés. Clé : identifiant du piège dont on reprend le graphique trompeur.
-const PROCEDES = ["Axe vertical qui ne commence pas à zéro", "Fenêtre de temps choisie", "Deux axes verticaux d'échelles différentes", "Valeurs cumulées", "Moyenne au lieu de la médiane"];
 const DOUBLES_PIEGES = {
   "fenetre": { justes: [0, 1], explication: "Le graphique ne montre que six années, choisies pour leur baisse, et son axe vertical commence bien au-dessus de zéro, ce qui amplifie encore la baisse." },
   "double-axe": { justes: [2, 0], explication: "Chaque courbe a son propre axe, et celui de gauche commence à 880 : on peut ainsi faire se croiser n'importe quelles courbes. Sur une échelle commune partant de zéro, B reste autour de 5 % de A." }
 };
 
-// Deux procédés à cocher parmi cinq, puis validation
+// Niveau 3 : deux procédés à cocher parmi les cinq premiers
 function afficherDoublePiege(p, zone, fini) {
   const d = DOUBLES_PIEGES[p.double];
+  afficherProcedes(p, zone, fini, { justes: d.justes, toleres: [], explication: d.explication, options: [0, 1, 2, 3, 4], annonce: true });
+}
+
+// Niveaux 4 et 5 : nommer le ou les procédés du graphique. Niveau 4 : nombre annoncé, la bonne réponse et trois
+// autres procédés ; niveau 5 : les neuf procédés, sans dire combien il y en a.
+function afficherProcedesNiveau(p, zone, fini, niveau) {
+  const autres = melanger(PROCEDES.map((_, k) => k).filter(k => !p.procedes.includes(k) && !(p.toleres || []).includes(k)));
+  const options = niveau === 4 ? melanger([...p.procedes, ...autres.slice(0, 3)]) : PROCEDES.map((_, k) => k);
+  const double = DOUBLES_PIEGES[p.id];
+  afficherProcedes(p, zone, fini, { justes: p.procedes, toleres: p.toleres || [], explication: double ? double.explication : p.explication, options, annonce: niveau === 4 });
+}
+
+// Choix des procédés, puis validation. annonce : le nombre de procédés est dit et limite les choix ; sinon, on coche
+// librement, et la réponse est juste si elle contient tous les procédés et aucun autre (hors procédés tolérés).
+function afficherProcedes(p, zone, fini, { justes, toleres, explication, options, annonce }) {
+  const nombre = justes.length;
   zone.appendChild(el("p", "consigne", p.titre));
+  if (p.affirmation) zone.appendChild(el("p", "cas", p.affirmation));
   const figure = el("figure", "figure-piege");
   figure.appendChild(p.trompeur());
   figure.appendChild(el("figcaption", null, p.legende || "Données fictives."));
   zone.appendChild(figure);
-  zone.appendChild(el("p", "cas", "Ce graphique cumule deux procédés trompeurs. Lesquels ? (deux réponses)"));
+  // Quand le piège tient à un chiffre annoncé (moyenne, pourcentage), c'est la présentation qui trompe, pas le dessin
+  zone.appendChild(el("p", "cas", p.affirmation
+    ? (annonce ? "Quel procédé trompeur cette présentation utilise-t-elle ?" : "Quels procédés trompeurs cette présentation utilise-t-elle ? Cochez-les tous, et seulement eux.")
+    : !annonce ? "Quels procédés trompeurs ce graphique utilise-t-il ? Cochez-les tous, et seulement eux."
+    : nombre === 2 ? "Ce graphique cumule deux procédés trompeurs. Lesquels ? (deux réponses)" : "Quel procédé trompeur ce graphique utilise-t-il ?"));
   const choisis = new Set();
-  const valider = el("button", "bouton large", "Valider mes deux réponses");
+  const valider = el("button", "bouton large", !annonce ? "Valider mes réponses" : nombre === 2 ? "Valider mes deux réponses" : "Valider ma réponse");
   valider.dataset.valider = "1";
   valider.disabled = true;
-  const boutons = PROCEDES.map((texte, k) => {
-    const b = boutonChoix(texte, k);
+  const boutons = options.map((k, rang) => {
+    const b = boutonChoix(PROCEDES[k], rang);
     b.setAttribute("aria-pressed", "false");
     b.addEventListener("click", () => {
-      if (choisis.has(k)) choisis.delete(k); else if (choisis.size < 2) choisis.add(k);
-      boutons.forEach((x, j) => { x.classList.toggle("choisi", choisis.has(j)); x.setAttribute("aria-pressed", String(choisis.has(j))); });
-      valider.disabled = choisis.size !== 2;
+      if (choisis.has(k)) choisis.delete(k);
+      else if (!annonce || choisis.size < nombre) choisis.add(k);
+      else if (nombre === 1) { choisis.clear(); choisis.add(k); }
+      boutons.forEach((x, j) => { x.classList.toggle("choisi", choisis.has(options[j])); x.setAttribute("aria-pressed", String(choisis.has(options[j]))); });
+      valider.disabled = annonce ? choisis.size !== nombre : choisis.size === 0;
     });
     zone.appendChild(b);
     return b;
@@ -815,22 +885,31 @@ function afficherDoublePiege(p, zone, fini) {
   zone.appendChild(valider);
   valider.addEventListener("click", () => {
     valider.remove();
-    boutons.forEach((b, k) => {
+    boutons.forEach((b, j) => {
+      const k = options[j];
       b.disabled = true;
       b.classList.remove("choisi");
-      if (d.justes.includes(k)) b.classList.add("juste");
-      else if (choisis.has(k)) b.classList.add("faux");
+      if (justes.includes(k)) b.classList.add("juste");
+      else if (choisis.has(k) && !toleres.includes(k)) b.classList.add("faux");
     });
-    const trouves = d.justes.filter(k => choisis.has(k)).length;
+    const trouves = justes.filter(k => choisis.has(k)).length;
+    const enTrop = [...choisis].filter(k => !justes.includes(k) && !toleres.includes(k)).length;
+    const juste = trouves === nombre && !enTrop;
     const retour = el("div", "retour-quiz");
-    retour.appendChild(el("p", "verdict " + (trouves === 2 ? "juste" : "faux"), trouves === 2 ? "Juste : les deux procédés." : trouves === 1 ? "Un procédé sur deux." : "Aucun des deux procédés."));
-    const f = el("figure", "figure-piege honnete");
-    if (p.verite) f.appendChild(messageGraphique(p.verite));
-    f.appendChild(p.honnete());
-    f.appendChild(el("figcaption", null, "Les mêmes données, présentées honnêtement."));
-    retour.append(f, paragraphe(d.explication));
+    retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), juste ? (nombre === 2 ? T("Juste : les deux procédés.") : T("Juste."))
+      : enTrop && trouves === nombre ? T("Tous les procédés trouvés, mais {0} en trop.", enTrop)
+      : nombre === 2 ? (trouves === 1 ? T("Un procédé sur deux.") : T("Aucun des deux procédés.")) : T("Non.")));
+    if (p.piege && !DOUBLES_PIEGES[p.double || ""]) retour.appendChild(paragraphe(p.piege));
+    if (p.honnete) {
+      const f = el("figure", "figure-piege honnete");
+      if (p.verite) f.appendChild(messageGraphique(p.verite));
+      f.appendChild(p.honnete());
+      f.appendChild(el("figcaption", null, "Les mêmes données, présentées honnêtement."));
+      retour.appendChild(f);
+    }
+    retour.appendChild(paragraphe(explication));
     zone.appendChild(retour);
-    fini(trouves === 2, retour);
+    fini(juste, retour);
   });
 }
 
@@ -850,6 +929,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Elle a environ triplé", T("Elle a progressé de {0} points, soit environ {1} %", fr(Number((v2 - v1).toFixed(1))), hausse), "Elle a doublé"],
         juste: 1,
         piege: T("L'axe vertical commence à {0} %, et non à zéro.", fr(min)),
+        procedes: [0],
         verite: T("Axe depuis zéro : une hausse de {0} %, à peine visible.", hausse),
         explication: T("Un axe qui ne commence pas à zéro grossit les écarts : la barre de 2025 paraît plusieurs fois plus haute alors que la valeur n'a augmenté que de {0} %. Pour des barres, dont on compare les longueurs, l'axe doit partir de zéro.", hausse)
       };
@@ -879,6 +959,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["À la baisse", "Impossible à dire avec ce seul graphique", "À la hausse"],
         juste: 1,
         piege: "Six années ne disent rien de la tendance de long terme.",
+        procedes: [1, 0],
         verite: "Sur trente ans, les adhérents augmentent : la baisse montrée (trait rouge épais) n'est qu'un creux passager.",
         explication: "Sur trente ans, le nombre d'adhérents a nettement augmenté ; la courbe montrée n'en est qu'un extrait, choisi parce qu'il baissait. Avant de conclure, il faut demander pourquoi la période commence et finit là."
       };
@@ -900,6 +981,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Oui, nettement", "Non, elles baissent chaque année", "On ne peut pas le savoir"],
         juste: 1,
         piege: "Une courbe de cumul monte toujours, même quand chaque année est moins bonne que la précédente.",
+        procedes: [3],
         verite: "Année par année, les ventes baissent.",
         explication: "La pente de la courbe, de plus en plus faible, trahit la baisse : les ventes annuelles ont reculé d'environ 10 % par an (barres ci-dessus, années 2018 à 2025). Les présentations en cumul sont fréquentes quand les chiffres annuels sont mauvais."
       };
@@ -930,6 +1012,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Oui, vers 2020", "Non : B reste plus de dix fois plus petite", "Oui, en 2025"],
         juste: 1,
         piege: "Les deux courbes n'utilisent pas la même échelle.",
+        procedes: [2, 0],
         verite: "Sur une échelle commune, B reste très loin derrière A : les courbes ne se croisent jamais.",
         explication: "Avec deux axes verticaux, on peut faire se croiser n'importe quelles courbes en choisissant les bornes de chaque axe. Sur une échelle commune, B reste autour de 5 % de A."
       };
@@ -948,6 +1031,8 @@ const PIEGES_GRAPHIQUES = [
         options: [T("De {0} %", t2 - t1), t2 - t1 > 1 ? T("De {0} points, soit +{1} %", t2 - t1, relatif) : T("De {0} point, soit +{1} %", t2 - t1, relatif), T("De {0} points", relatif)],
         juste: 1,
         piege: "Il faut distinguer points de pourcentage et pourcentage.",
+        procedes: [6],
+        affirmation: T("Titre d'un article : « Le chômage bondit de {0} % ! »", relatif),
         explication: T("L'écart entre deux taux se mesure en points ({0}), la variation relative en pourcentage (+{1} %). Selon l'effet recherché, on choisira l'un ou l'autre : « +{0} point » paraît anodin, « +{1} % » alarmant.", t2 - t1, relatif)
       };
     }
@@ -971,6 +1056,8 @@ const PIEGES_GRAPHIQUES = [
         options: [T("Environ {0} €", fr(moyenne)), T("Environ {0} €", fr(mediane)), T("Environ {0} €", fr(Math.round(patron / 1000) * 1000))],
         juste: 1,
         piege: "La moyenne est tirée vers le haut par un seul salaire très élevé.",
+        procedes: [4],
+        affirmation: T("La direction annonce : « Salaire moyen : {0} € ».", fr(moyenne)),
         explication: T("La moitié des salariés gagne moins de {0} € (c'est la médiane). La moyenne, {1} €, dépasse le salaire de 19 salariés sur 20 à cause du salaire du dirigeant. Pour des revenus, la médiane décrit mieux la situation typique.", fr(mediane), fr(moyenne))
       };
     }
@@ -990,6 +1077,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Il a diminué", "Il a augmenté", "Il est resté stable"],
         juste: 1,
         piege: "L'axe vertical est inversé : les valeurs augmentent vers le bas.",
+        procedes: [5], toleres: [0],
         verite: "Axe dans le bon sens : les accidents augmentent nettement depuis 2019.",
         explication: "La courbe descend, mais l'axe est gradué de haut en bas. En 2014, un graphique de l'agence Reuters sur les morts par arme à feu en Floride, construit avec un axe inversé, a été largement lu à l'envers."
       };
@@ -1008,6 +1096,7 @@ const PIEGES_GRAPHIQUES = [
         options: [String(base), String(base * 100), "5 000"],
         juste: 0,
         piege: "« Doubler » un risque très faible le laisse très faible.",
+        procedes: [7],
         verite: T("Sur 10 000 personnes : {0} sans le médicament, {1} avec. Le risque double, mais reste très faible.", pluriel(base, "cas", "cas"), base * 2),
         explication: T("Le risque relatif (×2) impressionne ; le risque absolu (+{0} pour 10 000) permet de décider. En 1995, l'annonce au Royaume-Uni d'un risque de thrombose « doublé » avec certaines pilules contraceptives a conduit de nombreuses femmes à arrêter leur contraception, suivie d'une hausse des grossesses non désirées et des avortements.", base)
       };
@@ -1026,6 +1115,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Oui", "Non : il l'exagère", "Non : il le minimise"],
         juste: 1,
         piege: "La production double, mais le bidon est agrandi dans les deux dimensions : sa surface est multipliée par quatre.",
+        procedes: [8],
         verite: "Deux bidons identiques au lieu d'un : la production double, ni plus ni moins.",
         explication: "L'œil compare les surfaces, pas les hauteurs. Doubler la hauteur et la largeur d'une image la fait paraître quatre fois plus grande. Une représentation fidèle aligne des images identiques, ou utilise des barres."
       };

@@ -1,10 +1,11 @@
-// niveaux.js : progression dans les ateliers. Trois niveaux : 1 (découverte), 2 (confirmé), 3 (expert).
+// niveaux.js : progression dans les ateliers. Trois niveaux : 1 (découverte), 2 (confirmé), 3 (expert) ; certains
+// ateliers vont jusqu'à 4 (maître) et 5 (virtuose), voir NIVEAUX_MAX.
 // Par défaut, le niveau s'ajuste tout seul (mode « auto ») ; on peut aussi le choisir à la main.
 // Stockage : niveaux[idAtelier] = { niveau, mode: "auto" | "choisi", parties, serie }.
 
 const NOMS_NIVEAUX = { 1: T("découverte"), 2: T("confirmé"), 3: T("expert"), 4: T("maître"), 5: T("virtuose") };
 // Ateliers qui vont au-delà du niveau 3 (plus durs, et mieux payés : barème « atelier-note », progression.js)
-const NIVEAUX_MAX = { points: 5 };
+const NIVEAUX_MAX = { points: 5, hasard: 5, correlation: 5, graphiques: 5 };
 const niveauMax = id => NIVEAUX_MAX[id] || 3;
 
 function niveauAtelier(id) {
@@ -60,7 +61,8 @@ function suivrePartie(id, score, sur) {
 function tirerSelonNiveau(cle, elements, n, niveau, idDe = e => e.id, niveauDe = e => e.niveau || 1) {
   const vus = lire("vus", {});
   const dejaVus = new Set(vus[cle] || []);
-  const ordre = [niveau, niveau - 1, niveau + 1, niveau - 2, niveau + 2].filter(x => x >= 1 && x <= 3);
+  // Jusqu'au niveau 5 : une banque sans élément de niveau 4 ou 5 retombe sur ses éléments de niveau 3
+  const ordre = [niveau, niveau - 1, niveau + 1, niveau - 2, niveau + 2].filter(x => x >= 1 && x <= 5);
   const pris = [];
   const prendre = liste => liste.forEach(e => { if (pris.length < n && !pris.includes(e)) pris.push(e); });
   ordre.forEach(niv => prendre(melanger(elements.filter(e => niveauDe(e) === niv && !dejaVus.has(idDe(e))))));
