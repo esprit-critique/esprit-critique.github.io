@@ -2,11 +2,28 @@
 // bibliothèque. Le site a un atelier « Graphiques trompeurs » : ses propres graphiques doivent être irréprochables.
 // Barres depuis zéro, pas de double axe, pas de relief, valeurs écrites, couleur jamais seule à porter l'information,
 // un titre qui dit ce que le graphique montre, et « Voir les données » pour le tableau correspondant.
+// Chaque graphique porte aussi son message : la conclusion, en une phrase, tirée des données qu'il montre. Sans elle,
+// un graphique ajoute de la matière sans dire quoi en penser, et le lecteur doit deviner ce qu'il faut y voir.
 
-// Bloc commun : titre, dessin, bouton « Voir les données » qui ouvre le tableau
-function blocGraphique(titre, dessin, entetes, lignes, classe) {
+// Le message d'un graphique, placé juste avant lui
+function messageGraphique(texte) {
+  return el("p", "graphique-message", texte);
+}
+
+// Étalonnage résumé en une phrase : certitude annoncée moyenne contre réussite réelle (en %), sur n réponses
+function phraseEtalonnage(annoncee, reelle, n) {
+  if (n < 5) return T("Encore trop peu de réponses pour juger votre étalonnage.");
+  const a = Math.round(annoncee), r = Math.round(reelle);
+  if (a - r > 5) return T("Trop sûr de vous : certitude moyenne {0} %, réussite {1} %. Vos points passent sous la diagonale.", a, r);
+  if (r - a > 5) return T("Vous vous sous-estimez : certitude moyenne {0} %, réussite {1} %. Vos points passent au-dessus de la diagonale.", a, r);
+  return T("Bien étalonné : certitude moyenne {0} %, réussite {1} %. Vos points suivent la diagonale.", a, r);
+}
+
+// Bloc commun : titre, message, dessin, bouton « Voir les données » qui ouvre le tableau
+function blocGraphique(titre, dessin, entetes, lignes, classe, message) {
   const figure = el("figure", "graphique" + (classe ? " " + classe : ""));
   figure.appendChild(el("figcaption", "graphique-titre", titre));
+  if (message) figure.appendChild(messageGraphique(message));
   figure.appendChild(dessin);
   const bouton = el("button", "lien graphique-donnees", "Voir les données");
   bouton.type = "button";
@@ -31,7 +48,7 @@ function blocGraphique(titre, dessin, entetes, lignes, classe) {
 }
 
 // Barres horizontales depuis zéro, valeur écrite au bout : [[libellé, valeur, couleur]], maximum de l'échelle, repères
-function graphiqueBarres(titre, donnees, max, reperes = []) {
+function graphiqueBarres(titre, donnees, max, reperes = [], message) {
   const haut = 26, largeur = 360, gauche = 150, droite = 50;
   const s = svg("svg", { viewBox: "0 0 " + largeur + " " + (donnees.length * haut + 18), class: "barres-svg", role: "img", "aria-label": titre });
   const echelle = v => gauche + (largeur - gauche - droite) * Math.max(0, v) / max;
@@ -47,11 +64,11 @@ function graphiqueBarres(titre, donnees, max, reperes = []) {
     s.appendChild(barre);
     s.appendChild(texteSvg(echelle(v || 0) + 5, y + 17, v === null ? T("jamais joué") : String(v), { class: "valeur-graphique" }));
   });
-  return blocGraphique(titre, s, [T("Élément"), T("Valeur")], donnees.map(([l, v]) => [l, v === null ? T("jamais joué") : v]));
+  return blocGraphique(titre, s, [T("Élément"), T("Valeur")], donnees.map(([l, v]) => [l, v === null ? T("jamais joué") : v]), null, message);
 }
 
 // Courbe dans le temps : points [[jour, valeur]], bandes horizontales (seuils de grade), maximum de l'échelle
-function graphiqueCourbe(titre, points, max, bandes = []) {
+function graphiqueCourbe(titre, points, max, bandes = [], message) {
   const L = 320, H = 170, g = 34, b = 22;
   const s = svg("svg", { viewBox: "0 0 " + L + " " + H, class: "courbe-svg", role: "img", "aria-label": titre });
   const j0 = points.length ? points[0][0] : 0, j1 = points.length ? Math.max(points[points.length - 1][0], j0 + 1) : 1;
@@ -81,12 +98,12 @@ function graphiqueCourbe(titre, points, max, bandes = []) {
     s.appendChild(texteSvg(g, H - 6, date(j0), { class: "graduation-graphique" }));
     if (points.length > 1) s.appendChild(texteSvg(L - 8, H - 6, date(points[points.length - 1][0]), { class: "graduation-graphique", "text-anchor": "end" }));
   }
-  return blocGraphique(titre, s, [T("Jour"), T("Valeur")], points.map(([j, v]) => [date(j), v]));
+  return blocGraphique(titre, s, [T("Jour"), T("Valeur")], points.map(([j, v]) => [date(j), v]), null, message);
 }
 
 // Toile des domaines (0 à max), avec en pointillé une toile plus ancienne ; l'aire d'une toile trompe : les valeurs sont
 // écrites à chaque sommet, et les mêmes données existent en barres (graphiqueBarres)
-function graphiqueToile(titre, axes, valeurs, anciennes, max) {
+function graphiqueToile(titre, axes, valeurs, anciennes, max, message) {
   const c = 150, r = 92, n = axes.length;
   // Marges du cadre : les noms des axes dépassent du cercle
   const s = svg("svg", { viewBox: "-70 -14 440 328", class: "toile-svg", role: "img", "aria-label": titre });
@@ -110,7 +127,7 @@ function graphiqueToile(titre, axes, valeurs, anciennes, max) {
     s.appendChild(texteSvg(x, y + 4, String(v), { class: "valeur-graphique", "text-anchor": "middle" }));
   });
   return blocGraphique(titre, s, [T("Domaine"), T("Aujourd'hui"), T("Il y a quatre semaines")],
-    axes.map((a, i) => [a, valeurs[i], anciennes ? anciennes[i] : "—"]));
+    axes.map((a, i) => [a, valeurs[i], anciennes ? anciennes[i] : "—"]), null, message);
 }
 
 // Jauge vers un objectif : part remplie, texte « reste N »
@@ -140,7 +157,7 @@ function anneau(part, taille, classe) {
 }
 
 // Calendrier d'activité : 16 semaines, une case par jour, plus ou moins foncée selon les points du jour
-function graphiqueCalendrier(titre, pointsParJour, aujourdhui) {
+function graphiqueCalendrier(titre, pointsParJour, aujourdhui, message) {
   const semaines = 16, cote = 12, ecart = 3;
   const s = svg("svg", { viewBox: "0 0 " + (semaines * (cote + ecart) + 2) + " " + (7 * (cote + ecart) + 2), class: "calendrier-svg", role: "img", "aria-label": titre });
   const debut = aujourdhui - semaines * 7 + 1, lignes = [];
@@ -152,11 +169,11 @@ function graphiqueCalendrier(titre, pointsParJour, aujourdhui) {
     s.appendChild(r);
     if (p) lignes.push([new Date(jour * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "short", timeZone: "UTC" }), p]);
   }
-  return blocGraphique(titre, s, [T("Jour"), T("Points")], lignes);
+  return blocGraphique(titre, s, [T("Jour"), T("Points")], lignes, null, message);
 }
 
 // Histogramme de la loi binomiale : scores possibles en répondant au hasard, score du joueur mis en évidence
-function graphiqueHasard(titre, probabilites, score) {
+function graphiqueHasard(titre, probabilites, score, message) {
   const n = probabilites.length - 1, L = 320, H = 130, b = 20;
   const max = Math.max(...probabilites);
   const s = svg("svg", { viewBox: "0 0 " + L + " " + H, class: "hasard-svg", role: "img", "aria-label": titre });
@@ -169,5 +186,5 @@ function graphiqueHasard(titre, probabilites, score) {
     s.appendChild(barre);
     s.appendChild(texteSvg(5 + k * larg + larg / 2, H - 6, String(k), { class: "graduation-graphique" + (k === score ? " score-joueur-texte" : ""), "text-anchor": "middle" }));
   });
-  return blocGraphique(titre, s, [T("Score"), T("Probabilité au hasard")], probabilites.map((p, k) => [k, (100 * p).toFixed(2) + PC]));
+  return blocGraphique(titre, s, [T("Score"), T("Probabilité au hasard")], probabilites.map((p, k) => [k, (100 * p).toFixed(2) + PC]), null, message);
 }

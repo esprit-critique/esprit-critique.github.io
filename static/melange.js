@@ -104,6 +104,10 @@ function bilanMelange(zone) {
     figure.append(dessin, el("figcaption", null, sec.titre));
     anneaux.appendChild(figure);
   });
+  // Message : la catégorie la plus réussie et la plus fragile de la partie
+  const parts = SECTIONS_ATELIERS.filter(sec => melange.parSection[sec.id]).map(sec => [T(sec.titre), Math.round(100 * melange.parSection[sec.id].juste / melange.parSection[sec.id].total)]).sort((a, b) => b[1] - a[1]);
+  if (parts.length > 1 && parts[0][1] > parts[parts.length - 1][1]) bilan.appendChild(messageGraphique(T("Votre catégorie la plus sûre : {0} ({1} %) ; la plus fragile : {2} ({3} %).", parts[0][0], parts[0][1], parts[parts.length - 1][0], parts[parts.length - 1][1])));
+  else if (parts.length > 1) bilan.appendChild(messageGraphique(T("Même réussite dans toutes les catégories : {0} %.", parts[0][1])));
   bilan.appendChild(anneaux);
   partie.appendChild(bilan);
   boutonRejouer(partie, () => JEUX.find(j => j.id === "melange").lancer(zone.parentNode));

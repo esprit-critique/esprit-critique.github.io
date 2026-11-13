@@ -11,6 +11,8 @@
 // Niveaux : 1, questions réussies par au moins un tiers des participants (Frederick, 2005 ; Thomson et Oppenheimer, 2016) ;
 // 2, variantes de même structure, et deux questions de lecture attentive ; 3, problèmes à deux étapes, et la question
 // la moins réussie (le trou, 16 %). Les variantes n'ont pas de taux de réussite publié : aucun n'est affiché.
+// 4 et 5 : problèmes originaux du site, de même mécanisme (réponse intuitive fausse), en deux ou trois étapes ;
+// toutes les réponses sont vérifiées par le calcul.
 const QUESTIONS_CRT = [
   { id: "batte", niveau: 1, texte: "Une batte et une balle coûtent 1,10 € au total. La batte coûte 1 € de plus que la balle. Combien coûte la balle ?", unite: "centimes", juste: 5, intuitive: 10, euros: true,
     explication: "Si la balle coûtait 10 centimes, la batte coûterait 1,10 € et le total 1,20 €. Avec x le prix de la balle : x + (x + 1) = 1,10, donc x = 0,05 €.", reussite: 48 },
@@ -48,7 +50,25 @@ const QUESTIONS_CRT = [
   { id: "couturiers", niveau: 3, texte: "5 couturiers cousent 5 robes en 5 jours. Combien de jours faut-il à 10 couturiers pour coudre 20 robes ?", unite: "jours", juste: 10, intuitive: 5,
     explication: "Un couturier coud une robe en 5 jours. 10 couturiers cousent 10 robes en 5 jours, donc 20 robes en 10 jours." },
   { id: "escargot", niveau: 3, texte: "Un escargot grimpe le long d'un mur de 10 m. Chaque jour, il monte de 3 m ; chaque nuit, il redescend de 2 m. En combien de jours atteint-il le haut du mur ?", unite: "jours", juste: 8, intuitive: 10,
-    explication: "Chaque jour suivi d'une nuit le fait monter de 1 m : au matin du 8e jour, il est à 7 m. Ce jour-là, il monte de 3 m et atteint le haut, sans redescendre."  }
+    explication: "Chaque jour suivi d'une nuit le fait monter de 1 m : au matin du 8e jour, il est à 7 m. Ce jour-là, il monte de 3 m et atteint le haut, sans redescendre."  },
+  { id: "batte-gant", niveau: 4, texte: "Une batte, une balle et un gant coûtent 1,65 € au total. La batte coûte 1 € de plus que la balle, et le gant 50 centimes de plus que la balle. Combien coûte la balle ?", unite: "centimes", juste: 5, intuitive: 15, euros: true,
+    explication: "Avec x le prix de la balle : x + (x + 1) + (x + 0,50) = 1,65, donc 3x = 0,15 et x = 0,05 €. À 15 centimes, le total serait de 1,95 €." },
+  { id: "machines-quatre", niveau: 4, texte: "Si 6 machines fabriquent 6 objets en 6 minutes, combien de temps faut-il à 3 machines pour fabriquer 12 objets ?", unite: "minutes", juste: 24, intuitive: 12,
+    explication: "Chaque machine fabrique un objet en 6 minutes. 3 machines fabriquent 3 objets en 6 minutes ; pour 12 objets, il faut quatre fois plus de temps : 24 minutes." },
+  { id: "peintres", niveau: 4, texte: "3 peintres peignent 3 clôtures en 3 heures. Combien de clôtures 6 peintres peignent-ils en 6 heures ?", unite: "clôtures", juste: 12, intuitive: 6,
+    explication: "Un peintre peint une clôture en 3 heures, donc deux en 6 heures. 6 peintres en peignent 6 × 2 = 12 : le nombre de peintres et la durée doublent tous les deux." },
+  { id: "remises", niveau: 4, texte: "Un manteau est soldé à −20 %, puis le prix soldé baisse encore de 20 %. Quelle est la remise totale par rapport au prix de départ ?", unite: "%", juste: 36, intuitive: 40,
+    explication: "Après la première remise, le manteau vaut 80 % de son prix ; après la seconde, 80 % de 80 %, soit 64 %. La remise totale est de 36 % : la seconde porte sur un prix déjà réduit." },
+  { id: "etang", niveau: 4, texte: "Une étendue d'algues double de surface chaque jour et couvre tout un étang en 32 jours. Combien de jours lui faut-il pour en couvrir le huitième ?", unite: "jours", juste: 29, intuitive: 4,
+    explication: "Au 31e jour, elle couvre la moitié de l'étang ; au 30e, le quart ; au 29e, le huitième. Diviser 32 par 8 suppose une croissance régulière, pas un doublement." },
+  { id: "hausse-baisse", niveau: 5, texte: "Un prix augmente de 50 %, puis baisse de 50 %. Le prix final représente quel pourcentage du prix de départ ?", unite: "%", juste: 75, intuitive: 100,
+    explication: "Après la hausse, le prix vaut 150 % du départ ; la baisse de 50 % porte sur ce nouveau prix : 50 % de 150 %, soit 75 %. Les deux variations ne s'annulent pas, car elles ne portent pas sur la même base." },
+  { id: "puits", niveau: 5, texte: "Un escargot est au fond d'un puits de 20 m. Chaque jour, il monte de 5 m ; chaque nuit, il redescend de 3 m. En combien de jours sort-il du puits ?", unite: "jours", juste: 9, intuitive: 10,
+    explication: "Chaque jour suivi d'une nuit le fait monter de 2 m : au matin du 9e jour, il est à 16 m. Ce jour-là, il monte de 5 m et sort, sans redescendre. Diviser 20 par 2 oublie la dernière montée." },
+  { id: "bacteries-quatre", niveau: 5, texte: "Une bactérie se divise en deux chaque minute ; partie d'une seule bactérie, la culture remplit un flacon en 60 minutes. Partie de 4 bactéries, en combien de minutes remplit-elle le flacon ?", unite: "minutes", juste: 58, intuitive: 15,
+    explication: "Une bactérie devient 4 bactéries en 2 minutes (1, 2, 4). Partir de 4, c'est donc avoir 2 minutes d'avance : 58 minutes. Diviser 60 par 4 suppose que la croissance est proportionnelle au nombre de départ." },
+  { id: "aiguilles", niveau: 5, texte: "Combien de fois, en 24 heures à partir de minuit, la grande et la petite aiguille d'une horloge se superposent-elles ?", unite: "fois", juste: 22, intuitive: 24,
+    explication: "La grande aiguille rattrape la petite toutes les 12/11 heures (environ 1 h 05), et non toutes les heures : 11 fois en 12 heures, donc 22 fois en 24 heures. Entre 11 heures et 13 heures, il n'y a qu'une superposition, à midi." }
 ];
 
 // Tâche de Wason : versions abstraites (presque toujours ratées) et versions concrètes
@@ -122,7 +142,8 @@ const WASON_CONCRETES = [
 // Règles cachées possibles pour le jeu 2, 4, 6 : toutes acceptent la suite 2, 4, 6
 // Règles cachées. graine : la suite donnée en exemple (2, 4, 6 par défaut) ; evidente : l'hypothèse que cette suite
 // suggère le plus, et qu'une suite « informative » doit pouvoir mettre en défaut en sortant de son cadre.
-// Niveaux : 1, la règle de Wason ; 2, autres règles larges ; 3, règles plus fines, avec un budget de 8 suites.
+// Niveaux : 1, la règle de Wason ; 2, autres règles larges ; 3, règles plus fines, avec un budget de 8 suites ;
+// 4 et 5 : règles que la suite donnée en exemple masque mieux encore (budget de 8 puis de 6 suites).
 const PLUS_DEUX = { texte: "des nombres pairs qui augmentent de 2", test: (a, b, c) => a % 2 === 0 && b === a + 2 && c === b + 2 };
 const REGLES_246 = [
   { id: "croissants", niveau: 1, texte: "trois nombres strictement croissants", test: (a, b, c) => a < b && b < c },
@@ -137,13 +158,27 @@ const REGLES_246 = [
   { id: "deux-pairs", niveau: 3, texte: "exactement deux des trois nombres sont pairs", test: (a, b, c) => [a, b, c].filter(x => Number.isInteger(x) && x % 2 === 0).length === 2,
     graine: [2, 3, 4], evidente: { texte: "trois entiers consécutifs", test: (a, b, c) => b === a + 1 && c === b + 1 } },
   { id: "moyenne", niveau: 3, texte: "le deuxième nombre est la moyenne des deux autres", test: (a, b, c) => Math.abs(2 * b - a - c) < 1e-9 },
-  { id: "multiple", niveau: 3, texte: "le troisième nombre est un multiple du premier", test: (a, b, c) => a !== 0 && Number.isInteger(c / a) }
+  { id: "multiple", niveau: 3, texte: "le troisième nombre est un multiple du premier", test: (a, b, c) => a !== 0 && Number.isInteger(c / a) },
+  { id: "un-pair", niveau: 4, texte: "au moins un des trois nombres est pair", test: (a, b, c) => [a, b, c].some(x => Number.isInteger(x) && x % 2 === 0),
+    graine: [3, 5, 8], evidente: { texte: "deux nombres impairs, puis un nombre pair", test: (a, b, c) => [a, b].every(x => Number.isInteger(x) && Math.abs(x % 2) === 1) && Number.isInteger(c) && c % 2 === 0 } },
+  { id: "somme-moins-20", niveau: 4, texte: "la somme des trois nombres est inférieure à 20", test: (a, b, c) => a + b + c < 20,
+    graine: [3, 5, 7], evidente: { texte: "trois nombres impairs qui augmentent de 2", test: (a, b, c) => Number.isInteger(a) && Math.abs(a % 2) === 1 && b === a + 2 && c === b + 2 } },
+  { id: "milieu-plus-grand", niveau: 4, texte: "le deuxième nombre est le plus grand des trois", test: (a, b, c) => b > a && b > c,
+    graine: [2, 9, 4], evidente: { texte: "un nombre impair entre deux nombres pairs", test: (a, b, c) => [a, c].every(x => Number.isInteger(x) && x % 2 === 0) && Number.isInteger(b) && Math.abs(b % 2) === 1 } },
+  { id: "carre", niveau: 5, texte: "le troisième nombre est le carré de l'un des deux premiers", test: (a, b, c) => c === a * a || c === b * b,
+    graine: [2, 3, 9], evidente: { texte: "le troisième nombre est le carré du deuxième", test: (a, b, c) => c === b * b } },
+  { id: "parites-melangees", niveau: 5, texte: "les trois nombres n'ont pas tous la même parité", test: (a, b, c) => [a, b, c].every(Number.isInteger) && new Set([a, b, c].map(x => Math.abs(x % 2))).size === 2,
+    graine: [1, 2, 3], evidente: { texte: "trois entiers consécutifs", test: (a, b, c) => b === a + 1 && c === b + 1 } },
+  { id: "non-entier", niveau: 5, texte: "au moins un des trois nombres n'est pas entier", test: (a, b, c) => [a, b, c].some(x => !Number.isInteger(x)),
+    graine: [1.5, 3, 4.5], evidente: { texte: "des nombres qui augmentent de 1,5", test: (a, b, c) => Math.abs(b - a - 1.5) < 1e-9 && Math.abs(c - b - 1.5) < 1e-9 } }
 ];
 
 // Problèmes classiques. type « choix » : une bonne réponse ; « nombre » : réponse chiffrée ;
 // « paire » : deux choix successifs, dont on vérifie la cohérence.
 // Niveaux : 1, problèmes à une étape, très connus ; 2, problèmes qui demandent de comparer ou de combiner ;
-// 3, problèmes qui demandent un calcul de probabilité conditionnelle ou de repérer une variable cachée.
+// 3, problèmes qui demandent un calcul de probabilité conditionnelle ou de repérer une variable cachée ;
+// 4 et 5 : problèmes originaux du site (données fictives, réponses vérifiées par le calcul), qui combinent deux pièges
+// ou demandent un raisonnement en plusieurs étapes.
 const PROBLEMES = [
   { id: "linda", niveau: 1, titre: "Linda", type: "choix",
     enonce: "Linda a 31 ans. Elle est célibataire, franche et très brillante. Elle a étudié la philosophie. Étudiante, elle se préoccupait beaucoup des questions de discrimination et de justice sociale, et a participé à des manifestations antinucléaires. Quelle affirmation est la plus probable ?",
@@ -330,7 +365,47 @@ const PROBLEMES = [
     unite: "points", reponse: 101, tolerance: 0.5,
     resultat: "Calcul : (150 + 49 × 100) / 50 = 101.",
     explication: "Les 49 autres élèves ne « compensent » pas le premier : on attend pour eux la moyenne habituelle, 100. Répondre 100 revient à croire que le hasard rééquilibre de lui-même un écart, comme dans l'erreur du joueur.",
-    liens: [["#biais/erreur-du-joueur", "Erreur du joueur"]] }
+    liens: [["#biais/erreur-du-joueur", "Erreur du joueur"]] },
+  { id: "cote", niveau: 4, titre: "La côte à vélo", type: "nombre",
+    enonce: "À vélo, vous montez une côte à 10 km/h, puis vous la redescendez à 30 km/h. Quelle est votre vitesse moyenne sur l'aller-retour ?",
+    unite: "km/h", reponse: 15, tolerance: 0.5,
+    resultat: "Calcul : pour une côte de 3 km, la montée dure 18 minutes, la descente 6 minutes ; 6 km en 24 minutes font 15 km/h.",
+    explication: "La réponse intuitive, 20 km/h, fait la moyenne des deux vitesses. Mais on passe trois fois plus de temps à monter qu'à descendre : la vitesse lente pèse trois fois plus." },
+  { id: "dix-pieces", niveau: 4, titre: "Dix lancers", type: "choix",
+    enonce: "On lance dix fois une pièce équilibrée. Qu'est-ce qui est le plus probable : obtenir exactement 5 « pile », ou obtenir un autre nombre de « pile » ?",
+    options: ["Exactement 5 « pile »", "Un autre nombre de « pile »", "Autant l'un que l'autre"], juste: 1,
+    resultat: "Calcul : 252 suites sur 1 024 contiennent exactement 5 « pile », soit environ 25 %.",
+    explication: "5 est bien le résultat le plus probable pris isolément, mais il ne sort qu'une fois sur quatre : les trois quarts du temps, on obtient 4, 6, 3, 7… On attend du hasard qu'il reproduise exactement la moyenne, alors qu'il s'en écarte presque toujours un peu." },
+  { id: "soutien", niveau: 4, titre: "Le soutien scolaire", type: "choix",
+    enonce: "Un collège repère les 10 % d'élèves qui ont eu les plus mauvaises notes à un test, et leur propose un soutien. Au test suivant, leur moyenne a nettement remonté. Que peut-on en conclure ?",
+    options: ["Le soutien est efficace", "Rien de sûr : les élèves choisis pour une note très basse remontent en partie d'eux-mêmes ; il faudrait un groupe sans soutien pour comparer", "Le soutien est inutile"], juste: 1,
+    resultat: "Une note dépend du niveau de l'élève et d'une part de hasard (fatigue, questions tombées) : les plus mauvaises notes réunissent aussi les plus malchanceux.",
+    explication: "Au test suivant, cette malchance ne se répète pas forcément : la moyenne du groupe remonte même sans aucun soutien. C'est la régression vers la moyenne. Pour mesurer l'effet du soutien, il faut comparer avec des élèves de même niveau qui n'en ont pas eu, idéalement tirés au sort.",
+    liens: [["#biais/regression-moyenne", "Régression vers la moyenne"]] },
+  { id: "depistage-rare", niveau: 4, titre: "Le test positif", type: "nombre",
+    enonce: "Une maladie touche 1 % des personnes d'un âge donné. Le test de dépistage repère 90 % des malades, mais il est aussi positif chez 9 % des personnes en bonne santé. Votre test est positif : quelle est la probabilité que vous soyez malade ?",
+    unite: "%", reponse: 9, tolerance: 1.5,
+    resultat: "Calcul : 9 / (9 + 89,1) ≈ 9 %.",
+    explication: "Sur 1 000 personnes : 10 malades, dont 9 ont un test positif ; 990 personnes en bonne santé, dont environ 89 ont un test positif quand même. Sur 98 tests positifs, 9 seulement correspondent à un malade. La maladie est si rare que les faux positifs l'emportent.",
+    liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
+  { id: "deux-temoins", niveau: 5, titre: "Deux témoins", type: "nombre",
+    enonce: "Dans une ville, 85 % des taxis sont verts et 15 % sont bleus. Deux témoins, qui ne se connaissent pas et reconnaissent chacun la bonne couleur 80 fois sur 100, affirment tous les deux que le taxi d'un accident était bleu. Quelle est la probabilité qu'il ait vraiment été bleu ?",
+    unite: "%", reponse: 74, tolerance: 3,
+    resultat: "Calcul : 0,15 × 0,8 × 0,8 = 0,096 ; 0,85 × 0,2 × 0,2 = 0,034 ; 0,096 / (0,096 + 0,034) ≈ 74 %.",
+    explication: "Un seul témoin ne donnerait que 41 % : les taxis bleus sont rares. Deux témoins indépendants qui se trompent tous les deux, c'est beaucoup plus rare qu'un seul (4 fois sur 100 au lieu de 20) : leur accord fait passer la probabilité à environ 74 %. Mais seulement s'ils sont vraiment indépendants : s'ils en ont parlé entre eux, leur accord compte bien moins.",
+    liens: [["#biais/taux-de-base", "Négligence du taux de base"]] },
+  { id: "hopitaux", niveau: 5, titre: "Les deux hôpitaux", type: "choix",
+    enonce: "Pour la même opération, l'hôpital A sauve 900 patients sur 1 000 (90 %) et l'hôpital B 920 sur 1 000 (92 %). Mais l'hôpital A reçoit beaucoup plus de cas graves : chez les patients légers, A en sauve 600 sur 620 et B 860 sur 900 ; chez les patients graves, A en sauve 300 sur 380 et B 60 sur 100. Quel hôpital soigne le mieux ?",
+    options: ["B, qui a le meilleur taux global", "A, qui fait mieux dans chaque catégorie de patients", "On ne peut pas comparer"], juste: 1,
+    resultat: "Calcul : patients légers, A 97 % contre B 96 % ; patients graves, A 79 % contre B 60 %.",
+    explication: "A fait mieux pour chaque type de patient, mais son taux global est plus bas parce qu'il soigne surtout les cas graves, ceux qui survivent le moins. Un taux global mélange la qualité des soins et la gravité des cas : c'est le paradoxe de Simpson.",
+    liens: [["#biais/simpson", "Paradoxe de Simpson"]] },
+  { id: "nnt", niveau: 5, titre: "Combien de patients traiter ?", type: "nombre",
+    enonce: "Pris pendant cinq ans, un traitement fait passer le risque d'infarctus de 2 % à 1,5 %. Combien de personnes faut-il traiter pendant cinq ans pour éviter un infarctus ?",
+    unite: "personnes", reponse: 200, tolerance: 0,
+    resultat: "Calcul : la baisse du risque est de 0,5 point, soit 1 sur 200 : il faut traiter 200 personnes pour éviter un infarctus.",
+    explication: "On peut annoncer le même résultat comme « un quart d'infarctus en moins » (de 2 à 1,5, c'est −25 %) : c'est exact, mais impressionnant. Le nombre de personnes à traiter traduit la baisse absolue du risque, celle qui permet de mettre en balance le bénéfice, les effets indésirables et le coût.",
+    liens: [["#biais/cadrage", "Effet de cadrage"]] }
 ];
 
 // Scénarios de dépistage réels ; d'autres sont créés au hasard (voir scenarioAuHasard)
@@ -618,7 +693,7 @@ const EXPERIENCES = [
       zone.appendChild(choixNiveau("regle-246", () => EXPERIENCES.find(e => e.id === "regle-246").lancer(zone)));
       const regle = resultatAtelier("regle-246") ? tirerSelonNiveau("regle-246", REGLES_246, 1, niveau)[0] : REGLES_246[0];
       const graine = regle.graine || [2, 4, 6], evidente = regle.evidente || PLUS_DEUX;
-      const budget = niveau === 3 ? 8 : Infinity;
+      const budget = { 3: 8, 4: 8, 5: 6 }[niveau] || Infinity;
       const suites = [];   // valeurs proposées, pour le bilan
       const essais = [];
 
@@ -688,7 +763,7 @@ const EXPERIENCES = [
             ? "Toutes vos suites respectaient la règle : chacune a confirmé votre hypothèse sans jamais pouvoir la mettre en défaut. C'est la stratégie la plus courante."
             : "Proposer des suites qui ne respectent pas la règle est la seule façon de tester les limites d'une hypothèse. Peu de participants le font spontanément.",
           "Peter Wason (1960) : la plupart des participants proposent des suites comme 8, 10, 12 ou 20, 22, 24, qui confirment l'hypothèse « nombres pairs croissant de 2 ». Ils annoncent cette règle avec assurance ; environ un sur cinq seulement trouve la bonne (« trois nombres croissants ») au premier essai.",
-          T("Une hypothèse se teste en cherchant ce qui pourrait la réfuter (Karl Popper). Les {0} règles possibles de cet atelier sont toutes compatibles avec 2, 4, 6.", REGLES_246.length)
+          T("Une hypothèse se teste en cherchant ce qui pourrait la réfuter (Karl Popper). Chacune des {0} règles possibles de cet atelier est compatible avec la suite donnée en exemple.", REGLES_246.length)
         ], [["#biais/confirmation", "Biais de confirmation"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "regle-246").lancer(zone), "Une nouvelle règle");
       });
@@ -968,18 +1043,29 @@ const EXPERIENCES = [
     resume: "Un test positif signifie-t-il qu'on est malade ? Quatre situations, réelles ou tirées au hasard, à résoudre en fréquences naturelles.",
     lancer(zone) {
       // Niveaux : 1, données en fréquences naturelles (« sur 1 000 personnes… ») ; 2, en pourcentages seulement,
-      // un format qui rend le calcul bayésien bien plus difficile (Gigerenzer et Hoffrage, 1995) ; 3, deux tests successifs.
+      // un format qui rend le calcul bayésien bien plus difficile (Gigerenzer et Hoffrage, 1995) ; 3, deux tests successifs ;
+      // 4, un second examen différent (autre fiabilité), positif lui aussi ; 5, un second examen différent, négatif.
       deroulerNiveaux(zone, {
         id: "depistage", n: 4, libelle: "Situation", relancer: () => EXPERIENCES.find(e => e.id === "depistage").lancer(zone),
-        tirer: (niveau, i) => i === 0 ? tirerNouveaux("depistage", SCENARIOS_DEPISTAGE, 1)[0] : scenarioAuHasard()
+        tirer: (niveau, i) => {
+          const s = Object.assign({}, i === 0 ? tirerNouveaux("depistage", SCENARIOS_DEPISTAGE, 1)[0] : scenarioAuHasard());
+          // Niveaux 4 et 5 : le second examen a sa propre fiabilité (chiffres fictifs)
+          if (niveau >= 4) s.second = { sensibilite: melanger([0.9, 0.95, 0.99])[0], fauxPositifs: melanger([0.005, 0.01, 0.02])[0], positif: niveau === 4 };
+          return s;
+        }
       }, (s, zone, fini, niveau) => {
         const c = comptesDepistage(s);
         const accord = (n, nom) => T(n > 1 ? nom : nom.split(" ").map(m => m !== "sans" && m.endsWith("s") ? m.slice(0, -1) : m).join(" "));
         const deuxTests = niveau === 3;
+        // Second examen : le même test répété (niveau 3), ou un autre examen (niveaux 4 et 5)
+        const second = deuxTests ? { sensibilite: s.sensibilite, fauxPositifs: s.fauxPositifs, positif: true } : s.second || null;
+        const pct2 = x => fr(Number((100 * x).toFixed(2))) + PC;
         if (niveau === 1) {
           zone.appendChild(el("p", "cas", T("Sur {0} personnes testées : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Une personne a un résultat positif.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs))));
         } else {
-          zone.appendChild(el("p", "cas", T(s.contexte) + (deuxTests ? " " + T("Elle passe ensuite un second test, indépendant du premier et aussi fiable, qui est lui aussi positif.") : "")));
+          zone.appendChild(el("p", "cas", T(s.contexte) + (deuxTests ? " " + T("Un second test, indépendant du premier et aussi fiable, donne lui aussi un résultat positif.")
+            : second ? " " + T(second.positif ? "Un second examen, différent et indépendant du premier, est positif dans {0} des vrais cas et à tort dans {1} des autres. Il donne lui aussi un résultat positif."
+              : "Un second examen, différent et indépendant du premier, est positif dans {0} des vrais cas et à tort dans {1} des autres. Il donne un résultat négatif.", pct2(second.sensibilite), pct2(second.fauxPositifs)) : "")));
         }
         zone.appendChild(paragraphe(s.question));
         const ligne = el("div", "ligne");
@@ -997,11 +1083,17 @@ const EXPERIENCES = [
           ok.remove();
           // Après un premier test positif, la probabilité obtenue devient la prévalence du second
           const apres1 = s.sensibilite * s.prevalence / (s.sensibilite * s.prevalence + s.fauxPositifs * (1 - s.prevalence));
-          const apres2 = s.sensibilite * apres1 / (s.sensibilite * apres1 + s.fauxPositifs * (1 - apres1));
-          const vrai = 100 * (deuxTests ? apres2 : c.vraisPositifs / (c.vraisPositifs + c.fauxPositifs));
+          // Second résultat positif : P(positif | cas) = sensibilité ; négatif : 1 − sensibilité (et de même pour les autres)
+          const siCas = second ? (second.positif ? second.sensibilite : 1 - second.sensibilite) : 0;
+          const siAutre = second ? (second.positif ? second.fauxPositifs : 1 - second.fauxPositifs) : 0;
+          const apres2 = second ? siCas * apres1 / (siCas * apres1 + siAutre * (1 - apres1)) : apres1;
+          const vrai = 100 * (second ? apres2 : c.vraisPositifs / (c.vraisPositifs + c.fauxPositifs));
           const juste = Math.abs(v - vrai) <= Math.max(3, vrai * 0.2);
           const retour = el("div", "retour-quiz");
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), T(juste ? "Juste : environ {0} %." : "Réponse : environ {0} %.", fr(vrai < 10 ? Number(vrai.toFixed(1)) : Math.round(vrai)))));
+          retour.appendChild(messageGraphique(c.fauxPositifs > c.vraisPositifs
+            ? T("Les faux positifs ({0}) sont plus nombreux que les vrais ({1}) : le groupe non concerné est si grand que son petit taux d'erreur l'emporte.", fr(c.fauxPositifs), fr(c.vraisPositifs))
+            : T("Les vrais positifs ({0}) sont plus nombreux que les faux ({1}) : le cas est assez fréquent pour que le test soit fiable.", fr(c.vraisPositifs), fr(c.fauxPositifs))));
           retour.appendChild(arbreFrequences(s, c));
           retour.appendChild(paragraphe(T(c.vraisPositifs > 1 ? "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspondent à un vrai cas." : "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspond à un vrai cas.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs), fr(c.vraisPositifs + c.fauxPositifs))));
           if (s.resultat) retour.appendChild(paragraphe(s.resultat, "source"));
@@ -1014,10 +1106,11 @@ const EXPERIENCES = [
             T("= P(positif) = {0} × {1} + {2} × {3} = {4}", pc(s.sensibilite), pc(s.prevalence), pc(s.fauxPositifs), pc(1 - s.prevalence), pc(pPositif)),
             T("= P(cas | positif) = {0} / {1} = {2}", pc(s.sensibilite * s.prevalence), pc(pPositif), pc(s.sensibilite * s.prevalence / pPositif)),
             T("L'arbre fait le même calcul avec des effectifs : {0} / ({0} + {1}), à l'arrondi près. Le dénominateur compte tous les résultats positifs, vrais et faux : c'est là que le taux de base pèse.", fr(c.vraisPositifs), fr(c.fauxPositifs)),
-            ...(deuxTests ? [
+            ...(second ? [
               T("Second test : la probabilité obtenue après le premier, {0}, devient la nouvelle prévalence.", pc(apres1)),
-              T("= P(cas | deux positifs) = {0} × {1} / ({0} × {1} + {2} × {3}) = {4}", pc(s.sensibilite), pc(apres1), pc(s.fauxPositifs), pc(1 - apres1), pc(apres2)),
-              "Un second test positif rend le diagnostic bien plus probable : c'est pourquoi on confirme un dépistage positif par un autre examen, si possible indépendant du premier."
+              T(second.positif ? "= P(cas | deux positifs) = {0} × {1} / ({0} × {1} + {2} × {3}) = {4}" : "= P(cas | positif puis négatif) = {0} × {1} / ({0} × {1} + {2} × {3}) = {4}", pc(siCas), pc(apres1), pc(siAutre), pc(1 - apres1), pc(apres2)),
+              second.positif ? "Un second test positif rend le diagnostic bien plus probable : c'est pourquoi on confirme un dépistage positif par un autre examen, si possible indépendant du premier."
+                : "Un second examen négatif fait retomber la probabilité : il manque rarement un vrai cas, donc son « non » pèse lourd. Un résultat isolé ne se lit jamais seul, mais avec tout ce qu'on sait déjà."
             ] : [])
           ]));
           zone.appendChild(retour);
@@ -1065,6 +1158,7 @@ const EXPERIENCES = [
         const retour = el("div", "retour-quiz");
         retour.appendChild(el("p", "verdict " + (Math.abs(v - 23) <= 2 ? "juste" : "faux"), T("Il suffit de 23 personnes : {0} %.", fr(Number((100 * probaAnniversaire(23)).toFixed(1))))));
         retour.appendChild(paragraphe(T("Avec {0} personnes, la probabilité est de {1} %. Avec 57 personnes, elle dépasse 99 %.", v, fr(Number((100 * probaAnniversaire(Math.min(v, 366))).toFixed(1))))));
+        retour.appendChild(messageGraphique(T("La courbe monte bien plus vite que l'intuition : une chance sur deux dès 23 personnes, presque la certitude à 57.")));
         retour.appendChild(courbeAnniversaires(v));
         retour.appendChild(paragraphe("L'intuition pense à « quelqu'un qui a le même anniversaire que moi » : pour cela, il faudrait 253 personnes. Mais n'importe quelle paire convient, et 23 personnes forment 253 paires.", "source"));
         const sansPaire = n => 1 - probaAnniversaire(n);

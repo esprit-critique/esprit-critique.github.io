@@ -511,25 +511,45 @@ const QUI_PROUVE = [
 // ===================== La pyramide du désaccord =====================
 // D'après l'essai de Paul Graham, « How to Disagree » (2008) : sept façons de répondre, de la moins à la plus utile.
 const NIVEAUX_GRAHAM = ["Insulte", "Attaque personnelle", "Réponse au ton", "Contradiction", "Contre-argument", "Réfutation", "Réfutation du point central"];
+// Ce que fait chaque étage (d'après Graham), et ce qui sépare deux étages voisins : c'est le critère à vérifier quand
+// on hésite entre eux. Chaque affirmation contient un point central et un point secondaire, pour que la réfutation
+// (d'un point cité) et la réfutation du point central visent des cibles différentes.
+const DEFINITIONS_GRAHAM = [
+  "Injurier la personne, sans rien dire de son idée.",
+  "Mettre en cause qui parle (ses intérêts, sa compétence, sa vie) au lieu de ce qu'il dit.",
+  "Critiquer la façon dont c'est dit, pas ce qui est dit.",
+  "Affirmer le contraire, sans raison ni preuve.",
+  "Donner une raison ou une preuve contre la position, souvent sur un autre point que ceux qu'elle avance.",
+  "Citer ce que l'autre a dit et montrer en quoi c'est faux.",
+  "Montrer que l'affirmation dont dépend toute la conclusion est fausse ou douteuse, et que la conclusion tombe avec elle."
+];
+const FRONTIERES_GRAHAM = [
+  "L'insulte ne contient rien ; l'attaque personnelle avance au moins un trait de la personne comme raison de rejeter son avis.",
+  "L'attaque personnelle vise qui parle ; la réponse au ton, comment il parle.",
+  "La réponse au ton ne dit rien de l'idée ; la contradiction prend au moins position sur elle.",
+  "La contradiction affirme le contraire sans raison ; le contre-argument en donne une.",
+  "Le contre-argument apporte une autre raison ; la réfutation reprend ce que l'autre a dit et montre que c'est faux.",
+  "La réfutation montre qu'un point est faux ; la réfutation du point central vise celui dont dépend la conclusion, et montre qu'elle tombe avec lui."
+];
 const PYRAMIDES = [
-  { affirmation: "Clara : « La ville devrait remplacer le parking de la place du marché par un jardin. Les commerces n'y perdraient rien : la plupart des clients du marché viennent à pied, d'après le comptage de l'an dernier. »",
+  { affirmation: "Clara : « La ville devrait remplacer le parking de la place du marché par un jardin. Les commerces n'y perdraient rien : la plupart des clients du marché viennent à pied, d'après le comptage de l'an dernier. En plus, un jardin coûterait moins cher à entretenir qu'un parking. »",
     repliques: [
-      ["Quelle idée ridicule, on voit bien que vous n'y connaissez rien.", 0],
+      ["Vous êtes ridicule, Clara.", 0],
       ["Vous dites ça parce que vous n'avez pas de voiture.", 1],
       ["Votre ton donneur de leçons est insupportable.", 2],
       ["Non, les commerces y perdraient.", 3],
       ["Les livreurs ont besoin de se garer près du marché, et un jardin ne le permettrait pas.", 4],
-      ["Vous dites « la plupart des clients viennent à pied » : le comptage a eu lieu un mardi matin, pas un samedi, jour où le marché attire surtout des clients en voiture.", 5],
-      ["Tout votre raisonnement repose sur ce comptage. S'il ne représente pas les jours de forte affluence, on ne sait pas si les commerces y perdraient : il faudrait compter un samedi avant de décider.", 6]
+      ["Vous dites qu'un jardin « coûterait moins cher à entretenir » : d'après le budget de la ville, l'entretien des espaces verts coûte deux fois plus au mètre carré que celui des parkings.", 5],
+      ["Tout votre raisonnement repose sur le comptage de l'an dernier, fait un mardi matin. S'il ne représente pas le samedi, jour de forte affluence, on ne sait pas si les commerces y perdraient : il faudrait compter un samedi avant de décider.", 6]
     ] },
-  { affirmation: "Hugo : « Le collège devrait commencer les cours à 9 heures au lieu de 8 heures : les adolescents dorment trop peu, et le sommeil compte pour apprendre. »",
+  { affirmation: "Hugo : « Le collège devrait commencer les cours à 9 heures au lieu de 8 heures : les adolescents dorment trop peu, et le sommeil compte pour apprendre. Le lycée voisin l'a fait l'an dernier sans aucune difficulté. »",
     repliques: [
-      ["N'importe quoi, comme d'habitude.", 0],
+      ["Pauvre naïf.", 0],
       ["Facile à dire pour quelqu'un qui n'a jamais eu à se lever tôt.", 1],
-      ["Vous prenez un ton très sûr de vous pour un simple parent d'élève.", 2],
+      ["Vous l'affirmez sur un ton bien péremptoire.", 2],
       ["Je ne suis pas d'accord.", 3],
       ["Beaucoup de parents commencent le travail à 8 h 30 et ne pourraient plus déposer leurs enfants.", 4],
-      ["Vous dites que les adolescents dorment trop peu ; mais s'ils se couchent plus tard quand les cours commencent plus tard, ils ne gagneront pas de sommeil.", 5],
+      ["Vous dites que le lycée voisin l'a fait « sans aucune difficulté » : il a pourtant dû réorganiser tous ses transports scolaires, d'après le compte rendu de son conseil d'administration.", 5],
       ["Votre proposition suppose qu'un début à 9 heures ferait gagner du sommeil. C'est le point à vérifier : si les adolescents décalent leur coucher d'autant, la mesure ne sert à rien, quoi qu'on pense par ailleurs du sommeil.", 6]
     ] }
 ];
@@ -620,6 +640,10 @@ EXPERIENCES.push(
             if (k !== r.niveau) b.classList.add("faux");
             const retour = el("div", "retour-quiz");
             retour.appendChild(el("p", "verdict " + (k === r.niveau ? "juste" : "faux"), (k === r.niveau ? T("Juste : ") : T("Réponse : ")) + T(NIVEAUX_GRAHAM[r.niveau]).toLowerCase() + "."));
+            retour.appendChild(paragraphe(DEFINITIONS_GRAHAM[r.niveau]));
+            // Erreur d'un étage : le critère qui sépare les deux ; plus loin, ce que fait l'étage choisi
+            if (Math.abs(k - r.niveau) === 1) retour.appendChild(paragraphe(FRONTIERES_GRAHAM[Math.min(k, r.niveau)]));
+            else if (k !== r.niveau) retour.appendChild(paragraphe(T("Votre choix, « {0} » : {1}", T(NIVEAUX_GRAHAM[k]), T(DEFINITIONS_GRAHAM[k])), "source"));
             zone.appendChild(retour);
             fini(k === r.niveau, retour);
           });
@@ -894,6 +918,17 @@ EXPERIENCES.push(
 // Arguments fictifs. Chaque phrase a un rôle ; « appui » est l'indice de la phrase qu'elle soutient
 // (raison), conteste (objection) ou défend (réponse) ; null pour la conclusion et le hors-sujet.
 const ROLES_ARGUMENT = ["Conclusion", "Raison", "Objection", "Réponse à une objection", "Hors sujet"];
+// Confusions entre deux rôles proches (clé : « rôle attendu-rôle choisi ») : le critère qui les sépare
+const CONFUSIONS_ROLES = {
+  "0-1": "C'est la thèse : les autres phrases la soutiennent, et elle ne soutient rien d'autre.",
+  "1-0": "Elle est peut-être elle-même appuyée par une autre phrase, mais ce n'est pas la thèse du texte : elle sert à en soutenir une autre.",
+  "1-3": "Une réponse à une objection défend la thèse contre une critique formulée juste avant. Celle-ci apporte un appui direct, sans répondre à aucune critique.",
+  "3-1": "Elle soutient bien la thèse, mais indirectement : elle n'apporte pas de raison nouvelle, elle neutralise une objection.",
+  "2-3": "Elle critique la thèse ; une réponse, au contraire, défendrait la thèse contre une critique.",
+  "3-2": "Elle commence parfois par « mais » ou « pourtant », mais elle ne critique pas la thèse : elle répond à la critique.",
+  "1-4": "Retirez-la : la thèse perd un appui. Une phrase hors sujet, elle, peut disparaître sans rien changer.",
+  "4-1": "Elle peut être vraie et parler du même sujet, mais la retirer ne change rien à l'argument : elle ne soutient pas la thèse."
+};
 const ARGUMENTS_A_DEMONTER = [
   { titre: "La rue du Marché",
     phrases: [
@@ -915,7 +950,7 @@ const ARGUMENTS_A_DEMONTER = [
     ] },
   { titre: "La bibliothèque le dimanche",
     phrases: [
-      { t: "Près d'un inscrit sur trois a un emploi en semaine, d'après le registre de la bibliothèque.", role: 1, appui: 1 },
+      { t: "Près d'un inscrit sur trois travaille du lundi au samedi, d'après le registre de la bibliothèque.", role: 1, appui: 1 },
       { t: "Pour beaucoup d'inscrits, le dimanche est donc le seul jour où venir.", role: 1, appui: 2 },
       { t: "C'est pourquoi la bibliothèque doit rester ouverte le dimanche.", role: 0, appui: null },
       { t: "Ouvrir le dimanche coûte cher en heures majorées, répondra-t-on.", role: 2, appui: 2 },
@@ -993,6 +1028,7 @@ EXPERIENCES.push(
             ][p.role];
             const retour = el("div", "retour-quiz");
             retour.append(el("p", "verdict " + (r === p.role ? "juste" : "faux"), (r === p.role ? T("Juste : ") : T("Réponse : ")) + T(ROLES_ARGUMENT[p.role]).toLowerCase() + "."), paragraphe(detail));
+            if (r !== p.role && CONFUSIONS_ROLES[p.role + "-" + r]) retour.appendChild(paragraphe(CONFUSIONS_ROLES[p.role + "-" + r]));
             zone.appendChild(retour);
             fini(r === p.role, retour);
           });
@@ -1031,7 +1067,8 @@ const SITES_FICTIFS = [
       "Une revue de synthèse universitaire sur le sujet, qui conclut au contraire à un lien entre boissons sucrées et surpoids."
     ],
     verdict: 2,
-    explication: "Le site soigne toutes les apparences d'un organisme scientifique, mais il est financé par les fabricants concernés, sans le dire, et contredit les synthèses indépendantes. Rien de cela ne se voyait en restant sur le site." },
+    explication: "Le site soigne toutes les apparences d'un organisme scientifique, mais il est financé par les fabricants concernés, sans le dire, et contredit les synthèses indépendantes. Rien de cela ne se voyait en restant sur le site.",
+    voisin: "Pas seulement « engagé » : une source engagée affiche son orientation et ses financeurs. Celle-ci cache les siens, et son affirmation est contredite par les synthèses indépendantes." },
   { nom: "Le Courrier de la Vallée",
     affirmation: "« Le pont de la départementale sera fermé trois semaines à partir du 4 mars pour travaux. »",
     apropos: "Une mise en page datée, des publicités envahissantes, des photos de qualité inégale. La page « Qui sommes-nous » se limite à une adresse et un numéro de téléphone.",
@@ -1041,7 +1078,8 @@ const SITES_FICTIFS = [
       "Plusieurs médias régionaux qui citent régulièrement ses informations locales."
     ],
     verdict: 0,
-    explication: "L'apparence du site est peu engageante, mais il s'agit d'un journal établi, et l'information est confirmée par la source officielle. La qualité de la mise en page ne dit rien de la fiabilité."
+    explication: "L'apparence du site est peu engageante, mais il s'agit d'un journal établi, et l'information est confirmée par la source officielle. La qualité de la mise en page ne dit rien de la fiabilité.",
+    voisin: "Pas besoin de croiser davantage : c'est déjà fait. Le journal est établi, et l'arrêté de la préfecture confirme l'information mot pour mot."
   },
   { nom: "Santé Nature Vérité",
     affirmation: "« Une cure de vitamine C à haute dose guérit la grippe en quarante-huit heures. »",
@@ -1052,7 +1090,8 @@ const SITES_FICTIFS = [
       "Une boutique en ligne liée au site, qui vend des compléments de vitamine C."
     ],
     verdict: 2,
-    explication: "Le site vend les produits qu'il recommande, son auteur est inconnu et ses affirmations ont déjà été démenties. Le mot « indépendant » sur un site ne prouve rien : c'est ce que d'autres disent de lui qui compte."
+    explication: "Le site vend les produits qu'il recommande, son auteur est inconnu et ses affirmations ont déjà été démenties. Le mot « indépendant » sur un site ne prouve rien : c'est ce que d'autres disent de lui qui compte.",
+    voisin: "Pas seulement « engagé » : il vend ce qu'il recommande sans le dire, son auteur est anonyme, et ses articles ont déjà été démentis."
   },
   { nom: "Laboratoire d'hydrologie de l'université de Valmont",
     affirmation: "« Le niveau moyen de la nappe phréatique de la région a baissé de deux mètres en trente ans. »",
@@ -1063,7 +1102,8 @@ const SITES_FICTIFS = [
       "Un article de presse régionale qui cite l'étude et interroge un hydrologue d'un autre laboratoire, qui juge les mesures solides."
     ],
     verdict: 0,
-    explication: "Laboratoire public, étude publiée dans une revue à comité de lecture et jugée solide par un spécialiste extérieur : pour cette information, la source est fiable."
+    explication: "Laboratoire public, étude publiée dans une revue à comité de lecture et jugée solide par un spécialiste extérieur : pour cette information, la source est fiable.",
+    voisin: "Rien n'indique un parti pris à compenser : l'étude a été relue par des spécialistes avant publication, et un hydrologue d'un autre laboratoire la juge solide."
   },
   { nom: "Institut pour la liberté d'entreprendre",
     affirmation: "« Baisser les impôts sur les entreprises augmenterait l'emploi de 3 % en cinq ans. »",
@@ -1074,7 +1114,8 @@ const SITES_FICTIFS = [
       "Les rapports d'un organisme public de prévision, qui donnent une fourchette large et incertaine."
     ],
     verdict: 1,
-    explication: "Ce groupe ne cache ni son orientation ni ses financeurs : ses rapports peuvent être utiles, mais ils défendent une thèse. Son chiffre est l'hypothèse haute d'un débat ; il faut le croiser avec des sources aux positions différentes."
+    explication: "Ce groupe ne cache ni son orientation ni ses financeurs : ses rapports peuvent être utiles, mais ils défendent une thèse. Son chiffre est l'hypothèse haute d'un débat ; il faut le croiser avec des sources aux positions différentes.",
+    voisin: "Pas « peu fiable » : il affiche son orientation et ses financeurs, et son chiffre vient d'un modèle réel. Pas « fiable » non plus pour ce chiffre : c'est l'hypothèse haute, que d'autres économistes contestent."
   },
   { nom: "Collectif citoyen pour l'air pur",
     affirmation: "« La pollution de l'air près de l'école des Tilleuls dépasse les seuils recommandés trois jours sur quatre. »",
@@ -1085,7 +1126,8 @@ const SITES_FICTIFS = [
       "Un rapport du même organisme régional, qui juge utile une campagne de mesure près de l'école, faute de station sur place."
     ],
     verdict: 1,
-    explication: "Le collectif défend une cause et ses capteurs sont imprécis, mais la question est légitime et la station officielle est loin. Ni à rejeter, ni à croire telle quelle : il faut croiser, et attendre des mesures fiables sur place."
+    explication: "Le collectif défend une cause et ses capteurs sont imprécis, mais la question est légitime et la station officielle est loin. Ni à rejeter, ni à croire telle quelle : il faut croiser, et attendre des mesures fiables sur place.",
+    voisin: "Pas « peu fiable » : la question est sérieuse, et l'organisme officiel lui-même juge utile de mesurer près de l'école. Pas « fiable » : ses capteurs bon marché peuvent se tromper, et la station officielle dit autre chose."
   }
 ];
 
@@ -1138,6 +1180,8 @@ EXPERIENCES.push(
             montrerAilleurs();
             const retour = el("div", "retour-quiz");
             retour.append(el("p", "verdict " + (k === s.verdict ? "juste" : "faux"), (k === s.verdict ? T("Juste : ") : T("Réponse : ")) + minuscule1(T(VERDICTS_SITE[s.verdict])) + "."), paragraphe(s.explication));
+            // Ce qui sépare ce verdict du verdict voisin : le point qui fait basculer la décision
+            if (s.voisin) retour.appendChild(paragraphe(s.voisin));
             zone.appendChild(retour);
             fini({ juste: k === s.verdict, cherche: !!s.cherche }, retour);
           });

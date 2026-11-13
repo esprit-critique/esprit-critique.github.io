@@ -128,9 +128,23 @@ const JEUX = [
       const exclus = new Set();
       deroulerNiveaux(zone, {
         id: "mortalite", n: 10, libelle: "Duel", relancer: () => JEUX.find(j => j.id === "mortalite").lancer(zone),
-        // Un duel sur deux oppose un risque très médiatisé à une cause plus meurtrière
-        tirer: (niveau, i) => auNiveau(niveau, n => tirerDuelsCauses(1, { niveau: n, media: i % 2 === 0, exclus })[0]) || tirerDuelsCauses(1, { exclus })[0]
-      }, ([a, b], zone, fini) => {
+        estJuste: justeOuPresque,
+        // Un duel sur deux oppose un risque très médiatisé à une cause plus meurtrière ; niveaux 4 et 5 : classer 4 puis 5 causes
+        tirer: (niveau, i) => (niveau >= 4 && tirerClassementCauses(niveau === 4 ? 4 : 5)) || auNiveau(niveau, n => tirerDuelsCauses(1, { niveau: n, media: i % 2 === 0, exclus })[0]) || tirerDuelsCauses(1, { exclus })[0]
+      }, (duel, zone, fini) => {
+        if (duel.classement) {
+          zone.appendChild(el("p", "consigne", "Chaque année, dans le monde, qu'est-ce qui cause le plus de décès ?"));
+          zone.appendChild(el("p", "cas", T("Classez ces {0} causes, de la plus meurtrière à la moins meurtrière.", duel.causes.length)));
+          classementInteractif(zone, duel.causes, c => T(c.nom), ordre => {
+            const bon = [...duel.causes].sort((x, y) => y.valeur - x.valeur);
+            const retour = el("div", "retour-quiz");
+            const part = corrigerClassement(retour, ordre, bon, c => T(c.nom), c => T(c.texte) + " (" + T(c.source) + ")");
+            zone.appendChild(retour);
+            fini(part, retour);
+          });
+          return;
+        }
+        const [a, b] = duel;
         zone.appendChild(el("p", "consigne", "Chaque année, dans le monde, qu'est-ce qui cause le plus de décès ?"));
         const boutons = [a, b].map((cause, k) => {
           const bouton = boutonChoix(cause.nom, k);
@@ -158,7 +172,8 @@ const JEUX = [
           fini(juste, retour);
         }
       }, resultats => {
-        const bonnes = resultats.filter(Boolean).length;
+        // Un classement compte comme une bonne réponse à partir de 80 % de paires dans le bon ordre
+        const bonnes = resultats.filter(justeOuPresque).length;
         afficherScore(zone, "mortalite", bonnes, resultats.length);
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Les causes de décès spectaculaires et médiatisées (requins, terrorisme, accidents d'avion) sont souvent surestimées par rapport aux causes banales et silencieuses (chutes, noyades, maladies chroniques).",
@@ -186,13 +201,13 @@ const JEUX = [
         id: "pays", n: 10, libelle: "Duel", relancer: () => JEUX.find(j => j.id === "pays").lancer(zone),
         avant: zone => zone.appendChild(choixThemePays(zone, theme)),   // choix du thème, au premier duel
         estJuste: justeOuPresque,
-        // Niveaux 1 et 2 : duels ; niveau 3 : classer quatre pays
-        tirer: niveau => (niveau === 3 && tirerClassementPays(theme)) || auNiveau(niveau, n => tirerDuelsPays(1, theme, { niveau: n, indicateurs })[0]) || tirerDuelsPays(1, theme, { indicateurs })[0]
+        // Niveaux 1 et 2 : duels ; niveaux 3 à 5 : classer quatre, cinq puis six pays
+        tirer: niveau => (niveau >= 3 && tirerClassementPays(theme, TAILLE_CLASSEMENT[niveau])) || auNiveau(niveau, n => tirerDuelsPays(1, theme, { niveau: n, indicateurs })[0]) || tirerDuelsPays(1, theme, { indicateurs })[0]
       }, (duel, zone, fini) => {
         const ind = INDICATEURS_PAYS[duel.cle];
         if (duel.classement) {
           zone.appendChild(el("p", "cas", ind.question));
-          zone.appendChild(el("p", "consigne", "Classez ces quatre pays, en commençant par la réponse"));
+          zone.appendChild(el("p", "consigne", T("Classez ces {0} pays, en commençant par la réponse", duel.pays.length)));
           classementInteractif(zone, duel.pays, p => p.nom, ordre => {
             const annee = p => (p.annees && p.annees[duel.cle]) || ANNEES_PAYS[duel.cle];
             const source = p => ind.source ? (ind.source.includes(String(annee(p))) ? T(ind.source) : T("{0}, {1}", T(ind.source), annee(p))) : T("Banque mondiale, {0}", annee(p));
@@ -275,8 +290,8 @@ const JEUX = [
       deroulerNiveaux(zone, {
         id: "nord", n: 10, relancer: () => JEUX.find(j => j.id === "nord").lancer(zone),
         estJuste: justeOuPresque,
-        // Niveau 3 : classer quatre villes
-        tirer: (niveau, i) => (niveau === 3 && tirerClassementVilles()) || tirerPaireVillesNiveau(niveau, i, exclus)
+        // Niveaux 3 à 5 : classer quatre, cinq puis six villes
+        tirer: (niveau, i) => (niveau >= 3 && tirerClassementVilles(TAILLE_CLASSEMENT[niveau])) || tirerPaireVillesNiveau(niveau, i, exclus)
       }, (q, zone, fini) => {
         if (q.classement) {
           zone.appendChild(el("p", "cas", q.sens === "nord" ? "Classez ces villes du nord au sud." : "Classez ces villes d'ouest en est."));
@@ -343,13 +358,31 @@ const JEUX = [
       zone.replaceChildren();
       deroulerNiveaux(zone, {
         id: "grandeurs", n: 8, relancer: () => JEUX.find(j => j.id === "grandeurs").lancer(zone),
-        // Niveau 3 : une question sur deux suit la méthode de Fermi (décomposer avant d'estimer)
-        tirer: (niveau, i) => niveau === 3 && i % 2 === 1
-          ? { fermiDe: tirerSelonNiveau("grandeurs:fermi", FERMI, 1, 3, f => f.id, () => 3)[0] }
-          : tirerSelonNiveau("grandeurs", GRANDEURS, 1, niveau)[0],
+        // Niveau 3 : une question sur deux suit la méthode de Fermi (décomposer avant d'estimer) ; niveaux 4 et 5 : sur
+        // quatre questions, un classement de 4 puis 5 quantités, un problème de Fermi et deux estimations
+        tirer: (niveau, i) => {
+          const classement = niveau >= 4 && i % 4 === 1 && tirerClassementGrandeurs(niveau === 4 ? 4 : 5);
+          if (classement) return classement;
+          if (niveau >= 3 && i % 2 === 1) return { fermiDe: tirerSelonNiveau("grandeurs:fermi", FERMI, 1, 3, f => f.id, () => 3)[0] };
+          return tirerSelonNiveau("grandeurs", GRANDEURS, 1, niveau)[0];
+        },
         estJuste: points => points >= 2   // moins d'un facteur 3
       }, (q, zone, fini) => {
         if (q.fermiDe) return afficherFermi(q.fermiDe, zone, fini);
+        if (q.classement) {
+          zone.appendChild(el("p", "cas", T("Classez ces {0} quantités, de la plus grande à la plus petite.", q.grandeurs.length)));
+          classementInteractif(zone, q.grandeurs, g => T(g.q), ordre => {
+            const bon = [...q.grandeurs].sort((x, y) => y.v - x.v);
+            const retour = el("div", "retour-quiz");
+            const part = corrigerClassement(retour, ordre, bon, g => T(g.q), g => T("environ {0}", enClair(g.v, 3)) + " (" + T(g.source) + ")");
+            // Même barème que les estimations (0 à 3 points) : exact 3, 80 % des paires 2, la moitié 1
+            const points = part === 1 ? 3 : part >= 0.8 ? 2 : part >= 0.5 ? 1 : 0;
+            retour.appendChild(paragraphe(T(["Aucun point : moins de la moitié des paires dans le bon ordre.", "1 point : au moins la moitié des paires dans le bon ordre.", "2 points : au moins 80 % des paires dans le bon ordre.", "3 points : classement exact."][points]), "source"));
+            zone.appendChild(retour);
+            fini(points, retour);
+          });
+          return;
+        }
         const vraie = Math.log10(q.v);
         // Fenêtre de 9 puissances de dix, décalée au hasard pour que sa position ne trahisse pas la réponse
         const debut = Math.max(0, Math.floor(vraie) - 2 - Math.floor(Math.random() * 5));
@@ -419,8 +452,8 @@ const JEUX = [
       deroulerNiveaux(zone, {
         id: "chronologie", n: 10, libelle: "Paire", relancer: () => JEUX.find(j => j.id === "chronologie").lancer(zone),
         estJuste: justeOuPresque,
-        // Niveau 3 : placer quatre événements dans l'ordre
-        tirer: (niveau, i) => (niveau === 3 && tirerClassementChronologie()) || tirerPaireChronologieNiveau(niveau, i, exclus)
+        // Niveaux 3 à 5 : placer quatre, cinq puis six événements dans l'ordre
+        tirer: (niveau, i) => (niveau >= 3 && tirerClassementChronologie(TAILLE_CLASSEMENT[niveau])) || tirerPaireChronologieNiveau(niveau, i, exclus)
       }, (paire, zone, fini) => {
         if (paire.classement) {
           zone.appendChild(el("p", "cas", "Classez ces événements du plus ancien au plus récent."));
@@ -560,6 +593,7 @@ const JEUX = [
         });
         const cumul = lire("confiance", {});
         zone.appendChild(el("p", "consigne", "Votre étalonnage, toutes parties confondues"));
+        zone.appendChild(messageGraphique(messageEtalonnage(cumul)));
         zone.appendChild(courbeEtalonnage(cumul, partie));
         zone.appendChild(legende([["var(--c-fort)", "toutes vos réponses"], ["var(--orange)", "cette partie"], ["var(--discret)", "étalonnage parfait"]]));
         const lignes = el("ul", "liste-simple");
@@ -1002,16 +1036,19 @@ function niveauPaireVilles(a, b, sens) {
 // sauf niveau indiqué dans les données
 const niveauPaireCelebre = p => p.niveau || 2;
 
-// ===================== Classements du niveau 3 =====================
-// Quatre éléments à ranger ; chaque paire doit être nettement séparée, pour qu'un seul ordre soit défendable.
+// ===================== Classements des niveaux 3 à 5 =====================
+// Quatre éléments à ranger au niveau 3, cinq au niveau 4, six au niveau 5 ; chaque paire doit être nettement séparée,
+// pour qu'un seul ordre soit défendable. Les plages admises grandissent avec le nombre d'éléments.
+const TAILLE_CLASSEMENT = { 3: 4, 4: 5, 5: 6 };
 
 // Plus ou moins ? : quatre pays sur un indicateur, deux à deux séparés d'au moins la borne basse d'ECARTS_PAYS
-function tirerClassementPays(theme) {
+function tirerClassementPays(theme, n = 4) {
   const retenus = Object.keys(INDICATEURS_PAYS).filter(c => theme === "tout" || INDICATEURS_PAYS[c].theme === theme);
   for (let essai = 0; essai < 3000; essai++) {
     const cle = retenus[Math.floor(Math.random() * retenus.length)];
     const [mode, [bas], minimum] = ECARTS_PAYS[cle];
-    const quatre = melanger(PAYS.filter(p => p[cle] !== undefined && (minimum === undefined || p[cle] >= minimum))).slice(0, 4);
+    const quatre = melanger(PAYS.filter(p => p[cle] !== undefined && (minimum === undefined || p[cle] >= minimum))).slice(0, n);
+    if (quatre.length < n) continue;
     const ecart = (a, b) => mode === "ratio" ? Math.max(a, b) / Math.max(Math.min(a, b), 1e-9) : Math.abs(a - b);
     if (quatre.every((a, i) => quatre.slice(i + 1).every(b => ecart(a[cle], b[cle]) >= bas))) return { classement: true, cle, pays: quatre };
   }
@@ -1019,28 +1056,55 @@ function tirerClassementPays(theme) {
 }
 
 // Le nord est où ? : quatre villes, séparées d'au moins 1,5°, sur moins de 20° de latitude ou 35° de longitude
-function tirerClassementVilles() {
+function tirerClassementVilles(n = 4) {
   const ids = Object.keys(VILLES);
   for (let essai = 0; essai < 5000; essai++) {
     const sens = Math.random() < 0.5 ? "nord" : "est";
-    const quatre = melanger(ids).slice(0, 4);
+    const quatre = melanger(ids).slice(0, n);
     const v = quatre.map(id => sens === "nord" ? VILLES[id][1] : VILLES[id][2]).sort((a, b) => a - b);
-    if (v.every((x, i) => i === 0 || x - v[i - 1] >= 1.5) && v[3] - v[0] <= (sens === "nord" ? 20 : 35)) return { classement: true, sens, villes: quatre };
+    if (v.every((x, i) => i === 0 || x - v[i - 1] >= 1.5) && v[n - 1] - v[0] <= (sens === "nord" ? 20 : 35) * (n - 1) / 3) return { classement: true, sens, villes: quatre };
   }
   return null;
 }
 
 // Avant ou après ? : quatre événements de sujets différents, séparés d'au moins deux ans (sauf dates précises),
 // sur une période courte au regard de leur ancienneté
-function tirerClassementChronologie() {
+function tirerClassementChronologie(n = 4) {
   for (let essai = 0; essai < 5000; essai++) {
-    const quatre = melanger(EVENEMENTS).slice(0, 4);
+    const quatre = melanger(EVENEMENTS).slice(0, n);
     if (quatre.filter(e => e.vers).length > 1) continue;
     const sujets = quatre.map(e => e.sujet).filter(Boolean);
     if (new Set(sujets).size < sujets.length) continue;
     const tries = [...quatre].sort((a, b) => momentEvenement(a) - momentEvenement(b));
     const separes = tries.every((e, i) => i === 0 || (e.date && tries[i - 1].date ? momentEvenement(e) > momentEvenement(tries[i - 1]) : e.annee - tries[i - 1].annee >= 2));
-    if (separes && tries[3].annee - tries[0].annee <= Math.max(40, 0.3 * (2026 - tries[0].annee))) return { classement: true, evenements: quatre };
+    if (separes && tries[n - 1].annee - tries[0].annee <= Math.max(40, 0.3 * (2026 - tries[0].annee)) * (n - 1) / 3) return { classement: true, evenements: quatre };
+  }
+  return null;
+}
+
+// Qu'est-ce qui tue le plus ? : n causes, deux à deux séparées d'un facteur 1,6 au moins (comme les duels), au plus un
+// facteur de risque, et aucune paire qu'un facteur de risque englobe (champ « exclure » : décès comptés deux fois)
+function tirerClassementCauses(n) {
+  const ids = Object.keys(CAUSES);
+  for (let essai = 0; essai < 3000; essai++) {
+    const choix = melanger(ids).slice(0, n);
+    const causes = choix.map(id => CAUSES[id]);
+    if (causes.filter(c => c.facteur).length > 1) continue;
+    if (choix.some((a, i) => choix.some((b, j) => i !== j && (CAUSES[a].exclure || []).includes(b)))) continue;
+    const v = causes.map(c => c.valeur).sort((x, y) => x - y);
+    if (v.every((x, i) => i === 0 || x / v[i - 1] >= 1.6)) return { classement: true, causes };
+  }
+  return null;
+}
+
+// Ordres de grandeur : n effectifs (« Nombre de… », « Population… », comparables entre eux), chacun au moins trois fois
+// plus grand que le précédent
+function tirerClassementGrandeurs(n) {
+  const effectifs = GRANDEURS.filter(g => /^(Nombre|Population) /.test(g.q));
+  for (let essai = 0; essai < 3000; essai++) {
+    const choix = melanger(effectifs).slice(0, n);
+    const v = choix.map(g => g.v).sort((x, y) => x - y);
+    if (v.every((x, i) => i === 0 || x / v[i - 1] >= 3)) return { classement: true, grandeurs: choix };
   }
   return null;
 }
@@ -1289,6 +1353,14 @@ function pointsConfiance(niveau, juste) {
   return Math.round(100 * (1 + Math.log2(juste ? p : 1 - p)));
 }
 
+// Message de la courbe d'étalonnage : certitude moyenne annoncée contre réussite, sur les niveaux du graphique
+function messageEtalonnage(cumul) {
+  const niveaux = NIVEAUX_CONFIANCE.filter(c => cumul[c] && cumul[c][0]);
+  const n = niveaux.reduce((a, c) => a + cumul[c][0], 0);
+  if (!n) return phraseEtalonnage(0, 0, 0);
+  return phraseEtalonnage(niveaux.reduce((a, c) => a + c * cumul[c][0], 0) / n, 100 * niveaux.reduce((a, c) => a + cumul[c][1], 0) / n, n);
+}
+
 // Courbe d'étalonnage : pour chaque niveau de confiance, la part de réponses justes
 function courbeEtalonnage(cumul, partie) {
   const s = svg("svg", { viewBox: "0 0 320 236", class: "graphe", role: "img", "aria-label": "Courbe d'étalonnage" });
@@ -1447,6 +1519,14 @@ function partiePoints(zone, avecRepere) {
       s.appendChild(texteSvg(25, 324 - p, String(v), { class: "graphe-texte", "text-anchor": "end" }));
     });
     s.appendChild(svg("line", { x1: 30, y1: 290, x2: 300, y2: 20, class: "graphe-diagonale" }));
+    // Message : sens de l'écart, et s'il grandit avec la taille du nuage (petite moitié contre grande moitié des nuages)
+    const tries = [...essais].sort((a, b) => a[0] - b[0]), moitie = Math.floor(tries.length / 2);
+    const rapportDe = t => moyenneGeometrique(t.map(([n, v]) => v / n));
+    const croissant = moitie >= 2 && pct < -5 && rapportDe(tries.slice(moitie)) < 0.9 * rapportDe(tries.slice(0, moitie));
+    zone.appendChild(messageGraphique(Math.abs(pct) < 5 ? T("Vos points suivent la diagonale : vos estimations sont justes en moyenne.")
+      : pct > 0 ? T("Vos points passent au-dessus de la diagonale : vous surestimez les quantités.")
+      : croissant ? T("Vos points passent sous la diagonale, et s'en écartent d'autant plus que le nuage est grand : vous sous-estimez surtout les grandes quantités.")
+      : T("Vos points passent sous la diagonale : vous sous-estimez les quantités.")));
     essais.forEach(([n, v]) => {
       const y = Math.min(haut, Math.max(10, v));
       s.appendChild(svg("circle", { cx: echelle(n), cy: 320 - echelle(y), r: 5, class: "graphe-point" }));

@@ -918,6 +918,7 @@ function afficherProfil(zone, runId) {
   const graphe = grapheAxes(scores, hasards);
   if (graphe) {
     axes.insertBefore(graphe, axes.firstChild);
+    axes.insertBefore(messageGraphique(messageAxes(scores, hasards)), graphe);
     axes.insertBefore(paragraphe("Point : part de réponses justes ; barre : plage plausible ; trait fin : niveau du hasard.", "source"), graphe.nextSibling);
   }
   const etal = blocEtalonnage(lignes);
@@ -983,6 +984,15 @@ function tableauEquivalent(legende, entetes, lignes) {
   return cadre;
 }
 
+// Message du graphique des axes : quels axes dépassent le hasard même au bas de leur plage plausible
+function messageAxes(scores, hasards) {
+  const axes = ["A", "B", "C"].filter(a => scores[a].n >= ITEMS_MIN_PLAGE);
+  const au = axes.filter(a => scores[a].plage.bas > hasards[a]), pas = axes.filter(a => scores[a].plage.bas <= hasards[a]);
+  if (!pas.length) return T("Sur chaque axe, vous faites mieux que le hasard, même au bas de la plage plausible.");
+  if (!au.length) return T("Sur aucun axe, le résultat ne se distingue encore nettement du hasard : la plage plausible le touche.");
+  return T("Nettement au-dessus du hasard : {0}. Pas encore distinct du hasard : {1}.", au.join(", "), pas.join(", "));
+}
+
 // Axes A à C : point = proportion de réponses justes, segment = plage plausible à 80 %, trait vertical = hasard
 function grapheAxes(scores, hasards) {
   const axes = ["A", "B", "C"].filter(a => scores[a].n >= ITEMS_MIN_PLAGE);
@@ -1012,6 +1022,7 @@ function blocEtalonnage(lignes) {
   const cumul = {};
   avec.forEach(l => { const c = l.reponse.certitude; const [n, j] = cumul[c] || [0, 0]; cumul[c] = [n + 1, j + (l.juste ? 1 : 0)]; });
   const bloc = el("div", "gt-etalonnage");
+  bloc.appendChild(messageGraphique(messageEtalonnage(cumul)));
   const graphe = courbeEtalonnage(Object.fromEntries(NIVEAUX_CONFIANCE.filter(c => cumul[c]).map(c => [c, cumul[c]])));
   graphe.setAttribute("aria-label", "Courbe d'étalonnage : réussite observée selon la certitude annoncée ; la diagonale correspond à un étalonnage parfait");
   bloc.appendChild(graphe);
@@ -1062,10 +1073,12 @@ function blocProgression(etat) {
     const g = grapheProgression(tests, a);
     if (!g) return;
     bloc.appendChild(el("p", "consigne", a + ". " + AXES_GT[a].nom));
-    bloc.appendChild(g);
     const complets = tests.filter(t => t.mode === "complet");
     const tdc = tendance(seriesAxe(complets, a), graineDe(a + complets.map(t => t.id).join()));
-    bloc.appendChild(paragraphe(T("Tests complets : {0}.", T(tdc.verdict)) + (complets.length >= 3 ? "" : " " + T("Une tendance ne s'annonce qu'à partir de trois tests comparables.")), "source"));
+    // La tendance des tests complets est le message du graphique : lue avant lui
+    bloc.appendChild(messageGraphique(T("Tests complets : {0}.", T(tdc.verdict))));
+    bloc.appendChild(g);
+    if (complets.length < 3) bloc.appendChild(paragraphe(T("Une tendance ne s'annonce qu'à partir de trois tests comparables."), "source"));
   });
   bloc.appendChild(paragraphe(T("Point plein : test complet ; point creux : test express.") + " " + T(AVERTISSEMENT_PROGRESSION), "source"));
   bloc.appendChild(tableauEquivalent("Vos tests terminés", ["Test", "Mode", "Date", "A", "B", "C", "Idées fausses corrigées"],

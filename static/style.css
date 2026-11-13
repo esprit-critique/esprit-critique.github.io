@@ -1706,6 +1706,8 @@ label[for] { display: block; margin: 0 0 8px; }
 
 .graphique { margin: 18px 0; }
 .graphique-titre { font-family: var(--titre); font-size: 16px; font-weight: 650; margin: 0 0 6px; }
+/* Message d'un graphique (graphiques.js, messageGraphique) : la conclusion à en tirer, lue avant le dessin */
+.graphique-message { font-weight: 600; margin: 0 0 8px; }
 .graphique svg { display: block; width: 100%; height: auto; max-width: 560px; }
 .graphique-donnees { font-size: 13px; margin-top: 4px; }
 .tableau-donnees { border-collapse: collapse; font-size: 13px; margin-top: 6px; }

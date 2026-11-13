@@ -123,6 +123,7 @@ EN_AJOUTER([
   ["{0} parmi les {1} →", "{0} among the {1} →"],
   ["résultat", "result"],
   ["L'essentiel", "The essentials"],
+  ["← Revenir à la partie : {0}", "← Back to the game: {0}"],
   ["✓ Acquise", "✓ Learned"],
   ["Illustration", "Illustration"],
   ["Schéma de l'argument", "Argument diagram"],

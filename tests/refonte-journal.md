@@ -289,6 +289,29 @@ Audit du site rendu (Chrome, 375 / 768 / 1 440 px) : 13 corrections, un commit c
 - Tailles de texte (13l) : 22 → 17 tailles ; l'objectif de dix demandait de toucher à la hiérarchie des titres.
 - Échec aléatoire connu du banc `ateliers` (« énoncés visibles après Suivant ») : vu deux fois, non reproduit ensuite.
 
+## Demandes du 13 novembre 2026 (branche `claude/dazzling-mccarthy-k55yr5`, pull request #24)
+
+- Retour à la partie : une carte ouverte pendant un atelier propose « Revenir à la partie » ; la partie reste dans sa
+  section masquée (`partieMiseDeCote`, `app.js`) et n'est plus relancée, tant qu'on ne va que sur des cartes.
+- Message des graphiques : `messageGraphique()` (`graphiques.js`), une phrase calculée sur les données, avant chaque
+  graphique de données. Non concernés : schémas des fiches, illusions, frise, planisphère, insignes, codex.
+- Niveaux 4 et 5 (`NIVEAUX_MAX`, `niveaux.js`) : hasard, corrélation, graphiques trompeurs, CRT, problèmes classiques,
+  dépistage, mots de passe, règle 2-4-6, pays, nord, chronologie, mortalité, grandeurs, hameçonnage. Contenu nouveau
+  original (calculs vérifiés, messages fictifs) ou mécanique plus exigeante sur les données sourcées existantes
+  (classements de 5 et 6 éléments) : aucun nouveau fait sourcé.
+- Laissés à trois niveaux, et pourquoi : « Le monde en chiffres », « Vrai ou faux », « Citations » (nouveaux contenus
+  à vérifier sur leur source primaire) ; « Fourchettes » ; les expériences de mesure (Wason, logique contre croyance,
+  illusions, écrire le hasard, foule, comprendre, Wald), qu'une difficulté ajoutée fausserait ; les jeux de Débattre
+  sans niveaux (pyramide, démonter, lecture latérale, qui doit prouver, reformuler) ; débat truqué et réparer
+  (niveaux 4 et 5 possibles, mais ils demandent de nouveaux débats et arguments : à faire dans un lot dédié).
+- Débattre : précision relue ; « toi aussi » accepté sous le nom « attaque personnelle » (`FORMES_PARTICULIERES`) ;
+  le retour explique ce qui sépare la bonne réponse de l'option proche.
+- Bancs : l'illusion du jour peut n'avoir aucun leurre (Kanizsa, Jastrow) ; le banc `test` levait une exception ces
+  jours-là, et s'arrêtait à 85 vérifications au lieu de 160. Échec aléatoire vu une fois : `recherche` (non reproduit
+  en local en trois essais, passé ensuite en intégration continue).
+- En local dans un conteneur Linux lancé en root, Chrome ne démarre qu'avec `--no-sandbox` : passer par un petit
+  lanceur dans `CHROME` (les bancs ne sont pas modifiés).
+
 ## État des lieux (lot 0, commit cb90ed8)
 
 ### Poids de `static/`

@@ -30,7 +30,7 @@ const MESSAGES_ENLIGNE = [
     explication: "Pas de lien, pas de paiement, et il renvoie au numéro que vous connaissez : un rappel ordinaire." },
   { id: "support-virus", niveau: 2, canal: "Courriel", de: "Support Fenestra <alerte@fenestra-support-technique.example>", fraude: true, levier: "biais:autorite", indice: 1,
     texte: ["Nous avons détecté 3 virus sur votre ordinateur.", "Appelez immédiatement notre technicien certifié au numéro ci-dessous pour éviter la perte de vos données.", "Ne redémarrez pas votre appareil."],
-    explication: "Personne ne peut voir à distance les virus de votre ordinateur pour vous en avertir. Le titre de « technicien certifié » joue sur l'autorité ; au téléphone, on vous demandera d'installer un logiciel de prise de contrôle." },
+    explication: "Aucun éditeur ne repère des virus sur votre ordinateur pour vous l'annoncer par courriel. Le titre de « technicien certifié » joue sur l'autorité ; au téléphone, on vous demandera d'installer un logiciel de prise de contrôle." },
   { id: "attestation", niveau: 2, canal: "Courriel", de: "Caisse de retraite Horizon <ne-pas-repondre@caisse-horizon.example>", fraude: false, levier: null, indice: 1,
     texte: ["Votre attestation fiscale 2025 est disponible dans votre espace personnel.", "Connectez-vous comme d'habitude sur notre site, en tapant son adresse.", "Nous ne vous demanderons jamais votre mot de passe par courriel."],
     explication: "Le message vous invite à taper vous-même l'adresse du site, sans lien à suivre : c'est exactement ce qu'il faut faire." },
@@ -45,7 +45,7 @@ const MESSAGES_ENLIGNE = [
     explication: "Vous n'avez participé à aucun tirage. Le nombre de gagnants qui auraient déjà réclamé leur lot pousse à faire comme eux, et la rareté à ne pas réfléchir ; les frais de port servent à prendre votre numéro de carte." },
   { id: "banque-lien", niveau: 3, canal: "Courriel", de: "Banque Duroc <noreply@banque-duroc.example>", fraude: true, levier: "biais:autorite", indice: 2,
     texte: ["Votre relevé de novembre est disponible.", "Consultez-le dans votre espace client :", "https://banque-duroc.example.releve-securise.example/connexion"],
-    explication: "Le nom de l'expéditeur s'affiche comme celui de la banque, ce qui se falsifie facilement. Mais le lien mène au domaine releve-securise.example : dans une adresse, c'est la fin avant le premier « / » qui compte, pas le début." },
+    explication: "Le nom de l'expéditeur s'affiche comme celui de la banque, ce qui se falsifie facilement. Mais le lien mène au domaine releve-securise.example : dans une adresse, c'est la fin du nom du site qui compte (juste avant le « / » qui suit « https:// » et le nom), pas son début." },
   { id: "banque-appareil", niveau: 3, canal: "Courriel", de: "Banque Duroc <noreply@banque-duroc.example>", fraude: false, levier: null, indice: 2,
     texte: ["Une connexion à votre espace a eu lieu depuis un nouvel appareil le 9 novembre à 21 h 12.", "Si c'est vous, il n'y a rien à faire.", "Sinon, appelez votre conseiller au numéro inscrit au dos de votre carte."],
     explication: "Inquiétant, mais légitime : rien n'est demandé, aucun lien, et il renvoie au numéro que vous possédez déjà. Crier à l'arnaque ici, c'est une fausse alerte." },
@@ -57,7 +57,33 @@ const MESSAGES_ENLIGNE = [
     explication: "Une somme modeste, décidée en réunion, réglée en main propre : rien qui ressemble à une escroquerie." },
   { id: "abonnement", niveau: 3, canal: "Courriel", de: "Streamia <facturation@streamia-compte.example>", fraude: true, levier: "biais:aversion-perte", indice: 1,
     texte: ["Votre paiement a été refusé.", "Vos listes et votre historique seront supprimés dans 48 h.", "Mettez à jour votre carte : streamia-compte.example/paiement"],
-    explication: "La perte annoncée de vos listes joue sur l'aversion à la perte ; le domaine n'est pas celui du service. En cas de doute, ouvrez l'application elle-même plutôt que le lien." }
+    explication: "La perte annoncée de vos listes joue sur l'aversion à la perte ; le domaine n'est pas celui du service. En cas de doute, ouvrez l'application elle-même plutôt que le lien." },
+  // Niveau 4 : arnaques plus crédibles (petite somme à recevoir, appel annoncé) et vrais messages qui inquiètent
+  { id: "remboursement", niveau: 4, canal: "Courriel", de: "Administration fiscale <avis@fiscal-service.example>", fraude: true, levier: "biais:autorite", indice: 2,
+    texte: ["Après examen de votre déclaration, vous avez droit à un remboursement de 248,90 €.", "Pour le recevoir, confirmez vos coordonnées bancaires avant le 30 novembre :", "https://remboursement.fiscal-service.example/dossier"],
+    explication: "Un remboursement d'impôt arrive sur le compte déjà connu de l'administration : elle n'a pas à vous redemander vos coordonnées par un lien. Le gain annoncé remplace la menace, mais le procédé est le même : obtenir vos données bancaires." },
+  { id: "point-relais", niveau: 4, canal: "SMS", de: "Expressia", fraude: false, levier: null, indice: 1,
+    texte: ["Expressia : votre colis n'a pas pu être livré.", "Il vous attend au point relais Tabac du Centre jusqu'au 22 novembre ; présentez le code 4821 et une pièce d'identité.", "Bonne journée."],
+    explication: "Un échec de livraison inquiète, mais rien n'est demandé : ni lien, ni paiement. Le colis attend dans un commerce réel, contre un code et une pièce d'identité." },
+  { id: "faux-conseiller", niveau: 4, canal: "SMS", de: "Banque Duroc", fraude: true, levier: "biais:autorite", indice: 1,
+    texte: ["Banque Duroc : opération suspecte de 1 240 € en cours sur votre carte.", "Un conseiller va vous appeler pour la bloquer : ne raccrochez pas et suivez ses instructions.", "Service sécurité."],
+    explication: "Le message prépare un faux appel : le « conseiller » vous demandera de valider une opération ou de donner un code, prétendument pour bloquer la fraude. Le nom affiché d'un SMS ou d'un appel se falsifie. Raccrochez, et appelez le numéro inscrit au dos de votre carte." },
+  { id: "reinitialisation", niveau: 4, canal: "Courriel", de: "Streamia <noreply@streamia.example>", fraude: false, levier: null, indice: 2,
+    texte: ["Vous venez de demander un nouveau mot de passe.", "Si c'est bien vous, ouvrez l'application Streamia et suivez la notification.", "Si ce n'est pas vous, ignorez ce message : votre mot de passe actuel reste valable."],
+    explication: "Le message ne contient aucun lien, renvoie à l'application déjà installée, et dit quoi faire si vous n'êtes pour rien dans la demande : sans rien faire, rien ne change." },
+  // Niveau 5 : imitations très proches, adresses réelles détournées, vrais messages qui ressemblent à des arnaques
+  { id: "domaine-zero", niveau: 5, canal: "Courriel", de: "Banque Duroc <noreply@banque-dur0c.example>", fraude: true, levier: "biais:autorite", indice: 1,
+    texte: ["Votre relevé de novembre est disponible dans votre espace client.", "https://banque-dur0c.example/connexion", "Merci de votre confiance."],
+    explication: "Tout est copié sur le vrai message de la banque, sauf une lettre : « dur0c » s'écrit avec un zéro. Un domaine qui ressemble à celui de la banque n'est pas le sien ; le plus sûr reste de taper soi-même l'adresse du site." },
+  { id: "changement-iban", niveau: 5, canal: "Courriel", de: "Atelier Morel <compta@atelier-morel.example> (votre fournisseur habituel)", fraude: true, levier: "biais:autorite", indice: 1,
+    texte: ["Bonjour, suite à un changement de banque,", "merci de régler désormais nos factures sur le nouvel IBAN joint, dès celle de novembre.", "Cordialement, le service comptable."],
+    explication: "L'adresse est bien celle du fournisseur : sa messagerie a pu être piratée. Un changement d'IBAN annoncé par courriel se vérifie toujours en appelant le fournisseur au numéro que vous connaissez déjà, jamais à celui du message." },
+  { id: "paiement-refuse", niveau: 5, canal: "SMS", de: "Banque Duroc", fraude: false, levier: null, indice: 1,
+    texte: ["Banque Duroc : paiement de 89,90 € chez Librairie Lumière refusé.", "Plafond atteint : vous pouvez le modifier depuis votre application.", "Ce message ne nécessite aucune réponse."],
+    explication: "Un paiement refusé inquiète, mais le message ne demande rien et renvoie à l'application que vous avez déjà. Si vous venez de payer dans cette librairie, il dit simplement vrai : y voir une arnaque serait une fausse alerte." },
+  { id: "amende", niveau: 5, canal: "Courriel", de: "Ville de Saint-Aubin <stationnement@saint-aubin-paiement.example>", fraude: true, levier: "sophismes:ad-baculum", indice: 2,
+    texte: ["Votre véhicule a dépassé la durée de stationnement autorisée.", "Réglez l'amende de 35 € sous 48 heures pour éviter sa majoration :", "saint-aubin-paiement.example/amende"],
+    explication: "Une amende de stationnement se règle par l'avis officiel reçu ou sur le site public de paiement des amendes, pas par un lien dans un courriel. Le domaine imite celui de la ville, et la menace de majoration pousse à payer sans vérifier." }
 ];
 
 function lancerHameconnage(zone) {
@@ -110,7 +136,7 @@ function lancerHameconnage(zone) {
     afficherScore(zone, "hameconnage", resultats.filter(r => r.juste).length, resultats.length);
     zone.appendChild(paragraphe(T("Tentatives repérées : {0} sur {1}. Fausses alertes : {2} sur {3} vrais messages. Sensibilité d′ : {4} (0 : au hasard ; 2 et plus : très bonne).", detections, fraudes, fausses, legitimes, fr(Number(d.toFixed(2))))));
     ajouterExplication(zone, "Se méfier sans tout soupçonner", [
-      "Les signes qui reviennent : une urgence, une menace ou une récompense ; un lien dont le domaine n'est pas celui de l'expéditeur (dans une adresse, c'est la partie juste avant le premier « / » qui compte) ; une demande inhabituelle : identifiants, code, paiement, cartes cadeaux.",
+      "Les signes qui reviennent : une urgence, une menace ou une récompense ; un lien dont le domaine n'est pas celui de l'expéditeur (dans une adresse, c'est la fin du nom du site qui compte, juste avant le « / » qui le suit) ; une demande inhabituelle : identifiants, code, paiement, cartes cadeaux.",
       "Le bon réflexe ne passe jamais par le message lui-même : on rappelle la personne au numéro que l'on connaît, on tape soi-même l'adresse du site, on ouvre l'application déjà installée. Et un message inquiétant peut être légitime : crier à l'arnaque partout est aussi une erreur."
     ], [["#biais/autorite", "Biais d'autorité"], ["#sophismes/ad-baculum", "Appel à la force"], ["#tests/laterale", "La lecture latérale"]]);
     boutonRejouer(zone, () => lancerHameconnage(zone));
@@ -142,7 +168,21 @@ const MOTS_DE_PASSE = [
   { id: "quatorze", niveau: 3, a: { texte: "Rx4tQ8vmW2pLz9", type: "aleatoire", longueur: 14, alphabet: 62 },
     b: { texte: "k7#Qm2!xZp9&", type: "aleatoire", longueur: 12, alphabet: 95 } },
   { id: "animaux", niveau: 3, a: { texte: "chien-chat-souris-lapin-cheval", type: "humain", bits: 38, raison: "cinq animaux familiers, choisis par une personne parmi quelque 200 : environ 7,6 bits par mot, pas 12,9" },
-    b: { texte: "fjord-pastel-ruban-orage", type: "mots", mots: 4 } }
+    b: { texte: "fjord-pastel-ruban-orage", type: "mots", mots: 4 } },
+  // Niveaux 4 et 5 : uniquement des mots de passe tirés au hasard, dont la force se calcule exactement ; écarts de
+  // 3,5 à 6 bits au niveau 4, de 1 à 3 bits au niveau 5. Ni la longueur ni les symboles ne suffisent à trancher.
+  { id: "six-mots", niveau: 4, a: { texte: "girafe-buvard-falaise-citron-tambour-osier", type: "mots", mots: 6 },
+    b: { texte: "T3kQ9wPz7mLx", type: "aleatoire", longueur: 12, alphabet: 62 } },
+  { id: "quinze-alnum", niveau: 4, a: { texte: "Kq7mZ2pW9xLr4Tv", type: "aleatoire", longueur: 15, alphabet: 62 },
+    b: { texte: "v#8Qm!2zK&p7R", type: "aleatoire", longueur: 13, alphabet: 95 } },
+  { id: "vingt-minuscules", niveau: 4, a: { texte: "kpqzrmvbtwxhnjgcdfsl", type: "aleatoire", longueur: 20, alphabet: 26 },
+    b: { texte: "ardoise-pinson-velours-cerise-tunnel-gazon-flute", type: "mots", mots: 7 } },
+  { id: "seize-minuscules", niveau: 5, a: { texte: "qzvmrtkpwhxbnjcd", type: "aleatoire", longueur: 16, alphabet: 26 },
+    b: { texte: "R4#vq!8Lm%z", type: "aleatoire", longueur: 11, alphabet: 95 } },
+  { id: "huit-symboles", niveau: 5, a: { texte: "w9!Kd#2q", type: "aleatoire", longueur: 8, alphabet: 95 },
+    b: { texte: "lanterne-cactus-moulin-poivre", type: "mots", mots: 4 } },
+  { id: "cinq-mots", niveau: 5, a: { texte: "comete-bocal-serpe-lilas-trompette", type: "mots", mots: 5 },
+    b: { texte: "z!4Rq#8vM&", type: "aleatoire", longueur: 10, alphabet: 95 } }
 ];
 // Hypothèse de calcul, écrite telle quelle dans l'explication : dix milliards d'essais par seconde, l'ordre de grandeur
 // d'une attaque hors ligne sur un fichier de mots de passe mal protégé ; en moyenne, on trouve après la moitié des essais

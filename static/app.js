@@ -1197,7 +1197,9 @@ function afficherFiche(type, fiche) {
   zone.replaceChildren();
   // Sur ordinateur large : la carte (colonne de lecture) et un rail collant à côté
   $("vue-fiches").classList.add("large");
-  zone.appendChild(lienVers("#" + type, "← " + conf.pluriel, "lien retour"));
+  // Carte ouverte depuis une partie : le retour naturel est la partie, au point où on l'a laissée
+  if (partieMiseDeCote) zone.appendChild(lienVers(partieMiseDeCote.adresse, T("← Revenir à la partie : {0}", T(partieMiseDeCote.titre)), "lien retour"));
+  else zone.appendChild(lienVers("#" + type, "← " + conf.pluriel, "lien retour"));
 
   const carte = el("article", "carte carte-fiche a-indice");
   carte.style.setProperty("--c", COULEURS[fiche.categorie]);
@@ -1660,7 +1662,11 @@ function afficherBilan(zone) {
 
 const ONGLET_DE = { parcours: "parcours", profil: "profil", accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
 const SECTION_DE = { parcours: "vue-parcours", profil: "vue-profil", accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
-let precedent = { vue: null, id: null };
+let precedent = { vue: null, id: null, titre: "" };
+// Partie d'atelier quittée pour lire une carte : { adresse, titre, defilement }. Elle reste dans sa section, masquée ;
+// y revenir (lien en tête de la carte, ou bouton Retour) la retrouve au même point au lieu de la relancer de zéro.
+// Abandonnée dès qu'on va ailleurs que sur des cartes.
+let partieMiseDeCote = null;
 let rechercheEnFiches = false;   // la barre de l'en-tête filtrait-elle la liste à l'affichage précédent ?
 
 function afficherPage() {
@@ -1708,6 +1714,17 @@ function afficherPage() {
 
   let titre = "";
   let defilement = 0;
+
+  const versCarte = (vue === "biais" || vue === "sophismes") && !!id && !inconnue;
+  if (versCarte && ["chiffres", "tests", "bingo"].includes(precedent.vue)) {
+    partieMiseDeCote = { adresse: "#" + precedent.vue + (precedent.id ? "/" + precedent.id : ""), titre: precedent.titre, defilement: window.scrollY };
+  }
+  let reprise = false;
+  if (partieMiseDeCote && "#" + vue + (id ? "/" + id : "") === partieMiseDeCote.adresse) {
+    reprise = true;
+    defilement = partieMiseDeCote.defilement;
+    partieMiseDeCote = null;
+  } else if (!versCarte) partieMiseDeCote = null;
 
   if (vue === "accueil" && defiLibre !== null) {
     afficherDefiLibre(defiLibre);
@@ -1767,12 +1784,12 @@ function afficherPage() {
 
   if (vue === "ateliers") { titre = "Ateliers"; afficherAteliers(); }
   if (vue === "portrait") { titre = "Votre portrait"; afficherPortrait(); }
-  if (vue === "chiffres") { afficherChiffres($("vue-chiffres"), id); titre = JEUX.find(j => j.id === id).titre; }
-  if (vue === "tests") { afficherExperiences($("vue-tests"), id); titre = EXPERIENCES.find(e => e.id === id).titre; }
+  if (vue === "chiffres") { if (!reprise) afficherChiffres($("vue-chiffres"), id); titre = JEUX.find(j => j.id === id).titre; }
+  if (vue === "tests") { if (!reprise) afficherExperiences($("vue-tests"), id); titre = EXPERIENCES.find(e => e.id === id).titre; }
   // #bingo/<graine> : la grille du bingo des sophismes correspondant à cette graine, à partager
   if (vue === "bingo") {
     grainePourBingo = id;
-    ouvrirAtelier($("vue-tests"), EXPERIENCES.find(e => e.id === "bingo"));
+    if (!reprise) ouvrirAtelier($("vue-tests"), EXPERIENCES.find(e => e.id === "bingo"));
     titre = "Bingo des sophismes";
   }
 
@@ -1803,7 +1820,7 @@ function afficherPage() {
   rechercheEnFiches = dansFiches;
 
   document.title = (titre ? T(titre) + " · " : "") + "Esprit critique";
-  precedent = { vue, id };
+  precedent = { vue, id, titre };
   if (defilement !== null) window.scrollTo(0, defilement);
 }
 

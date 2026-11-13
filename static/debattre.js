@@ -19,7 +19,8 @@ const DEBATS = [
       { qui: "Yves", texte: "Elles encombrent les trottoirs : la semaine dernière, j'en ai photographié quarante couchées en travers du passage, autour de la gare.", sophisme: null,
         pourquoi: "Un constat précis à l'appui d'une affirmation limitée (elles encombrent certains trottoirs). Il ne généralise pas au-delà." },
       { qui: "Nadia", texte: "Vous dites ça parce que vous tenez le garage de la rue Pasteur : évidemment que vous préférez qu'on prenne la voiture.", sophisme: "ad-hominem",
-        pourquoi: "Elle attaque les intérêts d'Yves au lieu de répondre à son constat sur les trottoirs. Ses intérêts ne rendent ses photos ni vraies ni fausses." },
+        pourquoi: "Elle attaque les intérêts d'Yves au lieu de répondre à son constat sur les trottoirs. Ses intérêts ne rendent ses photos ni vraies ni fausses.",
+        proche: "Signaler un conflit d'intérêts peut être légitime, quand on demande en conséquence d'autres sources. Ici, Nadia s'en sert pour écarter des photos que chacun peut vérifier : c'est ce qui en fait une attaque personnelle." },
       { qui: "Yves", texte: "Si on laisse faire les trottinettes, demain ce seront les vélos-cargos partout, puis plus personne ne pourra marcher sur un trottoir, et les personnes âgées ne sortiront plus de chez elles.", sophisme: "pente-glissante",
         pourquoi: "Une chaîne de conséquences de plus en plus graves, dont aucune étape n'est justifiée." },
       { qui: "Mme Roux", texte: "Revenons aux faits : la police municipale a relevé onze accidents impliquant une trottinette cette année, contre quatre l'an dernier, pour deux fois plus de trajets.", sophisme: null,
@@ -84,8 +85,9 @@ const DEBATS = [
         pourquoi: "La perte du contrat a suivi le télétravail ; rien ne montre qu'elle en résulte." },
       { qui: "Léa", texte: "D'après le courrier du client, le contrat Durand a été perdu sur le prix. Le vendredi n'y est pour rien.", sophisme: null,
         pourquoi: "Elle répond par un fait vérifiable qui contredit l'explication proposée." },
-      { qui: "Marc", texte: "Tu parles d'efficacité, toi qui arrives tous les jours à 9 h 30 ? Commence par être à l'heure.", sophisme: "tu-quoque",
-        pourquoi: "Il rejette l'argument de Léa en pointant l'écart entre ce qu'elle défend et ce qu'elle fait, sans discuter l'argument lui-même." },
+      { qui: "Marc", texte: "Tu te plains des interruptions de l'open space, toi qui viens bavarder à mon bureau dix fois par jour ? Commence par ne plus nous interrompre.", sophisme: "tu-quoque",
+        pourquoi: "Il rejette l'argument de Léa en pointant l'écart entre ce qu'elle dit (les interruptions gênent) et ce qu'elle fait (elle interrompt les autres), sans discuter l'argument lui-même : qu'elle interrompe ou non, les interruptions peuvent la gêner.",
+        proche: "Toute attaque contre la personne n'est pas un « toi aussi » : il faut que la réplique oppose ses paroles à ses actes. Lui reprocher ses retards, par exemple, aurait été une attaque personnelle ordinaire." },
       { qui: "Paul", texte: "Le télétravail ne réglera pas tous les problèmes de concentration de l'open space : ce n'est donc pas la peine de l'essayer.", sophisme: "nirvana",
         pourquoi: "Il rejette une amélioration partielle parce qu'elle n'est pas une solution parfaite." },
       { qui: "Sofia", texte: "Ce qui m'inquiète, ce sont les nouveaux : ils apprennent beaucoup en écoutant les conversations au bureau.", sophisme: null,
@@ -114,7 +116,7 @@ const DEBATS = [
       { qui: "M. Lemaire", texte: "Le règlement actuel ne dit rien des barbecues ; l'assureur de l'immeuble demande seulement qu'ils ne soient pas au charbon.", sophisme: null,
         pourquoi: "Un rappel des faits utiles à la décision." },
       { qui: "Inès", texte: "On n'a aucune preuve que cette fumée soit nocive : elle est donc sans danger.", sophisme: "ignorance",
-        pourquoi: "L'absence de preuve d'un danger n'est pas une preuve d'innocuité : la question n'a simplement pas été étudiée." },
+        pourquoi: "L'absence de preuve d'un danger n'est pas une preuve d'innocuité : avant de conclure, il faudrait chercher les études existantes, ou mesurer." },
       { qui: "Mme Garnier", texte: "Vous demandiez une mesure : le voisin du deuxième a prêté son capteur de particules. Pendant les grillades, les relevés sur mon balcon dépassent nettement ceux de la rue.", sophisme: null,
         pourquoi: "Elle apporte une mesure, imparfaite mais réelle, en réponse à une demande de preuve." },
       { qui: "Inès", texte: "Une mesure sur un balcon, ça ne prouve rien : il faudrait un laboratoire agréé, sur une année entière, dans plusieurs immeubles.", sophisme: "poteaux",
@@ -153,7 +155,8 @@ const DEBATS = [
       { qui: "Julie", texte: "Les avis sur le gîte signalent un bruit de route la nuit ; deux personnes sur une trentaine s'en plaignent.", sophisme: null,
         pourquoi: "Elle rapporte un inconvénient avec sa proportion, sans l'exagérer." },
       { qui: "Bastien", texte: "Si vous choisissez la montagne, je vais passer une semaine malheureux, et ce sera votre faute. Vous voulez vraiment me faire ça ?", sophisme: "emotion",
-        pourquoi: "Il cherche à culpabiliser les autres au lieu de donner des raisons de préférer la mer." },
+        pourquoi: "Il cherche à culpabiliser les autres au lieu de donner des raisons de préférer la mer.",
+        proche: "Ce n'est pas un appel aux conséquences : celui-ci juge une affirmation vraie ou fausse selon ses effets, alors que Bastien ne discute la vérité de rien. Sa préférence est même une vraie raison (Amina le dit ensuite) : ce qui est fautif, c'est d'en faire une culpabilisation." },
       { qui: "Amina", texte: "Tu préfères la mer, et c'est une vraie raison de la choisir. Mais le budget de Thomas est serré.", sophisme: null,
         pourquoi: "Dans un choix de vacances, les préférences de chacun sont des raisons pertinentes : elle les prend en compte sans en faire un chantage." },
       { qui: "Thomas", texte: "C'est vrai, mon budget est serré : 60 € de différence, ça compte pour moi.", sophisme: null,
@@ -306,7 +309,7 @@ const REPARATIONS = [
     acc: "« Naturel » ne veut rien dire : c'est un sophisme.",
     concl: "Ce sirop est fabriqué à partir de plantes." },
   { s: "emotion", arg: "Il faut acheter ce détecteur de fumée : imaginez vos enfants pris au piège dans les flammes.",
-    rep: ["Il faut acheter un détecteur de fumée : il donne l'alerte avant que la fumée n'atteigne les chambres, alors que la plupart des incendies mortels surviennent la nuit, pendant le sommeil.", "Le danger est décrit par ses mécanismes, sans chercher à effrayer pour emporter l'accord."],
+    rep: ["Il faut acheter un détecteur de fumée : il donne l'alerte dès les premières fumées, y compris la nuit, quand toute la maison dort.", "Le danger est décrit par ses mécanismes, sans chercher à effrayer pour emporter l'accord."],
     autre: ["Il faut acheter ce détecteur : tous vos voisins en ont déjà un.", "popularite"],
     acc: "Vous jouez sur la peur, c'est un sophisme.",
     concl: "Les incendies domestiques sont terrifiants." },
@@ -337,7 +340,7 @@ const REPARATIONS = [
     concl: "La propreté des rues s'est beaucoup améliorée." },
   { s: "question-piege", arg: "Pourquoi as-tu encore oublié de payer la facture d'électricité ce mois-ci ?",
     rep: ["La facture d'électricité de ce mois-ci n'apparaît pas sur le relevé : l'as-tu payée ?", "La question ne présuppose plus ce qui reste à établir : elle demande d'abord le fait."],
-    autre: ["Tu as oublié la facture, comme tous les gens distraits : les distraits oublient toujours tout.", "generalisation-hative"],
+    autre: ["Tu as oublié la facture : tu ne m'as montré aucun reçu, c'est donc que tu ne l'as pas payée.", "ignorance"],
     acc: "Ta question est un sophisme.",
     concl: "Il faudrait penser à payer la facture." },
   { s: "poteaux", arg: "Tu voulais une preuve que le nouveau logiciel fait gagner du temps ? Ce test chronométré ne compte pas : il faudrait le refaire sur six mois avec toute l'équipe.",
@@ -520,7 +523,7 @@ const REFORMULATIONS = [
     position: "Je laisse mon chien sans laisse au parc seulement tôt le matin, quand il est presque vide. Il revient au rappel, et je le rattache dès qu'un enfant ou un autre chien arrive.",
     fidele: "Elle détache son chien au parc seulement quand il est presque vide, parce qu'il obéit au rappel, et le rattache dès que quelqu'un arrive.",
     paille: "Elle pense que les chiens devraient pouvoir courir librement partout.",
-    acier: "Laisser un chien obéissant courir dans un parc vide ne fait courir de risque à personne, à condition de le rattacher dès que d'autres usagers arrivent : c'est ce qu'elle fait.",
+    acier: "Laisser un chien obéissant courir dans un parc presque vide ne fait guère courir de risque, à condition de le rattacher dès que d'autres usagers arrivent : c'est ce qu'elle fait.",
     hors: "Elle trouve que le parc n'est pas assez entretenu." },
   { id: "fast-fashion", auteur: "Claire, couturière",
     position: "J'achète moins de vêtements qu'avant, mais de meilleure qualité. Une veste bien cousue dure dix ans ; trois vestes bon marché qui se déforment en un an finissent par coûter plus cher.",
@@ -795,9 +798,33 @@ function blocReplique(r, classe) {
 }
 
 // Correction d'une réplique : verdict, explication et lien vers la fiche
+// Formes particulières d'un sophisme plus général : nommer le sophisme général n'est pas faux, seulement moins précis
+// (donnees.js, fiche « tu-quoque » : « une forme particulière d'attaque personnelle »)
+const FORMES_PARTICULIERES = { "tu-quoque": "ad-hominem" };
+const nommeJuste = (attendu, choisi) => choisi === attendu || FORMES_PARTICULIERES[attendu] === choisi;
+
+// Pourquoi ce n'est pas l'option proche : la distinction de la fiche avec sa voisine (proposée parmi les choix), et,
+// si le joueur a choisi une autre fiche, la distinction de celle-ci avec la bonne réponse, ou sa définition.
+// attendu : identifiant de sophisme ; cleChoisie : clé complète de la fiche choisie (« sophismes:… », « biais:… ») ou null
+function noteProche(attendu, cleChoisie) {
+  const bloc = el("div", "note-proche");
+  const fiche = ficheSophisme(attendu), cleAttendue = cleSophisme(attendu);
+  if (cleChoisie && cleChoisie === cleSophisme(FORMES_PARTICULIERES[attendu] || "")) {
+    bloc.appendChild(paragraphe(T("« {0} » n'est pas faux : c'en est la forme générale. « {1} » est plus précis : {2}", INDEX.get(cleChoisie).fiche.nom, fiche.nom, fiche.distinction[1])));
+    return bloc;
+  }
+  const [cleVoisine, texte] = fiche.distinction;
+  const voisine = INDEX.get(cleVoisine);
+  if (voisine) bloc.appendChild(paragraphe(T("À ne pas confondre avec « {0} » : {1}", voisine.fiche.nom, texte)));
+  const autre = cleChoisie && cleChoisie !== cleAttendue && cleChoisie !== cleVoisine ? INDEX.get(cleChoisie) : null;
+  if (autre) bloc.appendChild(paragraphe(T("Votre choix, « {0} » : {1}", autre.fiche.nom, autre.fiche.distinction && autre.fiche.distinction[0] === cleAttendue ? autre.fiche.distinction[1] : autre.fiche.definition)));
+  return bloc;
+}
+
 function corrigerReplique(retour, r, verdict, juste) {
   retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), verdict));
   retour.appendChild(paragraphe(r.pourquoi));
+  if (r.proche) retour.appendChild(paragraphe(r.proche));
   if (r.sophisme) {
     const l = el("div", "voir-aussi");
     sophismesDe(r).forEach(id => l.appendChild(lienSophisme(id)));
@@ -834,10 +861,12 @@ function nommerParmiCategories(zone, attendus, conclure) {
       b.disabled = true;
       b.classList.remove("choisi");
       if (attendus.includes(candidats[j].id)) b.classList.add("juste");
-      else if (choisis.has(candidats[j].id)) b.classList.add("faux");
+      else if (choisis.has(candidats[j].id) && !attendus.some(id => FORMES_PARTICULIERES[id] === candidats[j].id)) b.classList.add("faux");
     });
-    const nomme = attendus.every(id => choisis.has(id));
-    conclure(nomme, nomme ? T("Juste : {0}.", nomsSophismes(attendus)) : T("Sophisme repéré, mais il s'agit de : {0}.", nomsSophismes(attendus)));
+    // Chaque sophisme attendu doit être nommé, lui ou sa forme générale (FORMES_PARTICULIERES)
+    const nomme = attendus.every(id => [...choisis].some(c => nommeJuste(id, c)));
+    const exact = attendus.every(id => choisis.has(id));
+    conclure(nomme, exact ? T("Juste : {0}.", nomsSophismes(attendus)) : nomme ? T("Juste, et plus précisément : {0}.", nomsSophismes(attendus)) : T("Sophisme repéré, mais il s'agit de : {0}.", nomsSophismes(attendus)), [...choisis]);
   });
 }
 
@@ -886,9 +915,10 @@ EXPERIENCES.push(
         zone.appendChild(blocReplique(r));
         const choix = [boutonChoix("Recevable", 0), boutonChoix("Sophisme", 1)];
         choix.forEach(b => zone.appendChild(b));
-        const terminer = (resultat, verdict, juste) => {
+        const terminer = (resultat, verdict, juste, note) => {
           const retour = el("div", "retour-quiz");
           corrigerReplique(retour, r, verdict, juste);
+          if (note) retour.insertBefore(note, retour.lastChild);
           zone.appendChild(retour);
           fini(resultat, retour);
         };
@@ -910,17 +940,25 @@ EXPERIENCES.push(
           choix[1].classList.add("juste");
           const attendus = sophismesDe(r);
           // Niveau 3 : choisir parmi tous les sophismes de la catégorie (ou des catégories) concernée(s)
-          if (debat.niveau === 3) return nommerParmiCategories(zone, attendus, (nomme, verdict) => terminer({ sophisme: true, alerte: true, nomme }, verdict, nomme));
+          if (debat.niveau === 3) return nommerParmiCategories(zone, attendus, (nomme, verdict, choisis) => {
+            const note = el("div");
+            // Une note par sophisme attendu ; le choix du joueur n'y figure que s'il n'en attendait qu'un, ou s'il a nommé sa forme générale
+            const cleDe = c => c ? cleSophisme(c) : null;
+            attendus.forEach(id => note.appendChild(noteProche(id, cleDe(attendus.length === 1 ? choisis[0] : choisis.find(c => !attendus.includes(c) && FORMES_PARTICULIERES[id] === c)))));
+            terminer({ sophisme: true, alerte: true, nomme }, verdict, nomme, note);
+          });
           zone.appendChild(el("p", "consigne", "Lequel ?"));
           const options = optionsSophisme(r.sophisme);
           const boutons = options.map((o, i) => {
             const b = boutonChoix(o.fiche.nom, i);
             b.addEventListener("click", () => {
               boutons.forEach(x => { x.disabled = true; });
-              const nomme = o.cle === cleSophisme(r.sophisme);
+              const choisi = o.cle.startsWith("sophismes:") ? o.cle.slice(10) : null;
+              const nomme = nommeJuste(r.sophisme, choisi);
               boutons[options.findIndex(x => x.cle === cleSophisme(r.sophisme))].classList.add("juste");
               if (!nomme) b.classList.add("faux");
-              terminer({ sophisme: true, alerte: true, nomme }, nomme ? T("Juste : {0}.", ficheSophisme(r.sophisme).nom) : T("Sophisme repéré, mais il s'agit de : {0}.", ficheSophisme(r.sophisme).nom), nomme);
+              terminer({ sophisme: true, alerte: true, nomme }, choisi === r.sophisme ? T("Juste : {0}.", ficheSophisme(r.sophisme).nom)
+                : nomme ? T("Juste, et plus précisément : {0}.", ficheSophisme(r.sophisme).nom) : T("Sophisme repéré, mais il s'agit de : {0}.", ficheSophisme(r.sophisme).nom), nomme, noteProche(r.sophisme, o.cle));
             });
             zone.appendChild(b);
             return b;
@@ -1077,6 +1115,13 @@ EXPERIENCES.push(
         acier: ["Homme d'acier", "Elle garde la position et la renforce : meilleures raisons, limites assumées, objections prévues. L'auteur l'accepterait, et c'est elle qu'il faut discuter."],
         hors: ["Hors sujet", "Elle parle d'autre chose que de la position exprimée."]
       };
+      // Les deux confusions les plus fréquentes, entre deux versions que l'auteur accepterait : ce qui les sépare
+      const CONFUSIONS = {
+        "fidele-acier": "Les deux versions sont acceptables pour l'auteur, mais l'homme d'acier en dit plus que lui : il ajoute des raisons, des conditions ou des limites qu'il n'a pas formulées. Fidèle veut dire ni plus ni moins.",
+        "acier-fidele": "La version fidèle est exacte, mais elle ne renforce rien : ni meilleure raison, ni limite assumée, ni réponse à une objection. C'est la version d'acier qu'il faut discuter.",
+        "acier-paille": "L'homme de paille change la position au lieu de la renforcer : il la rend plus extrême ou plus faible, et l'auteur ne la reconnaîtrait pas.",
+        "fidele-paille": "L'homme de paille ressemble à la position, mais il la grossit : l'auteur ne la reconnaîtrait pas."
+      };
       derouler(zone, tirerNouveaux("reformuler", REFORMULATIONS, 5), (x, zone, fini) => {
         zone.appendChild(el("p", "consigne", x.auteur));
         zone.appendChild(el("p", "cas", "« " + x.position + " »"));
@@ -1095,6 +1140,7 @@ EXPERIENCES.push(
               retour.appendChild(el("p", "verdict " + (t === attendu ? "juste" : "faux"), (t === attendu ? T("Juste : ") : T("Réponse : ")) + T(TYPES_REFORMULATION[attendu][0]).toLowerCase() + "."));
               retour.appendChild(paragraphe(TYPES_REFORMULATION[attendu][1]));
               if (t !== attendu) retour.appendChild(paragraphe(T("Votre choix : {0}.", T(TYPES_REFORMULATION[t][0]).toLowerCase()) + " " + T(TYPES_REFORMULATION[t][1]), "source"));
+              if (t !== attendu && CONFUSIONS[attendu + "-" + t]) retour.appendChild(paragraphe(CONFUSIONS[attendu + "-" + t]));
               zone.appendChild(retour);
               suite(retour);
             });

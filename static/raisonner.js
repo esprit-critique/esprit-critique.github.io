@@ -66,6 +66,12 @@ const ELEVES_PILOTES = ["Camille", "Yanis", "Louise", "Malo", "Inès", "Théo", 
 // Atterrissages extrêmes (≥ 82 ou ≤ 58), reliés à l'atterrissage suivant du même élève
 function grapheMoniteur(extremes) {
   const bloc = el("div", "figure-moniteur");
+  // Message : variation moyenne de la note suivante après une note très haute, puis après une note très basse
+  const variationApres = liste => liste.length ? Math.round(liste.reduce((t, e) => t + e.suivante - e.note, 0) / liste.length) : null;
+  const hautes = variationApres(extremes.filter(e => e.note >= 82)), basses = variationApres(extremes.filter(e => e.note <= 58));
+  bloc.appendChild(messageGraphique(hautes !== null && basses !== null
+    ? T("Après une note très haute, la suivante varie de {0} points en moyenne ; après une très basse, de {1}. Les extrêmes reviennent vers la moyenne, quoi que vous ayez dit.", signe(hautes), signe(basses))
+    : T("Les notes extrêmes reviennent vers la moyenne, quoi que vous ayez dit.")));
   const s = svg("svg", { viewBox: "0 0 320 230", class: "graphe", role: "img", "aria-label": "Note d'un atterrissage extrême, puis note de l'atterrissage suivant du même élève" });
   const y = v => 200 - 180 * (v - 30) / 70, x0 = 90, x1 = 230;
   s.appendChild(svg("rect", { x: 46, y: 20, width: 250, height: 180, class: "graphe-fond" }));
@@ -799,6 +805,9 @@ JEUX.push({
         el("li", null, T("Mémoire : en moyenne, vous vous êtes souvenu d'une probabilité {0}.", Math.abs(glissement) < 2.5 ? T("à peu près exacte") : T(glissement > 0 ? "{0} points plus proche de ce qui s'est produit" : "{0} points plus éloignée de ce qui s'est produit", fr(Math.round(Math.abs(glissement))))))
       );
       zone.appendChild(liste);
+      // Message : probabilité moyenne annoncée (ramenée au-dessus de 50 %, comme sur la courbe) contre réalisation
+      const ramenees = resolues.map(r => r.p >= 50 ? [r.p, r.issue === "oui"] : [100 - r.p, r.issue === "non"]);
+      zone.appendChild(messageGraphique(phraseEtalonnage(ramenees.reduce((t, [p]) => t + p, 0) / ramenees.length, 100 * ramenees.filter(([, ok]) => ok).length / ramenees.length, ramenees.length)));
       zone.appendChild(courbeCarnet(resolues));
       zone.appendChild(paragraphe("Les prévisions à moins de 50 % sont comptées par leur complément (30 % que oui = 70 % que non), puis groupées par tranches de 10 points. Avec peu de prévisions, la courbe reste très approximative.", "source"));
     }
