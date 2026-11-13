@@ -57,7 +57,33 @@ const MESSAGES_ENLIGNE = [
     explication: "Une somme modeste, décidée en réunion, réglée en main propre : rien qui ressemble à une escroquerie." },
   { id: "abonnement", niveau: 3, canal: "Courriel", de: "Streamia <facturation@streamia-compte.example>", fraude: true, levier: "biais:aversion-perte", indice: 1,
     texte: ["Votre paiement a été refusé.", "Vos listes et votre historique seront supprimés dans 48 h.", "Mettez à jour votre carte : streamia-compte.example/paiement"],
-    explication: "La perte annoncée de vos listes joue sur l'aversion à la perte ; le domaine n'est pas celui du service. En cas de doute, ouvrez l'application elle-même plutôt que le lien." }
+    explication: "La perte annoncée de vos listes joue sur l'aversion à la perte ; le domaine n'est pas celui du service. En cas de doute, ouvrez l'application elle-même plutôt que le lien." },
+  // Niveau 4 : arnaques plus crédibles (petite somme à recevoir, appel annoncé) et vrais messages qui inquiètent
+  { id: "remboursement", niveau: 4, canal: "Courriel", de: "Administration fiscale <avis@fiscal-service.example>", fraude: true, levier: "biais:autorite", indice: 2,
+    texte: ["Après examen de votre déclaration, vous avez droit à un remboursement de 248,90 €.", "Pour le recevoir, confirmez vos coordonnées bancaires avant le 30 novembre :", "https://remboursement.fiscal-service.example/dossier"],
+    explication: "Un remboursement d'impôt arrive sur le compte déjà connu de l'administration : elle n'a pas à vous redemander vos coordonnées par un lien. Le gain annoncé remplace la menace, mais le procédé est le même : obtenir vos données bancaires." },
+  { id: "point-relais", niveau: 4, canal: "SMS", de: "Expressia", fraude: false, levier: null, indice: 1,
+    texte: ["Expressia : votre colis n'a pas pu être livré.", "Il vous attend au point relais Tabac du Centre jusqu'au 22 novembre ; présentez le code 4821 et une pièce d'identité.", "Bonne journée."],
+    explication: "Un échec de livraison inquiète, mais rien n'est demandé : ni lien, ni paiement. Le colis attend dans un commerce réel, contre un code et une pièce d'identité." },
+  { id: "faux-conseiller", niveau: 4, canal: "SMS", de: "Banque Duroc", fraude: true, levier: "biais:autorite", indice: 1,
+    texte: ["Banque Duroc : opération suspecte de 1 240 € en cours sur votre carte.", "Un conseiller va vous appeler pour la bloquer : ne raccrochez pas et suivez ses instructions.", "Service sécurité."],
+    explication: "Le message prépare un faux appel : le « conseiller » vous demandera de valider une opération ou de donner un code, prétendument pour bloquer la fraude. Le nom affiché d'un SMS ou d'un appel se falsifie. Raccrochez, et appelez le numéro inscrit au dos de votre carte." },
+  { id: "reinitialisation", niveau: 4, canal: "Courriel", de: "Streamia <noreply@streamia.example>", fraude: false, levier: null, indice: 2,
+    texte: ["Vous venez de demander un nouveau mot de passe.", "Si c'est bien vous, ouvrez l'application Streamia et suivez la notification.", "Si ce n'est pas vous, ignorez ce message : votre mot de passe actuel reste valable."],
+    explication: "Le message ne contient aucun lien, renvoie à l'application déjà installée, et dit quoi faire si vous n'êtes pour rien dans la demande : sans rien faire, rien ne change." },
+  // Niveau 5 : imitations très proches, adresses réelles détournées, vrais messages qui ressemblent à des arnaques
+  { id: "domaine-zero", niveau: 5, canal: "Courriel", de: "Banque Duroc <noreply@banque-dur0c.example>", fraude: true, levier: "biais:autorite", indice: 1,
+    texte: ["Votre relevé de novembre est disponible dans votre espace client.", "https://banque-dur0c.example/connexion", "Merci de votre confiance."],
+    explication: "Tout est copié sur le vrai message de la banque, sauf une lettre : « dur0c » s'écrit avec un zéro. Un domaine qui ressemble à celui de la banque n'est pas le sien ; le plus sûr reste de taper soi-même l'adresse du site." },
+  { id: "changement-iban", niveau: 5, canal: "Courriel", de: "Atelier Morel <compta@atelier-morel.example> (votre fournisseur habituel)", fraude: true, levier: "biais:autorite", indice: 1,
+    texte: ["Bonjour, suite à un changement de banque,", "merci de régler désormais nos factures sur le nouvel IBAN joint, dès celle de novembre.", "Cordialement, le service comptable."],
+    explication: "L'adresse est bien celle du fournisseur : sa messagerie a pu être piratée. Un changement d'IBAN annoncé par courriel se vérifie toujours en appelant le fournisseur au numéro que vous connaissez déjà, jamais à celui du message." },
+  { id: "paiement-refuse", niveau: 5, canal: "SMS", de: "Banque Duroc", fraude: false, levier: null, indice: 1,
+    texte: ["Banque Duroc : paiement de 89,90 € chez Librairie Lumière refusé.", "Plafond atteint : vous pouvez le modifier depuis votre application.", "Ce message ne nécessite aucune réponse."],
+    explication: "Un paiement refusé inquiète, mais le message ne demande rien et renvoie à l'application que vous avez déjà. Si vous venez de payer dans cette librairie, il dit simplement vrai : y voir une arnaque serait une fausse alerte." },
+  { id: "amende", niveau: 5, canal: "Courriel", de: "Ville de Saint-Aubin <stationnement@saint-aubin-paiement.example>", fraude: true, levier: "sophismes:ad-baculum", indice: 2,
+    texte: ["Votre véhicule a dépassé la durée de stationnement autorisée.", "Réglez l'amende de 35 € sous 48 heures pour éviter sa majoration :", "saint-aubin-paiement.example/amende"],
+    explication: "Une amende de stationnement se règle par l'avis officiel reçu ou sur le site public de paiement des amendes, pas par un lien dans un courriel. Le domaine imite celui de la ville, et la menace de majoration pousse à payer sans vérifier." }
 ];
 
 function lancerHameconnage(zone) {
