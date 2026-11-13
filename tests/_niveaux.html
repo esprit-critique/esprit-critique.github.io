@@ -52,12 +52,13 @@ f.onload = async () => {
     ok("escalier : 1, 1, 2 après trois réussites, puis 2, puis 1 après une erreur", pas.join(",") === "1,1,2,2,1", pas.join(","));
     ev("enregistrerNiveau")("e", { mode: "choisi", niveau: 3 });
     ok("niveau choisi : fixe, quelles que soient les réponses", suivre("e", false) === 3 && suivre("e", false) === 3);
-    // Niveaux 4 et 5 : seulement pour « Combien de points ? » (NIVEAUX_MAX) ; l'escalier s'y arrête à 5, ailleurs à 3
-    w.localStorage.setItem("niveaux", JSON.stringify({ points: { niveau: 5, mode: "choisi" }, crt: { niveau: 5, mode: "choisi" } }));
-    ok("niveaux 4 et 5 : acceptés pour « points », ramenés à 1 ailleurs", ev("niveauAtelier")("points").niveau === 5 && ev("niveauAtelier")("crt").niveau === 1);
-    w.localStorage.setItem("niveaux", JSON.stringify({ points: { niveau: 4, mode: "auto", serie: 2 }, crt: { niveau: 3, mode: "auto", serie: 2 } }));
+    // Niveaux 4 et 5 : seulement pour les ateliers de NIVEAUX_MAX (« Combien de points ? »…) ; l'escalier s'y arrête à 5,
+    // ailleurs à 3 (« citations » garde trois niveaux : ses citations doivent être vérifiées sur leur source)
+    w.localStorage.setItem("niveaux", JSON.stringify({ points: { niveau: 5, mode: "choisi" }, citations: { niveau: 5, mode: "choisi" } }));
+    ok("niveaux 4 et 5 : acceptés pour « points », ramenés à 1 ailleurs", ev("niveauAtelier")("points").niveau === 5 && ev("niveauAtelier")("citations").niveau === 1);
+    w.localStorage.setItem("niveaux", JSON.stringify({ points: { niveau: 4, mode: "auto", serie: 2 }, citations: { niveau: 3, mode: "auto", serie: 2 } }));
     const haut = [suivre("points", true), suivre("points", true), suivre("points", true), suivre("points", true)];
-    ok("niveaux 4 et 5 : l'escalier monte à 5 pour « points » et plafonne, à 3 ailleurs", haut[0] === 5 && haut[3] === 5 && suivre("crt", true) === 3, haut.join(","));
+    ok("niveaux 4 et 5 : l'escalier monte à 5 pour « points » et plafonne, à 3 ailleurs", haut[0] === 5 && haut[3] === 5 && suivre("citations", true) === 3, haut.join(","));
     w.localStorage.removeItem("niveaux");
     const partie = ev("suivrePartie");
     ev("enregistrerNiveau")("p", { mode: "auto", niveau: 1 });
