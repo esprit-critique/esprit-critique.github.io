@@ -235,18 +235,62 @@ function jeuConseille(m) {
 
 const nomsDomaines = () => DOMAINES.map(([, nom]) => T(nom));
 
+// Messages des graphiques du profil : la conclusion que chaque graphique doit faire passer
+// Courbe de maîtrise : évolution sur les sept derniers jours mesurés (ou depuis le premier jour, s'il est plus récent)
+function messageMaitrise(jours) {
+  if (jours.length < 2) return T("Un seul jour mesuré : la courbe se dessinera au fil de vos parties.");
+  const [jd, vd] = jours[jours.length - 1];
+  const [j0, v0] = jours.filter(([j]) => j <= jd - 7).pop() || jours[0];
+  const ecart = vd[0] - v0[0], duree = pluriel(jd - j0, "jour");
+  if (ecart > 0) return T("Votre maîtrise a gagné {0} points en {1}.", ecart, duree);
+  if (ecart < 0) return T("Votre maîtrise a perdu {0} points en {1}.", -ecart, duree);
+  return T("Votre maîtrise n'a pas bougé en {0}.", duree);
+}
+
+// Toile : le domaine qui a le plus progressé en quatre semaines ; sans historique, l'équilibre du profil
+function messageToile(valeurs, anciennes) {
+  const noms = nomsDomaines();
+  if (anciennes) {
+    const gains = valeurs.map((v, i) => v - (anciennes[i] || 0));
+    const k = gains.indexOf(Math.max(...gains));
+    return gains[k] > 0 ? T("En quatre semaines, c'est en {0} que vous avez le plus progressé (+{1}).", noms[k], gains[k])
+      : T("Aucun domaine n'a progressé en quatre semaines.");
+  }
+  const fort = valeurs.indexOf(Math.max(...valeurs)), faible = valeurs.indexOf(Math.min(...valeurs));
+  if (valeurs[fort] === 0) return T("Aucun domaine mesuré pour l'instant : une partie suffit pour remplir ce graphique.");
+  // Des domaines encore à zéro ne sont pas « au même niveau » : ils n'ont simplement pas été mesurés
+  const zeros = valeurs.filter(v => v === 0).length;
+  if (zeros) return T("Point fort : {0} ({1}). Domaines encore à zéro : {2} sur 6.", noms[fort], valeurs[fort], zeros);
+  if (valeurs[fort] - valeurs[faible] < 150) return T("Vos six domaines sont à peu près au même niveau.");
+  return T("Profil inégal : {0} devance {1} de {2} points.", noms[fort], noms[faible], valeurs[fort] - valeurs[faible]);
+}
+
+// Jeux d'une section : le plus et le moins maîtrisés, et le nombre de jeux jamais joués
+function messageJeuxSection(lignes) {
+  const joues = lignes.filter(([, v]) => v !== null).sort((a, b) => b[1] - a[1]);
+  const jamais = lignes.length - joues.length;
+  if (!joues.length) return T("Aucun jeu de cette section joué pour l'instant.");
+  const debut = joues.length > 1 ? T("Le plus maîtrisé : {0} ({1}) ; le moins : {2} ({3}).", T(joues[0][0]), joues[0][1], T(joues[joues.length - 1][0]), joues[joues.length - 1][1])
+    : T("Un seul jeu joué : {0} ({1}).", T(joues[0][0]), joues[0][1]);
+  return jamais ? debut + " " + T("Jamais joués : {0}.", jamais) : debut;
+}
+
 function ongletEnsemble(p, m, etat) {
   const jours = Object.entries(etat.jours || {}).map(([j, v]) => [Number(j), v]).sort((a, b) => a[0] - b[0]);
   // Échelle jusqu'au deuxième grade au-dessus de la meilleure maîtrise : une courbe lisible, sans grade qui se chevauche
   const plusHaut = GRADES.find(([s]) => s > (etat.meilleure || 0) * 1.15 + 40) || GRADES[GRADES.length - 1];
   const echelle = Math.min(1000, (GRADES[GRADES.indexOf(plusHaut) + 1] || [1000])[0]);
-  p.appendChild(graphiqueCourbe(T("Votre maîtrise, jour après jour"), jours.map(([j, v]) => [j, v[0]]), echelle, GRADES.filter(([s]) => s >= 25 && s <= echelle).map(([s, n]) => [s, T(n)])));
+  p.appendChild(graphiqueCourbe(T("Votre maîtrise, jour après jour"), jours.map(([j, v]) => [j, v[0]]), echelle, GRADES.filter(([s]) => s >= 25 && s <= echelle).map(([s, n]) => [s, T(n)]), messageMaitrise(jours)));
   p.appendChild(el("p", "source", T("La courbe commence le {0}, jour de la mise à jour qui a introduit la maîtrise : les jours d'avant ne peuvent pas être recalculés.",
     new Date((etat.depuis || aujourdHui()) * 86400000).toLocaleDateString(LOCALE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }))));
   const ancien = jours.filter(([j]) => j <= aujourdHui() - 28).pop();
   const valeurs = DOMAINES.map(([d]) => m.domaines[d]);
-  p.appendChild(graphiqueToile(T("Vos six domaines (en pointillé : il y a quatre semaines)"), nomsDomaines(), valeurs, ancien ? ancien[1].slice(1) : null, 1000));
-  p.appendChild(graphiqueBarres(T("Les mêmes domaines, en barres"), DOMAINES.map(([, nom], i) => [T(nom), valeurs[i]]).sort((a, b) => b[1] - a[1]), 1000, [500]));
+  p.appendChild(graphiqueToile(T("Vos six domaines (en pointillé : il y a quatre semaines)"), nomsDomaines(), valeurs, ancien ? ancien[1].slice(1) : null, 1000,
+    messageToile(valeurs, ancien ? ancien[1].slice(1) : null)));
+  const faible = valeurs.indexOf(Math.min(...valeurs));
+  p.appendChild(graphiqueBarres(T("Les mêmes domaines, en barres"), DOMAINES.map(([, nom], i) => [T(nom), valeurs[i]]).sort((a, b) => b[1] - a[1]), 1000, [500],
+    Math.max(...valeurs) > 0 ? T("À travailler en priorité : {0} ({1}). Jeu conseillé : {2}.", nomsDomaines()[faible], valeurs[faible], T(jeuConseille(m)))
+      : T("Aucun domaine mesuré pour l'instant : une partie suffit pour remplir ce graphique.")));
   // Forces et points faibles
   const jeux = Object.entries(m.jeux).filter(([id]) => tousLesAteliers().some(a => a.atelier.id === id)).map(([id, [, v]]) => [tousLesAteliers().find(a => a.atelier.id === id).atelier.titre, v]);
   const joues = jeux.filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
@@ -263,7 +307,9 @@ function ongletEnsemble(p, m, etat) {
   p.appendChild(el("h3", "titre-bloc", "Entraînement"));
   p.appendChild(el("p", null, T("Aujourd'hui : {0} points de lucidité sur un objectif de {1}. Série : {2} (un jour de repos par semaine ne la rompt pas). Total depuis le début : {3} points.",
     (luc.jours || {})[aujourdHui()] || 0, objectif, pluriel(serieAvecRepos(lire("activite", []), aujourdHui()), "jour"), luc.total || 0)));
-  p.appendChild(graphiqueCalendrier(T("Les seize dernières semaines : plus la case est foncée, plus le jour a compté de points"), luc.jours || {}, aujourdHui()));
+  const actifs = depuis => Object.keys(luc.jours || {}).filter(j => Number(j) > aujourdHui() - depuis && (luc.jours[j] || 0) > 0).length;
+  p.appendChild(graphiqueCalendrier(T("Les seize dernières semaines : plus la case est foncée, plus le jour a compté de points"), luc.jours || {}, aujourdHui(),
+    T("{0} sur les seize dernières semaines, dont {1} sur les quatre dernières.", pluriel(actifs(112), "jour d'entraînement", "jours d'entraînement"), actifs(28))));
 }
 
 function ongletJeux(p, m) {
@@ -273,7 +319,7 @@ function ongletJeux(p, m) {
     const lignes = tousLesAteliers().filter(a => a.atelier.section === section.id && MAITRISE_JEUX[a.atelier.id] && MAITRISE_JEUX[a.atelier.id][1] !== "aucun")
       .map(a => { const v = m.jeux[a.atelier.id] ? m.jeux[a.atelier.id][1] : 0; return [a.atelier.titre, resultatAtelier(a.atelier.id) ? v : null, a.atelier.couleur]; });
     if (!lignes.length) return;
-    p.appendChild(graphiqueBarres(T("{0} : maîtrise de chaque jeu (repères 500, 750, 1 000 : plafonds des niveaux 1, 2 et 3)", section.titre), lignes, 1000, [500, 750]));
+    p.appendChild(graphiqueBarres(T("{0} : maîtrise de chaque jeu (repères 500, 750, 1 000 : plafonds des niveaux 1, 2 et 3)", section.titre), lignes, 1000, [500, 750], messageJeuxSection(lignes)));
     if (domaineConnu) p.appendChild(el("p", "source", T("Maîtrise du domaine : {0}. Un jeu jamais joué compte pour zéro.", m.domaines[dom])));
   });
 }
@@ -460,7 +506,8 @@ function blocMaitriseJeu(id, avant) {
   const bloc = el("div", "maitrise-jeu");
   const ecart = apres - avant.jeu;
   bloc.appendChild(el("p", null, T("Maîtrise de ce jeu : {0} ({1})", apres, (ecart >= 0 ? "+" : "") + ecart) + " · " + T("maîtrise globale : {0}", m.globale)));
-  bloc.appendChild(graphiqueBarres(T("Maîtrise de ce jeu, avant et après la partie"), [[T("Avant"), avant.jeu], [T("Après"), apres]], 1000, [500, 750]));
+  bloc.appendChild(graphiqueBarres(T("Maîtrise de ce jeu, avant et après la partie"), [[T("Avant"), avant.jeu], [T("Après"), apres]], 1000, [500, 750],
+    ecart > 0 ? T("Cette partie a fait monter votre maîtrise de ce jeu de {0} points.", ecart) : ecart < 0 ? T("Cette partie a fait baisser votre maîtrise de ce jeu de {0} points.", -ecart) : T("Cette partie n'a pas changé votre maîtrise de ce jeu.")));
   const r = resultatAtelier(id);
   const niveauMax = r && r.niveaux ? Math.max(...Object.keys(r.niveaux).map(Number)) : 0;
   if (MAITRISE_JEUX[id][1] === "note" && niveauMax && niveauMax < 3) bloc.appendChild(el("p", "source", T("Pour dépasser {0}, jouez au niveau {1}.", PLAFONDS_NIVEAU[niveauMax], niveauMax + 1)));
@@ -479,7 +526,10 @@ function blocFaceAuHasard(score, n, p) {
   const sur1000 = auMoins * 1000;
   const phrase = sur1000 >= 10 ? T("En répondant au hasard, on obtient {0} sur {1} ou mieux environ {2} fois sur 100.", score, n, Math.round(auMoins * 100))
     : T("En répondant au hasard, on obtient {0} sur {1} ou mieux environ {2} fois sur 1 000 ({3} %).", score, n, sur1000 < 1 ? T("moins d'une") : Math.round(sur1000), (auMoins * 100).toLocaleString(LOCALE, { maximumFractionDigits: 2 }));
-  bloc.append(graphiqueHasard(T("Votre score face au hasard : les scores qu'on obtiendrait en répondant au hasard"), proba, score), el("p", null, phrase));
+  // Seuils usuels de 5 % et 1 % : en dessous, le hasard seul explique mal le score
+  const message = auMoins < 0.01 ? T("Le hasard seul n'explique presque jamais un tel score.") : auMoins < 0.05 ? T("Le hasard seul explique rarement un tel score.")
+    : T("Ce score reste à la portée du hasard : à lui seul, il ne prouve pas encore un savoir-faire.");
+  bloc.append(graphiqueHasard(T("Votre score face au hasard : les scores qu'on obtiendrait en répondant au hasard"), proba, score, message), el("p", null, phrase));
   return bloc;
 }
 

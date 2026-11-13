@@ -407,6 +407,11 @@ JEUX.push(
         afficherScore(zone, "correlation", total, resultats.length * 2);
         const erreurMoyenne = resultats.reduce((s, x) => s + Math.abs(x.estime - x.reel), 0) / resultats.length;
         zone.appendChild(paragraphe(T("Écart moyen : {0}.", fr(Number(erreurMoyenne.toFixed(2))))));
+        // Message : les estimations sont-elles plus loin de zéro (liens vus plus forts) ou plus près (liens vus plus faibles) ?
+        const biaisForce = resultats.reduce((s, x) => s + Math.abs(x.estime) - Math.abs(x.reel), 0) / resultats.length;
+        zone.appendChild(messageGraphique(biaisForce > 0.05 ? T("Vous voyez des liens plus forts qu'ils ne sont : vos estimations s'éloignent de zéro de {0} de plus que la réalité, en moyenne.", fr(Number(biaisForce.toFixed(2))))
+          : biaisForce < -0.05 ? T("Vous voyez des liens plus faibles qu'ils ne sont : vos estimations sont plus proches de zéro que la réalité, de {0} en moyenne.", fr(Number((-biaisForce).toFixed(2))))
+          : T("Vos points suivent la diagonale : vous jugez bien la force des liens.")));
         zone.appendChild(grapheEstimations(resultats));
         zone.appendChild(paragraphe("Chaque point est un nuage : en abscisse la vraie corrélation, en ordonnée votre estimation. Sur la diagonale, l'estimation est exacte.", "source"));
         ajouterExplication(zone, "Ce que montre ce jeu", [
@@ -457,6 +462,7 @@ JEUX.push(
             retour.appendChild(el("p", "verdict " + (k === p.juste ? "juste" : "faux"), T(k === p.juste ? "Juste." : "Non.") + " " + T(p.piege)));
             if (p.honnete) {
               const f = el("figure", "figure-piege honnete");
+              if (p.verite) f.appendChild(messageGraphique(p.verite));
               f.appendChild(p.honnete());
               f.appendChild(el("figcaption", null, "Les mêmes données, présentées honnêtement."));
               retour.appendChild(f);
@@ -819,6 +825,7 @@ function afficherDoublePiege(p, zone, fini) {
     const retour = el("div", "retour-quiz");
     retour.appendChild(el("p", "verdict " + (trouves === 2 ? "juste" : "faux"), trouves === 2 ? "Juste : les deux procédés." : trouves === 1 ? "Un procédé sur deux." : "Aucun des deux procédés."));
     const f = el("figure", "figure-piege honnete");
+    if (p.verite) f.appendChild(messageGraphique(p.verite));
     f.appendChild(p.honnete());
     f.appendChild(el("figcaption", null, "Les mêmes données, présentées honnêtement."));
     retour.append(f, paragraphe(d.explication));
@@ -843,6 +850,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Elle a environ triplé", T("Elle a progressé de {0} points, soit environ {1} %", fr(Number((v2 - v1).toFixed(1))), hausse), "Elle a doublé"],
         juste: 1,
         piege: T("L'axe vertical commence à {0} %, et non à zéro.", fr(min)),
+        verite: T("Axe depuis zéro : une hausse de {0} %, à peine visible.", hausse),
         explication: T("Un axe qui ne commence pas à zéro grossit les écarts : la barre de 2025 paraît plusieurs fois plus haute alors que la valeur n'a augmenté que de {0} %. Pour des barres, dont on compare les longueurs, l'axe doit partir de zéro.", hausse)
       };
     }
@@ -871,6 +879,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["À la baisse", "Impossible à dire avec ce seul graphique", "À la hausse"],
         juste: 1,
         piege: "Six années ne disent rien de la tendance de long terme.",
+        verite: "Sur trente ans, les adhérents augmentent : la baisse montrée (trait rouge épais) n'est qu'un creux passager.",
         explication: "Sur trente ans, le nombre d'adhérents a nettement augmenté ; la courbe montrée n'en est qu'un extrait, choisi parce qu'il baissait. Avant de conclure, il faut demander pourquoi la période commence et finit là."
       };
     }
@@ -891,6 +900,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Oui, nettement", "Non, elles baissent chaque année", "On ne peut pas le savoir"],
         juste: 1,
         piege: "Une courbe de cumul monte toujours, même quand chaque année est moins bonne que la précédente.",
+        verite: "Année par année, les ventes baissent.",
         explication: "La pente de la courbe, de plus en plus faible, trahit la baisse : les ventes annuelles ont reculé d'environ 10 % par an (barres ci-dessus, années 2018 à 2025). Les présentations en cumul sont fréquentes quand les chiffres annuels sont mauvais."
       };
     }
@@ -920,6 +930,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Oui, vers 2020", "Non : B reste plus de dix fois plus petite", "Oui, en 2025"],
         juste: 1,
         piege: "Les deux courbes n'utilisent pas la même échelle.",
+        verite: "Sur une échelle commune, B reste très loin derrière A : les courbes ne se croisent jamais.",
         explication: "Avec deux axes verticaux, on peut faire se croiser n'importe quelles courbes en choisissant les bornes de chaque axe. Sur une échelle commune, B reste autour de 5 % de A."
       };
     }
@@ -979,6 +990,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Il a diminué", "Il a augmenté", "Il est resté stable"],
         juste: 1,
         piege: "L'axe vertical est inversé : les valeurs augmentent vers le bas.",
+        verite: "Axe dans le bon sens : les accidents augmentent nettement depuis 2019.",
         explication: "La courbe descend, mais l'axe est gradué de haut en bas. En 2014, un graphique de l'agence Reuters sur les morts par arme à feu en Floride, construit avec un axe inversé, a été largement lu à l'envers."
       };
     }
@@ -996,6 +1008,7 @@ const PIEGES_GRAPHIQUES = [
         options: [String(base), String(base * 100), "5 000"],
         juste: 0,
         piege: "« Doubler » un risque très faible le laisse très faible.",
+        verite: T("Sur 10 000 personnes : {0} sans le médicament, {1} avec. Le risque double, mais reste très faible.", pluriel(base, "cas", "cas"), base * 2),
         explication: T("Le risque relatif (×2) impressionne ; le risque absolu (+{0} pour 10 000) permet de décider. En 1995, l'annonce au Royaume-Uni d'un risque de thrombose « doublé » avec certaines pilules contraceptives a conduit de nombreuses femmes à arrêter leur contraception, suivie d'une hausse des grossesses non désirées et des avortements.", base)
       };
     }
@@ -1013,6 +1026,7 @@ const PIEGES_GRAPHIQUES = [
         options: ["Oui", "Non : il l'exagère", "Non : il le minimise"],
         juste: 1,
         piege: "La production double, mais le bidon est agrandi dans les deux dimensions : sa surface est multipliée par quatre.",
+        verite: "Deux bidons identiques au lieu d'un : la production double, ni plus ni moins.",
         explication: "L'œil compare les surfaces, pas les hauteurs. Doubler la hauteur et la largeur d'une image la fait paraître quatre fois plus grande. Une représentation fidèle aligne des images identiques, ou utilise des barres."
       };
     }

@@ -560,6 +560,7 @@ const JEUX = [
         });
         const cumul = lire("confiance", {});
         zone.appendChild(el("p", "consigne", "Votre étalonnage, toutes parties confondues"));
+        zone.appendChild(messageGraphique(messageEtalonnage(cumul)));
         zone.appendChild(courbeEtalonnage(cumul, partie));
         zone.appendChild(legende([["var(--c-fort)", "toutes vos réponses"], ["var(--orange)", "cette partie"], ["var(--discret)", "étalonnage parfait"]]));
         const lignes = el("ul", "liste-simple");
@@ -1289,6 +1290,14 @@ function pointsConfiance(niveau, juste) {
   return Math.round(100 * (1 + Math.log2(juste ? p : 1 - p)));
 }
 
+// Message de la courbe d'étalonnage : certitude moyenne annoncée contre réussite, sur les niveaux du graphique
+function messageEtalonnage(cumul) {
+  const niveaux = NIVEAUX_CONFIANCE.filter(c => cumul[c] && cumul[c][0]);
+  const n = niveaux.reduce((a, c) => a + cumul[c][0], 0);
+  if (!n) return phraseEtalonnage(0, 0, 0);
+  return phraseEtalonnage(niveaux.reduce((a, c) => a + c * cumul[c][0], 0) / n, 100 * niveaux.reduce((a, c) => a + cumul[c][1], 0) / n, n);
+}
+
 // Courbe d'étalonnage : pour chaque niveau de confiance, la part de réponses justes
 function courbeEtalonnage(cumul, partie) {
   const s = svg("svg", { viewBox: "0 0 320 236", class: "graphe", role: "img", "aria-label": "Courbe d'étalonnage" });
@@ -1447,6 +1456,14 @@ function partiePoints(zone, avecRepere) {
       s.appendChild(texteSvg(25, 324 - p, String(v), { class: "graphe-texte", "text-anchor": "end" }));
     });
     s.appendChild(svg("line", { x1: 30, y1: 290, x2: 300, y2: 20, class: "graphe-diagonale" }));
+    // Message : sens de l'écart, et s'il grandit avec la taille du nuage (petite moitié contre grande moitié des nuages)
+    const tries = [...essais].sort((a, b) => a[0] - b[0]), moitie = Math.floor(tries.length / 2);
+    const rapportDe = t => moyenneGeometrique(t.map(([n, v]) => v / n));
+    const croissant = moitie >= 2 && pct < -5 && rapportDe(tries.slice(moitie)) < 0.9 * rapportDe(tries.slice(0, moitie));
+    zone.appendChild(messageGraphique(Math.abs(pct) < 5 ? T("Vos points suivent la diagonale : vos estimations sont justes en moyenne.")
+      : pct > 0 ? T("Vos points passent au-dessus de la diagonale : vous surestimez les quantités.")
+      : croissant ? T("Vos points passent sous la diagonale, et s'en écartent d'autant plus que le nuage est grand : vous sous-estimez surtout les grandes quantités.")
+      : T("Vos points passent sous la diagonale : vous sous-estimez les quantités.")));
     essais.forEach(([n, v]) => {
       const y = Math.min(haut, Math.max(10, v));
       s.appendChild(svg("circle", { cx: echelle(n), cy: 320 - echelle(y), r: 5, class: "graphe-point" }));

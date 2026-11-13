@@ -1002,6 +1002,9 @@ const EXPERIENCES = [
           const juste = Math.abs(v - vrai) <= Math.max(3, vrai * 0.2);
           const retour = el("div", "retour-quiz");
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), T(juste ? "Juste : environ {0} %." : "Réponse : environ {0} %.", fr(vrai < 10 ? Number(vrai.toFixed(1)) : Math.round(vrai)))));
+          retour.appendChild(messageGraphique(c.fauxPositifs > c.vraisPositifs
+            ? T("Les faux positifs ({0}) sont plus nombreux que les vrais ({1}) : le groupe non concerné est si grand que son petit taux d'erreur l'emporte.", fr(c.fauxPositifs), fr(c.vraisPositifs))
+            : T("Les vrais positifs ({0}) sont plus nombreux que les faux ({1}) : le cas est assez fréquent pour que le test soit fiable.", fr(c.vraisPositifs), fr(c.fauxPositifs))));
           retour.appendChild(arbreFrequences(s, c));
           retour.appendChild(paragraphe(T(c.vraisPositifs > 1 ? "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspondent à un vrai cas." : "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspond à un vrai cas.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs), fr(c.vraisPositifs + c.fauxPositifs))));
           if (s.resultat) retour.appendChild(paragraphe(s.resultat, "source"));
@@ -1065,6 +1068,7 @@ const EXPERIENCES = [
         const retour = el("div", "retour-quiz");
         retour.appendChild(el("p", "verdict " + (Math.abs(v - 23) <= 2 ? "juste" : "faux"), T("Il suffit de 23 personnes : {0} %.", fr(Number((100 * probaAnniversaire(23)).toFixed(1))))));
         retour.appendChild(paragraphe(T("Avec {0} personnes, la probabilité est de {1} %. Avec 57 personnes, elle dépasse 99 %.", v, fr(Number((100 * probaAnniversaire(Math.min(v, 366))).toFixed(1))))));
+        retour.appendChild(messageGraphique(T("La courbe monte bien plus vite que l'intuition : une chance sur deux dès 23 personnes, presque la certitude à 57.")));
         retour.appendChild(courbeAnniversaires(v));
         retour.appendChild(paragraphe("L'intuition pense à « quelqu'un qui a le même anniversaire que moi » : pour cela, il faudrait 253 personnes. Mais n'importe quelle paire convient, et 23 personnes forment 253 paires.", "source"));
         const sansPaire = n => 1 - probaAnniversaire(n);
