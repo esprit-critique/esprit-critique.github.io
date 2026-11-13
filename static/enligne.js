@@ -30,7 +30,7 @@ const MESSAGES_ENLIGNE = [
     explication: "Pas de lien, pas de paiement, et il renvoie au numéro que vous connaissez : un rappel ordinaire." },
   { id: "support-virus", niveau: 2, canal: "Courriel", de: "Support Fenestra <alerte@fenestra-support-technique.example>", fraude: true, levier: "biais:autorite", indice: 1,
     texte: ["Nous avons détecté 3 virus sur votre ordinateur.", "Appelez immédiatement notre technicien certifié au numéro ci-dessous pour éviter la perte de vos données.", "Ne redémarrez pas votre appareil."],
-    explication: "Personne ne peut voir à distance les virus de votre ordinateur pour vous en avertir. Le titre de « technicien certifié » joue sur l'autorité ; au téléphone, on vous demandera d'installer un logiciel de prise de contrôle." },
+    explication: "Aucun éditeur ne repère des virus sur votre ordinateur pour vous l'annoncer par courriel. Le titre de « technicien certifié » joue sur l'autorité ; au téléphone, on vous demandera d'installer un logiciel de prise de contrôle." },
   { id: "attestation", niveau: 2, canal: "Courriel", de: "Caisse de retraite Horizon <ne-pas-repondre@caisse-horizon.example>", fraude: false, levier: null, indice: 1,
     texte: ["Votre attestation fiscale 2025 est disponible dans votre espace personnel.", "Connectez-vous comme d'habitude sur notre site, en tapant son adresse.", "Nous ne vous demanderons jamais votre mot de passe par courriel."],
     explication: "Le message vous invite à taper vous-même l'adresse du site, sans lien à suivre : c'est exactement ce qu'il faut faire." },
@@ -45,7 +45,7 @@ const MESSAGES_ENLIGNE = [
     explication: "Vous n'avez participé à aucun tirage. Le nombre de gagnants qui auraient déjà réclamé leur lot pousse à faire comme eux, et la rareté à ne pas réfléchir ; les frais de port servent à prendre votre numéro de carte." },
   { id: "banque-lien", niveau: 3, canal: "Courriel", de: "Banque Duroc <noreply@banque-duroc.example>", fraude: true, levier: "biais:autorite", indice: 2,
     texte: ["Votre relevé de novembre est disponible.", "Consultez-le dans votre espace client :", "https://banque-duroc.example.releve-securise.example/connexion"],
-    explication: "Le nom de l'expéditeur s'affiche comme celui de la banque, ce qui se falsifie facilement. Mais le lien mène au domaine releve-securise.example : dans une adresse, c'est la fin avant le premier « / » qui compte, pas le début." },
+    explication: "Le nom de l'expéditeur s'affiche comme celui de la banque, ce qui se falsifie facilement. Mais le lien mène au domaine releve-securise.example : dans une adresse, c'est la fin du nom du site qui compte (juste avant le « / » qui suit « https:// » et le nom), pas son début." },
   { id: "banque-appareil", niveau: 3, canal: "Courriel", de: "Banque Duroc <noreply@banque-duroc.example>", fraude: false, levier: null, indice: 2,
     texte: ["Une connexion à votre espace a eu lieu depuis un nouvel appareil le 9 novembre à 21 h 12.", "Si c'est vous, il n'y a rien à faire.", "Sinon, appelez votre conseiller au numéro inscrit au dos de votre carte."],
     explication: "Inquiétant, mais légitime : rien n'est demandé, aucun lien, et il renvoie au numéro que vous possédez déjà. Crier à l'arnaque ici, c'est une fausse alerte." },
@@ -110,7 +110,7 @@ function lancerHameconnage(zone) {
     afficherScore(zone, "hameconnage", resultats.filter(r => r.juste).length, resultats.length);
     zone.appendChild(paragraphe(T("Tentatives repérées : {0} sur {1}. Fausses alertes : {2} sur {3} vrais messages. Sensibilité d′ : {4} (0 : au hasard ; 2 et plus : très bonne).", detections, fraudes, fausses, legitimes, fr(Number(d.toFixed(2))))));
     ajouterExplication(zone, "Se méfier sans tout soupçonner", [
-      "Les signes qui reviennent : une urgence, une menace ou une récompense ; un lien dont le domaine n'est pas celui de l'expéditeur (dans une adresse, c'est la partie juste avant le premier « / » qui compte) ; une demande inhabituelle : identifiants, code, paiement, cartes cadeaux.",
+      "Les signes qui reviennent : une urgence, une menace ou une récompense ; un lien dont le domaine n'est pas celui de l'expéditeur (dans une adresse, c'est la fin du nom du site qui compte, juste avant le « / » qui le suit) ; une demande inhabituelle : identifiants, code, paiement, cartes cadeaux.",
       "Le bon réflexe ne passe jamais par le message lui-même : on rappelle la personne au numéro que l'on connaît, on tape soi-même l'adresse du site, on ouvre l'application déjà installée. Et un message inquiétant peut être légitime : crier à l'arnaque partout est aussi une erreur."
     ], [["#biais/autorite", "Biais d'autorité"], ["#sophismes/ad-baculum", "Appel à la force"], ["#tests/laterale", "La lecture latérale"]]);
     boutonRejouer(zone, () => lancerHameconnage(zone));
