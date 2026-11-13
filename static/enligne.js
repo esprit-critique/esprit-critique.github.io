@@ -142,7 +142,21 @@ const MOTS_DE_PASSE = [
   { id: "quatorze", niveau: 3, a: { texte: "Rx4tQ8vmW2pLz9", type: "aleatoire", longueur: 14, alphabet: 62 },
     b: { texte: "k7#Qm2!xZp9&", type: "aleatoire", longueur: 12, alphabet: 95 } },
   { id: "animaux", niveau: 3, a: { texte: "chien-chat-souris-lapin-cheval", type: "humain", bits: 38, raison: "cinq animaux familiers, choisis par une personne parmi quelque 200 : environ 7,6 bits par mot, pas 12,9" },
-    b: { texte: "fjord-pastel-ruban-orage", type: "mots", mots: 4 } }
+    b: { texte: "fjord-pastel-ruban-orage", type: "mots", mots: 4 } },
+  // Niveaux 4 et 5 : uniquement des mots de passe tirés au hasard, dont la force se calcule exactement ; écarts de
+  // 3,5 à 6 bits au niveau 4, de 1 à 3 bits au niveau 5. Ni la longueur ni les symboles ne suffisent à trancher.
+  { id: "six-mots", niveau: 4, a: { texte: "girafe-buvard-falaise-citron-tambour-osier", type: "mots", mots: 6 },
+    b: { texte: "T3kQ9wPz7mLx", type: "aleatoire", longueur: 12, alphabet: 62 } },
+  { id: "quinze-alnum", niveau: 4, a: { texte: "Kq7mZ2pW9xLr4Tv", type: "aleatoire", longueur: 15, alphabet: 62 },
+    b: { texte: "v#8Qm!2zK&p7R", type: "aleatoire", longueur: 13, alphabet: 95 } },
+  { id: "vingt-minuscules", niveau: 4, a: { texte: "kpqzrmvbtwxhnjgcdfsl", type: "aleatoire", longueur: 20, alphabet: 26 },
+    b: { texte: "ardoise-pinson-velours-cerise-tunnel-gazon-flute", type: "mots", mots: 7 } },
+  { id: "seize-minuscules", niveau: 5, a: { texte: "qzvmrtkpwhxbnjcd", type: "aleatoire", longueur: 16, alphabet: 26 },
+    b: { texte: "R4#vq!8Lm%z", type: "aleatoire", longueur: 11, alphabet: 95 } },
+  { id: "huit-symboles", niveau: 5, a: { texte: "w9!Kd#2q", type: "aleatoire", longueur: 8, alphabet: 95 },
+    b: { texte: "lanterne-cactus-moulin-poivre", type: "mots", mots: 4 } },
+  { id: "cinq-mots", niveau: 5, a: { texte: "comete-bocal-serpe-lilas-trompette", type: "mots", mots: 5 },
+    b: { texte: "z!4Rq#8vM&", type: "aleatoire", longueur: 10, alphabet: 95 } }
 ];
 // Hypothèse de calcul, écrite telle quelle dans l'explication : dix milliards d'essais par seconde, l'ordre de grandeur
 // d'une attaque hors ligne sur un fichier de mots de passe mal protégé ; en moyenne, on trouve après la moitié des essais
