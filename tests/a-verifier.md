@@ -7,6 +7,11 @@ Aucun fait non vérifié n'est affiché sur le site à ce jour.
   vérifiée par la simulation affichée.
 - Wason et Brooks, « THOG: The anatomy of a problem », Psychological Research, 1979 : référence vérifiée (Crossref).
   Le site n'en cite aucun chiffre ; la solution du problème se vérifie par le raisonnement donné.
+- Population de Paris (« Ordres de grandeur ») : le site affichait 2 047 602 habitants « au 1er janvier 2023 », chiffre
+  qui ne correspond à aucune série de l'Insee (population légale de référence 2020 : 2 145 906 ; référence 2023 :
+  2 103 778 d'après l'Insee Flash Île-de-France de décembre 2025, cité par une recherche, insee.fr inaccessible depuis
+  la session du 13 novembre 2026). Affiché désormais : « environ 2,1 millions », vrai pour les deux séries. Le chiffre
+  exact reste à confirmer sur insee.fr avant d'être affiché.
 - Écartés faute de source vérifiable (non affichés) : « Impossible n'est pas français » (Napoléon), une phrase de
   Spinoza, les taux de réussite de Lecoutre (1992) et de Tversky et Kahneman (1971, 1972) pour les problèmes ajoutés.
 - Mentions légales, téléphone de l'hébergeur : +1 415 857 5430. Aucune page officielle de GitHub ne donne de numéro ;

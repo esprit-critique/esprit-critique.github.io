@@ -22,7 +22,7 @@ EN_AJOUTER([
   ["Ce que montre ce jeu", "What this game shows"],
   ["Les causes de décès spectaculaires et médiatisées (requins, terrorisme, accidents d'avion) sont souvent surestimées par rapport aux causes banales et silencieuses (chutes, noyades, maladies chroniques).", "Spectacular, widely covered causes of death (sharks, terrorism, plane crashes) are often overestimated compared with ordinary, silent ones (falls, drownings, chronic diseases)."],
   ["Lichtenstein, Slovic et leurs collègues (1978) ont demandé à des participants d'estimer la fréquence de 41 causes de décès : les causes rares et dramatiques étaient surestimées, les causes fréquentes sous-estimées. Combs et Slovic (1979) ont montré que ces erreurs suivaient la couverture des journaux plutôt que les statistiques.", "Lichtenstein, Slovic and their colleagues (1978) asked participants to estimate the frequency of 41 causes of death: rare, dramatic causes were overestimated, frequent ones underestimated. Combs and Slovic (1979) showed that these errors followed newspaper coverage rather than statistics."],
-  ["Les chiffres proviennent de sources et d'années différentes (2021 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins.", "The figures come from different sources and years (2021 to 2025): they give orders of magnitude. The duels only compare causes separated by a factor of at least 1.6."],
+  ["Les chiffres proviennent de sources et d'années différentes (2019 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins.", "The figures come from different sources and years (2019 to 2025): they give orders of magnitude. The duels only compare causes separated by a factor of at least 1.6."],
   ["Dix duels entre {0} pays : population, revenu, espérance de vie, dépenses militaires, réfugiés… Données 2024-2025 de la Banque mondiale et du HCR. Quatre thèmes au choix.", "Ten duels between {0} countries: population, income, life expectancy, military spending, refugees… 2024-2025 data from the World Bank and UNHCR. Four themes to choose from."],
   ["Classez ces {0} pays, en commençant par la réponse", "Rank these {0} countries, starting with the answer"],
   ["Banque mondiale, {0}", "World Bank, {0}"],
@@ -262,6 +262,7 @@ EN_AJOUTER([
   ["C'est l'une des raisons pour lesquelles les grands nombres (foules, budgets, victimes) sont si mal perçus sans point de comparaison.", "That is one reason why large numbers (crowds, budgets, victims) are so poorly perceived without a point of comparison."],
   ["Recommencer", "Start over"],
   ["Avec un repère", "With a reference"],
+  ["Les chiffres proviennent de sources et d'années différentes (2021 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins.", "The figures come from different sources and years (2021 to 2025): they give orders of magnitude. The duels only compare causes separated by a factor of at least 1.6."],
   ["Classez ces quatre pays, en commençant par la réponse", "Rank these four countries, starting with the answer"],
   ["Réponse : ", "Answer: "]
 ]);

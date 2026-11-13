@@ -178,7 +178,7 @@ const JEUX = [
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Les causes de décès spectaculaires et médiatisées (requins, terrorisme, accidents d'avion) sont souvent surestimées par rapport aux causes banales et silencieuses (chutes, noyades, maladies chroniques).",
           "Lichtenstein, Slovic et leurs collègues (1978) ont demandé à des participants d'estimer la fréquence de 41 causes de décès : les causes rares et dramatiques étaient surestimées, les causes fréquentes sous-estimées. Combs et Slovic (1979) ont montré que ces erreurs suivaient la couverture des journaux plutôt que les statistiques.",
-          "Les chiffres proviennent de sources et d'années différentes (2021 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins."
+          "Les chiffres proviennent de sources et d'années différentes (2019 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins."
         ], [["#biais/disponibilite", "Heuristique de disponibilité"], ["#biais/negativite", "Biais de négativité"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "mortalite").lancer(zone));
       });
