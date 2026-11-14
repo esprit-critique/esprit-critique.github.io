@@ -1689,7 +1689,15 @@ label[for] { display: block; margin: 0 0 8px; }
 .insigne.revele .insigne-trait { animation: revelation-insigne var(--duree-longue) var(--courbe); }
 @keyframes revelation-insigne { from { opacity: 0; } }
 .blason-fond { fill: color-mix(in srgb, var(--c) 18%, var(--carte)); stroke: var(--c); stroke-width: 1.5; }
-.blason-trait { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; }
+.blason-trait { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.portrait { flex: none; overflow: visible; }
+.portrait .blason-fond { stroke-width: 1; }
+.portrait .blason-trait { stroke-width: 2.8; }
+.portrait-plein { fill: var(--c); }
+.portrait-objet { stroke-width: 1.8; }
+.portrait-piste, .portrait-arc { fill: none; stroke-width: 5; stroke-linecap: round; }
+.portrait-piste { stroke: var(--trait-doux); }
+.portrait-arc { stroke: var(--c); }
 
 .pastille-points { position: fixed; left: var(--x); top: var(--y); z-index: 60; transform: translateX(-50%); pointer-events: none;
   padding: 2px 8px; border-radius: 999px; background: var(--vert); color: var(--fond); font-weight: 700; font-size: 13px; opacity: 0; }
@@ -1745,7 +1753,12 @@ label[for] { display: block; margin: 0 0 8px; }
 .barre-maitrise > div { height: 100%; width: calc(var(--part) * 100%); background: var(--c-fort, var(--accent)); }
 
 .profil-tete { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.profil-identite { display: flex; gap: 14px; align-items: center; }
+.profil-identite { display: flex; gap: 14px; align-items: center; min-width: 0; }
+.profil-noms { min-width: 0; }
+.profil-noms .page-titre { overflow-wrap: anywhere; }
+.profil-noms .page-titre.titre-long { font-size: clamp(26px, 5vw, 40px); }
+.bouton-profil .portrait .blason-trait { stroke-width: 6; }
+.bouton-profil .portrait .portrait-plein { display: none; }
 .profil-grade { display: flex; gap: 8px; align-items: center; margin: 0; font-family: var(--titre); font-size: 18px; font-weight: 650; }
 .profil-maitrise { text-align: right; }
 .grand-nombre { display: block; font-family: var(--titre); font-size: clamp(64px, 2vw + 56px, 80px); font-weight: 700; line-height: 1; font-variant-numeric: oldstyle-nums; }
