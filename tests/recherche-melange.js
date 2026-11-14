@@ -106,6 +106,10 @@ const ok = (libelle, condition, detail = '') => {
     if (largeur !== null && jauges[jauges.length - 1] !== largeur) jauges.push(largeur);
     const titre = await p.textContent('.melange-jeu a').catch(() => '');
     if (titre && jeux[jeux.length - 1] !== titre) jeux.push(titre);
+    // Réponse écrite (« Problèmes classiques ») : remplir le champ d'abord, sinon « Valider » ne fait rien et la partie
+    // reste bloquée (le banc échouait au hasard, selon les jeux tirés)
+    const champVide = p.locator('.melange-partie input.champ:not([type=checkbox]):not([type=radio])').first();
+    if (await champVide.count() && !(await champVide.inputValue())) await champVide.fill('50');
     const actions = ['.melange-partie button.choix:not([disabled])', '.melange-partie .certitude-boutons button:not([disabled])', '.melange-partie button.bouton:not([disabled]):not([data-suivant])'];
     let clique = false;
     for (const sel of actions) {
