@@ -116,16 +116,14 @@ function graphiqueToile(titre, axes, valeurs, anciennes, max, message) {
     const espaces = [...nom.matchAll(/ /g)].map(m => m.index);
     const coupe = nom.length > 12 && espaces.length ? espaces.reduce((a, b) => Math.abs(b - nom.length / 2) < Math.abs(a - nom.length / 2) ? b : a) : -1;
     const lignes = coupe < 0 ? [nom] : [nom.slice(0, coupe), nom.slice(coupe + 1)];
-    lignes.forEach((ligne, k) => s.appendChild(texteSvg(lx, ly + (k - (lignes.length - 1) / 2) * 17, ligne, { class: "libelle-graphique", "text-anchor": lx < c - 10 ? "end" : lx > c + 10 ? "start" : "middle" })));
+    // La valeur suit le nom de l'axe : écrite près de son point, elle se superposait aux autres pour les petites valeurs
+    lignes.forEach((ligne, k) => {
+      const t = s.appendChild(texteSvg(lx, ly + (k - (lignes.length - 1) / 2) * 17, ligne, { class: "libelle-graphique", "text-anchor": lx < c - 10 ? "end" : lx > c + 10 ? "start" : "middle" }));
+      if (k === lignes.length - 1) { const v = svg("tspan", { class: "valeur-graphique" }); v.textContent = "\u00a0" + fr(valeurs[i]); t.appendChild(v); }
+    });
   });
   if (anciennes) s.appendChild(svg("polygon", { points: anciennes.map((v, i) => pt(i, v).join(",")).join(" "), class: "toile-ancienne" }));
   s.appendChild(svg("polygon", { points: valeurs.map((v, i) => pt(i, v).join(",")).join(" "), class: "toile-actuelle" }));
-  valeurs.forEach((v, i) => {
-    // Les zéros se superposeraient au centre : non écrits ici, ils restent dans le tableau des données
-    if (v === 0) return;
-    const [x, y] = pt(i, Math.max(v, max * 0.12));
-    s.appendChild(texteSvg(x, y + 4, String(v), { class: "valeur-graphique", "text-anchor": "middle" }));
-  });
   return blocGraphique(titre, s, [T("Domaine"), T("Aujourd'hui"), T("Il y a quatre semaines")],
     axes.map((a, i) => [a, valeurs[i], anciennes ? anciennes[i] : "—"]), null, message);
 }

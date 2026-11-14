@@ -82,7 +82,7 @@ collant (sommaire de la fiche, carte suivante, carte au hasard).
 ## Motif
 
 Le **trait de Müller-Lyer** (le trait du haut de l'emblème, ailettes ouvertes) sert de séparateur entre les sections
-des fiches et des explications (`.section::before`). Il est décoratif. **Réservé aux séparateurs** : ni les bordures
+des fiches et des explications (`.section::before`), et entre les blocs des onglets du profil. Il est décoratif. **Réservé aux séparateurs** : ni les bordures
 des cartes, ni les listes. L'emblème lui-même apparaît dans l'en-tête et, pour un nouveau visiteur, dans
 l'ouverture de l'accueil ; toucher l'un ou l'autre révèle les repères verticaux.
 
