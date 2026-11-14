@@ -133,20 +133,64 @@ function insigne(rang, taille) {
   return s;
 }
 
-// Blason : dessin au trait généré à partir du pseudonyme, dans le vocabulaire de l'emblème, avec une couleur de catégorie
-function blason(pseudo, taille) {
-  const texte = pseudo || "?";
-  let h = 2166136261;
-  for (const c of texte) h = Math.imul(h ^ c.codePointAt(0), 16777619) >>> 0;
-  const alea = generateur(h);
-  const couleurs = [...CATEGORIES_BIAIS, ...CATEGORIES_SOPHISMES].map(c => c.couleur);
-  const s = svg("svg", { viewBox: "0 0 40 40", class: "blason", width: taille, height: taille, "aria-hidden": "true" });
-  s.style.setProperty("--c", couleurs[Math.floor(alea() * couleurs.length)]);
-  s.appendChild(svg("circle", { cx: 20, cy: 20, r: 18, class: "blason-fond" }));
-  const traits = 1 + Math.floor(alea() * 3);
-  for (let k = 0; k < traits; k++) {
-    const y = 12 + k * (16 / Math.max(1, traits - 1 || 1)), dehors = alea() < 0.5 ? 1 : -1;
-    s.appendChild(svg("path", { d: "M12 " + y + "h16M12 " + y + "l" + (-4 * dehors) + " -4M12 " + y + "l" + (-4 * dehors) + " 4M28 " + y + "l" + (4 * dehors) + " -4M28 " + y + "l" + (4 * dehors) + " 4", class: "blason-trait" }));
+// Personnage : figure au trait de l'emblème (bras = segment de Müller-Lyer) qui s'équipe à chaque grade, tient
+// l'objet de son meilleur domaine, et en prend la couleur. Autour, six arcs : la maîtrise de chaque domaine.
+// Tout vient de la clé « maitrise » (grade atteint, dernière photographie) ; etat null : figure neutre (mode sobre).
+const DOMAINES_PERSONNAGE = {
+  monde: ["#0e7c86", "un globe", "M-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0M-6 0h12M0-6c-3 3-3 9 0 12c3-3 3-9 0-12"],
+  confiance: ["#c23b5a", "une jauge", "M-7 3a7 7 0 0 1 14 0M0 3l4-6"],
+  perception: ["#8a3f8f", "un œil", "M-7 0q7-7 14 0q-7 7-14 0M-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"],
+  raisonner: ["#2f6db5", "une grille de logique", "M-5-5h10v10h-10zM-5 0h10M0-5v10"],
+  debattre: ["#c2412d", "deux bulles de dialogue", "M-7-6h8v6h-5l-3 3zM1-1h6v6h-1v3l-3-3h-2z"],
+  notions: ["#a77a12", "un livre ouvert", "M0-4q-3-2-7-1v10q4-1 7 1zM0-4q3-2 7-1v10q-4-1-7 1z"]
+};
+// [rang minimal, tracé, description pour le nom accessible]
+const ATTRIBUTS_PERSONNAGE = [
+  [2, "M61 29.5l5-1.5", "un sourcil levé"],
+  [3, "M85 50a5 5 0 1 0 0.1 0M81.5 53.5l-3.5 3.5", "une loupe"],
+  [4, "M54.6 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0M60.2 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0", "des lunettes"],
+  [5, "M47 24.5h26M52 24.5v-7h16v7", "un chapeau"],
+  [6, "M55 47l-9 31M65 47l9 31", "une cape"],
+  [7, "M60 4l1.6 3.3 3.6.5-2.6 2.5.6 3.6L60 12.2 56.8 13.9l.6-3.6-2.6-2.5 3.6-.5z", "une étoile"],
+  [8, "M42 101h36M42 101l-4-4M42 101l-4 4M78 101l4-4M78 101l4 4", "un socle"],
+  [9, "M60 9v-4M77 17l3-3M43 17l-3-3M84 34h4M36 34h-4", "des rayons"]
+];
+function personnage(etat, taille, anneauDomaines) {
+  const rang = etat ? gradeDe(etat.meilleure || 0).rang : 0;
+  const dernier = etat ? Object.entries(etat.jours || {}).sort((a, b) => b[0] - a[0])[0] : null;
+  const valeurs = DOMAINES.map(([d], i) => [d, dernier ? dernier[1][i + 1] || 0 : 0]);
+  const [fort, vfort] = valeurs.reduce((a, b) => b[1] > a[1] ? b : a, ["", 0]);
+  const objet = vfort > 0 ? DOMAINES_PERSONNAGE[fort] : null;
+  const s = svg("svg", { viewBox: "0 0 120 120", class: "blason portrait", width: taille, height: taille, "aria-hidden": "true" });
+  s.style.setProperty("--c", objet ? objet[0] : "var(--accent)");
+  s.appendChild(svg("circle", { cx: 60, cy: 60, r: anneauDomaines ? 49 : 58, class: "blason-fond" }));
+  if (anneauDomaines) valeurs.forEach(([d, v], i) => {
+    // Arc de 54° par domaine (6° d'écart), du haut dans le sens des aiguilles ; longueur proportionnelle à la maîtrise
+    const a0 = (-90 + i * 60 + 3) * Math.PI / 180, a1 = a0 + 54 * Math.PI / 180;
+    const d0 = "M" + (60 + 56 * Math.cos(a0)).toFixed(2) + " " + (60 + 56 * Math.sin(a0)).toFixed(2) + "A56 56 0 0 1 " + (60 + 56 * Math.cos(a1)).toFixed(2) + " " + (60 + 56 * Math.sin(a1)).toFixed(2);
+    s.appendChild(svg("path", { d: d0, class: "portrait-piste" }));
+    const arc = svg("path", { d: d0, pathLength: 100, class: "portrait-arc", "stroke-dasharray": Math.round(Math.min(1000, v) / 10) + " 100" });
+    arc.style.setProperty("--c", DOMAINES_PERSONNAGE[d][0]);
+    const nom = svg("title");
+    nom.textContent = T(DOMAINES[i][1]) + " : " + v;
+    arc.appendChild(nom);
+    if (v > 0) s.appendChild(arc);
+  });
+  // Mains : ailettes rentrées tant qu'on se laisse prendre (novice), ouvertes ensuite, comme les deux traits de l'emblème
+  const m = rang ? 1 : -1;
+  const corps = "M70 34a10 10 0 1 0-20 0a10 10 0 1 0 20 0M60 44v34M60 78l-8 18M60 78l8 18M42 56h36"
+    + "M42 56l" + (-4 * m) + "-4M42 56l" + (-4 * m) + " 4M78 56l" + (4 * m) + "-4M78 56l" + (4 * m) + " 4";
+  s.appendChild(svg("path", { d: corps, class: "blason-trait" }));
+  s.append(svg("circle", { cx: 57, cy: 34, r: 1.2, class: "portrait-plein" }), svg("circle", { cx: 63, cy: 34, r: 1.2, class: "portrait-plein" }));
+  ATTRIBUTS_PERSONNAGE.filter(([r]) => rang >= r).forEach(([r, d]) => s.appendChild(svg("path", { d, class: r === 7 ? "portrait-plein" : "blason-trait" })));
+  if (objet) s.appendChild(svg("path", { d: objet[2], transform: "translate(35 68)", class: "blason-trait portrait-objet" }));
+  if (anneauDomaines) {
+    s.setAttribute("role", "img");
+    s.removeAttribute("aria-hidden");
+    const equipement = ATTRIBUTS_PERSONNAGE.filter(([r]) => rang >= r).map(([, , t]) => T(t));
+    if (objet) equipement.push(T(objet[1]));
+    s.setAttribute("aria-label", T("Votre personnage, grade {0}", T(GRADES[rang][1])) + (equipement.length ? " : " + equipement.join(", ") : "") + ". "
+      + T("Maîtrise par domaine : {0}.", DOMAINES.map(([, nom], i) => T(nom) + " " + valeurs[i][1]).join(", ")));
   }
   return s;
 }
@@ -157,13 +201,13 @@ function majBoutonProfil(m, etat) {
   if (!b) return;
   // Mode sobre : bouton neutre (blason seul), pour que le profil et ses réglages restent atteignables
   b.classList.toggle("sobre", modeSobre());
-  if (modeSobre()) { b.replaceChildren(blason((lire("profil", {}) || {}).pseudo, 26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
+  if (modeSobre()) { b.replaceChildren(personnage(null, 26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
   etat = etat || lire("maitrise", { meilleure: 0, jours: {} });
   const globale = m ? m.globale : (Object.entries(etat.jours || {}).sort((a, x) => x[0] - a[0])[0] || [0, [0]])[1][0];
   const grade = gradeDe(etat.meilleure || 0);
   const points = (lire("lucidite", {}).jours || {})[aujourdHui()] || 0;
   const objectif = lire("objectif", 60);
-  b.replaceChildren(blason((lire("profil", {}) || {}).pseudo, 26), anneau(points / objectif, 34, "anneau-profil"), insigne(grade.rang, 18), el("span", "bouton-profil-maitrise", String(globale)));
+  b.replaceChildren(personnage(etat, 26), anneau(points / objectif, 34, "anneau-profil"), insigne(grade.rang, 18), el("span", "bouton-profil-maitrise", String(globale)));
   b.setAttribute("aria-label", T("Profil : {0}, maîtrise {1} ; {2} points sur {3} pour l'objectif du jour", T(grade.nom), globale, points, objectif));
 }
 
@@ -181,8 +225,8 @@ function afficherPageProfil(onglet) {
   // En tête : blason, pseudonyme, insigne du grade, maîtrise, jauge vers le grade suivant
   const tete = el("div", "profil-tete");
   const identite = el("div", "profil-identite");
-  identite.append(blason(profil.pseudo, 64), el("div", "profil-noms"));
-  identite.lastChild.append(el("h1", "page-titre", profil.pseudo || T("Votre profil")), el("p", "profil-grade"));
+  identite.append(personnage(etat, 112, true), el("div", "profil-noms"));
+  identite.lastChild.append(el("h1", "page-titre" + ((profil.pseudo || "").length > 12 ? " titre-long" : ""), profil.pseudo || T("Votre profil")), el("p", "profil-grade"));
   identite.querySelector(".profil-grade").append(insigne(grade.rang, 26), texteNoeud(" " + T(grade.nom)));
   tete.appendChild(identite);
   const chiffre = el("div", "profil-maitrise");

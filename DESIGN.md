@@ -82,7 +82,7 @@ collant (sommaire de la fiche, carte suivante, carte au hasard).
 ## Motif
 
 Le **trait de Müller-Lyer** (le trait du haut de l'emblème, ailettes ouvertes) sert de séparateur entre les sections
-des fiches et des explications (`.section::before`). Il est décoratif. **Réservé aux séparateurs** : ni les bordures
+des fiches et des explications (`.section::before`), et entre les blocs des onglets du profil. Il est décoratif. **Réservé aux séparateurs** : ni les bordures
 des cartes, ni les listes. L'emblème lui-même apparaît dans l'en-tête et, pour un nouveau visiteur, dans
 l'ouverture de l'accueil ; toucher l'un ou l'autre révèle les repères verticaux.
 
@@ -182,10 +182,12 @@ autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une s
 
 ## Écrans ajoutés par la refonte (lots 3 à 8)
 
-- **Profil** (`#profil`) : en tête, blason (dessin au trait tiré du pseudonyme), insigne du grade (galons faits des
+- **Profil** (`#profil`) : en tête, le personnage (figure au trait de l'emblème, bras en segment de Müller-Lyer, qui
+  s'équipe à chaque grade, tient l'objet de son meilleur domaine et en prend la couleur ; autour, six arcs, un par
+  domaine, de longueur proportionnelle à sa maîtrise ; jamais de visage expressif ni d'animation), insigne du grade (galons faits des
   ailettes de l'emblème), maîtrise en grand nombre, jauge vers le grade suivant et la phrase « La maîtrise mesure votre
   réussite dans les jeux de ce site, pas votre intelligence. » ; onglets. Graphiques selon « Graphiques ».
-- **Bouton de profil** dans l'en-tête : anneau de l'objectif du jour, insigne ; sur ordinateur, blason et maîtrise.
+- **Bouton de profil** dans l'en-tête : anneau de l'objectif du jour, insigne ; sur ordinateur, personnage et maîtrise.
 - **Codex** : une roue de 90 points en 14 arcs aux couleurs des catégories, la taille dit l'état de la fiche.
 - **Parcours** : un chemin vertical, une pastille par étape (pleine et verte : fait ; bleue : prochaine étape).
 - **Moments de récompense** : une pastille « +8 » près du bouton de profil, une carte en bas d'écran pour un grade ou
