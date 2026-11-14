@@ -417,8 +417,9 @@ h3.titre-bloc {
 /* Rangée qui défile (téléphone) : un fondu au bord droit signale la suite ; la marge laisse sortir la dernière puce
    du fondu en fin de défilement. Dès 760 px, les puces passent à la ligne : tout est visible. */
 .puces { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); padding-right: 28px; }
-.carte-bienvenue .puces { flex-wrap: wrap; overflow: visible; }
-:is(#filtres-quiz, .puces-theme, .choix-niveau .puces-niveau, .controles-tisane .puces, .carnet-formulaire .modeles, .carte-bienvenue .puces) { -webkit-mask-image: none; mask-image: none; padding-right: 0; }
+.carte-bienvenue .puces, .puces-personnage { flex-wrap: wrap; overflow: visible; }
+.puces-personnage .puce { white-space: normal; text-align: left; }
+:is(#filtres-quiz, .puces-theme, .choix-niveau .puces-niveau, .controles-tisane .puces, .carnet-formulaire .modeles, .carte-bienvenue .puces, .puces-personnage) { -webkit-mask-image: none; mask-image: none; padding-right: 0; }
 @media (min-width: 760px) { .puces { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; padding-right: 0; } }
 
 .puce {
@@ -1694,6 +1695,8 @@ label[for] { display: block; margin: 0 0 8px; }
 .blason-fond { fill: color-mix(in srgb, var(--c) 18%, var(--carte)); stroke: var(--c); stroke-width: 1.5; }
 .blason-trait { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .portrait { flex: none; overflow: visible; }
+.apercu-personnage { margin: 4px 0 6px; }
+.puce:disabled { border-style: dashed; cursor: not-allowed; }
 .portrait .blason-fond { stroke-width: 1; }
 .portrait .blason-trait { stroke-width: 2.8; }
 .portrait-plein { fill: var(--c); }

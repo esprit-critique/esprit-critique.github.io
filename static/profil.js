@@ -133,9 +133,11 @@ function insigne(rang, taille) {
   return s;
 }
 
-// Personnage : figure au trait de l'emblème (bras = segment de Müller-Lyer) qui s'équipe à chaque grade, tient
-// l'objet de son meilleur domaine, et en prend la couleur. Autour, six arcs : la maîtrise de chaque domaine.
-// Tout vient de la clé « maitrise » (grade atteint, dernière photographie) ; etat null : figure neutre (mode sobre).
+// Personnage : figure au trait de l'emblème qui s'équipe à chaque grade, tient l'objet de son meilleur domaine et en
+// prend la couleur ; autour, six arcs : la maîtrise de chaque domaine. Forme (humain, hibou, chat, robot), genre et
+// équipement se choisissent dans les réglages (clé « profil », champ personnage) ; les formes et les équipements autres
+// que les premiers se gagnent par une distinction difficile. Les tracés sont des chemins SVG : le même dessin sert à la
+// page (svg()) et à l'image à partager (Path2D sur un canvas). Coordonnées dans un carré de 120.
 const DOMAINES_PERSONNAGE = {
   monde: ["#0e7c86", "un globe", "M-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0M-6 0h12M0-6c-3 3-3 9 0 12c3-3 3-9 0-12"],
   confiance: ["#c23b5a", "une jauge", "M-7 3a7 7 0 0 1 14 0M0 3l4-6"],
@@ -144,29 +146,88 @@ const DOMAINES_PERSONNAGE = {
   debattre: ["#c2412d", "deux bulles de dialogue", "M-7-6h8v6h-5l-3 3zM1-1h6v6h-1v3l-3-3h-2z"],
   notions: ["#a77a12", "un livre ouvert", "M0-4q-3-2-7-1v10q4-1 7 1zM0-4q3-2 7-1v10q-4-1-7 1z"]
 };
-// [rang minimal, tracé, description pour le nom accessible]
-const ATTRIBUTS_PERSONNAGE = [
-  [2, "M61 29.5l5-1.5", "un sourcil levé"],
-  [3, "M85 50a5 5 0 1 0 0.1 0M81.5 53.5l-3.5 3.5", "une loupe"],
-  [4, "M54.6 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0M60.2 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0", "des lunettes"],
-  [5, "M47 24.5h26M52 24.5v-7h16v7", "un chapeau"],
-  [6, "M55 47l-9 31M65 47l9 31", "une cape"],
-  [7, "M60 4l1.6 3.3 3.6.5-2.6 2.5.6 3.6L60 12.2 56.8 13.9l.6-3.6-2.6-2.5 3.6-.5z", "une étoile"],
-  [8, "M42 101h36M42 101l-4-4M42 101l-4 4M78 101l4-4M78 101l4 4", "un socle"],
-  [9, "M60 9v-4M77 17l3-3M43 17l-3-3M84 34h4M36 34h-4", "des rayons"]
+// Formes : [id, nom, distinction qui la débloque (null : d'emblée), tracé du corps (m : 1 mains ouvertes, -1 rentrées),
+//   décalage des ancrages { tete, mainD, mainG, corps } par rapport à l'humain]
+const FORMES_PERSONNAGE = [
+  ["humain", "Humain", null, m => "M70 34a10 10 0 1 0-20 0a10 10 0 1 0 20 0M60 44v34M60 78l-8 18M60 78l8 18M42 56h36"
+    + "M42 56l" + (-4 * m) + "-4M42 56l" + (-4 * m) + " 4M78 56l" + (4 * m) + "-4M78 56l" + (4 * m) + " 4", {}],
+  // Les aigrettes du hibou sont les ailettes de l'emblème
+  ["hibou", "Hibou", "bien-etalonne", m => "M60 34c12 0 20 12 20 28s-8 28-20 28-20-12-20-28 8-28 20-28z"
+    + "M50 38l" + (-3 * m) + "-8M50 38l" + (3 * m) + "-8M70 38l" + (-3 * m) + "-8M70 38l" + (3 * m) + "-8"
+    + "M52 44a4 4 0 1 0 8 0a4 4 0 1 0-8 0M60 44a4 4 0 1 0 8 0a4 4 0 1 0-8 0M58 50l2 3 2-3"
+    + "M41 58q-7 12 3 22M79 58q7 12-3 22M54 90l-3 6M54 90l3 6M66 90l-3 6M66 90l3 6", { tete: [0, 10], mainD: [0, 16], mainG: [2, 8], corps: [0, 12] }],
+  // Les moustaches du chat aussi
+  ["chat", "Chat", "oreille-fine", m => "M70 34a10 10 0 1 0-20 0a10 10 0 1 0 20 0M52 28l-6-7 9 2M68 28l6-7-9 2"
+    + "M49 37h-8M49 37l" + (-4 * m) + "-3M71 37h8M71 37l" + (4 * m) + "-3"
+    + "M60 44v34M60 78l-8 18M60 78l8 18M42 56h36M60 76q16 2 14-14", {}],
+  ["robot", "Robot", "bayesien", m => "M50 24h20v20h-20zM60 24v-5M58 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0M51 46h18v28h-18z"
+    + "M42 56h9M69 56h9M42 56l" + (-4 * m) + "-4M42 56l" + (-4 * m) + " 4M78 56l" + (4 * m) + "-4M78 56l" + (4 * m) + " 4"
+    + "M55 74v20M65 74v20M51 94h8M61 94h8", {}]
 ];
-function personnage(etat, taille, anneauDomaines) {
+const GENRES_PERSONNAGE = [["neutre", "Neutre", ""], ["feminin", "Féminin", "M51 31q1-10 9-8q8-2 9 8M50 31q-2 10 2 14M70 31q2 10-2 14M60 46l-9 30h18z"],
+  ["masculin", "Masculin", "M51 30q4-9 9-6q5-3 9 6M51 30l3-3M69 30l-3-3"]];
+// Équipements : [id, nom, distinction, ancrage, tracé]
+const EQUIPEMENTS_PERSONNAGE = [
+  ["", "Aucun", null, "corps", ""],
+  ["echarpe", "Une écharpe", "assidu", "corps", "M52 45q8 5 16 0M64 47l4 10M64 47l-1 10"],
+  ["plume", "Une plume", "fourchettes", "tete", "M68 27q10-10 12-21q-9 5-12 21M71 19l4-2M73 14l4-1"],
+  ["medaille", "Une médaille", "polyvalent", "corps", "M56 46l4 7 4-7M57 57a3 3 0 1 0 6 0a3 3 0 1 0-6 0"],
+  ["laurier", "Une couronne de laurier", "specialiste", "tete", "M50 31q-2 10 7 14M70 31q2 10-7 14M49 34l-3-1M49 38h-3M51 42l-3 1M71 34l3-1M71 38h3M69 42l3 1"]
+];
+// [rang minimal, ancrage, tracé, plein, description]
+const ATTRIBUTS_PERSONNAGE = [
+  [2, "tete", "M61 29.5l5-1.5", false, "un sourcil levé"],
+  [3, "mainD", "M85 50a5 5 0 1 0 0.1 0M81.5 53.5l-3.5 3.5", false, "une loupe"],
+  [4, "tete", "M54.6 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0M60.2 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0", false, "des lunettes"],
+  [5, "tete", "M47 24.5h26M52 24.5v-7h16v7", false, "un chapeau"],
+  [6, "corps", "M55 47l-13 31M65 47l13 31", false, "une cape"],
+  [7, "tete", "M60 4l1.6 3.3 3.6.5-2.6 2.5.6 3.6L60 12.2 56.8 13.9l.6-3.6-2.6-2.5 3.6-.5z", true, "une étoile"],
+  [8, "pieds", "M42 101h36M42 101l-4-4M42 101l-4 4M78 101l4-4M78 101l4 4", false, "un socle"],
+  [9, "tete", "M60 9v-4M77 17l3-3M43 17l-3-3M84 34h4M36 34h-4", false, "des rayons"]
+];
+
+// Choix enregistré, ramené aux valeurs permises et débloquées (une donnée importée ou une distinction perdue ne casse rien)
+function choixPersonnage() {
+  const c = ((lire("profil", {}) || {}).personnage) || {};
+  const obtenues = new Set(((lire("distinctions", {}) || {}).obtenues) || []);
+  const permis = (liste, id) => { const x = liste.find(e => e[0] === id); return x && (!x[2] || obtenues.has(x[2])) ? x : liste[0]; };
+  return { forme: permis(FORMES_PERSONNAGE, c.forme), genre: GENRES_PERSONNAGE.find(g => g[0] === c.genre) || GENRES_PERSONNAGE[0],
+    equipement: permis(EQUIPEMENTS_PERSONNAGE, c.equipement), obtenues };
+}
+
+// Le dessin, indépendant du support : couleur, valeurs des domaines, traits [tracé, plein, dx, dy], description
+function dessinPersonnage(etat) {
   const rang = etat ? gradeDe(etat.meilleure || 0).rang : 0;
   const dernier = etat ? Object.entries(etat.jours || {}).sort((a, b) => b[0] - a[0])[0] : null;
   const valeurs = DOMAINES.map(([d], i) => [d, dernier ? dernier[1][i + 1] || 0 : 0]);
   const [fort, vfort] = valeurs.reduce((a, b) => b[1] > a[1] ? b : a, ["", 0]);
   const objet = vfort > 0 ? DOMAINES_PERSONNAGE[fort] : null;
+  const { forme, genre, equipement } = etat ? choixPersonnage() : { forme: FORMES_PERSONNAGE[0], genre: GENRES_PERSONNAGE[0], equipement: EQUIPEMENTS_PERSONNAGE[0] };
+  const decalage = ancrage => (forme[4][ancrage] || [0, 0]);
+  // Mains : ailettes rentrées tant qu'on se laisse prendre (novice), ouvertes ensuite, comme les deux traits de l'emblème
+  const traits = [[forme[3](rang ? 1 : -1), false, 0, 0]];
+  if (forme[0] !== "hibou") traits.push(["M56 34a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0M61.6 34a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0", true, 0, 0]);
+  if (forme[0] === "humain" && genre[2]) traits.push([genre[2], false, 0, 0]);
+  const portes = ATTRIBUTS_PERSONNAGE.filter(([r]) => rang >= r);
+  portes.forEach(([, ancrage, d, plein]) => traits.push([d, plein, ...decalage(ancrage)]));
+  if (equipement[4]) traits.push([equipement[4], false, ...decalage(equipement[3])]);
+  if (objet) traits.push([objet[2], false, 35 + decalage("mainG")[0], 68 + decalage("mainG")[1]]);
+  const elements = [...portes.map(a => T(a[4])), ...(equipement[4] ? [T(equipement[1]).toLowerCase()] : []), ...(objet ? [T(objet[1])] : [])];
+  const description = T("Votre personnage ({0}), grade {1}", T(forme[1]).toLowerCase(), T(GRADES[rang][1])) + (elements.length ? " : " + elements.join(", ") : "") + ". "
+    + T("Maîtrise par domaine : {0}.", DOMAINES.map(([, nom], i) => T(nom) + " " + valeurs[i][1]).join(", "));
+  return { couleur: objet ? objet[0] : null, valeurs, traits, description };
+}
+
+// Arc d'un domaine : 54° (6° d'écart), du haut dans le sens des aiguilles, rayon 56 autour du centre (60, 60)
+const anglesArcPersonnage = i => [(-90 + i * 60 + 3) * Math.PI / 180, (-90 + i * 60 + 57) * Math.PI / 180];
+
+function personnage(etat, taille, anneauDomaines) {
+  const p = dessinPersonnage(etat);
   const s = svg("svg", { viewBox: "0 0 120 120", class: "blason portrait", width: taille, height: taille, "aria-hidden": "true" });
-  s.style.setProperty("--c", objet ? objet[0] : "var(--accent)");
+  s.style.setProperty("--c", p.couleur || "var(--accent)");
   s.appendChild(svg("circle", { cx: 60, cy: 60, r: anneauDomaines ? 49 : 58, class: "blason-fond" }));
-  if (anneauDomaines) valeurs.forEach(([d, v], i) => {
-    // Arc de 54° par domaine (6° d'écart), du haut dans le sens des aiguilles ; longueur proportionnelle à la maîtrise
-    const a0 = (-90 + i * 60 + 3) * Math.PI / 180, a1 = a0 + 54 * Math.PI / 180;
+  if (anneauDomaines) p.valeurs.forEach(([d, v], i) => {
+    const [a0, a1] = anglesArcPersonnage(i);
     const d0 = "M" + (60 + 56 * Math.cos(a0)).toFixed(2) + " " + (60 + 56 * Math.sin(a0)).toFixed(2) + "A56 56 0 0 1 " + (60 + 56 * Math.cos(a1)).toFixed(2) + " " + (60 + 56 * Math.sin(a1)).toFixed(2);
     s.appendChild(svg("path", { d: d0, class: "portrait-piste" }));
     const arc = svg("path", { d: d0, pathLength: 100, class: "portrait-arc", "stroke-dasharray": Math.round(Math.min(1000, v) / 10) + " 100" });
@@ -176,23 +237,40 @@ function personnage(etat, taille, anneauDomaines) {
     arc.appendChild(nom);
     if (v > 0) s.appendChild(arc);
   });
-  // Mains : ailettes rentrées tant qu'on se laisse prendre (novice), ouvertes ensuite, comme les deux traits de l'emblème
-  const m = rang ? 1 : -1;
-  const corps = "M70 34a10 10 0 1 0-20 0a10 10 0 1 0 20 0M60 44v34M60 78l-8 18M60 78l8 18M42 56h36"
-    + "M42 56l" + (-4 * m) + "-4M42 56l" + (-4 * m) + " 4M78 56l" + (4 * m) + "-4M78 56l" + (4 * m) + " 4";
-  s.appendChild(svg("path", { d: corps, class: "blason-trait" }));
-  s.append(svg("circle", { cx: 57, cy: 34, r: 1.2, class: "portrait-plein" }), svg("circle", { cx: 63, cy: 34, r: 1.2, class: "portrait-plein" }));
-  ATTRIBUTS_PERSONNAGE.filter(([r]) => rang >= r).forEach(([r, d]) => s.appendChild(svg("path", { d, class: r === 7 ? "portrait-plein" : "blason-trait" })));
-  if (objet) s.appendChild(svg("path", { d: objet[2], transform: "translate(35 68)", class: "blason-trait portrait-objet" }));
+  p.traits.forEach(([d, plein, dx, dy]) => s.appendChild(svg("path", { d, class: plein ? "portrait-plein" : "blason-trait", ...(dx || dy ? { transform: "translate(" + dx + " " + dy + ")" } : {}) })));
   if (anneauDomaines) {
     s.setAttribute("role", "img");
     s.removeAttribute("aria-hidden");
-    const equipement = ATTRIBUTS_PERSONNAGE.filter(([r]) => rang >= r).map(([, , t]) => T(t));
-    if (objet) equipement.push(T(objet[1]));
-    s.setAttribute("aria-label", T("Votre personnage, grade {0}", T(GRADES[rang][1])) + (equipement.length ? " : " + equipement.join(", ") : "") + ". "
-      + T("Maîtrise par domaine : {0}.", DOMAINES.map(([, nom], i) => T(nom) + " " + valeurs[i][1]).join(", ")));
+    s.setAttribute("aria-label", p.description);
   }
   return s;
+}
+
+// Le même personnage sur l'image à partager : (x, y) coin haut gauche, cote en pixels
+function dessinerPersonnageCanvas(ctx, etat, x, y, cote) {
+  const p = dessinPersonnage(etat), couleur = p.couleur || "#1d4f91";
+  // Fond : 18 % de la couleur sur le papier, comme .blason-fond
+  const melange = parseInt(couleur.slice(1), 16), papier = [0xff, 0xfe, 0xfb];
+  const fond = [16, 8, 0].map((dec, k) => Math.round(((melange >> dec) & 255) * 0.18 + papier[k] * 0.82));
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(cote / 120, cote / 120);
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  ctx.beginPath(); ctx.arc(60, 60, 49, 0, 2 * Math.PI);
+  ctx.fillStyle = "rgb(" + fond.join(",") + ")"; ctx.fill(); ctx.strokeStyle = couleur; ctx.lineWidth = 1; ctx.stroke();
+  p.valeurs.forEach(([d, v], i) => {
+    const [a0, a1] = anglesArcPersonnage(i);
+    ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.arc(60, 60, 56, a0, a1); ctx.strokeStyle = "#ebe7df"; ctx.stroke();
+    if (v > 0) { ctx.beginPath(); ctx.arc(60, 60, 56, a0, a0 + (a1 - a0) * Math.min(1000, v) / 1000); ctx.strokeStyle = DOMAINES_PERSONNAGE[d][0]; ctx.stroke(); }
+  });
+  ctx.lineWidth = 2.8; ctx.strokeStyle = couleur; ctx.fillStyle = couleur;
+  p.traits.forEach(([d, plein, dx, dy]) => {
+    ctx.save(); ctx.translate(dx, dy);
+    const chemin = new Path2D(d);
+    if (plein) ctx.fill(chemin); else ctx.stroke(chemin);
+    ctx.restore();
+  });
+  ctx.restore();
 }
 
 // ===================== En-tête : bouton de profil =====================
@@ -201,7 +279,7 @@ function majBoutonProfil(m, etat) {
   if (!b) return;
   // Mode sobre : bouton neutre (blason seul), pour que le profil et ses réglages restent atteignables
   b.classList.toggle("sobre", modeSobre());
-  if (modeSobre()) { b.replaceChildren(personnage(null, 26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
+  if (modeSobre()) { /* rang 0, aucun domaine : le personnage choisi, sans rien qui trahisse le grade */ b.replaceChildren(personnage({ jours: {}, meilleure: 0 }, 26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
   etat = etat || lire("maitrise", { meilleure: 0, jours: {} });
   const globale = m ? m.globale : (Object.entries(etat.jours || {}).sort((a, x) => x[0] - a[0])[0] || [0, [0]])[1][0];
   const grade = gradeDe(etat.meilleure || 0);
@@ -426,11 +504,45 @@ function ongletDistinctions(p) {
     if (secrete && !a) { grille.appendChild(el("div", "distinction-carte secrete", T("Distinction secrète"))); return; }
     const carte = el("div", "distinction-carte" + (a ? " obtenue" : ""));
     carte.append(el("p", "distinction-nom", (a ? "✓ " : "") + T(nom)), el("p", "source", pourquoi));
+    const cadeau = [...FORMES_PERSONNAGE, ...EQUIPEMENTS_PERSONNAGE].find(x => x[2] === id);
+    if (cadeau) carte.appendChild(el("p", "source", T("Débloque pour votre personnage : {0}.", T(cadeau[1]).toLowerCase())));
     const adresse = lien.startsWith("#") ? lien : "#" + lien.replace(":", "/");
     carte.appendChild(lienVers(adresse, a ? T("Revoir") : T("Y aller"), "lien-discret"));
     grille.appendChild(carte);
   });
   p.appendChild(grille);
+}
+
+// Choix du personnage : forme, genre (pour l'humain), équipement. Ce qui n'est pas encore gagné reste affiché, désactivé,
+// avec la distinction qui le débloque : un objectif visible plutôt qu'une surprise.
+function reglagesPersonnage(p, profil) {
+  const { forme, genre, equipement, obtenues } = choixPersonnage();
+  const choisir = champ => valeur => { ecrire("profil", { ...profil, personnage: { ...(profil.personnage || {}), [champ]: valeur } }); majBoutonProfil(); afficherPageProfil(); };
+  p.appendChild(el("p", "consigne", "Votre personnage"));
+  const apercu = el("div", "apercu-personnage");
+  apercu.appendChild(personnage(lire("maitrise", { jours: {}, meilleure: 0 }), 96, true));
+  p.appendChild(apercu);
+  const rangee = (titre, liste, actuel, champ) => {
+    const groupe = el("div", "puces puces-personnage");
+    groupe.setAttribute("role", "group");
+    groupe.setAttribute("aria-label", T(titre));
+    liste.forEach(([id, nom, distinction]) => {
+      const gagne = !distinction || obtenues.has(distinction);
+      const d = gagne ? null : DISTINCTIONS.find(x => x[0] === distinction);
+      const b = el("button", "puce" + (id === actuel ? " active" : ""), gagne ? nom : T("{0} (à gagner : {1})", T(nom), T(d[1])));
+      b.type = "button";
+      b.disabled = !gagne;
+      b.setAttribute("aria-pressed", String(id === actuel));
+      if (d) b.title = d[3];
+      b.addEventListener("click", () => choisir(champ)(id));
+      groupe.appendChild(b);
+    });
+    p.append(el("p", "source", titre), groupe);
+  };
+  rangee("Forme", FORMES_PERSONNAGE, forme[0], "forme");
+  if (forme[0] === "humain") rangee("Genre", GENRES_PERSONNAGE.map(([id, nom]) => [id, nom, null]), genre[0], "genre");
+  rangee("Équipement", EQUIPEMENTS_PERSONNAGE, equipement[0], "equipement");
+  p.appendChild(el("p", "source", "Les formes et les équipements à gagner se débloquent avec une distinction difficile (onglet « Distinctions »)."));
 }
 
 function ongletReglages(p) {
@@ -443,6 +555,7 @@ function ongletReglages(p) {
   etiquette.htmlFor = champ.id;
   champ.addEventListener("change", () => { ecrire("profil", { ...profil, pseudo: champ.value.trim().slice(0, 24) }); afficherPageProfil(); });
   p.append(etiquette, champ);
+  reglagesPersonnage(p, profil);
   p.appendChild(el("p", "consigne", "Objectif du jour"));
   const objectif = el("div", "puces");
   [30, 60, 100].forEach(v => {
@@ -632,21 +745,21 @@ function partagerGrade() {
   const { m, etat } = majMaitrise(false);
   const grade = gradeDe(etat.meilleure || 0);
   return partagerImage("esprit-critique-grade.png", ctx => {
-    ctx.strokeStyle = "#1d4f91"; ctx.lineWidth = 10; ctx.lineCap = "round"; ctx.lineJoin = "round";
-    for (let k = 0; k < Math.min(3, grade.rang); k++) { ctx.beginPath(); ctx.moveTo(96, 210 + k * 40); ctx.lineTo(156, 170 + k * 40); ctx.lineTo(216, 210 + k * 40); ctx.stroke(); }
-    if (!grade.rang) { ctx.fillStyle = "#1d4f91"; ctx.beginPath(); ctx.arc(156, 200, 14, 0, 2 * Math.PI); ctx.fill(); }
-    ctx.fillStyle = "#1c1b19"; ctx.font = policeTitre(84); ctx.fillText(T(grade.nom), 260, 230);
-    ctx.font = policeTitre(200); ctx.fillText(String(m.globale), 96, 470);
-    ctx.font = policeTexte(38); ctx.fillStyle = "#6b6862"; ctx.fillText(T("de maîtrise, sur 1 000"), 96, 530);
-    // La toile des six domaines, valeurs écrites
-    const c = [540, 870], r = 190, n = DOMAINES.length;
+    // En haut, le personnage et ses six arcs ; puis le grade, la maîtrise, la toile des domaines
+    dessinerPersonnageCanvas(ctx, etat, 380, 40, 320);
+    ctx.textAlign = "center"; ctx.fillStyle = "#1c1b19";
+    ctx.font = policeTitre(80); ctx.fillText(T(grade.nom), 540, 450);
+    ctx.font = policeTitre(150); ctx.fillText(String(m.globale), 540, 610);
+    ctx.font = policeTexte(36); ctx.fillStyle = "#6b6862"; ctx.fillText(T("de maîtrise, sur 1 000"), 540, 662);
+    // La toile des six domaines, valeurs écrites après chaque nom (écrites au centre, elles se superposeraient)
+    const c = [540, 915], r = 165, n = DOMAINES.length;
     const pt = (i, v) => [c[0] + r * v / 1000 * Math.cos(-Math.PI / 2 + 2 * Math.PI * i / n), c[1] + r * v / 1000 * Math.sin(-Math.PI / 2 + 2 * Math.PI * i / n)];
     ctx.strokeStyle = "#dcd7cc"; ctx.lineWidth = 2;
     [500, 1000].forEach(v => { ctx.beginPath(); DOMAINES.forEach((_, i) => { const [x, y] = pt(i, v); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.stroke(); });
     ctx.beginPath(); DOMAINES.forEach(([d], i) => { const [x, y] = pt(i, m.domaines[d]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath();
     ctx.fillStyle = "rgba(29, 79, 145, 0.18)"; ctx.fill(); ctx.strokeStyle = "#1d4f91"; ctx.lineWidth = 5; ctx.stroke();
     ctx.font = policeTexte(27); ctx.fillStyle = "#1c1b19";
-    DOMAINES.forEach(([d, nom], i) => { const [x, y] = pt(i, 1200); ctx.textAlign = x < c[0] - 20 ? "right" : x > c[0] + 20 ? "left" : "center"; ctx.fillText(T(nom) + " : " + m.domaines[d], x, y); });
+    DOMAINES.forEach(([d, nom], i) => { const [x, y] = pt(i, 1180); ctx.textAlign = x < c[0] - 20 ? "right" : x > c[0] + 20 ? "left" : "center"; ctx.fillText(T(nom) + " : " + m.domaines[d], x, y + 9); });
     ctx.textAlign = "left"; ctx.font = "italic 30px Newsreader, Georgia, serif"; ctx.fillStyle = "#6b6862";
     ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1200);
   });
