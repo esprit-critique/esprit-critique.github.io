@@ -184,7 +184,10 @@ autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une s
 
 - **Profil** (`#profil`) : en tête, le personnage (figure au trait de l'emblème, bras en segment de Müller-Lyer, qui
   s'équipe à chaque grade, tient l'objet de son meilleur domaine et en prend la couleur ; autour, six arcs, un par
-  domaine, de longueur proportionnelle à sa maîtrise ; jamais de visage expressif ni d'animation), insigne du grade (galons faits des
+  domaine, de longueur proportionnelle à sa maîtrise ; jamais de visage expressif ni d'animation). Quatre formes
+  (humain, hibou, chat, robot : aigrettes et moustaches en ailettes), genre neutre, féminin ou masculin pour l'humain,
+  et quatre équipements ; les formes et équipements autres que les premiers se gagnent par une distinction difficile.
+  Le même dessin (chemins SVG, rejoués par `Path2D`) figure sur l'image « Partager mon grade ». Puis l'insigne du grade (galons faits des
   ailettes de l'emblème), maîtrise en grand nombre, jauge vers le grade suivant et la phrase « La maîtrise mesure votre
   réussite dans les jeux de ce site, pas votre intelligence. » ; onglets. Graphiques selon « Graphiques ».
 - **Bouton de profil** dans l'en-tête : anneau de l'objectif du jour, insigne ; sur ordinateur, personnage et maîtrise.

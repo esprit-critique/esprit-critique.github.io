@@ -191,6 +191,17 @@ f.onload = async () => {
     w.location.hash = "profil/ensemble";
     await pause(300);
     ok("page Profil : courbe, toile, barres et calendrier dessinés", d2.querySelectorAll("#vue-profil .graphique").length >= 4);
+    // Personnage : une forme non gagnée ou une valeur inconnue (import) retombe sur le premier choix ; gagnée, elle est prise
+    const profilAvant = w.localStorage.getItem("profil"), distAvant = w.localStorage.getItem("distinctions");
+    w.localStorage.setItem("profil", JSON.stringify({ personnage: { forme: "robot", genre: "inconnu", equipement: "plume" } }));
+    w.localStorage.setItem("distinctions", JSON.stringify({ obtenues: [] }));
+    const refuse = w.choixPersonnage();
+    w.localStorage.setItem("distinctions", JSON.stringify({ obtenues: ["bayesien", "fourchettes"] }));
+    const accepte = w.choixPersonnage();
+    ok("personnage : choix non gagnés refusés, choix gagnés pris",
+      refuse.forme[0] === "humain" && refuse.genre[0] === "neutre" && refuse.equipement[0] === "" && accepte.forme[0] === "robot" && accepte.equipement[0] === "plume");
+    w.localStorage.setItem("profil", profilAvant || "{}");
+    if (distAvant) w.localStorage.setItem("distinctions", distAvant); else w.localStorage.removeItem("distinctions");
 
     // ---------- Parcours (parcours.js, lot 5) ----------
     const PARC = ev("PARCOURS");
