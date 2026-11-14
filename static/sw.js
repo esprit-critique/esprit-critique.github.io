@@ -1,7 +1,7 @@
 // sw.js : mode hors ligne. Stratégie « réseau d'abord » : en ligne, on sert toujours la version publiée (et l'on met
 // le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Seuls les fichiers du site sont mis en cache.
 // À chaque nouveau fichier du site : l'ajouter à FICHIERS et changer le numéro de version du cache.
-const CACHE = "esprit-critique-v27";
+const CACHE = "esprit-critique-v28";
 // Liste lue en JSON par les bancs (_test, _grand-test, _hors-ligne) : pas de commentaire à l'intérieur. Version anglaise :
 // la page et ses dictionnaires (liste complète : python3 tests/en/controle.py).
 const FICHIERS = [
@@ -41,8 +41,12 @@ self.addEventListener("fetch", e => {
   if (e.request.method !== "GET" || url.origin !== location.origin || url.pathname.split("/").pop().startsWith("_")) return;
   // Première visite d'une langue : ses fichiers rejoignent le cache, pour qu'elle fonctionne aussi hors ligne
   if (e.request.mode === "navigate") e.waitUntil(completer(estAnglais(url)));
+  // « no-cache » : le navigateur redemande au serveur si le fichier a changé (réponse 304 s'il est identique) au lieu de
+  // reprendre sa copie HTTP, que GitHub Pages déclare valable 10 minutes : sans cela, une publication restait invisible
+  // jusqu'à 10 minutes. Une navigation ne peut pas être recopiée avec des options : on la redemande par son adresse.
+  const requete = e.request.mode === "navigate" ? new Request(e.request.url, { cache: "no-cache" }) : new Request(e.request, { cache: "no-cache" });
   e.respondWith(
-    fetch(e.request)
+    fetch(requete)
       .then(reponse => {
         if (reponse.ok) { const copie = reponse.clone(); caches.open(CACHE).then(c => c.put(e.request, copie)); }
         return reponse;
