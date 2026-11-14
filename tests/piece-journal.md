@@ -7,7 +7,7 @@ Pour reprendre dans une nouvelle session : lire `CLAUDE.md`, ce journal (« Éta
 
 | Lot | Branche | Pull request | État |
 |---|---|---|---|
-| P0 — Cadrage | `piece/p0` | à ouvrir | brief, plan, journal, catalogue |
+| P0 — Cadrage | `piece/p0` | #26 | brief, plan, journal, catalogue |
 | P1 — Moteur (niveaux 1 à 4) | `piece/p1` | — | à faire |
 | P2 — Jeu et contre-expertise | `piece/p2` | — | à faire |
 | P3 — Intégration | `piece/p3` | — | à faire |
