@@ -649,16 +649,28 @@ function rendreQuestionLibre(carte, q, reponseDejaDonnee, surReponse, actions) {
 // Dix questions de niveau 2 et 3, tirées de plusieurs ateliers, les mêmes pour tout le monde ce jour-là
 // (generateur(aujourdHui())). Une seule tentative par jour, enregistrée dans « defiJour ».
 // graine (défi libre, tirage.js) : à la place du jour, pour des questions reproductibles et partageables
+// Rotation sans remise des cartes du jour : chaque stock est mélangé une fois pour toutes (graine fixe), et chaque jour
+// en prend les éléments suivants ; un élément ne revient qu'après le passage de tout le stock. Le tirage indépendant de chaque jour répétait vite (défi : 3 questions sur 10 déjà vues dès le
+// 3e jour). Effective à partir du 16 novembre 2026 : les cartes déjà jouées avant gardent leur contenu et leur correction.
+const ROTATION_DEPUIS = 20773;
+function tirerSansRemise(liste, n, jour, sel) {
+  const ordre = melanger(liste, generateur(sel));
+  return Array.from({ length: Math.min(n, liste.length) }, (_, i) => ordre[(jour * n + i) % liste.length]);
+}
+
 function questionsDuDefi(jour, graine) {
   const alea = generateur(graine !== undefined ? graine : jour * 7 + 2026);
+  // Défi libre (graine) et jours d'avant la rotation : l'ancien tirage, pour que les liens partagés gardent leurs questions
+  const rotation = graine === undefined && jour >= ROTATION_DEPUIS;
+  const prendre = (liste, n, sel) => rotation ? tirerSansRemise(liste, n, jour, sel) : melanger(liste, alea).slice(0, n);
   const difficiles = l => l.filter(x => (x.niveau || 1) >= 2);
   const statuts = [["authentique", "Authentique"], ["deformee", "Déformée"], ["apocryphe", "Inventée ou mal attribuée"]];
   // Ordre des options tiré à part : les défis déjà partagés gardent les mêmes questions
   const aleaOrdre = generateur((graine !== undefined ? graine : jour * 7 + 2026) + 1);
-  const monde = melanger(difficiles(MONDE), alea).slice(0, 3).map(m => melangerOptions({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }, aleaOrdre));
-  const vf = melanger(difficiles(VRAI_FAUX), alea).slice(0, 3).map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
-  const citations = melanger(difficiles(CITATIONS), alea).slice(0, 2).map(c => ({ texte: T("« {0} » — attribuée à {1}", T(c.texte), c.auteur), options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
-  const chrono = melanger(PAIRES_CELEBRES, alea).slice(0, 2).map(p => {
+  const monde = prendre(difficiles(MONDE), 3, 11).map(m => melangerOptions({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }, aleaOrdre));
+  const vf = prendre(difficiles(VRAI_FAUX), 3, 13).map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
+  const citations = prendre(difficiles(CITATIONS), 2, 17).map(c => ({ texte: T("« {0} » — attribuée à {1}", T(c.texte), c.auteur), options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
+  const chrono = prendre(PAIRES_CELEBRES, 2, 19).map(p => {
     const [a, b] = melanger([evenement(p.a), evenement(p.b)], alea);
     return { texte: "Lequel a eu lieu en premier ?", options: [a.nom, b.nom], juste: momentEvenement(a) < momentEvenement(b) ? 0 : 1, explication: p.note };
   });
@@ -745,7 +757,8 @@ function situationDuJour() {
   const jour = aujourdHui();
   const toutes = [...INDEX.values()];
   const alea = generateur(jour * 7919 + 17);
-  const { type, fiche } = toutes[Math.floor(alea() * toutes.length)];
+  const tire = toutes[Math.floor(alea() * toutes.length)];
+  const { type, fiche } = jour >= ROTATION_DEPUIS ? tirerSansRemise(toutes, 1, jour, 23)[0] : tire;
   return creerQuestion(type, fiche, alea);
 }
 
@@ -967,7 +980,7 @@ function programmeDuJour(cartes) {
 // Carte « Vrai ou faux du jour » de l'accueil
 function carteVraiFauxDuJour() {
   const jour = aujourdHui();
-  const a = VRAI_FAUX[Math.floor(generateur(jour * 104729 + 3)() * VRAI_FAUX.length)];
+  const a = jour >= ROTATION_DEPUIS ? tirerSansRemise(VRAI_FAUX, 1, jour, 29)[0] : VRAI_FAUX[Math.floor(generateur(jour * 104729 + 3)() * VRAI_FAUX.length)];
   const memo = lire("vfJour", null);
   const carte = el("article", "carte vf-jour");
   carte.style.setProperty("--c", "#5b5bb5");
