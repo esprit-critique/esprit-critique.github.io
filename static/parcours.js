@@ -6,7 +6,7 @@
 
 const PARCOURS = [
   { id: "premiers-pas", titre: "Premiers pas",
-    promesse: "Voir qu'on ne peut pas se fier à ses yeux, puis à ses raisonnements : le site en trois quarts d'heure.",
+    promesse: "Voir qu'on ne peut pas se fier à ses yeux, puis à ses raisonnements : un premier tour du site.",
     conclusion: "Vous avez vu l'essentiel : l'œil se trompe même quand on sait, et le raisonnement aussi. La suite se joue dans la vie courante : quand vous repérez une notion autour de vous, notez-la avec « Je l'ai repéré » sur sa fiche.",
     etapes: ["a:illusion", "f:biais:confirmation", "a:crt", "f:sophismes:homme-de-paille", "q", "s"] },
   { id: "chiffres", titre: "Les chiffres qui trompent",
@@ -40,8 +40,74 @@ const PARCOURS = [
   { id: "en-ligne", titre: "Ne pas se faire avoir en ligne",
     promesse: "Les leviers des arnaques, les signes qui trahissent un message, et des mots de passe qui résistent.",
     conclusion: "Une arnaque presse, menace ou promet, et demande ce qu'on ne demande jamais par message. Le bon réflexe passe toujours par un autre chemin : le numéro que vous connaissez, l'adresse que vous tapez vous-même. Notez le prochain message douteux que vous aurez démonté.",
-    etapes: ["f:biais:autorite", "a:hameconnage", "f:biais:aversion-perte", "f:sophismes:ad-baculum", "a:laterale", "f:biais:conformisme", "f:sophismes:emotion", "a:mots-de-passe", "q"] }
+    etapes: ["f:biais:autorite", "a:hameconnage", "f:biais:aversion-perte", "f:sophismes:ad-baculum", "a:laterale", "f:biais:conformisme", "f:sophismes:emotion", "a:mots-de-passe", "q"] },
+  // Parcours ajoutés le 15 novembre 2026 : surtout des fiches et des ateliers qu'aucun parcours ne proposait encore
+  { id: "monde", titre: "Le monde tel qu'il est",
+    promesse: "Ordres de grandeur, causes de décès, pays et dates : confronter l'image du monde qu'on a en tête aux données.",
+    conclusion: "Nos estimations penchent du côté de ce qui frappe : le rare, le récent, le spectaculaire. Avant d'avancer un chiffre, cherchez un ordre de grandeur et une source ; la réalité surprend souvent, dans un sens comme dans l'autre.",
+    etapes: ["a:grandeurs", "f:biais:ancrage", "a:points", "a:mortalite", "f:biais:disponibilite", "a:pays", "f:biais:negativite", "a:chronologie", "a:nord", "q"] },
+  { id: "memoire", titre: "Les tours de la mémoire",
+    promesse: "Faux souvenirs, premières impressions, fins qui comptent double : ce que la mémoire garde, et ce qu'elle réécrit.",
+    conclusion: "Un souvenir vif n'est pas un souvenir exact : la mémoire reconstruit à chaque rappel. Quand un détail vous paraît certain, demandez-vous d'où vous le tenez, et notez la prochaine fois que vous aurez surpris votre mémoire à réécrire.",
+    etapes: ["f:biais:faux-souvenirs", "a:faux-souvenirs", "f:biais:retrospectif", "f:biais:primaute", "f:biais:pic-fin", "a:cecite", "f:biais:frequence", "f:biais:cryptomnesie", "q"] },
+  { id: "logique", titre: "Raisonner sans faille",
+    promesse: "Valide ou seulement convaincant ? Les erreurs de forme que l'on commet, même quand on connaît la logique.",
+    conclusion: "Une conclusion qui vous plaît n'en est pas plus valide. Avant d'accepter un raisonnement, remplacez ses termes par des lettres : si la forme ne tient plus, l'argument non plus.",
+    etapes: ["f:sophismes:affirmation-consequent", "a:wason", "f:sophismes:negation-antecedent", "a:logique", "f:biais:croyance-logique", "a:regle-246", "f:sophismes:petition-principe", "f:sophismes:ignorance", "a:douter-juste", "q"] },
+  { id: "mots", titre: "Les mots qui manipulent",
+    promesse: "Un mot qui change de sens, une question qui piège, une définition qui juge : quand le langage fait le travail de l'argument.",
+    conclusion: "Quand une discussion tourne en rond, vérifiez que tout le monde parle de la même chose : définir les mots d'abord évite bien des malentendus. Notez le prochain glissement de sens que vous aurez repéré.",
+    etapes: ["f:sophismes:equivoque", "f:sophismes:definition-persuasive", "f:sophismes:question-piege", "a:demonter", "f:sophismes:continuum", "f:sophismes:hareng-rouge", "f:sophismes:poteaux", "f:sophismes:brandolini", "q"] },
+  { id: "soi", titre: "Se voir tel qu'on est",
+    promesse: "Mérites et malchances, portraits flatteurs, bonheur prévu : les biais qui embellissent l'image qu'on se fait de soi.",
+    conclusion: "On se voit plus clairement à travers des faits qu'à travers des impressions : comparez vos prévisions à ce qui arrive, et la façon dont vous expliquez vos succès à celle dont vous expliquez vos échecs.",
+    etapes: ["f:biais:autocomplaisance", "a:comprendre", "f:biais:optimisme", "f:biais:barnum", "f:biais:malediction-savoir", "a:intervalles", "f:biais:prevision-affective", "f:biais:perseverance", "q"] },
+  { id: "prix", titre: "Payer le juste prix",
+    promesse: "Offres leurres, prix d'ancrage, « naturel » et « depuis toujours » : les leviers de la vente, et comment garder la tête froide.",
+    conclusion: "Un prix se compare à d'autres prix, pas au chiffre qu'on vous montre à côté. Avant un achat, demandez-vous si vous le choisiriez encore sans l'offre qui l'entoure.",
+    etapes: ["f:biais:leurre", "f:biais:dotation", "a:ancre", "f:biais:ikea", "f:biais:exposition", "f:sophismes:nature", "f:sophismes:tradition", "q"] },
+  { id: "philosophe", titre: "Penser en philosophe",
+    promesse: "Expériences de pensée, charge de la preuve, faux juste milieu : les outils des philosophes pour éprouver une idée.",
+    conclusion: "Une idée se juge sur ses raisons, ni sur son origine ni sur ses conséquences. Quand une discussion bloque, demandez qui doit prouver quoi, et cherchez le cas qui ferait tomber la thèse.",
+    etapes: ["a:pensee", "f:sophismes:genetique", "f:sophismes:consequences", "f:sophismes:vrai-ecossais", "f:sophismes:composition", "a:qui-prouve", "f:sophismes:juste-milieu", "f:sophismes:fausse-equivalence", "f:sophismes:nirvana", "f:biais:monde-juste", "q"] }
 ];
+
+// Durée estimée d'un parcours, en minutes : la durée affichée de chaque atelier (« 4 min »), 3 minutes par fiche et par
+// quiz ciblé, 5 pour la première série. shortcut: une fiche longue prend plus de 3 minutes ; c'est un ordre de grandeur.
+function dureeParcours(p) {
+  return p.etapes.reduce((s, e) => {
+    if (e.startsWith("a:")) {
+      const a = tousLesAteliers().find(x => x.atelier.id === e.slice(2));
+      return s + (parseInt(a && a.atelier.duree, 10) || 4);
+    }
+    return s + (e === "s" ? 5 : 3);
+  }, 0);
+}
+function libelleDuree(p) {
+  const m = Math.round(dureeParcours(p) / 5) * 5;
+  if (m < 60) return T("environ {0} min", m);
+  return m % 60 ? T("environ {0} h {1}", Math.floor(m / 60), String(m % 60).padStart(2, "0")) : T("environ {0} h", m / 60);
+}
+
+// Accès depuis la page Ateliers (un onglet de la navigation, sans en ajouter un) : les parcours commencés, le suivi en
+// tête, puis ceux jamais commencés, trois lignes au plus, et le lien vers tous les parcours.
+function blocParcoursAteliers() {
+  const d = donneesParcours();
+  const fait = p => avancementParcours(p, d);
+  const enCours = PARCOURS.filter(p => fait(p) > 0 && fait(p) < p.etapes.length).sort((a, b) => (b.id === d.parcours.actif) - (a.id === d.parcours.actif));
+  const choix = [...enCours, ...PARCOURS.filter(p => !fait(p))].slice(0, 3);
+  const bloc = el("article", "carte bloc-parcours");
+  bloc.append(el("p", "surtitre", "Parcours guidés"),
+    el("p", null, T("{0} parcours mêlent fiches et ateliers dans un ordre conseillé, avec un début et une fin.", PARCOURS.length)));
+  const liste = el("ul", "liste-parcours");
+  choix.forEach(p => {
+    const li = el("li");
+    li.append(lienVers("#parcours/" + p.id, p.titre, "lien-texte"), el("span", "source", fait(p) ? etapesSur(fait(p), p.etapes.length) : libelleDuree(p)));
+    liste.appendChild(li);
+  });
+  bloc.append(liste, lienVers("#parcours", T("Voir les {0} parcours", PARCOURS.length), "bouton secondaire"));
+  return bloc;
+}
 
 // Une étape est-elle faite ? (d : lectures, résultats, mémoire, quiz ciblés réussis)
 function etapeFaite(etape, parcours, d) {
@@ -54,6 +120,8 @@ function etapeFaite(etape, parcours, d) {
 }
 const donneesParcours = () => ({ fichesLues: lire("fichesLues", []), resultatsAteliers: lire("resultatsAteliers", {}), memoire: lire("memoire", {}), parcours: lire("parcours", {}) });
 const avancementParcours = (p, d) => p.etapes.filter(e => etapeFaite(e, p, d)).length;
+// « 1 étape sur 9 », « 3 étapes sur 9 »
+const etapesSur = (n, total) => n === 1 ? T("1 étape sur {0}", total) : T("{0} étapes sur {1}", n, total);
 
 // Libellé et adresse d'une étape
 function descriptionEtape(etape, p) {
@@ -97,7 +165,7 @@ function afficherParcours(id, sous) {
     PARCOURS.forEach(x => {
       const n = avancementParcours(x, d), fini = n === x.etapes.length;
       const carte = lienVers("#parcours/" + x.id, undefined, "carte entree carte-parcours");
-      carte.append(el("p", "surtitre", fini ? T("Terminé") : n ? T("{0} étapes sur {1}", n, x.etapes.length) : T("{0} étapes", x.etapes.length)), el("h2", null, x.titre), el("p", null, x.promesse));
+      carte.append(el("p", "surtitre", (fini ? T("Terminé") : n ? etapesSur(n, x.etapes.length) : T("{0} étapes", x.etapes.length)) + " · " + libelleDuree(x)), el("h2", null, x.titre), el("p", null, x.promesse));
       const barre = el("div", "barre-maitrise");
       const rempli = el("div");
       rempli.style.setProperty("--part", n / x.etapes.length);
@@ -118,7 +186,7 @@ function afficherParcours(id, sous) {
     suivre.addEventListener("click", () => { ecrire("parcours", { ...lire("parcours", {}), actif: p.id }); afficherParcours(p.id); annoncer(T("Parcours suivi : {0}. Sa prochaine étape est sur l'accueil.", p.titre)); });
     zone.appendChild(suivre);
   }
-  zone.appendChild(el("p", "source", T("{0} étapes faites sur {1}.", n, p.etapes.length)));
+  zone.appendChild(el("p", "source", T("{0} étapes faites sur {1}.", n, p.etapes.length) + " " + T("Durée : {0}.", libelleDuree(p))));
   const chemin = el("ol", "chemin-parcours");
   let suivanteMise = false;
   p.etapes.forEach(e => {
@@ -187,7 +255,7 @@ function ongletParcours(panneau) {
     const n = avancementParcours(p, d), fini = n === p.etapes.length;
     const carte = el("div", "distinction-carte" + (fini ? " obtenue" : ""));
     if (fini) carte.appendChild(sceau(p, 40));
-    carte.append(el("p", "distinction-nom", p.titre), el("p", "source", fini ? T("Terminé") : T("{0} étapes sur {1}", n, p.etapes.length)), lienVers("#parcours/" + p.id, fini ? T("Revoir") : T("Y aller"), "lien-discret"));
+    carte.append(el("p", "distinction-nom", p.titre), el("p", "source", fini ? T("Terminé") : etapesSur(n, p.etapes.length)), lienVers("#parcours/" + p.id, fini ? T("Revoir") : T("Y aller"), "lien-discret"));
     grille.appendChild(carte);
   });
   panneau.appendChild(grille);

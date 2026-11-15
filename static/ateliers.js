@@ -559,6 +559,7 @@ function afficherAteliers() {
   zone.appendChild(carte);
   // Le Grand test, atelier à part, mis en avant au-dessus des sections (grand-test-interface.js)
   if (typeof GRAND_TEST_VISIBLE !== "undefined" && GRAND_TEST_VISIBLE) zone.appendChild(carteGrandTest());
+  zone.appendChild(blocParcoursAteliers());   // parcours.js : accès aux parcours, sans onglet de plus
 
   // Sommaire : un bouton par section, qui l'ouvre et y fait défiler la page
   const sommaire = el("nav", "puces sommaire-ateliers");
