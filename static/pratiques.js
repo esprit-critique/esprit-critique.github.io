@@ -505,7 +505,27 @@ const QUI_PROUVE = [
   { texte: "Yasmine : « Ce médicament est efficace : il a passé un essai comparatif publié. » Karim : « Je pense que l'essai est truqué. »", reponse: 2,
     explication: "Yasmine a apporté un élément de preuve. Karim affirme une fraude : c'est maintenant à lui d'étayer cette accusation." },
   { texte: "Ali : « Je pense que la réunion de demain va être annulée. » Rose : « Pourquoi ? »", reponse: 0,
-    explication: "Une simple prévision, mais c'est quand même à Ali de dire sur quoi il s'appuie, s'il veut être cru." }
+    explication: "Une simple prévision, mais c'est quand même à Ali de dire sur quoi il s'appuie, s'il veut être cru." },
+  { texte: "Yanis : « Les chats noirs portent malheur. » Léa : « Je n'en crois rien. »", reponse: 0,
+    explication: "Yanis affirme ; Léa se contente de douter. C'est à Yanis de montrer ce qu'il avance." },
+  { texte: "Chloé : « Ce film est trop long. » Hugo : « Moi, je n'ai pas vu le temps passer. »", reponse: 3,
+    explication: "Chacun décrit ce qu'il a ressenti : il n'y a rien à prouver, seulement des impressions à partager." },
+  { texte: "Un fabricant : « Notre lessive lave plus blanc que toutes les autres. » Une association de consommateurs : « Rien ne le montre. »", reponse: 0,
+    explication: "Le fabricant affirme une supériorité mesurable : à lui de publier les essais comparatifs. L'association n'affirme rien en le relevant." },
+  { texte: "Zoé : « Ce vieux pont supportera le passage des camions. » Malik : « Non, il s'effondrera. »", reponse: 2,
+    explication: "Malik ne doute pas seulement : il prédit l'effondrement. Chacun doit appuyer sa prédiction, par exemple sur un calcul de charge." },
+  { texte: "Inès : « Il existe une forme de vie sur d'autres planètes. » Bruno : « On ne peut pas l'affirmer aujourd'hui. »", reponse: 0,
+    explication: "Inès affirme une existence ; Bruno constate seulement qu'elle n'est pas démontrée. Ne pas croire n'est pas affirmer le contraire." },
+  { texte: "Hélène : « Le café de ce matin était meilleur que celui d'hier. » Karim : « Je les ai trouvés pareils. »", reponse: 3,
+    explication: "Deux impressions de goût : aucune preuve à fournir, même si chacun peut dire ce qu'il a remarqué." },
+  { texte: "Un témoin : « L'accusé était sur les lieux du vol. » L'avocat de la défense : « Rien ne le prouve. »", reponse: 0,
+    explication: "C'est à l'accusation d'établir les faits : la défense n'a pas à prouver l'innocence de son client." },
+  { texte: "Lucas : « La maison au bout de la rue est hantée. » Anna : « Je n'y crois pas. » Lucas : « Alors prouve-moi qu'elle ne l'est pas ! »", reponse: 0,
+    explication: "Lucas renverse la charge de la preuve : c'est lui qui affirme, c'est donc à lui de montrer quelque chose. Anna n'a rien affirmé." },
+  { texte: "Paul : « Ce médicament a été autorisé après des essais publiés. » Max : « Ces essais sont truqués. »", reponse: 2,
+    explication: "Paul peut montrer l'autorisation et les essais. Max ne se contente pas de douter : accuser de trucage est une affirmation, qu'il doit appuyer à son tour." },
+  { texte: "Rose : « La vanille est meilleure que le chocolat. » Jules : « Prouve-le ! »", reponse: 3,
+    explication: "Une préférence ne se prouve pas : exiger une preuve n'a pas de sens ici." }
 ];
 
 // ===================== La pyramide du désaccord =====================
@@ -590,7 +610,8 @@ EXPERIENCES.push(
     titre: "Qui doit prouver ?",
     resume: "Dans un désaccord, qui doit apporter des preuves : celui qui affirme, celui qui doute, les deux, ou personne ? Dix situations.",
     lancer(zone) {
-      derouler(zone, melanger(QUI_PROUVE), (q, zone, fini) => {
+      // Dix situations sur vingt, les moins récemment vues d'abord : deux parties de suite ne se ressemblent plus
+      derouler(zone, tirerNouveaux("qui-prouve", QUI_PROUVE, 10, q => q.texte), (q, zone, fini) => {
         zone.appendChild(el("p", "cas", q.texte));
         zone.appendChild(el("p", "consigne", "Qui doit apporter des preuves ?"));
         const boutons = OPTIONS_PREUVE.map((t, k) => {

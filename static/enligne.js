@@ -28,6 +28,12 @@ const MESSAGES_ENLIGNE = [
   { id: "rendez-vous", niveau: 1, canal: "SMS", de: "Cabinet médical", fraude: false, levier: null, indice: 1,
     texte: ["Votre rendez-vous chez le Dr Lemaire est confirmé le jeudi 14 à 10 h 30.", "Pour annuler, appelez le cabinet au numéro habituel."],
     explication: "Pas de lien, pas de paiement, et il renvoie au numéro que vous connaissez : un rappel ordinaire." },
+  { id: "amende-sms", niveau: 1, canal: "SMS", de: "Numéro inconnu", fraude: true, levier: "biais:aversion-perte", indice: 2,
+    texte: ["Avis : un stationnement impayé de 35 € est enregistré à votre nom.", "Sans paiement sous 48 h, il sera majoré à 135 €.", "Régler ici : amendes-paiement-rapide.example"],
+    explication: "Le lien mène à un domaine inventé, et la majoration annoncée presse de payer sans vérifier. Une amende se vérifie en tapant soi-même l'adresse du site officiel, jamais par un lien reçu." },
+  { id: "piscine", niveau: 1, canal: "Courriel", de: "Piscine de Saint-Aubin <accueil@piscine-saint-aubin.example>", fraude: false, levier: null, indice: 1,
+    texte: ["La piscine sera fermée du 2 au 6 décembre pour vidange.", "Les abonnements seront prolongés d'autant, sans démarche de votre part.", "À bientôt dans les bassins !"],
+    explication: "Une simple information : rien à faire, ni lien, ni paiement, ni identifiant." },
   { id: "support-virus", niveau: 2, canal: "Courriel", de: "Support Fenestra <alerte@fenestra-support-technique.example>", fraude: true, levier: "biais:autorite", indice: 1,
     texte: ["Nous avons détecté 3 virus sur votre ordinateur.", "Appelez immédiatement notre technicien certifié au numéro ci-dessous pour éviter la perte de vos données.", "Ne redémarrez pas votre appareil."],
     explication: "Aucun éditeur ne repère des virus sur votre ordinateur pour vous l'annoncer par courriel. Le titre de « technicien certifié » joue sur l'autorité ; au téléphone, on vous demandera d'installer un logiciel de prise de contrôle." },
@@ -43,6 +49,12 @@ const MESSAGES_ENLIGNE = [
   { id: "concours", niveau: 2, canal: "Courriel", de: "Service fidélité <cadeaux@super-tirage.example>", fraude: true, levier: "biais:conformisme", indice: 1,
     texte: ["Félicitations, vous avez été tiré au sort parmi nos clients les plus fidèles !", "Déjà 8 254 personnes ont réclamé leur lot : il n'en reste que 3.", "Payez seulement les frais de port (2 €) pour recevoir le vôtre."],
     explication: "Vous n'avez participé à aucun tirage. Le nombre de gagnants qui auraient déjà réclamé leur lot pousse à faire comme eux, et la rareté à ne pas réfléchir ; les frais de port servent à prendre votre numéro de carte." },
+  { id: "compte-reseau", niveau: 2, canal: "Courriel", de: "Équipe Photogram <securite@photogram-verification.example>", fraude: true, levier: "sophismes:ad-baculum", indice: 2,
+    texte: ["Votre compte a été signalé pour violation des droits d'auteur.", "Sans contestation sous 24 h, il sera définitivement supprimé.", "Contester : photogram-verification.example/appel"],
+    explication: "La menace de suppression et le délai très court poussent à cliquer sans réfléchir ; le domaine n'est pas celui du réseau social. Une vraie notification se consulte dans l'application elle-même." },
+  { id: "mutuelle", niveau: 2, canal: "Courriel", de: "Mutuelle Alizé <info@mutuelle-alize.example>", fraude: false, levier: null, indice: 0,
+    texte: ["Votre remboursement de 23,50 € du 4 novembre a été versé sur votre compte.", "Le détail figure dans votre espace adhérent.", "Nous ne vous demandons aucune information par courriel."],
+    explication: "De l'argent versé sur le compte déjà connu, sans rien à confirmer : rien ne ressemble à une escroquerie." },
   { id: "banque-lien", niveau: 3, canal: "Courriel", de: "Banque Duroc <noreply@banque-duroc.example>", fraude: true, levier: "biais:autorite", indice: 2,
     texte: ["Votre relevé de novembre est disponible.", "Consultez-le dans votre espace client :", "https://banque-duroc.example.releve-securise.example/connexion"],
     explication: "Le nom de l'expéditeur s'affiche comme celui de la banque, ce qui se falsifie facilement. Mais le lien mène au domaine releve-securise.example : dans une adresse, c'est la fin du nom du site qui compte (juste avant le « / » qui suit « https:// » et le nom), pas son début." },
@@ -58,6 +70,12 @@ const MESSAGES_ENLIGNE = [
   { id: "abonnement", niveau: 3, canal: "Courriel", de: "Streamia <facturation@streamia-compte.example>", fraude: true, levier: "biais:aversion-perte", indice: 1,
     texte: ["Votre paiement a été refusé.", "Vos listes et votre historique seront supprimés dans 48 h.", "Mettez à jour votre carte : streamia-compte.example/paiement"],
     explication: "La perte annoncée de vos listes joue sur l'aversion à la perte ; le domaine n'est pas celui du service. En cas de doute, ouvrez l'application elle-même plutôt que le lien." },
+  { id: "faux-recrutement", niveau: 3, canal: "Message", de: "Agence Talenta", fraude: true, levier: "biais:couts-irrecuperables", indice: 2,
+    texte: ["Bonjour, votre profil nous intéresse pour une mission à domicile payée 300 € par jour.", "Il suffit d'aimer des vidéos et d'en envoyer des captures d'écran.", "Pour débloquer vos premiers gains, versez d'abord 50 € de frais d'inscription."],
+    explication: "Un emploi ne se paie pas pour être obtenu. Les premiers « gains », souvent affichés sans être versés, servent à réclamer d'autres frais : plus on a payé, plus on hésite à renoncer." },
+  { id: "mairie-travaux", niveau: 3, canal: "Courriel", de: "Mairie de Saint-Aubin <contact@saint-aubin.example>", fraude: false, levier: null, indice: 2,
+    texte: ["Des travaux sur le réseau d'eau auront lieu rue des Tilleuls le 12 décembre.", "L'eau sera coupée de 8 h à 16 h.", "Aucune intervention chez vous n'est prévue : signalez à la mairie toute personne qui se présenterait en son nom."],
+    explication: "Une information pratique, sans lien ni demande ; le message met même en garde contre les faux agents qui profitent de ce genre de travaux." },
   // Niveau 4 : arnaques plus crédibles (petite somme à recevoir, appel annoncé) et vrais messages qui inquiètent
   { id: "remboursement", niveau: 4, canal: "Courriel", de: "Administration fiscale <avis@fiscal-service.example>", fraude: true, levier: "biais:autorite", indice: 2,
     texte: ["Après examen de votre déclaration, vous avez droit à un remboursement de 248,90 €.", "Pour le recevoir, confirmez vos coordonnées bancaires avant le 30 novembre :", "https://remboursement.fiscal-service.example/dossier"],
@@ -71,6 +89,12 @@ const MESSAGES_ENLIGNE = [
   { id: "reinitialisation", niveau: 4, canal: "Courriel", de: "Streamia <noreply@streamia.example>", fraude: false, levier: null, indice: 2,
     texte: ["Vous venez de demander un nouveau mot de passe.", "Si c'est bien vous, ouvrez l'application Streamia et suivez la notification.", "Si ce n'est pas vous, ignorez ce message : votre mot de passe actuel reste valable."],
     explication: "Le message ne contient aucun lien, renvoie à l'application déjà installée, et dit quoi faire si vous n'êtes pour rien dans la demande : sans rien faire, rien ne change." },
+  { id: "code-verification", niveau: 4, canal: "SMS", de: "Streamia", fraude: true, levier: "biais:autorite", indice: 1,
+    texte: ["Streamia : votre code de vérification est 482 913.", "Un agent va vous appeler : communiquez-lui ce code pour sécuriser votre compte.", "Ne le partagez avec personne d'autre."],
+    explication: "Un code de vérification ne se donne à personne, agent compris : quelqu'un essaie d'entrer dans votre compte et il lui manque ce code. La dernière phrase imite les vrais messages pour rassurer." },
+  { id: "facture-energie", niveau: 4, canal: "Courriel", de: "Énergie Lumen <factures@lumen-energie.example>", fraude: false, levier: null, indice: 1,
+    texte: ["Votre facture de novembre, 87,40 €, est disponible.", "Elle sera prélevée le 5 décembre sur le compte habituel.", "Pour la consulter, ouvrez votre espace client depuis l'application ou en tapant notre adresse."],
+    explication: "Le prélèvement se fait sur le compte déjà connu ; aucun lien, aucune coordonnée demandée." },
   // Niveau 5 : imitations très proches, adresses réelles détournées, vrais messages qui ressemblent à des arnaques
   { id: "domaine-zero", niveau: 5, canal: "Courriel", de: "Banque Duroc <noreply@banque-dur0c.example>", fraude: true, levier: "biais:autorite", indice: 1,
     texte: ["Votre relevé de novembre est disponible dans votre espace client.", "https://banque-dur0c.example/connexion", "Merci de votre confiance."],
@@ -83,7 +107,13 @@ const MESSAGES_ENLIGNE = [
     explication: "Un paiement refusé inquiète, mais le message ne demande rien et renvoie à l'application que vous avez déjà. Si vous venez de payer dans cette librairie, il dit simplement vrai : y voir une arnaque serait une fausse alerte." },
   { id: "amende", niveau: 5, canal: "Courriel", de: "Ville de Saint-Aubin <stationnement@saint-aubin-paiement.example>", fraude: true, levier: "sophismes:ad-baculum", indice: 2,
     texte: ["Votre véhicule a dépassé la durée de stationnement autorisée.", "Réglez l'amende de 35 € sous 48 heures pour éviter sa majoration :", "saint-aubin-paiement.example/amende"],
-    explication: "Une amende de stationnement se règle par l'avis officiel reçu ou sur le site public de paiement des amendes, pas par un lien dans un courriel. Le domaine imite celui de la ville, et la menace de majoration pousse à payer sans vérifier." }
+    explication: "Une amende de stationnement se règle par l'avis officiel reçu ou sur le site public de paiement des amendes, pas par un lien dans un courriel. Le domaine imite celui de la ville, et la menace de majoration pousse à payer sans vérifier." },
+  { id: "douane", niveau: 5, canal: "Courriel", de: "Expressia <suivi@expressia.example>", fraude: true, levier: "biais:autorite", indice: 2,
+    texte: ["Votre colis n° 7713 est en attente de dédouanement.", "Réglez les droits de 3,20 € sur notre page sécurisée :", "https://expressia.example-douane.example/payer"],
+    explication: "L'expéditeur affiché est bien celui du transporteur, mais il se falsifie. L'adresse du lien se termine par example-douane.example : c'est ce site-là qu'on ouvre, pas celui d'Expressia." },
+  { id: "fuite-donnees", niveau: 5, canal: "Courriel", de: "Streamia <noreply@streamia.example>", fraude: false, levier: null, indice: 1,
+    texte: ["Votre adresse figure dans une fuite de données d'un autre site.", "Par précaution, changez votre mot de passe depuis l'application ou en tapant notre adresse.", "Nous ne vous demanderons jamais votre mot de passe."],
+    explication: "Le message inquiète, mais il ne contient aucun lien et vous laisse passer par l'application ou par l'adresse que vous tapez vous-même : c'est un vrai conseil de sécurité." }
 ];
 
 function lancerHameconnage(zone) {
@@ -177,12 +207,20 @@ const MOTS_DE_PASSE = [
     b: { texte: "v#8Qm!2zK&p7R", type: "aleatoire", longueur: 13, alphabet: 95 } },
   { id: "vingt-minuscules", niveau: 4, a: { texte: "kpqzrmvbtwxhnjgcdfsl", type: "aleatoire", longueur: 20, alphabet: 26 },
     b: { texte: "ardoise-pinson-velours-cerise-tunnel-gazon-flute", type: "mots", mots: 7 } },
+  { id: "neuf-symboles", niveau: 4, a: { texte: "Hq4!rZ8#t", type: "aleatoire", longueur: 9, alphabet: 95 },
+    b: { texte: "chalet-bambou-girolle-anis-perchoir", type: "mots", mots: 5 } },
+  { id: "onze-alnum", niveau: 4, a: { texte: "tvmqkzhrpwbxd", type: "aleatoire", longueur: 13, alphabet: 26 },
+    b: { texte: "p8ZkR3wq7Nm", type: "aleatoire", longueur: 11, alphabet: 62 } },
   { id: "seize-minuscules", niveau: 5, a: { texte: "qzvmrtkpwhxbnjcd", type: "aleatoire", longueur: 16, alphabet: 26 },
     b: { texte: "R4#vq!8Lm%z", type: "aleatoire", longueur: 11, alphabet: 95 } },
   { id: "huit-symboles", niveau: 5, a: { texte: "w9!Kd#2q", type: "aleatoire", longueur: 8, alphabet: 95 },
     b: { texte: "lanterne-cactus-moulin-poivre", type: "mots", mots: 4 } },
   { id: "cinq-mots", niveau: 5, a: { texte: "comete-bocal-serpe-lilas-trompette", type: "mots", mots: 5 },
-    b: { texte: "z!4Rq#8vM&", type: "aleatoire", longueur: 10, alphabet: 95 } }
+    b: { texte: "z!4Rq#8vM&", type: "aleatoire", longueur: 10, alphabet: 95 } },
+  { id: "dix-alnum", niveau: 5, a: { texte: "Wz3kP9qm7R", type: "aleatoire", longueur: 10, alphabet: 62 },
+    b: { texte: "hqzvrpkmwtxbc", type: "aleatoire", longueur: 13, alphabet: 26 } },
+  { id: "six-mots-douze", niveau: 5, a: { texte: "marmite-gecko-sablier-noisette-carafe-ruche", type: "mots", mots: 6 },
+    b: { texte: "M7#qz!R2v&kP", type: "aleatoire", longueur: 12, alphabet: 95 } }
 ];
 // Hypothèse de calcul, écrite telle quelle dans l'explication : dix milliards d'essais par seconde, l'ordre de grandeur
 // d'une attaque hors ligne sur un fichier de mots de passe mal protégé ; en moyenne, on trouve après la moitié des essais

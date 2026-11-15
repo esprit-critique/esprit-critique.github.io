@@ -335,7 +335,11 @@ Audit du site rendu (Chrome, 375 / 768 / 1 440 px) : 13 corrections, un commit c
 - Pièges : aux niveaux 4 et 5, la consigne devient « Cet argument tient-il ? », l'étape « reconnaître » propose trois
   sophismes et « Aucun : l'argument tient », et une question sur cinq environ est un argument recevable qui ressemble à
   un sophisme (`PIEGES_REPARER`, 8 situations fictives sans chiffre à sourcer).
-- Non traité : « Autres ateliers » cités comme répétitifs sans précision ; à demander.
+- Autres ateliers répétitifs (stock trop petit pour une partie) : « Qui doit prouver ? » passe de 10 à 20 situations,
+  10 tirées par partie (les moins récemment vues d'abord) ; « Hameçonnage » passe de 23 à 33 messages (2 de plus par
+  niveau, 6 à 7 par niveau pour 8 par partie) ; « Mots de passe » gagne 4 paires tirées au hasard aux niveaux 4 et 5,
+  calculées exactement (écarts de 4,4 et 5,5 bits ; 1,3 et 1,6 bits). Niveaux 1 à 3 des mots de passe laissés à
+  3 paires : leurs mots de passe « humains » reposent sur des estimations qu'il faudrait sourcer.
 
 ## État des lieux (lot 0, commit cb90ed8)
 
