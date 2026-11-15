@@ -208,6 +208,8 @@ EN_AJOUTER([
   ["Restaurer la sauvegarde du {0}", "Restore the backup from {0}"],
   ["Remplacer votre progression actuelle par la sauvegarde du {0} ?", "Replace your current progress with the backup from {0}?"],
   ["Effacer toute votre progression (fiches acquises, quiz, révisions, ateliers), sauvegardes automatiques comprises ? Cette action est définitive.", "Erase all your progress (learned entries, quiz, reviews, workshops), including automatic backups? This cannot be undone."],
+  ["Votre progression est aussi synchronisée. Supprimer aussi la copie en ligne ? (Annuler : cet appareil est seulement déconnecté de la synchronisation ; la copie en ligne reste accessible avec votre code sur vos autres appareils.)", "Your progress is also synced. Delete the online copy too? (Cancel: this device is only disconnected from sync; the online copy stays available with your code on your other devices.)"],
+  ["La copie en ligne n'a pas pu être supprimée ({0}) : rien n'a été effacé. Réessayez une fois en ligne.", "The online copy could not be deleted ({0}): nothing was erased. Try again once online."],
   ["Esprit critique", "Esprit critique"],
   ["Progression enregistrée dans un fichier.", "Progress saved to a file."],
   ["Ce fichier est trop gros pour être une sauvegarde d'Esprit critique.", "This file is too large to be an Esprit critique backup."],

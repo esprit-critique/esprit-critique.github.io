@@ -192,13 +192,19 @@ async function synchroniser() {
           const { valides } = validerSauvegarde(brut.cles || {});
           distant = { cles: valides, horodatages: estObjet(brut.horodatages) ? brut.horodatages : {} };
         } else if (r.status !== 404) throw new Error("serveur : " + r.status);
-        const fusion = fusionnerProgressions(progressionLocale(), distant, etat.base);
+        // Après un import ou une restauration (remplacerProgression, app.js), la progression locale remplace le coffre :
+        // horodatée maintenant, elle l'emporte aussi sur les autres appareils pour les clés sans règle de fusion
+        const remplacement = localStorage.getItem("remplacementLocal") === "1";
+        const fusion = remplacement
+          ? (l => ({ cles: l.cles, horodatages: Object.fromEntries(Object.keys(l.cles).map(c => [c, Date.now()])) }))(progressionLocale())
+          : fusionnerProgressions(progressionLocale(), distant, etat.base);
         Object.entries(fusion.cles).forEach(([cle, valeur]) => { if (JSON.stringify(valeur) !== JSON.stringify(lire(cle, undefined))) ecrireSansHorodatage(cle, valeur); });
         localStorage.setItem("horodatages", JSON.stringify(fusion.horodatages));
         const envoi = await requeteSynchro("PUT", secrets, { contenu: await chiffrerCoffre(secrets, fusion) }, version);
         if (envoi.status === 409) continue;   // un autre appareil a écrit entre-temps : on relit et l'on refusionne
         if (!envoi.ok) throw new Error("serveur : " + envoi.status);
         const { version: nouvelle } = await envoi.json();
+        if (remplacement) localStorage.removeItem("remplacementLocal");
         await ecrireEtatSynchro({ ...etat, version: nouvelle, base: fusion, derniere: Date.now() });
         majStatutSynchro("a-jour");
         return;
