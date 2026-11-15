@@ -14,3 +14,6 @@ static/controle-affichage.js
 
 # Outils de test (Playwright), installés par npm ci
 node_modules/
+
+# Graphe du projet produit par graphify (/graphify) : régénérable, et il contient des chemins locaux
+graphify-out/
