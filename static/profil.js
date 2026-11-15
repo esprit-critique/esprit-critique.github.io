@@ -340,37 +340,70 @@ const prenomDuJoueur = () => ((lire("profil", {}) || {}).pseudo || "").trim();
 
 // Formules de l'en-tête, par moment de la journée ; la formule change chaque jour (rotation sans remise, app.js)
 const SALUTS = {
-  matin: ["Bonjour", "Bonne matinée", "Bonjour à vous"],
-  midi: ["Bonjour", "Bonne journée", "Bon appétit"],
-  apresMidi: ["Bon après-midi", "Bonjour", "Belle journée"],
-  soir: ["Bonsoir", "Bonne soirée", "Bonsoir à vous"],
-  nuit: ["Bonsoir", "Encore debout", "Bonne nuit"]
+  matin: ["Bonjour", "Bien le bonjour", "Belle matinée", "Debout, les neurones"],
+  midi: ["Bonjour", "Bon appétit", "Pause méritée", "Re-bonjour"],
+  apresMidi: ["Bon après-midi", "Re-bonjour", "Salut", "Belle journée"],
+  soir: ["Bonsoir", "Bonne soirée", "Re-bonsoir", "Bonsoir l'esprit vif"],
+  nuit: ["Encore debout", "Bonsoir", "Tiens, un oiseau de nuit", "Insomnie critique"]
 };
-// Phrases du jour quand rien de particulier ne se présente : des idées, jamais des faits chiffrés
+// Phrases du jour quand rien de particulier ne se présente : des idées et des clins d'œil, jamais des faits chiffrés,
+// jamais la peur de perdre une série (le site apprend à ne pas se laisser manipuler)
 const PHRASES_DU_JOUR = [
-  "Une bonne question vaut mieux qu'une réponse rapide.",
-  "Aujourd'hui, une idée à vérifier avant d'y croire.",
-  "Le doute est un outil, pas un état d'âme.",
-  "Les biais ne se voient pas de l'intérieur : c'est pour ça qu'on s'entraîne.",
-  "Ce que vous savez déjà mérite aussi d'être vérifié.",
-  "Être sûr n'est pas avoir raison : votre étalonnage vous le dira.",
-  "Prenez le temps : la première réponse n'est pas toujours la bonne.",
-  "Une source, une date, un auteur : trois questions avant de partager.",
-  "Changer d'avis devant une preuve n'est pas une défaite.",
-  "Un chiffre seul ne dit rien : demandez-lui son dénominateur.",
-  "Tout le monde se trompe ; l'esprit critique, c'est s'en apercevoir plus tôt.",
+  "Aujourd'hui, une seule règle : on croit ce qu'on vérifie, pas l'inverse.",
+  "Votre cerveau est génial. Il est aussi très doué pour vous raconter des histoires.",
+  "Un biais par jour éloigne la crédulité.",
+  "Petit rappel amical : avoir l'impression de savoir n'est pas savoir.",
+  "Les sophismes portent de beaux costumes. Aujourd'hui, on lit les étiquettes.",
+  "Si c'est trop beau pour être vrai, ça mérite au moins une deuxième lecture.",
+  "Votre intuition a souvent raison. Aujourd'hui, on apprend à savoir quand.",
+  "Votre meilleur adversaire du jour : votre première impression.",
+  "Le doute n'est pas une faiblesse, c'est un outil. Aujourd'hui, on l'aiguise.",
+  "Une source, une date, un auteur : le trio gagnant avant de partager quoi que ce soit.",
+  "Changer d'avis devant une preuve, c'est une victoire, pas une défaite.",
+  "Un chiffre tout seul ne dit rien : demandez-lui toujours son dénominateur.",
+  "Tout le monde se trompe. L'astuce, c'est de s'en apercevoir avant les autres.",
   "Ce qui vient facilement à l'esprit n'est pas forcément ce qui arrive souvent.",
-  "Un bon argument se juge à ses raisons, pas à celui qui le défend.",
-  "Une coïncidence frappante reste souvent une coïncidence.",
-  "Savoir ce qu'on ne sait pas, c'est déjà savoir beaucoup."
+  "Un argument se juge à ses raisons, pas à la tête de celui qui le défend.",
+  "Les coïncidences adorent se déguiser en signes. Ne vous laissez pas faire.",
+  "Savoir ce qu'on ne sait pas : voilà déjà un sacré savoir.",
+  "Être sûr n'est pas avoir raison. Votre étalonnage, lui, ne ment pas.",
+  "Prenez votre temps : la réponse rapide n'est pas toujours la bonne.",
+  "Aujourd'hui, soyez sceptique avec élégance.",
+  "Les illusions d'optique ne trichent qu'avec vos yeux. Les biais, avec tout le reste.",
+  "On ne devient pas critique en un jour. Mais un jour de plus, ça compte.",
+  "Une bonne question vaut mieux que dix réponses rapides.",
+  "Le monde est plein d'arguments boiteux. Bonne nouvelle : vous savez maintenant marcher droit."
 ];
+// Situations : plusieurs tournures, une par jour (rotation sans remise)
+const PHRASES_RETOUR = ["Tiens, un revenant ! {0} jours sans nous voir : vos révisions ont gardé votre place au chaud.",
+  "{0} jours d'absence : l'oubli a fait son travail, à vous de défaire le sien.",
+  "Vous revoilà, après {0} jours. Vos notions vous attendaient, sagement rangées."];
+const PHRASES_RETOUR_SANS_REVISION = ["Vous revoilà, après {0} jours. Heureux hasard, ou décision éclairée ?",
+  "{0} jours sans nous voir. Les biais, eux, n'ont pas pris de vacances.",
+  "Quel plaisir de vous revoir après {0} jours. On reprend où vous en étiez ?"];
+const PHRASES_OBJECTIF = ["Objectif du jour dans la poche. Tout ce qui suit, c'est pour le plaisir.",
+  "Objectif atteint ! Votre cortex mérite une ovation (modérée : on reste critiques).",
+  "Objectif du jour rempli. La suite, c'est du bonus, et du bonus bien mérité."];
+const PHRASES_REVISIONS = ["{0} notions frappent à la porte de votre mémoire. On leur ouvre ?",
+  "{0} notions arrivent à échéance : c'est leur moment pour s'ancrer.",
+  "Votre mémoire a {0} rendez-vous aujourd'hui. Ils ne prennent que quelques minutes."];
+const PHRASES_SERIE = ["{0} jours d'affilée. La régularité, c'est le super-pouvoir le plus sous-estimé.",
+  "{0} jours de suite : votre esprit critique fait de la musculation.",
+  "{0} jours d'affilée. À ce rythme, les sophismes vont finir par vous éviter."];
+const PHRASES_PARCOURS = ["Votre parcours « {0} » vous attend juste en dessous. Une étape, et on avance.",
+  "Prochaine étape de « {0} » : elle est juste en dessous, prête quand vous l'êtes.",
+  "« {0} » continue. Encore une étape, et vous en saurez un peu plus que tout à l'heure."];
+const PHRASES_NUIT = ["Il est tard : les questions seront encore là demain, promis.",
+  "Une partie de nuit ? Méfiez-vous : à cette heure-ci, tout semble convaincant.",
+  "Les biais ne dorment jamais. Vous, en revanche, vous devriez peut-être."];
 
 // Titre et phrase de l'accueil, selon l'heure, la date et la situation du joueur (la première qui s'applique)
 function salutation(nouveau) {
   const maintenant = new Date(), h = maintenant.getHours(), jour = aujourdHui();
   const moment = h < 5 ? "nuit" : h < 11 ? "matin" : h < 14 ? "midi" : h < 18 ? "apresMidi" : h < 22 ? "soir" : "nuit";
   const [mois, date, semaine] = [maintenant.getMonth() + 1, maintenant.getDate(), maintenant.getDay()];
-  let formule = T(tirerSansRemise(SALUTS[moment], 1, jour, 31)[0]);
+  const varier = (liste, sel) => tirerSansRemise(liste, 1, jour, sel)[0];
+  let formule = T(varier(SALUTS[moment], 31));
   if (mois === 1 && date === 1) formule = T("Bonne année");
   else if (mois === 12 && date === 25) formule = T("Joyeux Noël");
   else if (moment !== "nuit" && (semaine === 0 || semaine === 6) && jour % 2) formule = T("Bon week-end");
@@ -383,15 +416,15 @@ function salutation(nouveau) {
   const aReviser = clesAReviser().length, serie = serieDeJours();
   const etape = typeof prochaineEtape === "function" ? prochaineEtape() : null;
   let phrase;
-  if (mois === 4 && date === 1) phrase = T("Premier avril : aujourd'hui plus qu'un autre jour, vérifiez avant de croire.");
-  else if (nouveau) phrase = T("Bienvenue. Ici, on apprend à se tromper un peu moins, en commençant par se tromper.");
-  else if (absence >= 7) phrase = aReviser ? T("Vous revoilà, après {0} jours : vos révisions vous attendent.", absence) : T("Vous revoilà, après {0} jours. Content de vous revoir ici.", absence);
-  else if (!modeSobre() && (luc[jour] || 0) >= lire("objectif", 60)) phrase = T("Objectif du jour atteint : tout ce qui suit est du bonus.");
-  else if (aReviser >= 3) phrase = T("{0} notions vous attendent en révision : c'est le bon moment pour les revoir.", aReviser);
-  else if (serie >= 3 && serie % 7 === 0) phrase = T("{0} jours d'affilée : la régularité fait la mémoire.", serie);
-  else if (etape) phrase = T("Votre parcours « {0} » continue : la prochaine étape est juste en dessous.", T(etape.parcours.titre));
-  else if (moment === "nuit") phrase = T("Il est tard : les questions seront encore là demain.");
-  else phrase = T(tirerSansRemise(PHRASES_DU_JOUR, 1, jour, 37)[0]);
+  if (mois === 4 && date === 1) phrase = T("Premier avril : aujourd'hui plus que jamais, vérifiez avant de croire. (Celle-là, elle est vraie.)");
+  else if (nouveau) phrase = T("Bienvenue ! Ici, on apprend à se tromper moins… en commençant par se tromper un peu.");
+  else if (absence >= 7) phrase = T(varier(aReviser ? PHRASES_RETOUR : PHRASES_RETOUR_SANS_REVISION, 41), absence);
+  else if (!modeSobre() && (luc[jour] || 0) >= lire("objectif", 60)) phrase = T(varier(PHRASES_OBJECTIF, 43));
+  else if (aReviser >= 3) phrase = T(varier(PHRASES_REVISIONS, 47), aReviser);
+  else if (serie >= 3 && serie % 7 === 0) phrase = T(varier(PHRASES_SERIE, 53), serie);
+  else if (etape) phrase = T(varier(PHRASES_PARCOURS, 59), T(etape.parcours.titre));
+  else if (moment === "nuit") phrase = T(varier(PHRASES_NUIT, 61));
+  else phrase = T(varier(PHRASES_DU_JOUR, 37));
   return { titre, phrase };
 }
 
