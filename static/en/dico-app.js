@@ -276,5 +276,7 @@ EN_AJOUTER([
   ["Aucun résultat pour « {0} ».", "No results for “{0}”."],
   ["Encore {0} : précisez la recherche.", "{0} more: refine your search."],
   ["Chercher dans tout le site", "Search the whole site"],
-  ["Résultats de la recherche", "Search results"]
+  ["Résultats de la recherche", "Search results"],
+  ["Rien à trouver ici. Les secrets ne se cherchent pas : ils se remarquent. Ceux qui regardent sous le capot en trouvent un.", "Nothing to find here. Secrets are not searched for: they are noticed. Those who look under the hood find one."],
+  ["Énigme résolue. Vous savez lire les indices.", "Riddle solved. You know how to read clues."]
 ]);

@@ -96,7 +96,8 @@ const REGLES_FUSION = {
   activite: (a, b) => union(a, b).sort((x, y) => x - y).slice(-400),
   fichesLues: (a, b) => union(a, b),
   distinctions: (a, b) => ({ obtenues: union((a || {}).obtenues, (b || {}).obtenues),
-    drapeaux: { embleme: !!(((a || {}).drapeaux || {}).embleme || ((b || {}).drapeaux || {}).embleme), illusions: union(((a || {}).drapeaux || {}).illusions, ((b || {}).drapeaux || {}).illusions) } }),
+    drapeaux: { embleme: !!(((a || {}).drapeaux || {}).embleme || ((b || {}).drapeaux || {}).embleme), illusions: union(((a || {}).drapeaux || {}).illusions, ((b || {}).drapeaux || {}).illusions),
+      secrets: union(((a || {}).drapeaux || {}).secrets, ((b || {}).drapeaux || {}).secrets) } }),
   memoire: (a, b) => parCle(a, b, plusJoue),                                       // par notion : l'entrée la plus jouée
   records: (a, b) => parCle(a, b, Math.max),
   chrono: (a, b) => parCle(a, b, Math.max),

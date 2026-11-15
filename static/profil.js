@@ -58,6 +58,9 @@ function gagner(source, valeur, cle) {
     if (avant < objectif && etat.jours[jour] >= objectif) montrerMoment(T("Objectif du jour atteint"), T("{0} points de lucidité aujourd'hui.", etat.jours[jour]));
   }
   majBoutonProfil();
+  const maintenant = new Date();
+  if (maintenant.getHours() < 5) trouverSecret("noctambule");
+  if (maintenant.getDay() === 5 && maintenant.getDate() === 13) trouverSecret("vendredi-13");
   return points;
 }
 
@@ -68,15 +71,63 @@ function compter(nom) {
   ecrire("lucidite", e);
 }
 
-// Drapeaux des distinctions secrètes (emblème révélé, illusions vérifiées)
+// Drapeaux des distinctions secrètes (emblème révélé, illusions vérifiées, secrets trouvés)
 function noterDrapeau(nom, valeur) {
   const dist = lire("distinctions", {});
   const drapeaux = { ...(dist.drapeaux || {}) };
-  if (nom === "illusions") drapeaux.illusions = [...new Set([...(drapeaux.illusions || []), valeur])];
+  if (nom === "illusions" || nom === "secrets") drapeaux[nom] = [...new Set([...(drapeaux[nom] || []), valeur])];
   else drapeaux[nom] = true;
   ecrire("distinctions", { ...dist, drapeaux });
   majMaitrise();
 }
+
+// ===================== Secrets =====================
+// Chaque découverte s'inscrit une fois dans distinctions.drapeaux.secrets ; les distinctions secrètes (progression.js)
+// les lisent. Solutions dans tests/secrets.md.
+function trouverSecret(id) {
+  if (!(((lire("distinctions", {}) || {}).drapeaux || {}).secrets || []).includes(id)) noterDrapeau("secrets", id);
+}
+
+// L'énigme de la console : les numéros de fiches dont les initiales forment un mot, à chercher ensuite dans la recherche.
+// Le mot est choisi parmi quelques-uns, le premier qu'on peut écrire avec les fiches de la langue affichée.
+function enigmeConsole() {
+  // Mots écrits avec les initiales disponibles (en français, aucune fiche ne commence par L, O, U ni V)
+  const mots = LANGUE === "en" ? ["reason", "proof", "mind"] : ["esprit", "debat", "biais"];
+  const fiches = Object.keys(TYPES).flatMap(t => ORDRE[t].map(f => [t, f]));
+  for (const mot of mots) {
+    const prises = new Set();
+    const numeros = [...mot].map(lettre => {
+      const r = fiches.find(([t, f]) => !prises.has(t + f.id) && comparable(T(f.nom)).startsWith(lettre));
+      if (!r) return null;
+      prises.add(r[0] + r[1].id);
+      return (r[0] === "biais" ? "B " : "S ") + r[1].num;
+    });
+    if (numeros.every(Boolean)) return { mot, indice: numeros.join(", ") };
+  }
+  return null;
+}
+
+// Sésame : le mot tapé au clavier hors d'un champ révèle l'emblème
+const tapeSesame = [];
+document.addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1 || (e.target.matches && e.target.matches("input, textarea, select"))) return;
+  tapeSesame.push(e.key.toLowerCase());
+  if (tapeSesame.length > 5) tapeSesame.shift();
+  if (tapeSesame.join("") !== (LANGUE === "en" ? "doubt" : "doute")) return;
+  const embleme = document.querySelector(".embleme");
+  if (embleme) { embleme.classList.add("revele"); setTimeout(() => embleme.classList.remove("revele"), 3400); }
+  annoncer(T("Sésame : douter n'est pas tout rejeter, c'est vérifier avant de croire."));
+  trouverSecret("sesame");
+});
+
+// Bilingue, et l'énigme pour qui ouvre la console : une fois le site entièrement chargé
+window.addEventListener("load", () => {
+  // Sans annonce au chargement : la distinction apparaîtra à la prochaine action
+  const dist = lire("distinctions", {}) || {}, drapeaux = dist.drapeaux || {};
+  if (!(drapeaux.secrets || []).includes("langue-" + LANGUE)) ecrire("distinctions", { ...dist, drapeaux: { ...drapeaux, secrets: [...(drapeaux.secrets || []), "langue-" + LANGUE] } });
+  const e = enigmeConsole();
+  if (e) console.info(T("Esprit critique : vous regardez sous le capot, bonne habitude. Prenez l'initiale des fiches {0}, dans cet ordre, puis cherchez le mot obtenu dans la recherche du site.", e.indice));
+});
 
 // ===================== Moments de récompense, jamais bloquants =====================
 function montrerPastille(texte) {
