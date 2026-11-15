@@ -1560,6 +1560,7 @@ label[for] { display: block; margin: 0 0 8px; }
 /* Accueil : l'avatar à gauche du bloc date, salutation, phrase, centré sur lui ; plus petit sur téléphone */
 .salut-accueil { display: flex; align-items: center; gap: 18px; }
 .salut-textes { min-width: 0; }
+.salut-textes .date-du-jour { margin-bottom: 12px; }   /* la pastille de série ne touche pas le grand titre */
 .salut-textes .page-titre { margin: 2px 0 0; }
 .salut-textes .salut-phrase { margin-bottom: 0; }
 .lien-avatar { flex: none; display: block; border-radius: 50%; }
