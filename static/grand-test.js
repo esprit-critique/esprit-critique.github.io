@@ -699,7 +699,9 @@ const GENERATEURS_GT = {
       type: "qcm",
       texte: texte + " Question posée : « " + question + " »",
       question: "Quelle est la meilleure réponse ?",
-      choix: ["Le texte ne dit pas que " + fait + " : la question suppose un fait qui n'est pas établi.", raisons[0], raisons[1], raisons[2]],
+      // Deux leurres acceptent la présupposition en la justifiant : la bonne réponse ne se reconnaît plus à sa longueur
+      choix: ["Le texte ne dit pas que " + fait + ".", raisons[0], raisons[1].replace(/[.!?]$/, "") + " : c'est la raison la plus vraisemblable.",
+        raisons[2].replace(/[.!?]$/, "") + ", comme le laisse entendre la question."],
       juste: 0, leurre: 1, valeurs: {},
       explication: "La question glisse un fait que rien n'établit : " + fait + ". Chercher une raison, c'est accepter ce fait sans preuve. Avant de répondre à « pourquoi ? », vérifiez que la chose s'est bien produite."
     };
@@ -724,7 +726,7 @@ const GENERATEURS_GT = {
       type: "qcm",
       texte: regle + " " + accorder("{p} " + condition + ".", prenom, genre),
       question: "Que peut-on en conclure ?",
-      choix: ["On ne peut pas savoir si " + fait + ".", fait + ".", elision(prenom + " n'a pas le droit de", infinitif) + ".", "Tout le monde peut désormais " + infinitif + "."],
+      choix: ["On ne peut pas savoir si " + fait + ".", "Donc " + fait + ", puisque la condition est remplie.", elision(prenom + " n'a pas le droit de", infinitif) + ".", "Tout le monde peut désormais " + infinitif + "."],
       juste: 0, leurre: 1, valeurs: {},
       explication: "« On ne peut … que si … » donne une condition nécessaire : sans elle, impossible ; avec elle, rien n'est garanti. " + accorder("{p} " + condition, prenom, genre) + ", mais rien ne dit que " + fait + ". Conclure le contraire revient à lire « si » à la place de « seulement si »."
     };
@@ -801,8 +803,8 @@ const GENERATEURS_GT = {
       type: "qcm",
       texte: "Lors de " + epreuve + ", on suit les 10 % des " + participants + " qui ont le mieux réussi la première. En moyenne, ils passent de " + t1 + " à " + t2 + " points. Les 10 % les moins bons, eux, passent de " + b1 + " à " + b2 + " points. La moyenne de l'ensemble est la même aux deux.",
       question: "Quelle est l'explication la plus probable ?",
-      choix: ["Le premier résultat mêlait niveau et chance ; la chance ne se répète pas, et les extrêmes se rapprochent de la moyenne.",
-        "Les meilleurs se sont relâchés après leur succès.", "La seconde fois était plus difficile pour tout le monde.", "Les moins bons ont copié les meilleurs."],
+      choix: ["Le premier résultat devait aussi à la chance, qui ne se répète pas.",
+        "Les meilleurs se sont relâchés après leur succès, et les moins bons se sont mobilisés.", "La seconde fois était plus difficile pour tout le monde.", "Les moins bons ont copié les meilleurs."],
       juste: 0, leurre: 1, valeurs: { t1, t2, b1, b2 },
       explication: "Un très bon résultat tient au niveau, mais aussi à la chance du jour, qui ne se reproduit pas forcément. Les meilleurs baissent et les moins bons remontent, alors que la moyenne générale ne bouge pas : c'est la régression vers la moyenne. Elle ne demande aucune explication psychologique."
     };
@@ -850,7 +852,7 @@ const GENERATEURS_GT = {
       type: "qcm",
       texte: objet + " vient de tomber sur " + issue + " " + n + " fois de suite.",
       question: "Au coup suivant, quelle est la probabilité de tomber de nouveau sur " + issue + " ?",
-      choix: [majuscule(chance), "Moins de " + chance + " : une telle série doit s'interrompre", "Plus de " + chance + " : la série est lancée", "Cela dépend du nombre total de coups déjà joués"],
+      choix: ["Toujours " + chance + ", comme à chaque coup", "Moins de " + chance + " : une telle série doit s'interrompre", "Plus de " + chance + " : la série est lancée", "Cela dépend du nombre total de coups déjà joués"],
       juste: 0, leurre: 1, valeurs: { k, n },
       explication: "Chaque coup est indépendant : l'objet n'a pas de mémoire et ne « rattrape » rien. La probabilité reste de " + chance + ", série ou pas. Les longues séries sont d'ailleurs plus fréquentes au hasard qu'on ne le croit."
     };
@@ -862,7 +864,7 @@ const GENERATEURS_GT = {
       texte: part + " % " + evenement + " concernent " + groupe + ". Quelqu'un en conclut que " + conclusion + ".",
       question: "Que faut-il savoir pour juger cette conclusion ?",
       choix: ["La part " + elision("de", groupe.replace(/^des /, "")) + " parmi les " + ensemble + ".", "Rien de plus : " + part + " %, c'est une nette majorité.",
-        "Le nombre total de cas recensés.", "La date à laquelle ces chiffres ont été publiés."],
+        "Le nombre total de cas recensés, pour savoir si l'échantillon est assez grand.", "La date à laquelle ces chiffres ont été publiés."],
       juste: 0, leurre: 1, valeurs: { part },
       explication: "Si " + groupe.replace(/^des /, "les ") + " représentent déjà " + part + " % des " + ensemble + ", ce chiffre ne montre rien de particulier. Il faut comparer la part des cas à la part du groupe dans l'ensemble. Sans ce dénominateur, la conclusion ne tient pas."
     };
@@ -917,7 +919,8 @@ const GENERATEURS_GT = {
     return {
       type: "qcm",
       texte: remplir(f.texte, valeurs), question: remplir(f.question, valeurs),
-      choix: f.choix.map(c => remplir(c, valeurs)),
+      // « Que une haie… » → « Qu'une haie… » : un morceau inséré peut commencer par une voyelle
+      choix: f.choix.map(c => LANGUE === "en" ? remplir(c, valeurs) : remplir(c, valeurs).replace(/\b([Qq])ue ([aeiouéèêàâîôû])/g, "$1u'$2")),
       juste: 0, leurre: f.leurre, valeurs: {},
       explication: f.explication
     };

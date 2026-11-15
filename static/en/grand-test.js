@@ -75,7 +75,8 @@ const GENERATEURS_GT_EN = {
       type: "qcm",
       texte: texte + " Question asked: “" + question + "”",
       question: "What is the best answer?",
-      choix: ["The text does not say that " + fait + ": the question assumes a fact that has not been established.", raisons[0], raisons[1], raisons[2]],
+      choix: ["The text does not say that " + fait + ".", raisons[0], raisons[1].replace(/[.!?]$/, "") + ": that is the most likely reason.",
+        raisons[2].replace(/[.!?]$/, "") + ", as the question implies."],
       juste: 0, leurre: 1, valeurs: {},
       explication: "The question slips in a fact that nothing establishes: " + fait + ". Looking for a reason means accepting that fact without proof. Before answering “why?”, check that it actually happened."
     };
@@ -100,7 +101,7 @@ const GENERATEURS_GT_EN = {
       type: "qcm",
       texte: regle + " " + accorderEN("{p} " + condition + ".", prenom, genre),
       question: "What can we conclude?",
-      choix: ["We cannot tell whether " + fait + ".", fait + ".", prenom + " is not allowed to " + infinitif + ".", "Everyone can now " + infinitif + "."],
+      choix: ["We cannot tell whether " + fait + ".", "So " + fait + ", since the condition is met.", prenom + " is not allowed to " + infinitif + ".", "Everyone can now " + infinitif + "."],
       juste: 0, leurre: 1, valeurs: {},
       explication: "“You can only … if …” gives a necessary condition: without it, impossible; with it, nothing is guaranteed. " + accorderEN("{p} " + condition, prenom, genre) + ", but nothing says that " + fait + ". Concluding the opposite amounts to reading “if” as “only if”."
     };
@@ -178,8 +179,8 @@ const GENERATEURS_GT_EN = {
       type: "qcm",
       texte: "In " + epreuve + ", we follow the top 10% of " + participants + " on the first one. On average, they go from " + t1 + " to " + t2 + " points. The bottom 10%, meanwhile, go from " + b1 + " to " + b2 + " points. The overall average is the same in both.",
       question: "What is the most likely explanation?",
-      choix: ["The first result mixed ability and luck; luck does not repeat, and extremes move back towards the average.",
-        "The best relaxed after their success.", "The second time was harder for everyone.", "The weakest copied the best."],
+      choix: ["The first result also owed something to luck, which does not repeat.",
+        "The best relaxed after their success, and the weakest pulled themselves together.", "The second time was harder for everyone.", "The weakest copied the best."],
       juste: 0, leurre: 1, valeurs: { t1, t2, b1, b2 },
       explication: "A very good result reflects ability, but also the luck of the day, which does not necessarily repeat. The best fall back and the weakest rise, while the overall average does not move: this is regression to the mean. It needs no psychological explanation."
     };
@@ -227,7 +228,7 @@ const GENERATEURS_GT_EN = {
       type: "qcm",
       texte: objet + " has just landed on " + issue + " " + n + " times in a row.",
       question: "On the next try, what is the probability of landing on " + issue + " again?",
-      choix: [majuscule(chance), "Less than " + chance + ": such a streak has to end", "More than " + chance + ": the streak is on", "It depends on the total number of tries already made"],
+      choix: ["Still " + chance + ", as on every try", "Less than " + chance + ": such a streak has to end", "More than " + chance + ": the streak is on", "It depends on the total number of tries already made"],
       juste: 0, leurre: 1, valeurs: { k, n },
       explication: "Each try is independent: the object has no memory and does not “catch up” on anything. The probability stays at " + chance + ", streak or no streak. Long streaks are also more common by chance than people think."
     };
@@ -239,7 +240,7 @@ const GENERATEURS_GT_EN = {
       texte: pourcentGT(part) + " of " + evenement + " involve " + groupe + ". Someone concludes that " + conclusion + ".",
       question: "What do you need to know to judge this conclusion?",
       choix: ["The share of " + groupe + " among the " + ensemble + ".", "Nothing more: " + pourcentGT(part) + " is a clear majority.",
-        "The total number of cases recorded.", "The date on which these figures were published."],
+        "The total number of cases recorded, to know whether the sample is large enough.", "The date on which these figures were published."],
       juste: 0, leurre: 1, valeurs: { part },
       explication: "If " + groupe + " already make up " + pourcentGT(part) + " of the " + ensemble + ", this figure shows nothing in particular. You have to compare the share of the cases with the group’s share of the whole. Without that denominator, the conclusion does not hold."
     };

@@ -653,7 +653,9 @@ function questionsDuDefi(jour, graine) {
   const alea = generateur(graine !== undefined ? graine : jour * 7 + 2026);
   const difficiles = l => l.filter(x => (x.niveau || 1) >= 2);
   const statuts = [["authentique", "Authentique"], ["deformee", "Déformée"], ["apocryphe", "Inventée ou mal attribuée"]];
-  const monde = melanger(difficiles(MONDE), alea).slice(0, 3).map(m => ({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }));
+  // Ordre des options tiré à part : les défis déjà partagés gardent les mêmes questions
+  const aleaOrdre = generateur((graine !== undefined ? graine : jour * 7 + 2026) + 1);
+  const monde = melanger(difficiles(MONDE), alea).slice(0, 3).map(m => melangerOptions({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }, aleaOrdre));
   const vf = melanger(difficiles(VRAI_FAUX), alea).slice(0, 3).map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
   const citations = melanger(difficiles(CITATIONS), alea).slice(0, 2).map(c => ({ texte: T("« {0} » — attribuée à {1}", T(c.texte), c.auteur), options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
   const chrono = melanger(PAIRES_CELEBRES, alea).slice(0, 2).map(p => {
@@ -1462,11 +1464,14 @@ function nouvelleSerie() {
     choisies = melanger(choisies);
   }
   quiz.serie = choisies.map(r => creerQuestion(r.type, r.fiche));
-  // Révision : une situation supplémentaire (casSup), pour ne pas reconnaître un texte déjà lu
-  if (quiz.mode === "reviser") quiz.serie.forEach(q => {
-    const sup = q.fiche.casSup;
+  // Les situations d'une notion se succèdent d'une réponse à l'autre, au lieu d'être tirées au hasard : on ne retrouve
+  // pas la bonne réponse à la seule vue d'un texte déjà lu. Séries ordinaires : cas et cas2, qui ont leur passage
+  // à trouver (INDICES) ; révision : les deux situations supplémentaires (casSup), jamais montrées ailleurs.
+  quiz.serie.forEach(q => {
     const m = memoire[cleFiche(q.type, q.fiche)];
-    if (sup && sup.length) q.cas = sup[(m ? m.n : 0) % sup.length];
+    const f = q.fiche;
+    const situations = (quiz.mode === "reviser" && f.casSup && f.casSup.length ? f.casSup : [f.cas, f.cas2]).filter(Boolean);
+    if (situations.length) q.cas = situations[(m ? m.n : 0) % situations.length];
   });
   // Réponse libre : la situation seule ; retrouver le nom de mémoire est plus exigeant que le reconnaître
   if (quiz.mode === "libre") quiz.serie.forEach(q => { q.libre = true; });

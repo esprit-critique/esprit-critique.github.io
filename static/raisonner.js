@@ -10,37 +10,60 @@ const majuscule1 = t => t.charAt(0).toUpperCase() + t.slice(1);
 const pointsAsym = (v, brut) => fr(Number(v.toFixed(1))) + " " + (LANGUE === "en" ? T(Number(v.toFixed(1)) === 1 ? "point" : "points") : (brut >= 2 ? "points" : "point"));
 
 // ===================== Logique contre croyance =====================
-// 16 syllogismes : 4 dans chaque case (valide ou non, conclusion crédible ou non).
-// « justifications » : pour quatre d'entre eux, trois explications, dont une seule correcte.
+// 32 syllogismes : 8 dans chaque case (valide ou non, conclusion crédible ou non) ; une partie en tire 4 par case,
+// pour que deux parties de suite ne se ressemblent pas tout en gardant les indices de −4 à +4.
+// « justifications » : pour six d'entre eux, trois explications, dont une seule correcte.
 
 const SYLLOGISMES = [
   { id: "chiens", p: ["Tous les chiens sont des mammifères.", "Tous les mammifères respirent de l'air."], c: "Tous les chiens respirent de l'air.", valide: true, credible: true },
   { id: "pigeons-dents", p: ["Aucun oiseau n'a de dents.", "Tous les pigeons sont des oiseaux."], c: "Aucun pigeon n'a de dents.", valide: true, credible: true },
   { id: "cuivre", p: ["Tous les métaux conduisent l'électricité.", "Le cuivre est un métal."], c: "Le cuivre conduit l'électricité.", valide: true, credible: true },
   { id: "triangles", p: ["Tous les triangles ont trois côtés.", "Certaines figures de ce cahier sont des triangles."], c: "Certaines figures de ce cahier ont trois côtés.", valide: true, credible: true },
+  { id: "baleines", p: ["Tous les mammifères allaitent leurs petits.", "Les baleines sont des mammifères."], c: "Les baleines allaitent leurs petits.", valide: true, credible: true },
+  { id: "carres", p: ["Tous les carrés sont des rectangles.", "Tous les rectangles ont quatre angles droits."], c: "Tous les carrés ont quatre angles droits.", valide: true, credible: true },
+  { id: "impairs", p: ["Aucun nombre impair n'est divisible par 2.", "7 est un nombre impair."], c: "7 n'est pas divisible par 2.", valide: true, credible: true },
+  { id: "racines", p: ["Tous les arbres ont des racines.", "Certaines plantes de ce jardin sont des arbres."], c: "Certaines plantes de ce jardin ont des racines.", valide: true, credible: true },
   { id: "fourmis", p: ["Tous les insectes ont huit pattes.", "Les fourmis sont des insectes."], c: "Les fourmis ont huit pattes.", valide: true, credible: false,
     justifications: [
       ["Valide : si les deux prémisses étaient vraies, la conclusion le serait forcément, même si la première est fausse.", true],
-      ["Non valide : les fourmis ont six pattes, donc la conclusion est fausse.", false],
+      ["Non valide : les fourmis ont six pattes, comme tous les insectes, donc la conclusion est fausse et le raisonnement ne tient pas.", false],
       ["Non valide : la première prémisse est fausse, donc le raisonnement ne tient pas.", false]
     ] },
   { id: "epinards", p: ["Aucun légume n'est vert.", "Les épinards sont des légumes."], c: "Les épinards ne sont pas verts.", valide: true, credible: false },
   { id: "ancres", p: ["Tout ce qui est en métal est léger.", "Les ancres de navire sont en métal."], c: "Les ancres de navire sont légères.", valide: true, credible: false },
   { id: "dauphins", p: ["Tous les animaux qui vivent dans l'eau sont des poissons.", "Les dauphins vivent dans l'eau."], c: "Les dauphins sont des poissons.", valide: true, credible: false },
+  { id: "manchots", p: ["Tous les oiseaux volent.", "Les manchots sont des oiseaux."], c: "Les manchots volent.", valide: true, credible: false,
+    justifications: [
+      ["Non valide : les manchots ne volent pas, donc le raisonnement est faux.", false],
+      ["Valide : si tous les oiseaux volaient, les manchots, qui en sont, voleraient forcément.", true],
+      ["Non valide : la première prémisse est fausse, donc la conclusion ne découle pas des prémisses.", false]
+    ] },
+  { id: "citrons", p: ["Tous les fruits sont bleus.", "Les citrons sont des fruits."], c: "Les citrons sont bleus.", valide: true, credible: false },
+  { id: "chauves-souris", p: ["Aucun mammifère ne vole.", "Les chauves-souris sont des mammifères."], c: "Les chauves-souris ne volent pas.", valide: true, credible: false },
+  { id: "sommeil", p: ["Aucun animal ne dort.", "Les chats sont des animaux."], c: "Les chats ne dorment pas.", valide: true, credible: false },
   { id: "chats", p: ["Tous les chats sont des animaux.", "Certains animaux sont domestiques."], c: "Certains chats sont domestiques.", valide: false, credible: true,
     justifications: [
       ["Valide : tout le monde sait que des chats sont domestiques.", false],
-      ["Valide : les chats sont des animaux, et certains animaux sont domestiques.", false],
+      ["Valide : les chats sont des animaux, et certains animaux sont domestiques, donc certains chats font partie de ces animaux domestiques.", false],
       ["Non valide : les animaux domestiques dont parle la seconde prémisse ne sont peut-être pas des chats.", true]
     ] },
   { id: "roses", p: ["Toutes les roses sont des fleurs.", "Certaines fleurs fanent vite."], c: "Certaines roses fanent vite.", valide: false, credible: true,
     justifications: [
-      ["Valide : les roses sont des fleurs, et certaines fleurs fanent vite, donc certaines roses aussi.", false],
-      ["Non valide : les fleurs qui fanent vite ne sont peut-être pas des roses ; la conclusion est peut-être vraie, mais elle ne découle pas des prémisses.", true],
+      ["Valide : les roses sont des fleurs, et certaines fleurs fanent vite ; certaines roses font donc forcément partie de celles qui fanent vite.", false],
+      ["Non valide : les fleurs qui fanent vite ne sont peut-être pas des roses ; la conclusion peut être vraie sans découler des prémisses.", true],
       ["Valide : on voit bien des roses faner en quelques jours.", false]
     ] },
   { id: "truites", p: ["Tous les poissons vivent dans l'eau.", "Les truites vivent dans l'eau."], c: "Les truites sont des poissons.", valide: false, credible: true },
   { id: "serpents", p: ["Aucun reptile n'a de fourrure.", "Aucun serpent n'a de fourrure."], c: "Tous les serpents sont des reptiles.", valide: false, credible: true },
+  { id: "aigles", p: ["Tous les oiseaux ont des plumes.", "Les aigles ont des plumes."], c: "Les aigles sont des oiseaux.", valide: false, credible: true,
+    justifications: [
+      ["Valide : les aigles ont des plumes comme tous les oiseaux, donc ce sont des oiseaux.", false],
+      ["Valide : tout le monde sait que l'aigle est un oiseau.", false],
+      ["Non valide : rien ne dit que seuls les oiseaux ont des plumes.", true]
+    ] },
+  { id: "tulipes", p: ["Toutes les tulipes sont des plantes.", "Certaines plantes ont besoin de soleil."], c: "Certaines tulipes ont besoin de soleil.", valide: false, credible: true },
+  { id: "pommes", p: ["Certains fruits sont rouges.", "Les pommes sont des fruits."], c: "Certaines pommes sont rouges.", valide: false, credible: true },
+  { id: "vaches", p: ["Si un animal est un poisson, il vit dans l'eau.", "Les vaches ne sont pas des poissons."], c: "Les vaches ne vivent pas dans l'eau.", valide: false, credible: true },
   { id: "canards", p: ["Tous les poissons nagent.", "Les canards nagent."], c: "Les canards sont des poissons.", valide: false, credible: false },
   { id: "chevaux", p: ["Tous les chiens ont quatre pattes.", "Certains animaux à quatre pattes sont des chevaux."], c: "Certains chiens sont des chevaux.", valide: false, credible: false },
   { id: "pigeons-vol", p: ["Aucun poisson ne vole.", "Aucun pigeon n'est un poisson."], c: "Aucun pigeon ne vole.", valide: false, credible: false,
@@ -49,7 +72,11 @@ const SYLLOGISMES = [
       ["Valide : les pigeons ne sont pas des poissons, et les poissons ne volent pas, donc les pigeons non plus.", false],
       ["Non valide : les pigeons volent, donc la conclusion est fausse.", false]
     ] },
-  { id: "tortues", p: ["Si un animal est un oiseau, il pond des œufs.", "Les tortues pondent des œufs."], c: "Les tortues sont des oiseaux.", valide: false, credible: false }
+  { id: "tortues", p: ["Si un animal est un oiseau, il pond des œufs.", "Les tortues pondent des œufs."], c: "Les tortues sont des oiseaux.", valide: false, credible: false },
+  { id: "requins", p: ["Tous les mammifères ont une colonne vertébrale.", "Les requins ont une colonne vertébrale."], c: "Les requins sont des mammifères.", valide: false, credible: false },
+  { id: "voitures", p: ["Certaines machines volent.", "Les voitures sont des machines."], c: "Certaines voitures volent.", valide: false, credible: false },
+  { id: "soleil", p: ["Si un objet est une ampoule, il produit de la lumière.", "Le soleil n'est pas une ampoule."], c: "Le soleil ne produit pas de lumière.", valide: false, credible: false },
+  { id: "elephants", p: ["Aucun oiseau n'est un mammifère.", "Aucun éléphant n'est un oiseau."], c: "Aucun éléphant n'est un mammifère.", valide: false, credible: false }
 ];
 
 // Énoncé d'un syllogisme
@@ -208,7 +235,9 @@ EXPERIENCES.push(
     titre: "Logique contre croyance",
     resume: "Seize syllogismes : la conclusion découle-t-elle des prémisses, qu'elle soit vraie ou non ? Puis vous jugez les raisonnements d'autres joueurs.",
     lancer(zone) {
-      const items = melanger(SYLLOGISMES);
+      // Quatre par case, tirés parmi huit : les indices gardent la même échelle d'une partie à l'autre
+      const items = melanger([[true, true], [true, false], [false, true], [false, false]]
+        .flatMap(([v, c]) => melanger(SYLLOGISMES.filter(s => s.valide === v && s.credible === c)).slice(0, 4)));
       const reponses = {};       // id → true si l'utilisateur dit « valide »
       const choisies = [];       // justifications choisies par l'utilisateur : { s, texte, correcte }
       derouler(zone, items, (s, zone, fini) => {
@@ -284,22 +313,25 @@ EXPERIENCES.push(
       }
 
       function bilan(jugements) {
-        const accepte = f => SYLLOGISMES.filter(f).filter(s => reponses[s.id]).length;
+        const accepte = f => items.filter(f).filter(s => reponses[s.id]).length;
         const logique = (accepte(s => s.valide) - accepte(s => !s.valide)) / 2;
         const croyance = (accepte(s => s.credible) - accepte(s => !s.credible)) / 2;
-        const justes = SYLLOGISMES.filter(s => reponses[s.id] === s.valide).length;
+        const justes = items.filter(s => reponses[s.id] === s.valide).length;
         const propre = jugements.find(j => j.x.propre);
         const rang = jugements.indexOf(propre) + 1;
         const historique = lire("logique", []);
         historique.push({ j: aujourdHui(), l: logique, c: croyance, rejet: !propre.accepte, fautif: !propre.x.correcte });
         ecrire("logique", historique.slice(-30));
-        afficherScore(zone, "logique", justes, SYLLOGISMES.length);
+        afficherScore(zone, "logique", justes, items.length);
 
         zone.appendChild(el("p", "consigne", T("Le raisonnement n° {0} était le vôtre", rang)));
         zone.appendChild(paragraphe(T("Vous l'aviez choisi mot pour mot pour le syllogisme « {0} ».", minuscule1(T(propre.x.s.c)).slice(0, -1)) + " " +
           T(propre.accepte ? "Présenté comme celui d'un autre, vous l'avez jugé correct." : "Présenté comme celui d'un autre, vous l'avez jugé incorrect.") + " " +
           T(propre.x.correcte ? "Il était en fait correct." : "Il était en fait incorrect.") +
-          (propre.accepte === propre.x.correcte ? "" : " " + T(propre.x.correcte ? "Vous avez rejeté un raisonnement juste : le vôtre." : "Vous avez su le rejeter chez un autre alors que vous l'aviez adopté vous-même."))));
+          // Le commentaire dépend des deux à la fois : ce que vous avez fait de ce raisonnement chez un autre, et ce qu'il valait
+          (propre.accepte
+            ? (propre.x.correcte ? "" : " " + T("Vous l'avez adopté une seconde fois, sans le reconnaître."))
+            : " " + T(propre.x.correcte ? "Vous avez rejeté un raisonnement juste : le vôtre." : "Vous avez su le rejeter chez un autre alors que vous l'aviez adopté vous-même."))));
 
         const liste = el("ul", "liste-simple");
         liste.append(
@@ -308,13 +340,13 @@ EXPERIENCES.push(
         );
         zone.appendChild(liste);
 
-        // Correction des seize syllogismes, groupés par case
+        // Correction des seize syllogismes de la partie, groupés par case
         const correction = el("div", "section");
         correction.appendChild(el("h3", null, "Correction"));
         [[true, true, "Valides, conclusion crédible"], [true, false, "Valides, conclusion non crédible"], [false, true, "Non valides, conclusion crédible"], [false, false, "Non valides, conclusion non crédible"]].forEach(([v, c, titre]) => {
           correction.appendChild(el("p", "consigne", titre));
           const ul = el("ul", "liste-simple");
-          SYLLOGISMES.filter(s => s.valide === v && s.credible === c).forEach(s => {
+          items.filter(s => s.valide === v && s.credible === c).forEach(s => {
             const ok = reponses[s.id] === s.valide;
             ul.appendChild(el("li", ok ? null : "erreur-liste", s.p.map(p => T(p)).join(" ") + " " + T("Donc {0}", minuscule1(T(s.c))) + (ok ? "" : " " + T(reponses[s.id] ? "(vous : valide)" : "(vous : non valide)"))));
           });
@@ -549,12 +581,14 @@ EXPERIENCES.push(
         conteneur.append(affichage, actions);
       }
 
+      // Ordre des options mélangé une fois par partie : réponses individuelles et réponse du groupe portent sur le même
+      const problemesMelanges = PROBLEMES_GROUPE.map(p => melangerOptions(p));
       function problemes(joueurs) {
         const resultats = [];
         let i = 0;
         const probleme = () => {
           if (i >= PROBLEMES_GROUPE.length) return bilanProblemes();
-          const p = PROBLEMES_GROUPE[i];
+          const p = problemesMelanges[i];
           const individuelles = [];
           tourDeTable(joueurs, (k, nom, ok) => {
             entete(zone, i + 1, PROBLEMES_GROUPE.length, "Problème");

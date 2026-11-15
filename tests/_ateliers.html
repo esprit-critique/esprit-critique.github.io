@@ -197,8 +197,8 @@ f.onload = async () => {
     // ---------- Logique contre croyance : contenus et mesures ----------
     const SYL = w.eval("SYLLOGISMES");
     const cases = [[true, true], [true, false], [false, true], [false, false]].map(([v, c]) => SYL.filter(x => x.valide === v && x.credible === c).length);
-    ok("syllogismes : 16, quatre par case", SYL.length === 16 && cases.every(n => n === 4));
-    ok("syllogismes : quatre avec trois justifications, une seule correcte", SYL.filter(x => x.justifications).length === 4 && SYL.filter(x => x.justifications).every(x => x.justifications.length === 3 && x.justifications.filter(j => j[1]).length === 1));
+    ok("syllogismes : 32, huit par case", SYL.length === 32 && cases.every(n => n === 8) && new Set(SYL.map(x => x.id)).size === 32);
+    ok("syllogismes : six avec trois justifications, une seule correcte", SYL.filter(x => x.justifications).length === 6 && SYL.filter(x => x.justifications).every(x => x.justifications.length === 3 && x.justifications.filter(j => j[1]).length === 1));
     const hist = JSON.parse(w.localStorage.getItem("logique") || "[]");
     ok("logique : indices enregistrés après les parties", hist.length === 3 && hist.every(h => Math.abs(h.l) <= 4 && Math.abs(h.c) <= 4));
     ok("études : asymétrie enregistrée", JSON.parse(w.localStorage.getItem("etudes") || "[]").length >= 1);
@@ -358,6 +358,36 @@ f.onload = async () => {
     const doubles3 = DEB3.flatMap(d => d.repliques).filter(r => Array.isArray(r.sophisme));
     ok("débats niveau 3 : répliques à deux sophismes, tous existants", doubles3.length >= 4 && doubles3.every(r => r.sophisme.length === 2 && r.sophisme.every(id => w.eval("SOPHISMES").some(f => f.id === id))));
     const PREM = w.eval("PREMISSES");
+    // Les réécritures ne doivent pas se trahir : ni par la longueur (la réparation était la plus longue 39 fois sur 40),
+    // ni par le vocabulaire (l'accusation disait presque toujours « sophisme »)
+    const plusLongue = REP.filter(x => [x.autre[0], x.acc, x.concl].every(t => t.length < x.rep[0].length)).length;
+    ok("réparer : la réparation n'est la plus longue que dans un tiers des cas au plus", plusLongue <= REP.length / 3, plusLongue + " / " + REP.length);
+    ok("réparer : aucune réécriture ne contient le mot « sophisme »", REP.every(x => ![x.rep[0], x.autre[0], x.acc, x.concl].some(t => /sophism/i.test(t))));
+    const PIEGES = w.eval("PIEGES_REPARER"), idsS = new Set(w.eval("SOPHISMES").map(f => f.id));
+    ok("réparer : au moins 8 arguments pièges, chacun proche d'un sophisme existant", PIEGES.length >= 8 && PIEGES.every(x => x.id && x.arg && x.pourquoi && idsS.has(x.ressemble)) && new Set(PIEGES.map(x => x.id)).size === PIEGES.length);
+    // ---------- Réponses qui se devinent sans lire ----------
+    // Part des questions où la bonne réponse est strictement la plus longue : au hasard, 1 sur le nombre d'options.
+    // On tolère jusqu'à la moitié pour les petites banques (quatre ou cinq questions), un tiers au-delà.
+    const plusLongue2 = (liste, options, juste) => liste.filter(x => { const o = options(x).map(String), j = juste(x); return o.every((t, k) => k === j || t.length < o[j].length); }).length;
+    const banques = [
+      ["Comprendre", w.eval("MECANISMES"), m => m.options, () => 0],
+      ["survivants", w.eval("SURVIVANTS"), s => s.options, s => s.juste],
+      ["problèmes classiques", w.eval("PROBLEMES").filter(p => p.type === "choix"), p => p.options, p => p.juste],
+      ["Reformuler (fidèle)", REF, r => [r.fidele, r.paille, r.acier, r.hors], () => 0],
+      ["Reformuler (acier)", REF, r => [r.fidele, r.paille, r.acier, r.hors], () => 2],
+      ["prémisses cachées", Object.values(PREM), p => p, () => 0],
+      ["justifications des syllogismes", w.eval("SYLLOGISMES").filter(s => s.justifications), s => s.justifications.map(j => j[0]), s => s.justifications.findIndex(j => j[1])],
+      ["graphiques trompeurs", w.eval("PIEGES_GRAPHIQUES").map(p => p.creer()).filter(p => Array.isArray(p.options)), p => p.options, p => p.juste]
+    ];
+    const fuites = banques.map(([nom, liste, o, j]) => [nom, plusLongue2(liste, o, j), liste.length]).filter(([, n, total]) => n > total * (total <= 5 ? 0.5 : 1 / 3));
+    ok("aucune banque où la bonne réponse se reconnaît à sa longueur", !fuites.length, fuites.map(([n, k, t]) => n + " " + k + "/" + t).join(", "));
+    const gtQcm = w.eval("FAMILLES_GT").filter(f => w.eval("GENERATEURS_GT")[f.generer]).flatMap(f => [0, 1, 2, 3, 4].map(i => { try { return w.eval("GENERATEURS_GT")[f.generer](f, i); } catch (e) { return null; } })).filter(x => x && Array.isArray(x.choix) && typeof x.juste === "number");
+    const gtLongue = plusLongue2(gtQcm, x => x.choix, x => x.juste);
+    ok("grand test : la bonne réponse n'est la plus longue que dans un QCM sur cinq au plus", gtLongue <= gtQcm.length / 5, gtLongue + "/" + gtQcm.length);
+    const reponsesPreuve = [0, 1, 2, 3].map(k => w.eval("QUI_PROUVE").filter(q => q.reponse === k).length);
+    ok("qui doit prouver : aucune réponse n'est juste dans plus de 40 % des situations", Math.max(...reponsesPreuve) <= 0.4 * w.eval("QUI_PROUVE").length, reponsesPreuve.join("/"));
+    const essai = w.eval("melangerOptions")({ options: ["a", "b", "c", "d"], juste: 2 });
+    ok("melangerOptions : mêmes options, bonne réponse suivie", essai.options.slice().sort().join("") === "abcd" && essai.options[essai.juste] === "c");
     ok("réparer : au moins 20 prémisses cachées, quatre propositions distinctes", Object.keys(PREM).length >= 20 && Object.values(PREM).every(p => p.length === 4 && new Set(p).size === 4) && Object.keys(PREM).every(k => w.eval("REPARATIONS").some(x => x.s === k)));
     ok("débat à deux : 20 cartes contrainte", w.eval("CARTES_CONTRAINTE").length === 20);
     // Débat truqué de niveau 3 : nommer parmi la catégorie, deux sophismes
@@ -393,6 +423,12 @@ f.onload = async () => {
     ok("réparer niveau 3 : puis la réparation", /Quelle réécriture le répare/.test(vue().textContent));
     const finiRep = await jouer("#tests/reparer");
     ok("réparer niveau 3 : partie jusqu'au bilan", finiRep && textesSuspects().length === 0, textesSuspects().join());
+    // Niveau 4 : le sophisme n'est plus annoncé, « Aucun » est toujours proposé, et des arguments pièges tiennent
+    w.localStorage.setItem("niveaux", JSON.stringify({ reparer: { niveau: 4, mode: "choisi" } }));
+    await aller("accueil"); await aller("tests/reparer");
+    ok("réparer niveau 4 : trois sophismes et « Aucun »", visibles(".choix").length === 4 && /Aucun\s?: l.argument tient/.test(visibles(".choix")[3].textContent));
+    const finiRep4 = await jouer("#tests/reparer");
+    ok("réparer niveau 4 : partie jusqu'au bilan", finiRep4 && textesSuspects().length === 0, textesSuspects().join());
     w.localStorage.removeItem("niveaux");
     // Débat à deux avec cartes
     await aller("accueil"); await aller("tests/debat-a-deux");
