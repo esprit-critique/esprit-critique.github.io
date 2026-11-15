@@ -1464,13 +1464,13 @@ function nouvelleSerie() {
     choisies = melanger(choisies);
   }
   quiz.serie = choisies.map(r => creerQuestion(r.type, r.fiche));
-  // Les quatre situations d'une notion (cas, cas2, casSup) se succèdent d'une réponse à l'autre : on ne retrouve pas la
-  // bonne réponse à la seule vue d'un texte déjà lu. La révision commence par les situations supplémentaires, qu'on n'a
-  // pas encore rencontrées dans les séries ordinaires.
+  // Les situations d'une notion se succèdent d'une réponse à l'autre, au lieu d'être tirées au hasard : on ne retrouve
+  // pas la bonne réponse à la seule vue d'un texte déjà lu. Séries ordinaires : cas et cas2, qui ont leur passage
+  // à trouver (INDICES) ; révision : les deux situations supplémentaires (casSup), jamais montrées ailleurs.
   quiz.serie.forEach(q => {
     const m = memoire[cleFiche(q.type, q.fiche)];
-    const f = q.fiche, sup = f.casSup || [];
-    const situations = (quiz.mode === "reviser" ? [...sup, f.cas, f.cas2] : [f.cas, f.cas2, ...sup]).filter(Boolean);
+    const f = q.fiche;
+    const situations = (quiz.mode === "reviser" && f.casSup && f.casSup.length ? f.casSup : [f.cas, f.cas2]).filter(Boolean);
     if (situations.length) q.cas = situations[(m ? m.n : 0) % situations.length];
   });
   // Réponse libre : la situation seule ; retrouver le nom de mémoire est plus exigeant que le reconnaître

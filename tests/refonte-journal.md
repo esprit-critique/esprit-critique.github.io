@@ -358,8 +358,9 @@ nuancés, répartition des réponses, contexte qui donne la réponse, mots du no
   trahissaient la réponse (« toujours », « jamais »), et parfois mis dans une bonne réponse.
 - Répartition : Qui doit prouver, « celui qui affirme » 10/20 → 8/20 ; sur la fiche d'un sophisme, l'exercice
   « recevable ou sophisme » montre une réplique recevable une fois sur deux (c'était toujours « sophisme »).
-- Bachotage du quiz : les quatre situations de chaque notion (cas, cas2, casSup) tournent d'une réponse à l'autre
-  (compteur `n` de la mémoire, sans nouvelle clé) ; mots du nom retirés de cinq situations (« un joueur »,
+- Bachotage du quiz : les situations de chaque notion tournent d'une réponse à l'autre au lieu d'être tirées au
+  hasard (compteur `n` de la mémoire, sans nouvelle clé) : cas et cas2 dans les séries ordinaires (ils ont leur passage
+  à trouver), les deux casSup en révision ; mots du nom retirés de cinq situations (« un joueur »,
   « Le procureur », « avis très négatif »…). Gardés : « naturel », « Aucun vrai… », « une seule cause »,
   « matérialiser la perte » (la forme même du sophisme, et les passages du jeu « Touchez le passage »).
 - Contenu : graphiques trompeurs, deux procédés de plus (axe horizontal irrégulier, nombres bruts au lieu de taux) ;
