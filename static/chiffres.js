@@ -1554,6 +1554,7 @@ function partiePoints(zone, avecRepere) {
     delete PARTIES_EN_COURS.points;
     // Partie notée (estimations à moins de 25 % d'écart), au niveau joué : les points suivent la réussite et la difficulté
     noterPartie("points", justes.filter(Boolean).length, justes.length, niveau);
+    if (essais.some(([n, v]) => n >= 100 && v === n)) trouverSecret("oeil-de-lynx");   // secret (profil.js)
     zone.appendChild(el("p", "consigne", "Résultat"));
     zone.appendChild(el("p", "grand-score", (pct >= 0 ? "+" : "") + pct + PC));
     zone.appendChild(paragraphe(Math.abs(pct) < 5 ? T("En moyenne, vos estimations étaient très proches des vraies valeurs.") : pct < 0 ? T("En moyenne, vos estimations étaient inférieures de {0} % aux vraies valeurs.", -pct) : T("En moyenne, vos estimations étaient supérieures de {0} % aux vraies valeurs.", pct)));

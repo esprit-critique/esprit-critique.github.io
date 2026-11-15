@@ -66,5 +66,21 @@ EN_AJOUTER([
   ["Les apparences", "Appearances"],
   ["Avoir révélé l'emblème de l'en-tête.", "Revealed the emblem in the header."],
   ["Démonteur d'illusions", "Illusion breaker"],
-  ["Avoir vérifié huit illusions du jour différentes.", "Checked eight different illusions of the day."]
+  ["Avoir vérifié huit illusions du jour différentes.", "Checked eight different illusions of the day."],
+  ["Chercheur de secrets", "Secret seeker"],
+  ["Avoir cherché un secret là où on cherche tout.", "Searched for a secret where you search for everything."],
+  ["Noctambule", "Night owl"],
+  ["Avoir gagné des points entre minuit et 5 heures du matin.", "Earned points between midnight and 5 a.m."],
+  ["Bilingue", "Bilingual"],
+  ["Avoir visité le site dans ses deux langues.", "Visited the site in both its languages."],
+  ["Sésame", "Open sesame"],
+  ["Avoir tapé au clavier le mot qui ouvre l'esprit critique, hors de tout champ.", "Typed on the keyboard the word that opens critical thinking, outside any field."],
+  ["Vendredi 13", "Friday the 13th"],
+  ["Avoir joué un vendredi 13, sans qu'il arrive rien de plus qu'un autre jour.", "Played on a Friday the 13th, with nothing more happening than on any other day."],
+  ["Œil de lynx", "Eagle eye"],
+  ["Avoir donné le nombre exact d'un nuage d'au moins cent points.", "Gave the exact count of a cloud of at least a hundred dots."],
+  ["Tous les sceaux", "Every seal"],
+  ["Avoir terminé tous les parcours.", "Finished every path."],
+  ["Cryptographe", "Cryptographer"],
+  ["Avoir résolu l'énigme laissée à ceux qui regardent sous le capot.", "Solved the riddle left for those who look under the hood."]
 ]);

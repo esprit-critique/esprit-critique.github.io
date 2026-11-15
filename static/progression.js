@@ -331,8 +331,18 @@ const DISTINCTIONS = [
   ["specialiste", "Spécialiste", d => Object.values(d.domaines || {}).some(v => v >= 800), "800 de maîtrise dans un domaine.", "#profil"],
   ["polyvalent", "Polyvalent", d => DOMAINES.every(([dom]) => (d.domaines || {})[dom] >= 300), "Au moins 300 dans chacun des six domaines.", "#profil"],
   ["apparences", "Les apparences", d => !!(d.drapeaux || {}).embleme, "Avoir révélé l'emblème de l'en-tête.", "#accueil", true],
-  ["demonteur", "Démonteur d'illusions", d => ((d.drapeaux || {}).illusions || []).length >= 8, "Avoir vérifié huit illusions du jour différentes.", "#accueil", true]
+  ["demonteur", "Démonteur d'illusions", d => ((d.drapeaux || {}).illusions || []).length >= 8, "Avoir vérifié huit illusions du jour différentes.", "#accueil", true],
+  // Secrets ajoutés le 15 novembre 2026 (solutions : tests/secrets.md), du plus facile au plus difficile
+  ["chercheur", "Chercheur de secrets", d => secretTrouve(d, "chercheur"), "Avoir cherché un secret là où on cherche tout.", "#accueil", true],
+  ["noctambule", "Noctambule", d => secretTrouve(d, "noctambule"), "Avoir gagné des points entre minuit et 5 heures du matin.", "#accueil", true],
+  ["bilingue", "Bilingue", d => secretTrouve(d, "langue-fr") && secretTrouve(d, "langue-en"), "Avoir visité le site dans ses deux langues.", "#accueil", true],
+  ["sesame", "Sésame", d => secretTrouve(d, "sesame"), "Avoir tapé au clavier le mot qui ouvre l'esprit critique, hors de tout champ.", "#accueil", true],
+  ["vendredi-13", "Vendredi 13", d => secretTrouve(d, "vendredi-13"), "Avoir joué un vendredi 13, sans qu'il arrive rien de plus qu'un autre jour.", "biais:apophenie", true],
+  ["oeil-de-lynx", "Œil de lynx", d => secretTrouve(d, "oeil-de-lynx"), "Avoir donné le nombre exact d'un nuage d'au moins cent points.", "#chiffres/points", true],
+  ["seize-sceaux", "Tous les sceaux", d => typeof PARCOURS !== "undefined" && PARCOURS.every(p => avancementParcours(p, donneesParcours()) === p.etapes.length), "Avoir terminé tous les parcours.", "#parcours", true],
+  ["cryptographe", "Cryptographe", d => secretTrouve(d, "cryptographe"), "Avoir résolu l'énigme laissée à ceux qui regardent sous le capot.", "#accueil", true]
 ];
+const secretTrouve = (d, id) => (((d.drapeaux || {}).secrets) || []).includes(id);
 function distinctionsObtenues(d) {
   return DISTINCTIONS.filter(([, , condition]) => { try { return !!condition(d); } catch (e) { return false; } }).map(([id]) => id);
 }

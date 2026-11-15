@@ -62,6 +62,13 @@ f.onload = async () => {
     photo = ev("photographier")(photo, 100, { globale: 300, domaines: {} });
     photo = ev("photographier")(photo, 101, { globale: 200, domaines: {} });
     ok("photographie : un grade acquis ne se perd pas (meilleure maîtrise gardée)", photo.meilleure === 300 && photo.jours[101][0] === 200 && photo.depuis === 100);
+    // Distinctions secrètes : chaque secret noté dans drapeaux.secrets donne la sienne ; « Bilingue » demande les deux langues
+    const obtenuesAvec = secrets => ev("distinctionsObtenues")({ drapeaux: { secrets }, ateliers: [], aujourdhui: 100, categorieDe: () => "" });
+    const tous = ["chercheur", "noctambule", "langue-fr", "langue-en", "sesame", "vendredi-13", "oeil-de-lynx", "cryptographe"];
+    const attendues = ["chercheur", "noctambule", "bilingue", "sesame", "vendredi-13", "oeil-de-lynx", "cryptographe"];
+    ok("distinctions secrètes : chaque secret trouvé donne sa distinction, et rien sans secret",
+      attendues.every(id => obtenuesAvec(tous).includes(id)) && !obtenuesAvec(["langue-fr"]).includes("bilingue") && !attendues.some(id => obtenuesAvec([]).includes(id)),
+      obtenuesAvec(tous).join(", "));
     for (let j = 0; j < 450; j++) photo = ev("photographier")(photo, 200 + j, { globale: 10, domaines: {} });
     ok("photographie : 400 jours au plus", Object.keys(photo.jours).length === 400);
 

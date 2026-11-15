@@ -129,7 +129,18 @@ function afficherRecherche() {
   }
   RECHERCHE.resultats = chercher(q);
   const total = RECHERCHE.resultats.length;
-  if (!total) {
+  // Secrets (profil.js) : « secret » donne un indice, le mot de l'énigme de la console la résout
+  const enigme = enigmeConsole();
+  const secret = comparable(q) === "secret" ? T("Rien à trouver ici. Les secrets ne se cherchent pas : ils se remarquent. Ceux qui regardent sous le capot en trouvent un.")
+    : enigme && comparable(q) === enigme.mot ? T("Énigme résolue. Vous savez lire les indices.") : null;
+  if (secret) {
+    trouverSecret(comparable(q) === "secret" ? "chercheur" : "cryptographe");
+    liste.appendChild(el("li", "resultat-vide", secret));
+    bilan.textContent = secret;
+  }
+  if (secret && !total) {
+    // rien de plus : l'indice tient lieu de résultat
+  } else if (!total) {
     liste.appendChild(el("li", "resultat-vide", T("Aucun résultat pour « {0} ».", q)));
     bilan.textContent = T("Aucun résultat pour « {0} ».", q);
   } else {

@@ -68,7 +68,7 @@ const SCHEMAS_SAUVEGARDE = {
   maitrise: { jours: ["dico", ["liste", "nombre", 10], 500], meilleure: "nombre", depuis: "jour", grade: "entier" },
   lucidite: { total: "nombre", jours: ["dico", "nombre", 200], compteurs: ["dico", "libre", 200], uniques: ["dico", "nombre", 2000],
     journal: ["liste", ["liste", "libre", 3], 60], rattrapage: "nombre", rattrapageVu: "booleen", cumuls: ["dico", "entier", 20] },
-  distinctions: { obtenues: ["liste", "texte", 100], drapeaux: { embleme: "booleen", illusions: ["liste", "texte", 50] } },
+  distinctions: { obtenues: ["liste", "texte", 100], drapeaux: { embleme: "booleen", illusions: ["liste", "texte", 50], secrets: ["liste", "texte", 50] } },
   objectif: "entier",
   profil: { pseudo: "texte", accueilFait: "booleen", personnage: { forme: "texte", genre: "texte", equipement: "texte" } },
   parcours: { actif: "texte", quiz: ["dico", "booleen", 50] }
