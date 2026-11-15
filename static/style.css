@@ -1817,6 +1817,10 @@ label[for] { display: block; margin: 0 0 8px; }
 .sceau-cercle.fin { stroke-width: 0.8; }
 .sceau-trait { fill: none; stroke: var(--c); stroke-width: 1.8; stroke-linecap: round; }
 .carte-parcours .barre-maitrise > div { background: var(--vert); }
+/* Bloc « Parcours guidés » de la page Ateliers : une ligne par parcours, le nom à gauche, l'avancement ou la durée à droite */
+.liste-parcours { list-style: none; margin: 10px 0 14px; padding: 0; }
+.liste-parcours li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; padding: 8px 0; border-top: 1px solid var(--trait-doux); }
+.liste-parcours li .lien-texte { min-height: 44px; display: inline-flex; align-items: center; }
 
 /* Synchronisation (coffre.js) */
 @media (max-width: 759px) { .etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 29px); right: 124px; } }
