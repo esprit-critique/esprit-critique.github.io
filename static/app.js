@@ -797,7 +797,9 @@ function afficherAccueil() {
   const serie = serieDeJours();
   const ligneDate = el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1));
   if (serie > 0) ligneDate.appendChild(el("span", "serie-jours", serie > 1 ? T("{0} jours d'affilée", serie) : T("1 jour d'affilée")));
-  tete.append(ligneDate, el("h1", "page-titre", "Aujourd'hui"));
+  // Salutation du jour (profil.js), le personnage du joueur à côté
+  const salut = salutation(nouveau);
+  tete.append(ligneDate, avecPersonnage(el("h1", "page-titre salut", salut.titre)), el("p", "salut-phrase", salut.phrase));
   tete.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
   // Nouveau visiteur (aucune activité, aucun atelier) : l'accueil en trois écrans (profil.js), sinon l'emblème en grand
   const bienvenue = nouveau ? carteBienvenue() : null;
@@ -1625,7 +1627,7 @@ function afficherBilan(zone) {
 
   const carte = el("article", "carte");
   carte.style.setProperty("--c", "#2a8a5c");
-  carte.appendChild(el("p", "consigne", quiz.mode === "reviser" ? "Bilan de la révision" : "Bilan de la série"));
+  carte.appendChild(avecPersonnage(el("p", "consigne", quiz.mode === "reviser" ? "Bilan de la révision" : "Bilan de la série"), el("p", "reaction", reactionBilan(n ? quiz.bonnes / n : 0))));
   carte.appendChild(el("p", "grand-score", quiz.bonnes + " / " + n));
   // Votre score face au hasard (pas pour la réponse libre : rien à deviner)
   if (quiz.mode !== "libre" && !modeSobre()) carte.appendChild(blocFaceAuHasard(quiz.bonnes, n, quiz.mode === "proches" ? 0.5 : 0.25));

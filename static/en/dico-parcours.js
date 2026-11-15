@@ -69,6 +69,8 @@ EN_AJOUTER([
   ["Durée : {0}.", "Duration: {0}."],
   ["Prochaine étape", "Next step"],
   ["Parcours terminé : {0}", "Path completed: {0}"],
+  ["Bravo, {0} : un parcours de plus à votre actif.", "Well done, {0}: one more path completed."],
+  ["Bravo : un parcours de plus à votre actif.", "Well done: one more path completed."],
   ["Choisir un autre parcours", "Choose another path"],
   ["Sceau du parcours « {0} »", "Seal of the path “{0}”"],
   ["Quiz ciblé", "Targeted quiz"],

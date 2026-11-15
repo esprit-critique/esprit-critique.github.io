@@ -1552,6 +1552,16 @@ label[for] { display: block; margin: 0 0 8px; }
 /* Accueil : ouverture, programme du jour */
 .accueil-tete { margin-bottom: 28px; }
 .accueil-tete .page-intro { max-width: 62ch; }
+/* Salutation de l'accueil et bilans : le personnage du joueur à gauche du titre */
+.avec-personnage { display: flex; align-items: center; gap: 12px; }
+.avec-personnage-textes { min-width: 0; }
+.avec-personnage-textes > * { margin-top: 0; margin-bottom: 0; }
+.accueil-tete .page-titre.salut { font-size: clamp(34px, 6vw, 56px); }
+.accueil-tete .avec-personnage .portrait { width: 64px; height: 64px; }
+.avec-personnage .portrait { flex: none; }
+.page-titre.salut { overflow-wrap: anywhere; }
+.salut-phrase { font-family: var(--titre); font-style: italic; font-size: 19px; margin: 6px 0 10px; max-width: 62ch; }
+.reaction { font-family: var(--titre); font-style: italic; color: var(--discret); }
 .serie-jours { display: inline-block; margin-left: 10px; padding: 1px 8px; border: 1px solid var(--trait); border-radius: 999px;
   font-size: 13px; font-weight: 600; color: var(--texte); background: var(--carte); }
 .programme { margin: 0 0 22px; }

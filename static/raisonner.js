@@ -238,6 +238,12 @@ EXPERIENCES.push(
       // Quatre par case, tirés parmi huit : les indices gardent la même échelle d'une partie à l'autre
       const items = melanger([[true, true], [true, false], [false, true], [false, false]]
         .flatMap(([v, c]) => melanger(SYLLOGISMES.filter(s => s.valide === v && s.credible === c)).slice(0, 4)));
+      // Au moins un syllogisme avec explications : la phase 2 en présente une comme celle d'un autre joueur (sans elle,
+      // la partie s'arrêtait, une fois sur 130 environ). On remplace un syllogisme de la même case.
+      if (!items.some(s => s.justifications)) {
+        const k = items.findIndex(s => SYLLOGISMES.some(t => t.justifications && t.valide === s.valide && t.credible === s.credible));
+        items[k] = melanger(SYLLOGISMES.filter(t => t.justifications && t.valide === items[k].valide && t.credible === items[k].credible))[0];
+      }
       const reponses = {};       // id → true si l'utilisateur dit « valide »
       const choisies = [];       // justifications choisies par l'utilisateur : { s, texte, correcte }
       derouler(zone, items, (s, zone, fini) => {
