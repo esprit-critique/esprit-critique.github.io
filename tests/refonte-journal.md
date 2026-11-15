@@ -341,6 +341,35 @@ Audit du site rendu (Chrome, 375 / 768 / 1 440 px) : 13 corrections, un commit c
   calculées exactement (écarts de 4,4 et 5,5 bits ; 1,3 et 1,6 bits). Niveaux 1 à 3 des mots de passe laissés à
   3 paires : leurs mots de passe « humains » reposent sur des estimations qu'il faudrait sourcer.
 
+## Réponses qui se devinent sans réfléchir (15 novembre 2026, deuxième lot)
+
+Audit de toutes les banques de questions à choix : position fixe de la bonne réponse, longueur, mots absolus ou
+nuancés, répartition des réponses, contexte qui donne la réponse, mots du nom repris dans la situation.
+
+- Position : options mélangées à l'affichage (`melangerOptions`, `ateliers.js`) pour Le monde en chiffres (bonne réponse en
+  première place 8 fois sur 60 seulement), le défi du jour (tirage d'ordre séparé, les défis partagés gardent leurs questions),
+  problèmes classiques à choix, avions de Wald et survivants, problèmes à plusieurs, graphiques trompeurs.
+- Longueur (bonne réponse la plus longue) : Comprendre 5/5 → 0/5, survivants 4/4 → 1/4, Reformuler (« acier »)
+  15/15 → 4/15, prémisses cachées 17/21 → 4/21, problèmes classiques 13/20 → 4/20, justifications des syllogismes
+  3/6 → 1/6, graphiques trompeurs 5/9 → 0, grand test 67/143 → 15/143. Grand test : leurres des familles
+  « hypothèse » et « information utile » réécrits en propositions plausibles (c'étaient « La plante est verte »),
+  présupposition acceptée dans deux leurres, élision « Qu'une… » ; oracle du banc familles mis à jour (« joueur »).
+- Tournure : plus d'accusation avec « sophisme » (lot précédent) ; mots absolus retirés des leurres où ils
+  trahissaient la réponse (« toujours », « jamais »), et parfois mis dans une bonne réponse.
+- Répartition : Qui doit prouver, « celui qui affirme » 10/20 → 8/20 ; sur la fiche d'un sophisme, l'exercice
+  « recevable ou sophisme » montre une réplique recevable une fois sur deux (c'était toujours « sophisme »).
+- Bachotage du quiz : les quatre situations de chaque notion (cas, cas2, casSup) tournent d'une réponse à l'autre
+  (compteur `n` de la mémoire, sans nouvelle clé) ; mots du nom retirés de cinq situations (« un joueur »,
+  « Le procureur », « avis très négatif »…). Gardés : « naturel », « Aucun vrai… », « une seule cause »,
+  « matérialiser la perte » (la forme même du sophisme, et les passages du jeu « Touchez le passage »).
+- Contenu : graphiques trompeurs, deux procédés de plus (axe horizontal irrégulier, nombres bruts au lieu de taux) ;
+  mots de passe, deux paires de plus aux niveaux 1 à 3, avec le modèle d'estimation déjà affiché.
+- Banc `ateliers` : contrôle de la longueur dans chaque banque (un tiers au plus, la moitié pour les banques de
+  cinq questions au plus), dans le grand test (un QCM sur cinq au plus), de la répartition de Qui doit prouver.
+- Restent, voulus : Mots de passe, le plus long gagne 17 fois sur 25 (aux niveaux 1 et 2, c'est la leçon) ;
+  conjonction du grand test, la bonne réponse est toujours la plus courte (c'est le raisonnement attendu) ;
+  Citations, « authentique » juste dans la moitié des cas (faits sourcés, non modifiables).
+
 ## État des lieux (lot 0, commit cb90ed8)
 
 ### Poids de `static/`

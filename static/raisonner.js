@@ -26,7 +26,7 @@ const SYLLOGISMES = [
   { id: "fourmis", p: ["Tous les insectes ont huit pattes.", "Les fourmis sont des insectes."], c: "Les fourmis ont huit pattes.", valide: true, credible: false,
     justifications: [
       ["Valide : si les deux prémisses étaient vraies, la conclusion le serait forcément, même si la première est fausse.", true],
-      ["Non valide : les fourmis ont six pattes, donc la conclusion est fausse.", false],
+      ["Non valide : les fourmis ont six pattes, comme tous les insectes, donc la conclusion est fausse et le raisonnement ne tient pas.", false],
       ["Non valide : la première prémisse est fausse, donc le raisonnement ne tient pas.", false]
     ] },
   { id: "epinards", p: ["Aucun légume n'est vert.", "Les épinards sont des légumes."], c: "Les épinards ne sont pas verts.", valide: true, credible: false },
@@ -44,13 +44,13 @@ const SYLLOGISMES = [
   { id: "chats", p: ["Tous les chats sont des animaux.", "Certains animaux sont domestiques."], c: "Certains chats sont domestiques.", valide: false, credible: true,
     justifications: [
       ["Valide : tout le monde sait que des chats sont domestiques.", false],
-      ["Valide : les chats sont des animaux, et certains animaux sont domestiques.", false],
+      ["Valide : les chats sont des animaux, et certains animaux sont domestiques, donc certains chats font partie de ces animaux domestiques.", false],
       ["Non valide : les animaux domestiques dont parle la seconde prémisse ne sont peut-être pas des chats.", true]
     ] },
   { id: "roses", p: ["Toutes les roses sont des fleurs.", "Certaines fleurs fanent vite."], c: "Certaines roses fanent vite.", valide: false, credible: true,
     justifications: [
-      ["Valide : les roses sont des fleurs, et certaines fleurs fanent vite, donc certaines roses aussi.", false],
-      ["Non valide : les fleurs qui fanent vite ne sont peut-être pas des roses ; la conclusion est peut-être vraie, mais elle ne découle pas des prémisses.", true],
+      ["Valide : les roses sont des fleurs, et certaines fleurs fanent vite ; certaines roses font donc forcément partie de celles qui fanent vite.", false],
+      ["Non valide : les fleurs qui fanent vite ne sont peut-être pas des roses ; la conclusion peut être vraie sans découler des prémisses.", true],
       ["Valide : on voit bien des roses faner en quelques jours.", false]
     ] },
   { id: "truites", p: ["Tous les poissons vivent dans l'eau.", "Les truites vivent dans l'eau."], c: "Les truites sont des poissons.", valide: false, credible: true },

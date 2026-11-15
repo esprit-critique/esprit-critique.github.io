@@ -781,26 +781,26 @@ const PIEGES_REPARER = [
 // La première proposition est la prémisse dont dépend l'argument ; les autres sont vraies ou plausibles,
 // mais l'argument n'en a pas besoin.
 const PREMISSES = {
-  "ad-hominem": ["Quelqu'un qui a raté son bac ne peut pas faire un budget juste.", "Le budget du club est en déficit.", "Le bac est obligatoire pour être trésorier.", "Un budget doit être voté par le bureau."],
-  "tu-quoque": ["Un conseil ne vaut que si celui qui le donne l'applique lui-même.", "Les téléphones nuisent à la conversation.", "Passer ses soirées sur son téléphone fatigue les yeux.", "Les repas en famille sont importants."],
-  "autorite": ["Un champion de tennis sait si un matelas soigne le mal de dos.", "Le mal de dos est fréquent.", "Les matelas fermes sont les meilleurs.", "Les sportifs dorment beaucoup."],
-  "popularite": ["Un produit très vendu est forcément efficace.", "Les rides apparaissent avec l'âge.", "Cette crème est vendue en pharmacie.", "Les crèmes chères sont les meilleures."],
-  "tradition": ["Ce qu'on a toujours fait est la meilleure façon de faire.", "Les réunions du lundi sont utiles.", "8 heures est une heure matinale.", "L'équipe préfère se réunir le matin."],
+  "ad-hominem": ["Quelqu'un qui a raté son bac ne peut pas faire un budget juste.", "Le budget du club doit être présenté au bureau avant d'être voté.", "Un trésorier doit savoir tenir des comptes sans erreur de calcul.", "Le bac est obligatoire pour être trésorier."],
+  "tu-quoque": ["Un conseil ne vaut que si celui qui le donne l'applique lui-même.", "Passer ses soirées sur son téléphone fatigue les yeux et nuit au sommeil.", "Les repas en famille sont un moment important pour se parler.", "Un bon conseil doit être formulé avec gentillesse pour être écouté."],
+  "autorite": ["Un champion de tennis sait si un matelas soigne le mal de dos.", "Les matelas fermes conviennent mieux à certains dos que les matelas mous.", "Les sportifs de haut niveau dorment beaucoup pour bien récupérer.", "Le mal de dos est fréquent."],
+  "popularite": ["Un produit très vendu est forcément efficace.", "Cette crème est vendue en pharmacie et en grande surface depuis des années.", "Les rides apparaissent avec l'âge.", "Les crèmes chères sont souvent mieux présentées que les autres."],
+  "tradition": ["Ce qu'on a toujours fait est la meilleure façon de faire.", "Changer l'heure d'une réunion demande de prévenir toute l'équipe à l'avance.", "L'équipe préfère se réunir le matin, avant les rendez-vous.", "8 heures est une heure matinale."],
   "nature": ["Ce qui est naturel est sans danger.", "Les enfants aiment les sirops sucrés.", "Ce sirop est vendu sans ordonnance.", "Les plantes poussent sans engrais."],
-  "emotion": ["Ce qui fait peur justifie à lui seul un achat.", "Les détecteurs de fumée sont chers.", "Les incendies sont plus fréquents l'hiver.", "Les enfants dorment dans leur chambre."],
-  "genetique": ["Une idée inventée pour de mauvaises raisons est forcément mauvaise.", "Les patrons cherchent la publicité.", "Les salariés aiment les week-ends longs.", "La semaine de quatre jours existe dans plusieurs pays."],
-  "homme-de-paille": ["Limiter les écrans à une heure revient à priver les enfants de toute technologie.", "Les enfants passent beaucoup de temps sur les écrans.", "La technologie est utile aujourd'hui.", "Une heure par jour suffit pour les devoirs."],
-  "faux-dilemme": ["Il n'existe aucune autre façon de partir en vacances qu'avec une voiture neuve.", "Les voitures neuves sont chères.", "Les vacances font du bien.", "Notre voiture actuelle consomme beaucoup."],
-  "juste-milieu": ["La vraie valeur se trouve toujours à mi-chemin entre deux estimations.", "Les prix de l'immobilier varient selon les quartiers.", "L'acheteur connaît bien le quartier.", "La maison a un grand jardin."],
-  "fausse-analogie": ["Ce qui vaut pour l'entretien d'une machine vaut aussi pour un être humain.", "Les machines doivent être entretenues.", "Les employés aiment leur travail.", "La productivité se mesure en heures."],
+  "emotion": ["Ce qui fait peur justifie à lui seul un achat.", "Un détecteur de fumée doit être installé dans le couloir, près des chambres.", "Les enfants dorment dans leur chambre, à l'étage.", "Les détecteurs de fumée sont chers."],
+  "genetique": ["Une idée inventée pour de mauvaises raisons est forcément mauvaise.", "Une mesure de temps de travail se juge d'abord à son coût pour l'entreprise.", "Les patrons cherchent la publicité.", "La semaine de quatre jours existe dans plusieurs pays."],
+  "homme-de-paille": ["Limiter les écrans à une heure revient à priver les enfants de toute technologie.", "Les enfants passent beaucoup de temps sur les écrans, surtout le week-end.", "Une heure d'écran par jour suffit pour faire ses devoirs et se détendre.", "Une limite qui vaut pour tous les enfants doit être appliquée de la même façon par toutes les familles."],
+  "faux-dilemme": ["Il n'existe aucune autre façon de partir en vacances qu'avec une voiture neuve.", "Notre voiture actuelle consomme beaucoup et tombe souvent en panne sur les longs trajets.", "Les vacances font du bien.", "Une voiture neuve coûte cher, mais elle se revend mieux qu'une voiture d'occasion."],
+  "juste-milieu": ["La vraie valeur se trouve toujours à mi-chemin entre deux estimations.", "Les prix de l'immobilier varient beaucoup d'un quartier à l'autre de la même ville.", "L'acheteur connaît bien le quartier.", "Une maison avec un grand jardin se vend en général plus cher qu'un appartement."],
+  "fausse-analogie": ["Ce qui vaut pour l'entretien d'une machine vaut aussi pour un être humain.", "Un employé fatigué fait plus d'erreurs qu'un employé reposé, quel que soit son poste.", "Les machines doivent être entretenues.", "La productivité d'un service se mesure en heures travaillées et en dossiers traités."],
   "nirvana": ["Une protection qui n'est pas parfaite ne sert à rien.", "Les accidents de vélo arrivent surtout en ville.", "Les casques sont parfois inconfortables.", "Les cyclistes roulent de plus en plus."],
   "post-hoc": ["Ce qui précède un événement en est la cause.", "Changer de coiffeur coûte cher.", "Les recruteurs reçoivent beaucoup de candidatures.", "L'emploi était très demandé."],
-  "correlation": ["Si deux choses varient ensemble, l'une cause l'autre.", "Les lycéens se couchent tard.", "Les notes sont données sur 20.", "Le sommeil est important pour la santé."],
-  "pente-glissante": ["Autoriser une chose conduit forcément à autoriser des choses de plus en plus extrêmes.", "Les chevaux sont plus grands que les chiens.", "Les chiens aiment courir.", "Le parc a une grande pelouse."],
-  "generalisation-hative": ["Deux cas suffisent pour juger tous les stagiaires.", "Les stagiaires sont souvent jeunes.", "Arriver à l'heure est apprécié.", "Les stagiaires changent chaque année."],
-  "composition": ["Si chaque ingrédient est délicieux, le mélange l'est aussi.", "Les gâteaux maison sont appréciés.", "Le chocolat se marie bien avec la vanille.", "La recette est facile."],
+  "correlation": ["Si deux choses varient ensemble, l'une cause l'autre.", "Le sommeil est important pour la santé.", "Les lycéens se couchent tard.", "Les notes sont données sur 20."],
+  "pente-glissante": ["Autoriser une chose conduit forcément à autoriser des choses de plus en plus extrêmes.", "Les chiens doivent être tenus en laisse dans les lieux publics où jouent des enfants.", "Le parc a une grande pelouse.", "Une règle adoptée par la mairie s'applique à tous les habitants de la commune, sans exception."],
+  "generalisation-hative": ["Deux cas suffisent pour juger tous les stagiaires.", "Les stagiaires changent chaque année.", "Arriver à l'heure est apprécié.", "Les stagiaires sont souvent jeunes."],
+  "composition": ["Si chaque ingrédient est délicieux, le mélange l'est aussi.", "Le chocolat se marie bien avec la vanille.", "La recette est facile.", "Les gâteaux maison sont appréciés."],
   "ignorance": ["Ce qui n'a pas été prouvé faux est vrai.", "Les compléments alimentaires se vendent en pharmacie.", "Les essais cliniques prennent du temps.", "Ce complément contient des vitamines."],
-  "cherry-picking": ["Les trois meilleurs numéros représentent bien l'ensemble.", "Les abonnés lisent surtout le titre.", "Une newsletter paraît chaque semaine.", "Les abonnés ouvrent tous les numéros."],
+  "cherry-picking": ["Les trois meilleurs numéros représentent bien l'ensemble.", "Une newsletter paraît chaque semaine et doit garder ses abonnés.", "Les abonnés lisent surtout le titre et le premier paragraphe.", "Les abonnés ouvrent tous les numéros."],
   "cause-unique": ["Un phénomène complexe n'a qu'une seule cause.", "Les élèves ont souvent un téléphone.", "Les élèves lisent moins de livres qu'avant.", "Les tests de lecture changent d'une année à l'autre."]
 };
 
@@ -1474,17 +1474,24 @@ function entrainementFiche(type, fiche) {
 
   // 1. Une réplique de débat : recevable ou sophisme ?
   if (repliques.length) {
-    const { r, d } = repliques[0];
+    // Sur la fiche d'un sophisme, une réplique toujours fautive se devinerait sans la lire : une fois sur deux, on montre
+    // à la place une réplique recevable du même débat
+    const { r: fautive, d } = repliques[0];
+    const recevables = d.repliques.filter(x => !x.sophisme);
+    const r = recevables.length && Math.random() < 0.5 ? melanger(recevables)[0] : fautive;
+    const attendu = r.sophisme ? 1 : 0;
     const ex = el("div", "exercice");
     ex.append(el("p", "consigne", T("Dans un débat : {0}", T(d.titre).toLowerCase())), blocReplique(r, "replique-fiche"));
     const choix = [boutonChoix("Recevable", 0), boutonChoix("Sophisme", 1)];
     choix.forEach((b, k) => {
       b.addEventListener("click", () => {
         choix.forEach(x => { x.disabled = true; });
-        choix[1].classList.add("juste");
-        if (k === 0) choix[0].classList.add("faux");
+        choix[attendu].classList.add("juste");
+        if (k !== attendu) choix[k].classList.add("faux");
         const retour = el("div", "retour-quiz");
-        corrigerReplique(retour, r, k === 1 ? "Juste : c'est un exemple de ce sophisme." : "Non : c'est un exemple de ce sophisme.", k === 1);
+        const verdict = r.sophisme ? (k === 1 ? "Juste : c'est un exemple de ce sophisme." : "Non : c'est un exemple de ce sophisme.")
+          : (k === 0 ? "Juste : cette réplique est recevable." : "Non : cette réplique est recevable, même sur la fiche d'un sophisme.");
+        corrigerReplique(retour, r, verdict, k === attendu);
         ex.appendChild(retour);
       });
       ex.appendChild(b);
