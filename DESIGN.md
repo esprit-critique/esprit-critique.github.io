@@ -190,8 +190,9 @@ autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une s
   Le même dessin (chemins SVG, rejoués par `Path2D`) figure sur l'image « Partager mon grade ». Puis l'insigne du grade (galons faits des
   ailettes de l'emblème), maîtrise en grand nombre, jauge vers le grade suivant et la phrase « La maîtrise mesure votre
   réussite dans les jeux de ce site, pas votre intelligence. » ; onglets. Graphiques selon « Graphiques ».
-- **Accueil** : le titre est une salutation (formule selon l'heure et la date, pseudonyme s'il existe) avec le personnage
-  du joueur à gauche ; dessous, une phrase en italique selon la situation (retour, révisions, série, parcours), sinon une
+- **Accueil** : le titre est une salutation (formule selon l'heure et la date, pseudonyme s'il existe) ; l'avatar du
+  joueur (88 px, 52 px sur téléphone) à gauche de la date, du titre et de la phrase, mène au choix du personnage. L'avatar
+  est le même partout, mode sobre compris ; dessous, une phrase en italique selon la situation (retour, révisions, série, parcours), sinon une
   idée du jour (jamais un fait chiffré). Le personnage revient, avec un mot selon la réussite, aux bilans des ateliers,
   du quiz et des parcours.
 - **Bouton de profil** dans l'en-tête : anneau de l'objectif du jour, insigne ; sur ordinateur, personnage et maîtrise.
