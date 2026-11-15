@@ -132,6 +132,8 @@ page("mentions-legales.html", "Mentions légales", "Éditeur, hébergeur et lice
           <li>EM-DAT (catastrophes naturelles) : « EM-DAT, CRED / UCLouvain, Bruxelles, Belgique, www.emdat.be ». Seuls deux
           chiffres agrégés sont cités ; la base n'est pas redistribuée.</li>
           <li>Gapminder : « Based on free material from GAPMINDER.ORG, CC-BY LICENSE ».</li>
+          <li>Natural Earth (contours des terres du planisphère de « Le nord est où ? ») : « Made with Natural Earth »,
+          naturalearthdata.com, domaine public.</li>
           <li>Autres sources (ONU, Insee, NASA, Our World in Data, études scientifiques…) : citées à côté de chaque chiffre,
           selon leurs propres conditions.</li>
         </ul>
@@ -299,6 +301,8 @@ page("legal-notice.html", "Legal notice", "Publisher, host and licences of the E
           <li>EM-DAT (natural disasters): “EM-DAT, CRED / UCLouvain, Brussels, Belgium, www.emdat.be”. Only two aggregate
           figures are quoted; the database is not redistributed.</li>
           <li>Gapminder: “Based on free material from GAPMINDER.ORG, CC-BY LICENSE”.</li>
+          <li>Natural Earth (land outlines of the world map in “Where is north?”): “Made with Natural Earth”,
+          naturalearthdata.com, public domain.</li>
           <li>Other sources (UN, Insee, NASA, Our World in Data, scientific studies…): credited next to each figure, under their
           own terms.</li>
         </ul>
