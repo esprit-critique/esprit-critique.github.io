@@ -325,9 +325,9 @@ function dessinerPersonnageCanvas(ctx, etat, x, y, cote) {
 }
 
 // ===================== Salutations =====================
-// Le personnage du joueur, petit, à côté d'un titre (accueil, bilans) ; neutre en mode sobre, comme le bouton de profil
+// Le personnage du joueur (accueil, bilans), le même que dans le profil, mode sobre compris : c'est son avatar
 function personnageDuJoueur(taille) {
-  return personnage(modeSobre() ? { jours: {}, meilleure: 0 } : lire("maitrise", { jours: {}, meilleure: 0 }), taille);
+  return personnage(lire("maitrise", { jours: {}, meilleure: 0 }), taille);
 }
 function avecPersonnage(...enfants) {
   const ligne = el("div", "avec-personnage");
@@ -410,7 +410,8 @@ function majBoutonProfil(m, etat) {
   if (!b) return;
   // Mode sobre : bouton neutre (blason seul), pour que le profil et ses réglages restent atteignables
   b.classList.toggle("sobre", modeSobre());
-  if (modeSobre()) { /* rang 0, aucun domaine : le personnage choisi, sans rien qui trahisse le grade */ b.replaceChildren(personnage({ jours: {}, meilleure: 0 }, 26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
+  // Mode sobre : l'avatar seul, sans maîtrise ni insigne (l'avatar reste celui du joueur, comme dans son profil)
+  if (modeSobre()) { b.replaceChildren(personnageDuJoueur(26)); b.setAttribute("aria-label", T("Profil et réglages")); return; }
   etat = etat || lire("maitrise", { meilleure: 0, jours: {} });
   const globale = m ? m.globale : (Object.entries(etat.jours || {}).sort((a, x) => x[0] - a[0])[0] || [0, [0]])[1][0];
   const grade = gradeDe(etat.meilleure || 0);

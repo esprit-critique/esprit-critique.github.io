@@ -1557,7 +1557,17 @@ label[for] { display: block; margin: 0 0 8px; }
 .avec-personnage-textes { min-width: 0; }
 .avec-personnage-textes > * { margin-top: 0; margin-bottom: 0; }
 .accueil-tete .page-titre.salut { font-size: clamp(34px, 6vw, 56px); }
-.accueil-tete .avec-personnage .portrait { width: 64px; height: 64px; }
+/* Accueil : l'avatar à gauche du bloc date, salutation, phrase, centré sur lui ; plus petit sur téléphone */
+.salut-accueil { display: flex; align-items: center; gap: 18px; }
+.salut-textes { min-width: 0; }
+.salut-textes .page-titre { margin: 2px 0 0; }
+.salut-textes .salut-phrase { margin-bottom: 0; }
+.lien-avatar { flex: none; display: block; border-radius: 50%; }
+.lien-avatar .portrait { display: block; width: 88px; height: 88px; transition: transform var(--duree-courte) var(--courbe); }
+.lien-avatar:hover .portrait { transform: scale(1.04); }
+/* Téléphone : le titre passe souvent sur deux lignes ; l'avatar s'aligne sur la première, sous la date */
+@media (max-width: 759px) { .salut-accueil { align-items: flex-start; gap: 12px; } .lien-avatar { margin-top: 30px; } .lien-avatar .portrait { width: 52px; height: 52px; } }
+.salut-accueil + .page-intro { margin-top: 14px; }
 .avec-personnage .portrait { flex: none; }
 .page-titre.salut { overflow-wrap: anywhere; }
 .salut-phrase { font-family: var(--titre); font-style: italic; font-size: 19px; margin: 6px 0 10px; max-width: 62ch; }

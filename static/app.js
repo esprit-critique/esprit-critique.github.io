@@ -797,9 +797,17 @@ function afficherAccueil() {
   const serie = serieDeJours();
   const ligneDate = el("p", "date-du-jour", date.charAt(0).toUpperCase() + date.slice(1));
   if (serie > 0) ligneDate.appendChild(el("span", "serie-jours", serie > 1 ? T("{0} jours d'affilée", serie) : T("1 jour d'affilée")));
-  // Salutation du jour (profil.js), le personnage du joueur à côté
+  // Salutation du jour (profil.js) : l'avatar du joueur à gauche de la date, du titre et de la phrase ; le toucher mène
+  // au choix du personnage
   const salut = salutation(nouveau);
-  tete.append(ligneDate, avecPersonnage(el("h1", "page-titre salut", salut.titre)), el("p", "salut-phrase", salut.phrase));
+  const avatar = lienVers("#profil/reglages", undefined, "lien-avatar");
+  avatar.setAttribute("aria-label", T("Modifier votre personnage"));
+  avatar.appendChild(personnageDuJoueur(88));
+  const textesSalut = el("div", "salut-textes");
+  textesSalut.append(ligneDate, el("h1", "page-titre salut", salut.titre), el("p", "salut-phrase", salut.phrase));
+  const ligneSalut = el("div", "salut-accueil");
+  ligneSalut.append(avatar, textesSalut);
+  tete.appendChild(ligneSalut);
   tete.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
   // Nouveau visiteur (aucune activité, aucun atelier) : l'accueil en trois écrans (profil.js), sinon l'emblème en grand
   const bienvenue = nouveau ? carteBienvenue() : null;
