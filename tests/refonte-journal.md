@@ -322,6 +322,25 @@ Audit du site rendu (Chrome, 375 / 768 / 1 440 px) : 13 corrections, un commit c
 - En local dans un conteneur Linux lancé en root, Chrome ne démarre qu'avec `--no-sandbox` : passer par un petit
   lanceur dans `CHROME` (les bancs ne sont pas modifiés).
 
+## Retours du 15 novembre 2026 (branche `claude/pensive-goodall-m91c73`)
+
+- « Bilan des syllogismes non affiché » : le bilan s'affichait (16 parties robot, 0 erreur), mais le commentaire sur
+  votre propre raisonnement était inversé : « Vous avez su le rejeter… » apparaissait quand on l'avait accepté, et
+  rien quand on l'avait bien rejeté. Corrigé ; nouveau cas « adopté une seconde fois ».
+- Répétitions : 32 syllogismes au lieu de 16 (8 par case), une partie en tire 4 par case ; indices toujours de −4 à +4.
+- Réparer l'argument : la réparation était la réécriture la plus longue 39 fois sur 40, et « la simple accusation »
+  contenait presque toujours « sophisme ». Leurres réécrits (aussi longs et concrets que la réparation, accusation
+  argumentée), réparations trop longues resserrées : plus longue 8 fois sur 40. Banc `ateliers` : au plus un tiers,
+  et aucune réécriture avec « sophisme ».
+- Pièges : aux niveaux 4 et 5, la consigne devient « Cet argument tient-il ? », l'étape « reconnaître » propose trois
+  sophismes et « Aucun : l'argument tient », et une question sur cinq environ est un argument recevable qui ressemble à
+  un sophisme (`PIEGES_REPARER`, 8 situations fictives sans chiffre à sourcer).
+- Autres ateliers répétitifs (stock trop petit pour une partie) : « Qui doit prouver ? » passe de 10 à 20 situations,
+  10 tirées par partie (les moins récemment vues d'abord) ; « Hameçonnage » passe de 23 à 33 messages (2 de plus par
+  niveau, 6 à 7 par niveau pour 8 par partie) ; « Mots de passe » gagne 4 paires tirées au hasard aux niveaux 4 et 5,
+  calculées exactement (écarts de 4,4 et 5,5 bits ; 1,3 et 1,6 bits). Niveaux 1 à 3 des mots de passe laissés à
+  3 paires : leurs mots de passe « humains » reposent sur des estimations qu'il faudrait sourcer.
+
 ## État des lieux (lot 0, commit cb90ed8)
 
 ### Poids de `static/`
