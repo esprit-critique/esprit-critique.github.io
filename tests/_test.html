@@ -492,6 +492,12 @@ f.onload = async () => {
     const d1 = w.eval("questionsDuDefi")(jourD), d2 = w.eval("questionsDuDefi")(jourD), dDemain = w.eval("questionsDuDefi")(jourD + 1);
     ok("défi : 10 questions, les mêmes toute la journée, d'autres demain", d1.length === 10 && d1.map(q => q.texte).join() === d2.map(q => q.texte).join() && d1.map(q => q.texte).join() !== dDemain.map(q => q.texte).join());
     ok("défi : chaque question a sa bonne réponse parmi les options", d1.every(q => q.options[q.juste] !== undefined && q.explication));
+    // Rotation sans remise : aucune question du défi ne revient en une semaine, aucun vrai-faux du jour en 90 jours
+    const R0 = w.eval("ROTATION_DEPUIS"), cleQ = q => q.texte + "|" + [...q.options].sort().join("/");
+    const semaine = Array.from({ length: 7 }, (_, k) => w.eval("questionsDuDefi")(R0 + k).map(cleQ)).flat();
+    const tirer = w.eval("tirerSansRemise"), VF = w.eval("VRAI_FAUX");
+    const vfs = new Set(Array.from({ length: 90 }, (_, k) => tirer(VF, 1, R0 + k, 29)[0]));
+    ok("défi : 70 questions différentes sur sept jours ; vrai-faux du jour : 90 différents sur 90 jours", new Set(semaine).size === 70 && vfs.size === 90, new Set(semaine).size + " / " + vfs.size);
     [...vue().querySelectorAll(".defi-jour button")].find(b => /Relever/.test(b.textContent)).click();
     for (let k = 0; k < 10; k++) {
       touche("1");
