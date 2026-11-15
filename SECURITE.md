@@ -100,6 +100,13 @@ taille et leurs dates.
 pouvoir être réaffiché : c'est un compromis assumé entre sécurité et récupération. Qui a le code peut lire et modifier
 le coffre ; « Supprimer la copie en ligne » l'efface, et créer un nouveau compte en donne un autre.
 
+**Effacer et remplacer, avec la synchronisation active.** « Effacer ma progression » déconnecte aussi l'appareil, et
+supprime la copie en ligne si la personne le confirme : sans cela, la fusion redonnait au rechargement tout ce qui
+venait d'être effacé (une clé absente localement prenait la valeur du coffre). Si la suppression en ligne échoue, rien
+n'est effacé. Un import ou une restauration remplace le coffre au prochain envoi au lieu d'y fusionner (drapeau local
+`remplacementLocal`). Limite : un autre appareil encore connecté y renvoie ses propres données à sa synchronisation
+suivante ; il faut le déconnecter aussi (audit du 16 novembre 2026, `tests/securite-audit.md`).
+
 **Pas de récupération.** Sans adresse électronique, il n'y a personne à qui renvoyer un code perdu : c'est le prix
 d'une synchronisation sans donnée personnelle. Le site propose d'enregistrer le code dans le gestionnaire de mots de
 passe, de l'imprimer, et le réaffiche (après confirmation) sur tout appareil déjà connecté.

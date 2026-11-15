@@ -77,6 +77,14 @@ const ok = (libelle, condition, detail = '') => { if (!condition) echecs++; cons
     const { contenu } = await r.json();
     return !/ancrage|post-hoc|confiance/.test(contenu) && JSON.parse(contenu).v === 1;
   }, SYNCHRO));
+  // Remplacement (import ou restauration) sur B : le coffre prend la progression importée, les clés absentes ne reviennent pas
+  const apresRemplacement = await B.page.evaluate(async () => {
+    remplacerProgression({ acquis: ['biais:halo'] });
+    await synchroniser();
+    await synchroniser();   // une seconde fusion avec le coffre ne doit rien rapporter
+    return { acquis: JSON.parse(localStorage.getItem('acquis')), records: localStorage.getItem('records'), drapeau: localStorage.getItem('remplacementLocal') };
+  });
+  ok('remplacement synchronisé : seule la progression importée reste, le drapeau est levé', JSON.stringify(apresRemplacement.acquis) === '["biais:halo"]' && apresRemplacement.records === null && apresRemplacement.drapeau === null, JSON.stringify(apresRemplacement));
   // Contenu altéré d'un seul bit : refusé, les données locales restent intactes
   const avant = await lireCles(A.page);
   const refus = await A.page.evaluate(async url => {
@@ -92,6 +100,14 @@ const ok = (libelle, condition, detail = '') => { if (!condition) echecs++; cons
   }, SYNCHRO);
   ok('contenu altéré d\'un seul bit : refusé', refus === 'refusé');
   ok('contenu altéré : les données locales sont intactes', JSON.stringify(await lireCles(A.page)) === JSON.stringify(avant));
+  // « Effacer ma progression » sur B, synchronisation active : l'appareil est déconnecté et la copie en ligne supprimée
+  // (les deux questions sont acceptées) ; après le rechargement, rien ne revient du coffre
+  const secretsB = await B.page.evaluate(async () => { const e = await lireEtatSynchro(); return { id: e.id, jeton: e.jeton }; });
+  await Promise.all([B.page.waitForEvent('load'), B.page.evaluate(() => document.getElementById('btn-effacer').click())]);
+  await B.page.waitForTimeout(1500);
+  const statutCoffre = await B.page.evaluate(async ([url, s]) => (await fetch(url + '/v1/coffres/' + s.id, { headers: { Authorization: 'Bearer ' + s.jeton } })).status, [SYNCHRO, secretsB]);
+  const local = await B.page.evaluate(async () => ({ acquis: localStorage.getItem('acquis'), etat: await lireEtatSynchro() }));
+  ok('effacement synchronisé : rien ne revient après le rechargement, appareil déconnecté, copie en ligne supprimée', local.acquis === null && local.etat === null && statutCoffre === 404, JSON.stringify({ ...local, statutCoffre }));
   ok('aucune erreur JavaScript', !A.erreurs.length && !B.erreurs.length, [...A.erreurs, ...B.erreurs].join(' | '));
   await navigateur.close();
   console.log(echecs ? echecs + ' contrôle(s) en échec' : 'Tous les contrôles sont passés');

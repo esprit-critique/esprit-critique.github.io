@@ -1908,6 +1908,9 @@ function remplacerProgression(cles) {
   const { valides } = validerSauvegarde(cles);
   CLES_SAUVEGARDE.forEach(effacer);
   Object.entries(valides).forEach(([cle, valeur]) => ecrire(cle, valeur));
+  // Synchronisation active : le prochain envoi remplace le coffre au lieu d'y fusionner, sinon les clés absentes de la
+  // copie reviendraient du coffre (coffre.js, synchroniser)
+  if (SYNCHRO.actif) { try { localStorage.setItem("remplacementLocal", "1"); } catch (e) { /* la fusion habituelle aura lieu */ } }
 }
 
 function afficherSauvegardesAuto() {
@@ -1942,10 +1945,25 @@ function afficherSauvegardesAuto() {
 sauvegarderAuto("quotidienne");
 afficherSauvegardesAuto();
 
-$("btn-effacer").addEventListener("click", () => {
+$("btn-effacer").addEventListener("click", async () => {
   if (!confirm("Effacer toute votre progression (fiches acquises, quiz, révisions, ateliers), sauvegardes automatiques comprises ? Cette action est définitive.")) return;
+  // Synchronisation active : sans déconnexion, le coffre redonnerait au rechargement tout ce qui vient d'être effacé
+  // (la fusion prend la valeur distante d'une clé absente). Cet appareil est donc déconnecté, et la copie en ligne
+  // supprimée si la personne le veut ; si cette suppression échoue, rien n'est effacé.
+  const synchro = await lireEtatSynchro().catch(() => null);
+  if (synchro) {
+    const enLigne = confirm(T("Votre progression est aussi synchronisée. Supprimer aussi la copie en ligne ? (Annuler : cet appareil est seulement déconnecté de la synchronisation ; la copie en ligne reste accessible avec votre code sur vos autres appareils.)"));
+    try {
+      await (enLigne ? supprimerCopieEnLigne() : deconnecterAppareil());
+    } catch (e) {
+      annoncer(T("La copie en ligne n'a pas pu être supprimée ({0}) : rien n'a été effacé. Réessayez une fois en ligne.", e.message));
+      return;
+    }
+  }
   CLES_SAUVEGARDE.forEach(effacer);
   effacer("sauvegardesAuto");
+  effacer("horodatages");
+  effacer("remplacementLocal");
   location.hash = "accueil";
   location.reload();
 });
