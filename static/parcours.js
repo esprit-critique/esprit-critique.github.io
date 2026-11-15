@@ -200,7 +200,8 @@ function afficherParcours(id, sous) {
   zone.appendChild(chemin);
   if (fini) {
     const fin = el("article", "carte conclusion-parcours");
-    fin.append(sceau(p, 56), el("h2", null, T("Parcours terminé : {0}", p.titre)), el("p", null, p.conclusion), lienVers("#parcours", "Choisir un autre parcours", "bouton secondaire"));
+    const nom = prenomDuJoueur();
+    fin.append(avecPersonnage(sceau(p, 56)), el("h2", null, T("Parcours terminé : {0}", p.titre)), el("p", "reaction", nom ? T("Bravo, {0} : un parcours de plus à votre actif.", nom) : T("Bravo : un parcours de plus à votre actif.")), el("p", null, p.conclusion), lienVers("#parcours", "Choisir un autre parcours", "bouton secondaire"));
     zone.appendChild(fin);
   }
 }

@@ -324,6 +324,86 @@ function dessinerPersonnageCanvas(ctx, etat, x, y, cote) {
   ctx.restore();
 }
 
+// ===================== Salutations =====================
+// Le personnage du joueur, petit, à côté d'un titre (accueil, bilans) ; neutre en mode sobre, comme le bouton de profil
+function personnageDuJoueur(taille) {
+  return personnage(modeSobre() ? { jours: {}, meilleure: 0 } : lire("maitrise", { jours: {}, meilleure: 0 }), taille);
+}
+function avecPersonnage(...enfants) {
+  const ligne = el("div", "avec-personnage");
+  const textes = el("div", "avec-personnage-textes");
+  textes.append(...enfants);
+  ligne.append(personnageDuJoueur(48), textes);
+  return ligne;
+}
+const prenomDuJoueur = () => ((lire("profil", {}) || {}).pseudo || "").trim();
+
+// Formules de l'en-tête, par moment de la journée ; la formule change chaque jour (rotation sans remise, app.js)
+const SALUTS = {
+  matin: ["Bonjour", "Bonne matinée", "Bonjour à vous"],
+  midi: ["Bonjour", "Bonne journée", "Bon appétit"],
+  apresMidi: ["Bon après-midi", "Bonjour", "Belle journée"],
+  soir: ["Bonsoir", "Bonne soirée", "Bonsoir à vous"],
+  nuit: ["Bonsoir", "Encore debout", "Bonne nuit"]
+};
+// Phrases du jour quand rien de particulier ne se présente : des idées, jamais des faits chiffrés
+const PHRASES_DU_JOUR = [
+  "Une bonne question vaut mieux qu'une réponse rapide.",
+  "Aujourd'hui, une idée à vérifier avant d'y croire.",
+  "Le doute est un outil, pas un état d'âme.",
+  "Les biais ne se voient pas de l'intérieur : c'est pour ça qu'on s'entraîne.",
+  "Ce que vous savez déjà mérite aussi d'être vérifié.",
+  "Être sûr n'est pas avoir raison : votre étalonnage vous le dira.",
+  "Prenez le temps : la première réponse n'est pas toujours la bonne.",
+  "Une source, une date, un auteur : trois questions avant de partager.",
+  "Changer d'avis devant une preuve n'est pas une défaite.",
+  "Un chiffre seul ne dit rien : demandez-lui son dénominateur.",
+  "Tout le monde se trompe ; l'esprit critique, c'est s'en apercevoir plus tôt.",
+  "Ce qui vient facilement à l'esprit n'est pas forcément ce qui arrive souvent.",
+  "Un bon argument se juge à ses raisons, pas à celui qui le défend.",
+  "Une coïncidence frappante reste souvent une coïncidence.",
+  "Savoir ce qu'on ne sait pas, c'est déjà savoir beaucoup."
+];
+
+// Titre et phrase de l'accueil, selon l'heure, la date et la situation du joueur (la première qui s'applique)
+function salutation(nouveau) {
+  const maintenant = new Date(), h = maintenant.getHours(), jour = aujourdHui();
+  const moment = h < 5 ? "nuit" : h < 11 ? "matin" : h < 14 ? "midi" : h < 18 ? "apresMidi" : h < 22 ? "soir" : "nuit";
+  const [mois, date, semaine] = [maintenant.getMonth() + 1, maintenant.getDate(), maintenant.getDay()];
+  let formule = T(tirerSansRemise(SALUTS[moment], 1, jour, 31)[0]);
+  if (mois === 1 && date === 1) formule = T("Bonne année");
+  else if (mois === 12 && date === 25) formule = T("Joyeux Noël");
+  else if (moment !== "nuit" && (semaine === 0 || semaine === 6) && jour % 2) formule = T("Bon week-end");
+  const nom = prenomDuJoueur();
+  const titre = nom ? T("{0}, {1}.", formule, nom) : formule + ".";
+  // Situation : du plus utile au plus général
+  const activite = lire("activite", []), avant = activite.filter(j => j < jour);
+  const absence = avant.length ? jour - avant[avant.length - 1] : 0;
+  const luc = (lire("lucidite", {}) || {}).jours || {};
+  const aReviser = clesAReviser().length, serie = serieDeJours();
+  const etape = typeof prochaineEtape === "function" ? prochaineEtape() : null;
+  let phrase;
+  if (mois === 4 && date === 1) phrase = T("Premier avril : aujourd'hui plus qu'un autre jour, vérifiez avant de croire.");
+  else if (nouveau) phrase = T("Bienvenue. Ici, on apprend à se tromper un peu moins, en commençant par se tromper.");
+  else if (absence >= 7) phrase = aReviser ? T("Vous revoilà, après {0} jours : vos révisions vous attendent.", absence) : T("Vous revoilà, après {0} jours. Content de vous revoir ici.", absence);
+  else if (!modeSobre() && (luc[jour] || 0) >= lire("objectif", 60)) phrase = T("Objectif du jour atteint : tout ce qui suit est du bonus.");
+  else if (aReviser >= 3) phrase = T("{0} notions vous attendent en révision : c'est le bon moment pour les revoir.", aReviser);
+  else if (serie >= 3 && serie % 7 === 0) phrase = T("{0} jours d'affilée : la régularité fait la mémoire.", serie);
+  else if (etape) phrase = T("Votre parcours « {0} » continue : la prochaine étape est juste en dessous.", T(etape.parcours.titre));
+  else if (moment === "nuit") phrase = T("Il est tard : les questions seront encore là demain.");
+  else phrase = T(tirerSansRemise(PHRASES_DU_JOUR, 1, jour, 37)[0]);
+  return { titre, phrase };
+}
+
+// Un mot du personnage à la fin d'une partie, selon la part de réussite (0 à 1)
+function reactionBilan(part) {
+  const nom = prenomDuJoueur(), ajout = texte => nom ? T("{0}, {1}", texte, nom) + "." : texte + ".";
+  if (part >= 0.9) return ajout(T("Remarquable"));
+  if (part >= 0.7) return ajout(T("Belle partie"));
+  if (part >= 0.5) return ajout(T("Pas mal du tout"));
+  return T("Les erreurs d'aujourd'hui sont les réflexes de demain.");
+}
+
 // ===================== En-tête : bouton de profil =====================
 function majBoutonProfil(m, etat) {
   const b = document.querySelector(".bouton-profil");

@@ -330,7 +330,7 @@ function afficherScore(zone, id, score, sur, texteScore) {
   const niveau = partie ? niveauDePartie(partie.niveaux) : undefined;
   const avant = maitriseAvant(id);
   const r = noterPartie(id, score, sur, niveau);
-  zone.appendChild(el("p", "consigne", "Bilan"));
+  zone.appendChild(avecPersonnage(el("p", "consigne", "Bilan"), el("p", "reaction", reactionBilan(sur ? score / sur : 0))));   // profil.js
   zone.appendChild(el("p", "grand-score", texteScore || (score + " / " + sur)));
   if (partie) {
     zone.appendChild(bilanNiveaux(id));
