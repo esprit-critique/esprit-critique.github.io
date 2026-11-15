@@ -486,93 +486,93 @@ const REFORMULATIONS = [
   { id: "devoirs", auteur: "Hélène, professeure des écoles",
     position: "Je donne peu de devoirs écrits à mes élèves de CM1. À la maison, certains ont un parent pour les aider, d'autres non : les devoirs creusent les écarts. Je préfère qu'ils lisent un quart d'heure chaque soir.",
     fidele: "Elle limite les devoirs écrits parce que l'aide à la maison est inégale, et leur préfère un quart d'heure de lecture quotidienne.",
-    paille: "Elle pense que les enfants n'ont pas à travailler en dehors de l'école.",
-    acier: "Le travail à la maison profite surtout aux enfants qui y trouvent de l'aide ; mieux vaut un exercice que tous peuvent faire seuls, comme la lecture, qui entretient aussi un apprentissage essentiel.",
-    hors: "Elle trouve que les programmes de CM1 sont trop chargés." },
+    paille: "Elle pense que les enfants n'ont pas à travailler en dehors de l'école : les devoirs ne serviraient qu'à fatiguer les familles le soir, et elle les supprimerait volontiers dans toutes les classes.",
+    acier: "Le travail à la maison profite surtout aux enfants aidés ; mieux vaut un exercice que tous peuvent faire seuls, comme la lecture, qui entretient aussi un apprentissage essentiel.",
+    hors: "Elle trouve que les programmes de CM1 sont trop chargés, et qu'on demande aux enfants d'apprendre trop de choses en une seule année." },
   { id: "voiture-electrique", auteur: "Marc, garagiste",
     position: "Je conseille une voiture électrique aux clients qui roulent surtout en ville et peuvent recharger chez eux. Pour ceux qui font souvent de longs trajets sans borne sur leur route, je reste plus prudent.",
     fidele: "Il recommande l'électrique pour un usage urbain avec recharge à domicile, et reste réservé pour les longs trajets mal équipés en bornes.",
-    paille: "Il pense que les voitures électriques ne servent à rien dès qu'on sort de la ville.",
-    acier: "L'intérêt d'une voiture électrique dépend de l'usage : excellent quand on recharge chez soi et qu'on roule surtout en ville, plus incertain quand les longs trajets dépendent de bornes rares ; le conseil doit donc partir des trajets réels de chaque client.",
-    hors: "Il trouve que les voitures électriques coûtent trop cher à l'achat." },
+    paille: "Il pense que les voitures électriques ne servent à rien dès qu'on sort de la ville, et qu'il vaut mieux les déconseiller à presque tous ses clients.",
+    acier: "L'intérêt d'une voiture électrique dépend de l'usage : excellent en ville avec une recharge à domicile, plus incertain quand les longs trajets dépendent de bornes rares ; le conseil part donc des trajets réels.",
+    hors: "Il trouve que les voitures électriques coûtent trop cher à l'achat, et que les aides publiques ne compensent pas l'écart de prix avec une voiture à essence de même gamme, même en comptant plusieurs années d'entretien." },
   { id: "reunions", auteur: "Sofia, cheffe d'équipe",
     position: "Je voudrais supprimer la réunion d'équipe du vendredi. La moitié des points pourrait passer par écrit, et elle tombe au moment où chacun essaie de finir sa semaine.",
     fidele: "Elle veut supprimer la réunion du vendredi, parce qu'une bonne partie peut se faire par écrit et qu'elle tombe mal.",
-    paille: "Elle veut supprimer toutes les réunions et faire tout par messages.",
+    paille: "Elle veut supprimer toutes les réunions d'équipe et faire passer tout le travail par messages écrits, même les décisions qui demandent une vraie discussion.",
     acier: "Une réunion ne se justifie que pour ce qui demande vraiment un échange : si la moitié des points du vendredi peuvent se traiter par écrit, il vaut mieux les traiter ainsi et libérer un créneau où chacun a besoin de se concentrer.",
-    hors: "Elle trouve que l'équipe travaille trop le vendredi." },
+    hors: "Elle trouve que l'équipe travaille trop le vendredi, et voudrait que chacun puisse partir plus tôt en fin de semaine." },
   { id: "potager", auteur: "Bernard, jardinier amateur",
     position: "Je n'utilise plus d'engrais chimique dans mon potager. Le compost suffit pour les légumes que je fais pousser, et je n'ai pas vu de différence de récolte depuis trois ans.",
     fidele: "Il a remplacé l'engrais chimique par du compost dans son potager, sans constater de baisse de récolte en trois ans.",
-    paille: "Il pense que les engrais chimiques sont du poison et que l'agriculture devrait s'en passer.",
-    acier: "Pour un potager familial comme le sien, le compost apporte assez de nutriments : trois ans de récoltes comparables le suggèrent, même si une seule parcelle ne permet pas de généraliser à toutes les cultures.",
-    hors: "Il pense que les légumes du marché sont moins bons que ceux du potager." },
+    paille: "Il pense que les engrais chimiques sont du poison pour la terre comme pour ceux qui mangent les légumes, et que toute l'agriculture devrait s'en passer au plus vite, comme lui l'a fait dans son potager.",
+    acier: "Pour un potager familial, le compost apporte assez de nutriments : trois ans de récoltes comparables le suggèrent, même si une seule parcelle ne permet pas de généraliser.",
+    hors: "Il pense que les légumes du marché sont moins bons que ceux de son potager, parce qu'ils sont cueillis trop tôt et transportés trop loin." },
   { id: "velo-ecole", auteur: "Nadia, mère d'élève",
     position: "J'aimerais que l'école organise des rangs à vélo le matin, encadrés par des parents. Beaucoup d'enfants habitent à moins de deux kilomètres, et les voitures devant l'école rendent le carrefour dangereux.",
     fidele: "Elle propose des trajets à vélo encadrés par des parents, parce que beaucoup d'enfants habitent près de l'école et que les voitures rendent le carrefour dangereux.",
-    paille: "Elle veut interdire aux parents d'amener leurs enfants en voiture.",
-    acier: "Pour des enfants qui habitent à moins de deux kilomètres, un trajet à vélo encadré est faisable et retire des voitures d'un carrefour dangereux ; l'encadrement par des adultes répond à la principale objection, la sécurité des enfants sur la route.",
-    hors: "Elle trouve que les enfants ne font pas assez de sport à l'école." },
+    paille: "Elle veut interdire aux parents d'amener leurs enfants en voiture et obliger toutes les familles à venir à vélo, quelles que soient la distance et la météo.",
+    acier: "Pour des enfants qui habitent à moins de deux kilomètres, un trajet à vélo encadré est faisable et retire des voitures d'un carrefour dangereux ; l'encadrement répond à l'objection de la sécurité.",
+    hors: "Elle trouve que les enfants ne font pas assez de sport à l'école, et voudrait davantage d'heures d'éducation physique dans la semaine, avec des activités en plein air comme le vélo ou la course d'orientation." },
   { id: "lecture-ecran", auteur: "Yann, libraire",
     position: "Je ne dis pas que les liseuses sont mauvaises. Mais pour les longs textes difficiles, beaucoup de mes clients me disent mieux retenir sur papier, et j'ai la même impression.",
     fidele: "Il n'est pas contre les liseuses, mais lui et beaucoup de ses clients ont l'impression de mieux retenir les textes longs et difficiles sur papier.",
-    paille: "Il pense que lire sur écran abîme la mémoire.",
+    paille: "Il pense que lire sur écran abîme la mémoire, et qu'il faudrait déconseiller les liseuses à tous les lecteurs.",
     acier: "Pour les textes longs et exigeants, plusieurs lecteurs, dont lui, ont l'impression de mieux retenir sur papier ; c'est une raison de garder ce support pour ce type de lecture, en attendant des mesures plus solides que des impressions.",
-    hors: "Il pense que les librairies sont menacées par la vente en ligne." },
+    hors: "Il pense que les librairies sont menacées par la vente en ligne, et que les lecteurs devraient acheter leurs livres en magasin." },
   { id: "chien", auteur: "Inès, propriétaire d'un chien",
     position: "Je laisse mon chien sans laisse au parc seulement tôt le matin, quand il est presque vide. Il revient au rappel, et je le rattache dès qu'un enfant ou un autre chien arrive.",
     fidele: "Elle détache son chien au parc seulement quand il est presque vide, parce qu'il obéit au rappel, et le rattache dès que quelqu'un arrive.",
-    paille: "Elle pense que les chiens devraient pouvoir courir librement partout.",
+    paille: "Elle pense que les chiens devraient pouvoir courir librement partout, dans les parcs comme dans les rues, et que les règles sur la laisse ne servent qu'à gêner les maîtres responsables.",
     acier: "Laisser un chien obéissant courir dans un parc presque vide ne fait guère courir de risque, à condition de le rattacher dès que d'autres usagers arrivent : c'est ce qu'elle fait.",
-    hors: "Elle trouve que le parc n'est pas assez entretenu." },
+    hors: "Elle trouve que le parc n'est pas assez entretenu, avec des pelouses abîmées et trop peu de poubelles." },
   { id: "fast-fashion", auteur: "Claire, couturière",
     position: "J'achète moins de vêtements qu'avant, mais de meilleure qualité. Une veste bien cousue dure dix ans ; trois vestes bon marché qui se déforment en un an finissent par coûter plus cher.",
     fidele: "Elle achète moins mais mieux, parce qu'un vêtement solide dure longtemps et revient finalement moins cher que plusieurs vêtements bon marché.",
-    paille: "Elle pense que les gens qui achètent des vêtements bon marché gaspillent leur argent.",
+    paille: "Elle pense que les gens qui achètent des vêtements bon marché gaspillent leur argent, et que tout le monde devrait se mettre à acheter des vêtements de marque, quels que soient ses moyens.",
     acier: "Sur la durée, un vêtement solide peut coûter moins cher que plusieurs vêtements fragiles ; c'est vrai pour qui peut avancer la somme et choisit des pièces qu'il portera longtemps.",
-    hors: "Elle trouve que les vêtements sont mal taillés aujourd'hui." },
+    hors: "Elle trouve que les vêtements sont mal taillés aujourd'hui, et qu'on ne trouve plus de tailles adaptées à toutes les morphologies." },
   { id: "sieste", auteur: "Paul, directeur d'une PME",
     position: "J'ai aménagé une salle de repos où chacun peut faire une sieste de vingt minutes après le déjeuner. Je n'oblige personne, mais plusieurs salariés disent être plus efficaces l'après-midi.",
     fidele: "Il propose, sans l'imposer, une salle pour une courte sieste, et plusieurs salariés s'en disent plus efficaces l'après-midi.",
-    paille: "Il veut que ses salariés dorment au travail.",
-    acier: "Offrir la possibilité d'une courte sieste, sans l'imposer, ne coûte presque rien et peut aider ceux qui sont fatigués l'après-midi ; les témoignages de ses salariés vont dans ce sens, même s'ils ne valent pas une mesure.",
-    hors: "Il trouve que les pauses déjeuner sont trop courtes." },
+    paille: "Il veut que ses salariés dorment au travail, et pense qu'une sieste devrait faire partie de la journée de chacun.",
+    acier: "Proposer une courte sieste, sans l'imposer, ne coûte presque rien et peut aider ceux qui sont fatigués l'après-midi ; ses salariés le disent, même si leurs témoignages ne valent pas une mesure.",
+    hors: "Il trouve que les pauses déjeuner sont trop courtes dans son entreprise, et voudrait les allonger d'une demi-heure pour que chacun puisse manger tranquillement et sortir prendre l'air avant de reprendre." },
   { id: "cantine-bio", auteur: "M. Diallo, cuisinier de cantine",
     position: "Je préfère acheter des légumes à des producteurs de la région, même s'ils ne sont pas tous bio. Ils sont cueillis plus mûrs, et je peux aller voir comment ils sont cultivés.",
     fidele: "Il privilégie les légumes de producteurs de la région, bio ou non, parce qu'ils sont plus mûrs et qu'il peut voir comment ils sont cultivés.",
-    paille: "Il pense que le bio ne sert à rien.",
+    paille: "Il pense que le bio ne sert à rien, et que les labels ne sont qu'un argument de vente pour des légumes plus chers.",
     acier: "Pour une cantine, la fraîcheur et la possibilité de vérifier soi-même les pratiques d'un producteur proche peuvent compter davantage qu'un label : c'est un choix de qualité, qui ne s'oppose pas au bio.",
-    hors: "Il trouve que les enfants ne mangent pas assez de légumes." },
+    hors: "Il trouve que les enfants ne mangent pas assez de légumes à la cantine, et qu'ils en laissent une bonne partie dans leur assiette." },
   { id: "jeux-video", auteur: "Amina, mère de deux enfants",
     position: "Mes enfants jouent aux jeux vidéo le week-end, une heure par jour. Je ne trouve pas ça mauvais en soi ; ce que je surveille, c'est que ça ne remplace ni le sommeil ni les amis.",
     fidele: "Elle autorise une heure de jeu par jour le week-end, sans juger les jeux mauvais, en veillant à ce qu'ils ne prennent pas la place du sommeil et des amis.",
-    paille: "Elle laisse ses enfants jouer sans limite.",
-    acier: "Le temps de jeu compte moins que ce qu'il remplace : une heure le week-end est raisonnable tant que le sommeil et la vie sociale ne sont pas sacrifiés, et c'est ce qu'il faut surveiller.",
-    hors: "Elle trouve que les jeux vidéo sont trop chers." },
+    paille: "Elle laisse ses enfants jouer sans limite aux jeux vidéo, persuadée qu'ils ne font aucun mal, et ne voit pas pourquoi elle surveillerait ce qu'ils y font ou le temps qu'ils y passent.",
+    acier: "Le temps de jeu compte moins que ce qu'il remplace : une heure le week-end est raisonnable tant que le sommeil et les amis n'en pâtissent pas.",
+    hors: "Elle trouve que les jeux vidéo sont trop chers, surtout les nouveautés qui sortent avant les fêtes." },
   { id: "marche-pied", auteur: "Léon, retraité",
     position: "Je fais mes courses à pied plutôt qu'en voiture quand c'est à moins d'un kilomètre. Ça me fait marcher, et je ne cherche plus de place pour me garer.",
-    fidele: "Il fait à pied les courses à moins d'un kilomètre, pour marcher et éviter de chercher une place.",
-    paille: "Il pense que la voiture est inutile en ville.",
-    acier: "Pour des courses toutes proches, la marche est souvent plus simple que la voiture, une fois compté le temps de stationnement, et elle offre en plus une activité physique régulière.",
-    hors: "Il trouve que les magasins de son quartier ferment trop tôt." },
+    fidele: "Il fait à pied les courses qui sont à moins d'un kilomètre de chez lui, parce que cela le fait marcher et lui évite de chercher une place pour se garer.",
+    paille: "Il pense que la voiture est inutile en ville, et que tout le monde devrait faire ses courses à pied.",
+    acier: "Pour des courses toutes proches, la marche est souvent plus simple que la voiture, une fois compté le stationnement, et elle fait bouger régulièrement.",
+    hors: "Il trouve que les magasins de son quartier ferment trop tôt le soir pour ceux qui travaillent." },
   { id: "notes", auteur: "Hugo, professeur de collège",
     position: "En sixième, je remplace certaines notes par des appréciations détaillées. Les élèves lisent la note et ignorent le commentaire ; sans note, ils lisent enfin ce qu'il faut corriger.",
     fidele: "Il remplace certaines notes de sixième par des appréciations, parce que sans note les élèves lisent enfin les commentaires.",
-    paille: "Il veut supprimer les notes à l'école.",
+    paille: "Il veut supprimer les notes à l'école et ne plus évaluer les élèves du tout, en sixième comme dans les autres classes.",
     acier: "Un commentaire ne sert que s'il est lu ; si la note détourne l'attention du commentaire, la retirer sur certains devoirs aide l'élève à savoir quoi corriger, sans renoncer à l'évaluer ailleurs.",
-    hors: "Il trouve que les classes de sixième sont trop chargées." },
+    hors: "Il trouve que les classes de sixième sont trop chargées pour qu'un professeur puisse suivre chaque élève." },
   { id: "voisins", auteur: "Mme Garnier, habitante d'un immeuble",
     position: "Je propose une boîte d'échange de livres dans le hall. Ça ne coûte rien, et plusieurs voisins m'ont dit avoir des cartons de livres qu'ils ne relisent pas.",
     fidele: "Elle propose une boîte d'échange de livres dans le hall, gratuite, parce que des voisins ont des livres dont ils ne se servent plus.",
-    paille: "Elle veut transformer le hall en bibliothèque.",
+    paille: "Elle veut transformer le hall en bibliothèque, avec des étagères sur tous les murs et des fauteuils pour lire sur place.",
     acier: "Une boîte d'échange ne coûte rien, donne une seconde vie aux livres que plusieurs voisins n'utilisent plus, et peut se retirer facilement si elle pose problème.",
-    hors: "Elle trouve que le hall de l'immeuble est trop sombre." },
+    hors: "Elle trouve que le hall de l'immeuble est trop sombre, et voudrait que le syndic remplace les ampoules par un éclairage plus puissant, qui s'allume dès qu'on entre." },
   { id: "transports", auteur: "Fatou, habitante d'un quartier périphérique",
     position: "Je voudrais un bus le dimanche dans notre quartier. Beaucoup d'habitants n'ont pas de voiture, et sans bus ils ne peuvent pas rendre visite à leur famille ce jour-là.",
     fidele: "Elle demande un bus le dimanche parce que beaucoup d'habitants sans voiture ne peuvent pas, sinon, voir leur famille ce jour-là.",
-    paille: "Elle veut que les bus circulent partout à toute heure.",
-    acier: "Le dimanche est le jour des visites familiales ; pour les habitants sans voiture, une seule ligne de bus fait la différence entre pouvoir y aller ou non, ce qui justifie une desserte même réduite.",
-    hors: "Elle trouve que les bus de semaine sont souvent en retard." }
+    paille: "Elle veut que les bus circulent partout et à toute heure, y compris la nuit et dans les rues les moins fréquentées, quel qu'en soit le coût pour la commune et quel que soit le nombre de passagers.",
+    acier: "Le dimanche est le jour des visites familiales ; pour les habitants sans voiture, une ligne de bus fait la différence entre y aller ou non, ce qui justifie une desserte même réduite.",
+    hors: "Elle trouve que les bus de semaine sont souvent en retard, surtout aux heures de pointe." }
 ];
 
 // ===================== Le débat à deux =====================
@@ -781,26 +781,26 @@ const PIEGES_REPARER = [
 // La première proposition est la prémisse dont dépend l'argument ; les autres sont vraies ou plausibles,
 // mais l'argument n'en a pas besoin.
 const PREMISSES = {
-  "ad-hominem": ["Quelqu'un qui a raté son bac ne peut pas faire un budget juste.", "Le budget du club est en déficit.", "Le bac est obligatoire pour être trésorier.", "Un budget doit être voté par le bureau."],
-  "tu-quoque": ["Un conseil ne vaut que si celui qui le donne l'applique lui-même.", "Les téléphones nuisent à la conversation.", "Passer ses soirées sur son téléphone fatigue les yeux.", "Les repas en famille sont importants."],
-  "autorite": ["Un champion de tennis sait si un matelas soigne le mal de dos.", "Le mal de dos est fréquent.", "Les matelas fermes sont les meilleurs.", "Les sportifs dorment beaucoup."],
-  "popularite": ["Un produit très vendu est forcément efficace.", "Les rides apparaissent avec l'âge.", "Cette crème est vendue en pharmacie.", "Les crèmes chères sont les meilleures."],
-  "tradition": ["Ce qu'on a toujours fait est la meilleure façon de faire.", "Les réunions du lundi sont utiles.", "8 heures est une heure matinale.", "L'équipe préfère se réunir le matin."],
+  "ad-hominem": ["Quelqu'un qui a raté son bac ne peut pas faire un budget juste.", "Le budget du club doit être présenté au bureau avant d'être voté.", "Un trésorier doit savoir tenir des comptes sans erreur de calcul.", "Le bac est obligatoire pour être trésorier."],
+  "tu-quoque": ["Un conseil ne vaut que si celui qui le donne l'applique lui-même.", "Passer ses soirées sur son téléphone fatigue les yeux et nuit au sommeil.", "Les repas en famille sont un moment important pour se parler.", "Un bon conseil doit être formulé avec gentillesse pour être écouté."],
+  "autorite": ["Un champion de tennis sait si un matelas soigne le mal de dos.", "Les matelas fermes conviennent mieux à certains dos que les matelas mous.", "Les sportifs de haut niveau dorment beaucoup pour bien récupérer.", "Le mal de dos est fréquent."],
+  "popularite": ["Un produit très vendu est forcément efficace.", "Cette crème est vendue en pharmacie et en grande surface depuis des années.", "Les rides apparaissent avec l'âge.", "Les crèmes chères sont souvent mieux présentées que les autres."],
+  "tradition": ["Ce qu'on a toujours fait est la meilleure façon de faire.", "Changer l'heure d'une réunion demande de prévenir toute l'équipe à l'avance.", "L'équipe préfère se réunir le matin, avant les rendez-vous.", "8 heures est une heure matinale."],
   "nature": ["Ce qui est naturel est sans danger.", "Les enfants aiment les sirops sucrés.", "Ce sirop est vendu sans ordonnance.", "Les plantes poussent sans engrais."],
-  "emotion": ["Ce qui fait peur justifie à lui seul un achat.", "Les détecteurs de fumée sont chers.", "Les incendies sont plus fréquents l'hiver.", "Les enfants dorment dans leur chambre."],
-  "genetique": ["Une idée inventée pour de mauvaises raisons est forcément mauvaise.", "Les patrons cherchent la publicité.", "Les salariés aiment les week-ends longs.", "La semaine de quatre jours existe dans plusieurs pays."],
-  "homme-de-paille": ["Limiter les écrans à une heure revient à priver les enfants de toute technologie.", "Les enfants passent beaucoup de temps sur les écrans.", "La technologie est utile aujourd'hui.", "Une heure par jour suffit pour les devoirs."],
-  "faux-dilemme": ["Il n'existe aucune autre façon de partir en vacances qu'avec une voiture neuve.", "Les voitures neuves sont chères.", "Les vacances font du bien.", "Notre voiture actuelle consomme beaucoup."],
-  "juste-milieu": ["La vraie valeur se trouve toujours à mi-chemin entre deux estimations.", "Les prix de l'immobilier varient selon les quartiers.", "L'acheteur connaît bien le quartier.", "La maison a un grand jardin."],
-  "fausse-analogie": ["Ce qui vaut pour l'entretien d'une machine vaut aussi pour un être humain.", "Les machines doivent être entretenues.", "Les employés aiment leur travail.", "La productivité se mesure en heures."],
+  "emotion": ["Ce qui fait peur justifie à lui seul un achat.", "Un détecteur de fumée doit être installé dans le couloir, près des chambres.", "Les enfants dorment dans leur chambre, à l'étage.", "Les détecteurs de fumée sont chers."],
+  "genetique": ["Une idée inventée pour de mauvaises raisons est forcément mauvaise.", "Une mesure de temps de travail se juge d'abord à son coût pour l'entreprise.", "Les patrons cherchent la publicité.", "La semaine de quatre jours existe dans plusieurs pays."],
+  "homme-de-paille": ["Limiter les écrans à une heure revient à priver les enfants de toute technologie.", "Les enfants passent beaucoup de temps sur les écrans, surtout le week-end.", "Une heure d'écran par jour suffit pour faire ses devoirs et se détendre.", "Une limite qui vaut pour tous les enfants doit être appliquée de la même façon par toutes les familles."],
+  "faux-dilemme": ["Il n'existe aucune autre façon de partir en vacances qu'avec une voiture neuve.", "Notre voiture actuelle consomme beaucoup et tombe souvent en panne sur les longs trajets.", "Les vacances font du bien.", "Une voiture neuve coûte cher, mais elle se revend mieux qu'une voiture d'occasion."],
+  "juste-milieu": ["La vraie valeur se trouve toujours à mi-chemin entre deux estimations.", "Les prix de l'immobilier varient beaucoup d'un quartier à l'autre de la même ville.", "L'acheteur connaît bien le quartier.", "Une maison avec un grand jardin se vend en général plus cher qu'un appartement."],
+  "fausse-analogie": ["Ce qui vaut pour l'entretien d'une machine vaut aussi pour un être humain.", "Un employé fatigué fait plus d'erreurs qu'un employé reposé, quel que soit son poste.", "Les machines doivent être entretenues.", "La productivité d'un service se mesure en heures travaillées et en dossiers traités."],
   "nirvana": ["Une protection qui n'est pas parfaite ne sert à rien.", "Les accidents de vélo arrivent surtout en ville.", "Les casques sont parfois inconfortables.", "Les cyclistes roulent de plus en plus."],
   "post-hoc": ["Ce qui précède un événement en est la cause.", "Changer de coiffeur coûte cher.", "Les recruteurs reçoivent beaucoup de candidatures.", "L'emploi était très demandé."],
-  "correlation": ["Si deux choses varient ensemble, l'une cause l'autre.", "Les lycéens se couchent tard.", "Les notes sont données sur 20.", "Le sommeil est important pour la santé."],
-  "pente-glissante": ["Autoriser une chose conduit forcément à autoriser des choses de plus en plus extrêmes.", "Les chevaux sont plus grands que les chiens.", "Les chiens aiment courir.", "Le parc a une grande pelouse."],
-  "generalisation-hative": ["Deux cas suffisent pour juger tous les stagiaires.", "Les stagiaires sont souvent jeunes.", "Arriver à l'heure est apprécié.", "Les stagiaires changent chaque année."],
-  "composition": ["Si chaque ingrédient est délicieux, le mélange l'est aussi.", "Les gâteaux maison sont appréciés.", "Le chocolat se marie bien avec la vanille.", "La recette est facile."],
+  "correlation": ["Si deux choses varient ensemble, l'une cause l'autre.", "Le sommeil est important pour la santé.", "Les lycéens se couchent tard.", "Les notes sont données sur 20."],
+  "pente-glissante": ["Autoriser une chose conduit forcément à autoriser des choses de plus en plus extrêmes.", "Les chiens doivent être tenus en laisse dans les lieux publics où jouent des enfants.", "Le parc a une grande pelouse.", "Une règle adoptée par la mairie s'applique à tous les habitants de la commune, sans exception."],
+  "generalisation-hative": ["Deux cas suffisent pour juger tous les stagiaires.", "Les stagiaires changent chaque année.", "Arriver à l'heure est apprécié.", "Les stagiaires sont souvent jeunes."],
+  "composition": ["Si chaque ingrédient est délicieux, le mélange l'est aussi.", "Le chocolat se marie bien avec la vanille.", "La recette est facile.", "Les gâteaux maison sont appréciés."],
   "ignorance": ["Ce qui n'a pas été prouvé faux est vrai.", "Les compléments alimentaires se vendent en pharmacie.", "Les essais cliniques prennent du temps.", "Ce complément contient des vitamines."],
-  "cherry-picking": ["Les trois meilleurs numéros représentent bien l'ensemble.", "Les abonnés lisent surtout le titre.", "Une newsletter paraît chaque semaine.", "Les abonnés ouvrent tous les numéros."],
+  "cherry-picking": ["Les trois meilleurs numéros représentent bien l'ensemble.", "Une newsletter paraît chaque semaine et doit garder ses abonnés.", "Les abonnés lisent surtout le titre et le premier paragraphe.", "Les abonnés ouvrent tous les numéros."],
   "cause-unique": ["Un phénomène complexe n'a qu'une seule cause.", "Les élèves ont souvent un téléphone.", "Les élèves lisent moins de livres qu'avant.", "Les tests de lecture changent d'une année à l'autre."]
 };
 
@@ -1474,17 +1474,24 @@ function entrainementFiche(type, fiche) {
 
   // 1. Une réplique de débat : recevable ou sophisme ?
   if (repliques.length) {
-    const { r, d } = repliques[0];
+    // Sur la fiche d'un sophisme, une réplique toujours fautive se devinerait sans la lire : une fois sur deux, on montre
+    // à la place une réplique recevable du même débat
+    const { r: fautive, d } = repliques[0];
+    const recevables = d.repliques.filter(x => !x.sophisme);
+    const r = recevables.length && Math.random() < 0.5 ? melanger(recevables)[0] : fautive;
+    const attendu = r.sophisme ? 1 : 0;
     const ex = el("div", "exercice");
     ex.append(el("p", "consigne", T("Dans un débat : {0}", T(d.titre).toLowerCase())), blocReplique(r, "replique-fiche"));
     const choix = [boutonChoix("Recevable", 0), boutonChoix("Sophisme", 1)];
     choix.forEach((b, k) => {
       b.addEventListener("click", () => {
         choix.forEach(x => { x.disabled = true; });
-        choix[1].classList.add("juste");
-        if (k === 0) choix[0].classList.add("faux");
+        choix[attendu].classList.add("juste");
+        if (k !== attendu) choix[k].classList.add("faux");
         const retour = el("div", "retour-quiz");
-        corrigerReplique(retour, r, k === 1 ? "Juste : c'est un exemple de ce sophisme." : "Non : c'est un exemple de ce sophisme.", k === 1);
+        const verdict = r.sophisme ? (k === 1 ? "Juste : c'est un exemple de ce sophisme." : "Non : c'est un exemple de ce sophisme.")
+          : (k === 0 ? "Juste : cette réplique est recevable." : "Non : cette réplique est recevable, même sur la fiche d'un sophisme.");
+        corrigerReplique(retour, r, verdict, k === attendu);
         ex.appendChild(retour);
       });
       ex.appendChild(b);

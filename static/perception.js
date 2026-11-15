@@ -461,7 +461,7 @@ JEUX.push(
           ? (x => Object.assign(x.creer(), { id: x.id, nommer: niveau }))(tirerSelonNiveau("graphiques-procedes", PIEGES_GRAPHIQUES, 1, niveau, x => x.id, () => niveau)[0])
           : niveau === 3 && i % 4 === 1
           ? (id => Object.assign(PIEGES_GRAPHIQUES.find(x => x.id === id).creer(), { double: id }))(doubles[(i - 1) / 4])
-          : tirerSelonNiveau("graphiques", niveau === 3 ? PIEGES_GRAPHIQUES.filter(x => !DOUBLES_PIEGES[x.id]) : PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer()
+          : melangerOptions(tirerSelonNiveau("graphiques", niveau === 3 ? PIEGES_GRAPHIQUES.filter(x => !DOUBLES_PIEGES[x.id]) : PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer())
       }, (p, zone, fini) => {
         if (p.double) return afficherDoublePiege(p, zone, fini);
         if (p.nommer) return afficherProcedesNiveau(p, zone, fini, p.nommer);
@@ -824,11 +824,12 @@ const entier = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 
 // Chaque piège crée des données au hasard, une version trompeuse et une version honnête
 // Procédés trompeurs, nommés aux niveaux 3 à 5. Les cinq premiers servent au niveau 3 (graphiques à deux procédés) ;
-// les quatre suivants complètent la liste des niveaux 4 et 5, où chaque piège porte ses procédés (« procedes »), et
+// les suivants complètent la liste des niveaux 4 et 5, où chaque piège porte ses procédés (« procedes »), et
 // ceux qu'on ne compte pas faux s'ils sont cochés en plus (« toleres » : l'axe de la courbe inversée ne part pas de
 // zéro, ce qui n'est pas un défaut pour une courbe).
 const PROCEDES = ["Axe vertical qui ne commence pas à zéro", "Fenêtre de temps choisie", "Deux axes verticaux d'échelles différentes", "Valeurs cumulées", "Moyenne au lieu de la médiane",
-  "Axe vertical inversé", "Pourcentage au lieu de points de pourcentage", "Risque relatif sans le risque absolu", "Image agrandie dans les deux dimensions"];
+  "Axe vertical inversé", "Pourcentage au lieu de points de pourcentage", "Risque relatif sans le risque absolu", "Image agrandie dans les deux dimensions",
+  "Axe horizontal à intervalles irréguliers", "Nombres bruts au lieu de taux"];
 // Niveau 3 : graphiques qui cumulent deux procédés. Clé : identifiant du piège dont on reprend le graphique trompeur.
 const DOUBLES_PIEGES = {
   "fenetre": { justes: [0, 1], explication: "Le graphique ne montre que six années, choisies pour leur baisse, et son axe vertical commence bien au-dessus de zéro, ce qui amplifie encore la baisse." },
@@ -842,7 +843,7 @@ function afficherDoublePiege(p, zone, fini) {
 }
 
 // Niveaux 4 et 5 : nommer le ou les procédés du graphique. Niveau 4 : nombre annoncé, la bonne réponse et trois
-// autres procédés ; niveau 5 : les neuf procédés, sans dire combien il y en a.
+// autres procédés ; niveau 5 : les onze procédés, sans dire combien il y en a.
 function afficherProcedesNiveau(p, zone, fini, niveau) {
   const autres = melanger(PROCEDES.map((_, k) => k).filter(k => !p.procedes.includes(k) && !(p.toleres || []).includes(k)));
   const options = niveau === 4 ? melanger([...p.procedes, ...autres.slice(0, 3)]) : PROCEDES.map((_, k) => k);
@@ -926,7 +927,7 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], min, max, { unite: PC, tronque: true, pas: (max - min) / 4 }),
         honnete: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], 0, 100, { unite: PC, pas: 25 }),
         question: "D'après ce graphique, comment la satisfaction a-t-elle évolué ?",
-        options: ["Elle a environ triplé", T("Elle a progressé de {0} points, soit environ {1} %", fr(Number((v2 - v1).toFixed(1))), hausse), "Elle a doublé"],
+        options: ["Elle a environ triplé, à en juger par la hauteur des barres", T("Elle a progressé de {0} points, soit environ {1} %", fr(Number((v2 - v1).toFixed(1))), hausse), "Elle a à peu près doublé d'une année sur l'autre"],
         juste: 1,
         piege: T("L'axe vertical commence à {0} %, et non à zéro.", fr(min)),
         procedes: [0],
@@ -956,7 +957,8 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheCourbe([{ points: fenetre }], fenetre[0][0], fenetre[5][0], fmin, fmax, { etiquettesX: [fenetre[0][0], fenetre[5][0]] }),
         honnete: () => grapheCourbe([{ points: annees }, { points: fenetre, classe: "courbe-fenetre" }], 1996, 2025, ymin, ymax, { etiquettesX: [1996, 2005, 2015, 2025] }),
         question: "D'après ce graphique, quelle est la tendance de long terme ?",
-        options: ["À la baisse", "Impossible à dire avec ce seul graphique", "À la hausse"],
+        // Leurres aussi longs que la bonne réponse : « on ne peut pas savoir » ne doit pas se reconnaître à sa longueur
+        options: ["À la baisse, comme le montre toute la courbe", "Impossible à dire avec ce seul graphique", "À la hausse, malgré un creux sur la fin"],
         juste: 1,
         piege: "Six années ne disent rien de la tendance de long terme.",
         procedes: [1, 0],
@@ -978,7 +980,7 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheCourbe([{ points: cumul.map((c, k) => [2018 + k, c]) }], 2018, 2025, 0, max, { etiquettesX: [2018, 2021, 2025] }),
         honnete: () => grapheBarres(annuel.map((a, k) => ({ libelle: String(2018 + k).slice(2), valeur: a, forte: k === 7 })), 0, Math.ceil(annuel[0] / 50) * 50, { pas: Math.ceil(annuel[0] / 50) * 50 / 4 }),
         question: "Les ventes annuelles sont-elles en hausse ?",
-        options: ["Oui, nettement", "Non, elles baissent chaque année", "On ne peut pas le savoir"],
+        options: ["Oui, nettement : la courbe ne cesse de monter", "Non, elles baissent chaque année", "On ne peut pas le savoir sans autre source"],
         juste: 1,
         piege: "Une courbe de cumul monte toujours, même quand chaque année est moins bonne que la précédente.",
         procedes: [3],
@@ -1009,7 +1011,7 @@ const PIEGES_GRAPHIQUES = [
         ], 2016, 2025, 0, 1000, { etiquettesX: [2016, 2020, 2025] }),
         legende: "Courbe pleine : entreprise A (axe de gauche). Courbe pointillée : entreprise B (axe de droite). Données fictives.",
         question: "L'entreprise B a-t-elle dépassé l'entreprise A ?",
-        options: ["Oui, vers 2020", "Non : B reste plus de dix fois plus petite", "Oui, en 2025"],
+        options: ["Oui, vers 2020, quand les deux courbes se croisent", "Non : B reste plus de dix fois plus petite", "Oui, en 2025, où sa courbe passe au-dessus"],
         juste: 1,
         piege: "Les deux courbes n'utilisent pas la même échelle.",
         procedes: [2, 0],
@@ -1028,7 +1030,7 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheBarres([{ libelle: "2024", valeur: t1 }, { libelle: "2025", valeur: t2, forte: true }], 0, 10, { unite: PC, pas: 2.5 }),
         honnete: null,
         question: T("Le taux passe de {0} % à {1} %. De combien a-t-il augmenté ?", t1, t2),
-        options: [T("De {0} %", t2 - t1), t2 - t1 > 1 ? T("De {0} points, soit +{1} %", t2 - t1, relatif) : T("De {0} point, soit +{1} %", t2 - t1, relatif), T("De {0} points", relatif)],
+        options: [T("De {0} %, l'écart entre les deux taux", t2 - t1), t2 - t1 > 1 ? T("De {0} points, soit +{1} %", t2 - t1, relatif) : T("De {0} point, soit +{1} %", t2 - t1, relatif), T("De {0} points, d'après la hauteur des barres", relatif)],
         juste: 1,
         piege: "Il faut distinguer points de pourcentage et pourcentage.",
         procedes: [6],
@@ -1118,6 +1120,52 @@ const PIEGES_GRAPHIQUES = [
         procedes: [8],
         verite: "Deux bidons identiques au lieu d'un : la production double, ni plus ni moins.",
         explication: "L'œil compare les surfaces, pas les hauteurs. Doubler la hauteur et la largeur d'une image la fait paraître quatre fois plus grande. Une représentation fidèle aligne des images identiques, ou utilise des barres."
+      };
+    }
+  },
+  {
+    // Barres espacées régulièrement pour des années qui ne le sont pas : une hausse régulière paraît s'emballer
+    id: "intervalles",
+    creer() {
+      const pente = entier(20, 40) / 10, base = entier(40, 60);
+      const annees = [2000, 2001, 2002, 2003, 2010, 2020, 2025];
+      const valeur = a => Math.round((base + pente * (a - 2000)) * 10) / 10;
+      const max = Math.ceil(valeur(2025) / 20) * 20;
+      return {
+        titre: "Abonnés d'une médiathèque (en centaines)",
+        trompeur: () => grapheBarres(annees.map((a, k) => ({ libelle: String(a).slice(2), valeur: valeur(a), forte: k === annees.length - 1 })), 0, max, { pas: max / 4 }),
+        honnete: () => grapheCourbe([{ points: annees.map(a => [a, valeur(a)]) }], 2000, 2025, 0, max, { etiquettesX: [2000, 2010, 2020, 2025] }),
+        question: "D'après ce graphique, la hausse des abonnés s'est-elle accélérée à la fin ?",
+        options: ["Oui, nettement : les dernières barres montent bien plus vite que les premières", "Non : la hausse est régulière, mais les dernières barres couvrent bien plus d'années",
+          "Non : elle a ralenti, puisque les dernières barres sont moins nombreuses"],
+        juste: 1,
+        piege: "Les quatre premières barres sont à un an d'écart, les suivantes à sept, dix puis cinq ans.",
+        procedes: [9],
+        verite: T("Années à leur vraie place : environ {0} abonnés de plus chaque année, du début à la fin.", fr(Math.round(pente * 100))),
+        explication: "Des barres placées à égale distance invitent à lire le temps de façon régulière. Ici, l'écart entre deux barres passe d'un an à dix : la marche entre deux barres grandit, alors que la hausse annuelle ne change pas. Lisez toujours les étiquettes de l'axe horizontal avant de juger d'un rythme."
+      };
+    }
+  },
+  {
+    // Les grandes villes ont le plus d'accidents parce qu'elles ont le plus d'habitants
+    id: "nombres-bruts",
+    creer() {
+      const villes = [["Grandville", entier(180, 240) * 1000], ["Moyenbourg", entier(60, 90) * 1000], ["Petitbois", entier(15, 25) * 1000]];
+      const taux = [entier(30, 40) / 10, entier(42, 52) / 10, entier(60, 75) / 10];   // accidents pour 1 000 habitants
+      const nombres = villes.map(([, h], k) => Math.round(h * taux[k] / 1000));
+      const max = Math.ceil(nombres[0] / 200) * 200, maxTaux = 8;
+      return {
+        titre: "Accidents de la route l'an dernier, par ville",
+        legende: T("Habitants : Grandville {0}, Moyenbourg {1}, Petitbois {2}. Données fictives.", fr(villes[0][1]), fr(villes[1][1]), fr(villes[2][1])),
+        trompeur: () => grapheBarres(villes.map(([n], k) => ({ libelle: n.slice(0, 5) + ".", valeur: nombres[k], forte: k === 0 })), 0, max, { pas: max / 4 }),
+        honnete: () => grapheBarres(villes.map(([n], k) => ({ libelle: n.slice(0, 5) + ".", valeur: taux[k], forte: k === 2 })), 0, maxTaux, { pas: 2 }),
+        question: "Dans quelle ville un habitant a-t-il le plus de risques d'avoir un accident ?",
+        options: ["À Grandville, qui compte de loin le plus d'accidents", "À Petitbois, une fois rapportés aux habitants", "À Moyenbourg, qui se situe entre les deux autres"],
+        juste: 1,
+        piege: "Le graphique compte les accidents sans les rapporter au nombre d'habitants.",
+        procedes: [10],
+        verite: T("Pour 1 000 habitants : Grandville {0}, Moyenbourg {1}, Petitbois {2}.", fr(taux[0]), fr(taux[1]), fr(taux[2])),
+        explication: "Plus une ville a d'habitants, plus elle compte d'accidents, même si chacun y court moins de risques. Pour comparer des risques, il faut un taux : le nombre d'accidents divisé par le nombre d'habitants. C'est la petite ville qui a le taux le plus élevé."
       };
     }
   }

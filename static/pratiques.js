@@ -58,16 +58,16 @@ function testT(a, b) {
 // ===================== Les avions de Wald =====================
 const SURVIVANTS = [
   { texte: "Les immeubles anciens du centre-ville sont solides : la plupart ont plus de cent ans et tiennent toujours debout.",
-    options: ["On construisait mieux autrefois", "Les immeubles fragiles de la même époque ont été démolis ou se sont effondrés : on ne voit que ceux qui ont tenu", "Les matériaux anciens durcissent avec le temps"], juste: 1,
+    options: ["On construisait mieux autrefois, avec des murs plus épais", "Les immeubles fragiles de la même époque ont disparu : on ne voit que ceux qui ont tenu", "Les immeubles anciens ont été si souvent renforcés lors des rénovations qu'ils sont devenus plus solides que les neufs"], juste: 1,
     explication: "Les immeubles qu'on peut observer aujourd'hui sont ceux qui ont résisté. Les autres, peut-être nombreux, ont disparu et ne comptent plus dans l'impression d'ensemble." },
   { texte: "Les chansons des années 1980 qu'on entend encore à la radio sont presque toutes excellentes. La musique était meilleure à l'époque.",
-    options: ["Les radios ne rediffusent que les chansons qui ont plu ; les chansons oubliées de la même époque, bien plus nombreuses, n'y passent plus", "Les musiciens des années 1980 étaient plus doués", "Les goûts musicaux ne changent pas"], juste: 0,
+    options: ["Les radios ne repassent que les chansons qui ont plu ; les autres, bien plus nombreuses, sont oubliées", "Les musiciens des années 1980 étaient plus doués", "Les années 1980 ont réuni plus de grands compositeurs que les autres décennies, d'où ces nombreux succès"], juste: 0,
     explication: "On compare les meilleures chansons d'hier, filtrées par le temps, à toute la production d'aujourd'hui, pas encore filtrée." },
   { texte: "Une salle de sport interroge ses clients inscrits depuis plus de deux ans : 90 % se disent satisfaits. Elle en conclut que presque tous ses clients sont satisfaits.",
-    options: ["90 %, c'est une large majorité", "Les clients mécontents sont partis avant deux ans : l'enquête n'interroge que ceux qui sont restés", "Les clients mentent dans les enquêtes"], juste: 1,
+    options: ["90 % est une large majorité, sur un échantillon assez grand pour que le résultat soit fiable", "Les mécontents sont partis avant deux ans : l'enquête n'interroge que ceux qui sont restés", "Les clients se disent plus satisfaits qu'ils ne le sont"], juste: 1,
     explication: "En n'interrogeant que les clients restés, l'enquête écarte ceux qui avaient le plus de raisons d'être insatisfaits." },
   { texte: "Tous les champions d'échecs interrogés par un magazine jouaient déjà enfant. Le magazine en conclut que commencer tôt suffit pour devenir champion.",
-    options: ["Les échecs demandent des années d'entraînement", "Le magazine n'a pas interrogé les nombreux joueurs qui ont commencé enfant sans devenir champions", "Les champions se souviennent mal de leur enfance"], juste: 1,
+    options: ["Les échecs demandent des milliers d'heures d'entraînement, qu'on n'accumule qu'en commençant très jeune", "Le magazine n'a pas interrogé ceux qui ont commencé enfant sans jamais devenir champions, bien plus nombreux qu'eux", "Les champions se souviennent mal de leur enfance et pensent avoir commencé plus tôt qu'en réalité"], juste: 1,
     explication: "Pour savoir si commencer tôt suffit, il faudrait regarder tous ceux qui ont commencé tôt, et pas seulement ceux qui ont réussi." }
 ];
 
@@ -153,9 +153,9 @@ EXPERIENCES.push(
     titre: "Les avions de Wald",
     resume: "Les avions qui reviennent de mission sont criblés d'impacts. Où renforcer le blindage ? Puis quatre autres situations où l'on ne voit que les survivants.",
     lancer(zone) {
-      const etapes = [{ wald: true }, ...melanger(SURVIVANTS)];
+      const etapes = [{ wald: true }, ...melanger(SURVIVANTS).map(s => melangerOptions(s))];
       derouler(zone, etapes, (e, zone, fini) => {
-        let q = e;   // la question posée : celle de Wald, ou une situation de SURVIVANTS
+        let q = e;   // la question posée : celle de Wald, ou une situation de SURVIVANTS (options déjà mélangées)
         if (e.wald) {
           zone.appendChild(el("p", "cas", "Pendant la Seconde Guerre mondiale, on relève les impacts de balles sur les bombardiers qui rentrent de mission. Ils sont nombreux sur les ailes et le fuselage, rares sur les moteurs et le poste de pilotage. Où faut-il renforcer le blindage ?"));
           const schema = SCHEMAS["biais:survivant"]();
@@ -163,8 +163,8 @@ EXPERIENCES.push(
           figure.appendChild(schema.svg);
           figure.appendChild(el("figcaption", null, "Schéma illustratif : les impacts relevés sur les avions revenus."));
           zone.appendChild(figure);
-          q = { options: ["Sur les ailes et le fuselage, là où les impacts sont nombreux", "Sur les moteurs et le poste de pilotage, là où les impacts sont rares", "Partout de la même façon"], juste: 1,
-            explication: "Les avions observés sont ceux qui sont revenus. S'ils portent peu d'impacts sur les moteurs, c'est que les avions touchés là ne sont pas revenus : c'est là qu'il faut blinder. Les impacts visibles montrent au contraire les endroits où un avion peut être touché et rentrer quand même." };
+          q = melangerOptions({ options: ["Sur les ailes et le fuselage, là où les impacts sont nombreux", "Sur les moteurs et le poste de pilotage, là où les impacts sont rares", "Partout de la même façon"], juste: 1,
+            explication: "Les avions observés sont ceux qui sont revenus. S'ils portent peu d'impacts sur les moteurs, c'est que les avions touchés là ne sont pas revenus : c'est là qu'il faut blinder. Les impacts visibles montrent au contraire les endroits où un avion peut être touché et rentrer quand même." });
         } else zone.appendChild(el("p", "cas", e.texte));
         zone.appendChild(el("p", "consigne", e.wald ? "Votre choix" : "Qu'est-ce qui explique le mieux cette impression ?"));
         const boutons = q.options.map((t, k) => {
@@ -506,8 +506,8 @@ const QUI_PROUVE = [
     explication: "Yasmine a apporté un élément de preuve. Karim affirme une fraude : c'est maintenant à lui d'étayer cette accusation." },
   { texte: "Ali : « Je pense que la réunion de demain va être annulée. » Rose : « Pourquoi ? »", reponse: 0,
     explication: "Une simple prévision, mais c'est quand même à Ali de dire sur quoi il s'appuie, s'il veut être cru." },
-  { texte: "Yanis : « Les chats noirs portent malheur. » Léa : « Je n'en crois rien. »", reponse: 0,
-    explication: "Yanis affirme ; Léa se contente de douter. C'est à Yanis de montrer ce qu'il avance." },
+  { texte: "Une station météo relève −3 °C cette nuit-là, et Yanis en conclut qu'il a gelé. Léa : « Je n'y crois pas, prouve-le. »", reponse: 1,
+    explication: "Yanis s'appuie sur une mesure que chacun peut consulter. Si Léa la conteste, c'est à elle de dire en quoi la mesure serait fausse." },
   { texte: "Chloé : « Ce film est trop long. » Hugo : « Moi, je n'ai pas vu le temps passer. »", reponse: 3,
     explication: "Chacun décrit ce qu'il a ressenti : il n'y a rien à prouver, seulement des impressions à partager." },
   { texte: "Un fabricant : « Notre lessive lave plus blanc que toutes les autres. » Une association de consommateurs : « Rien ne le montre. »", reponse: 0,
@@ -520,8 +520,8 @@ const QUI_PROUVE = [
     explication: "Deux impressions de goût : aucune preuve à fournir, même si chacun peut dire ce qu'il a remarqué." },
   { texte: "Un témoin : « L'accusé était sur les lieux du vol. » L'avocat de la défense : « Rien ne le prouve. »", reponse: 0,
     explication: "C'est à l'accusation d'établir les faits : la défense n'a pas à prouver l'innocence de son client." },
-  { texte: "Lucas : « La maison au bout de la rue est hantée. » Anna : « Je n'y crois pas. » Lucas : « Alors prouve-moi qu'elle ne l'est pas ! »", reponse: 0,
-    explication: "Lucas renverse la charge de la preuve : c'est lui qui affirme, c'est donc à lui de montrer quelque chose. Anna n'a rien affirmé." },
+  { texte: "Le garagiste montre à Léon son pneu crevé, avec le clou planté dedans. Léon : « Je ne crois pas que ce soit ce clou. Prouvez-le. »", reponse: 1,
+    explication: "Le garagiste a déjà montré sa preuve. Pour la refuser, Léon doit dire pourquoi elle ne vaudrait rien, ou proposer une autre cause." },
   { texte: "Paul : « Ce médicament a été autorisé après des essais publiés. » Max : « Ces essais sont truqués. »", reponse: 2,
     explication: "Paul peut montrer l'autorisation et les essais. Max ne se contente pas de douter : accuser de trucage est une affirmation, qu'il doit appuyer à son tour." },
   { texte: "Rose : « La vanille est meilleure que le chocolat. » Jules : « Prouve-le ! »", reponse: 3,
@@ -808,42 +808,42 @@ EXPERIENCES.push(
 const MECANISMES = [
   { objet: "une fermeture éclair",
     question: "Que fait le curseur quand on le fait glisser vers le haut ?",
-    options: ["Ses deux gorges, qui se rejoignent, rapprochent les dents décalées des deux bandes et les engrènent",
-      "Il presse les dents l'une contre l'autre, et elles tiennent par simple frottement",
-      "Il accroche chaque dent à un œillet placé en face, sur l'autre bande",
-      "Il tord légèrement chaque dent, qui se bloque ensuite contre sa voisine"],
+    options: ["Ses deux gorges rapprochent les dents des deux bandes, décalées, qui s'emboîtent alors",
+      "Il presse les dents des deux bandes l'une contre l'autre, et elles tiennent ensuite par simple frottement",
+      "Il accroche chaque dent à un petit œillet placé juste en face, sur la bande opposée",
+      "Il tord légèrement chaque dent au passage, et elle se bloque ensuite contre sa voisine"],
     explication: "Deux bandes de tissu portent des dents, décalées d'une bande à l'autre. Le curseur a deux gorges qui se rejoignent : en montant, il guide les dents des deux bandes l'une vers l'autre et les engrène ; en descendant, il les sépare.",
     source: "Wikipédia, « Fermeture à glissière »." },
   { objet: "un réfrigérateur",
     question: "D'où vient le froid à l'intérieur ?",
-    options: ["Un fluide s'y évapore en prenant de la chaleur ; comprimé, il se condense à l'arrière, où il la rejette",
-      "Le moteur produit de l'air froid, qu'un ventilateur souffle à l'intérieur",
-      "Un gaz très froid, chargé en usine, se réchauffe lentement au fil des années",
-      "Les parois isolantes absorbent la chaleur des aliments"],
+    options: ["Un fluide s'y évapore en prenant de la chaleur, puis la rejette à l'arrière en se condensant",
+      "Le moteur fabrique de l'air froid, qu'un ventilateur souffle ensuite en continu à l'intérieur",
+      "Un gaz très froid, chargé une fois pour toutes en usine, se réchauffe lentement au fil des années",
+      "Les parois isolantes absorbent la chaleur des aliments et l'évacuent peu à peu vers l'extérieur"],
     explication: "Le réfrigérateur ne fabrique pas de froid : il déplace de la chaleur. Un fluide frigorigène s'évapore dans l'appareil en prenant de la chaleur ; le compresseur le comprime, ce qui l'échauffe ; il se condense dans la grille ou les tuyaux de l'arrière, où il cède cette chaleur à la pièce, puis revient s'évaporer.",
     source: "Wikipédia, « Réfrigérateur »." },
   { objet: "une chasse d'eau",
     question: "Qu'est-ce qui arrête le remplissage du réservoir ?",
     options: ["Le flotteur, qui remonte avec le niveau de l'eau et referme le robinet d'arrivée",
-      "Une minuterie, réglée sur la contenance du réservoir",
-      "La pression de l'eau accumulée, qui repousse l'eau du tuyau d'arrivée",
-      "L'obturateur, qui en retombant au fond coupe aussi l'arrivée d'eau"],
+      "Une minuterie intégrée au robinet, réglée en usine sur la contenance exacte du réservoir",
+      "La pression de l'eau accumulée, qui finit par repousser l'eau du tuyau d'arrivée",
+      "L'obturateur, qui en retombant au fond du réservoir coupe aussi l'arrivée d'eau"],
     explication: "Le levier soulève l'obturateur du fond du réservoir : l'eau descend dans la cuvette en quelques secondes et l'obturateur se repose. Le flotteur, descendu avec le niveau, a ouvert le robinet d'arrivée ; en remontant avec l'eau, il le referme. Un tube de trop-plein évacue l'eau si le flotteur ferme mal.",
     source: "Wikipédia, « Chasse d'eau »." },
   { objet: "une serrure à clé plate (serrure à goupilles)",
     question: "Pourquoi le cylindre ne tourne-t-il qu'avec la bonne clé ?",
-    options: ["Des goupilles poussées par des ressorts le bloquent ; seule la bonne clé les aligne toutes à la limite du cylindre",
-      "La clé contient un code magnétique que la serrure lit",
-      "Les crans de la clé s'emboîtent dans des encoches du cylindre, comme un engrenage",
-      "La clé pousse directement le pêne, à condition d'avoir la bonne longueur"],
+    options: ["Des goupilles à ressort le bloquent ; seule la bonne clé les aligne toutes au bord du cylindre",
+      "La clé contient un petit code magnétique que la serrure lit avant de libérer le cylindre",
+      "Les crans de la clé s'emboîtent dans des encoches du cylindre et l'entraînent, comme un engrenage",
+      "La clé pousse directement le pêne, à condition d'avoir exactement la bonne longueur et la bonne épaisseur"],
     explication: "Des paires de goupilles, poussées par des ressorts, traversent à la fois le cylindre et le corps de la serrure, et l'empêchent de tourner. Chaque cran de la clé soulève une paire à une hauteur précise : avec la bonne clé, toutes les séparations s'alignent sur la limite du cylindre, qui peut alors tourner. Un cran trop court ou trop long laisse une goupille en travers.",
     source: "Wikipédia, « Serrure à goupilles »." },
   { objet: "un vélo",
     question: "Que relie la chaîne ?",
     options: ["Le plateau du pédalier au pignon de la roue arrière",
-      "Le pédalier aux deux roues",
-      "La roue avant à la roue arrière",
-      "Le pédalier à la roue avant"],
+      "Le pédalier aux deux roues, pour répartir l'effort",
+      "La roue avant à la roue arrière, pour qu'elles tournent ensemble",
+      "Le pédalier à la roue avant, qui entraîne tout le vélo"],
     explication: "Les pédales font tourner le plateau du pédalier ; la chaîne transmet ce mouvement au pignon de la roue arrière, seule motrice. La roue avant, libre, sert à diriger : une chaîne qui la relierait empêcherait de tourner le guidon.",
     source: "Wikipédia, « Bicyclette »." }
 ];

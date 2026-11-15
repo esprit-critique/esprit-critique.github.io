@@ -29,7 +29,7 @@ EN_AJOUTER([
   ["Les fourmis sont des insectes.", "Ants are insects."],
   ["Les fourmis ont huit pattes.", "Ants have eight legs."],
   ["Valide : si les deux prémisses étaient vraies, la conclusion le serait forcément, même si la première est fausse.", "Valid: if both premises were true, the conclusion would necessarily be true, even if the first one is false."],
-  ["Non valide : les fourmis ont six pattes, donc la conclusion est fausse.", "Invalid: ants have six legs, so the conclusion is false."],
+  ["Non valide : les fourmis ont six pattes, comme tous les insectes, donc la conclusion est fausse et le raisonnement ne tient pas.", "Not valid: ants have six legs, like all insects, so the conclusion is false and the reasoning does not hold."],
   ["Non valide : la première prémisse est fausse, donc le raisonnement ne tient pas.", "Invalid: the first premise is false, so the argument does not hold."],
   ["Aucun légume n'est vert.", "No vegetable is green."],
   ["Les épinards sont des légumes.", "Spinach is a vegetable."],
@@ -59,13 +59,13 @@ EN_AJOUTER([
   ["Certains animaux sont domestiques.", "Some animals are domestic."],
   ["Certains chats sont domestiques.", "Some cats are domestic."],
   ["Valide : tout le monde sait que des chats sont domestiques.", "Valid: everyone knows that some cats are domestic."],
-  ["Valide : les chats sont des animaux, et certains animaux sont domestiques.", "Valid: cats are animals, and some animals are domestic."],
+  ["Valide : les chats sont des animaux, et certains animaux sont domestiques, donc certains chats font partie de ces animaux domestiques.", "Valid: cats are animals, and some animals are domestic, so some cats are among those domestic animals."],
   ["Non valide : les animaux domestiques dont parle la seconde prémisse ne sont peut-être pas des chats.", "Invalid: the domestic animals the second premise refers to may not be cats."],
   ["Toutes les roses sont des fleurs.", "All roses are flowers."],
   ["Certaines fleurs fanent vite.", "Some flowers wilt quickly."],
   ["Certaines roses fanent vite.", "Some roses wilt quickly."],
-  ["Valide : les roses sont des fleurs, et certaines fleurs fanent vite, donc certaines roses aussi.", "Valid: roses are flowers, and some flowers wilt quickly, so some roses do too."],
-  ["Non valide : les fleurs qui fanent vite ne sont peut-être pas des roses ; la conclusion est peut-être vraie, mais elle ne découle pas des prémisses.", "Invalid: the flowers that wilt quickly may not be roses; the conclusion may be true, but it does not follow from the premises."],
+  ["Valide : les roses sont des fleurs, et certaines fleurs fanent vite ; certaines roses font donc forcément partie de celles qui fanent vite.", "Valid: roses are flowers, and some flowers wilt quickly; so some roses are necessarily among those that wilt quickly."],
+  ["Non valide : les fleurs qui fanent vite ne sont peut-être pas des roses ; la conclusion peut être vraie sans découler des prémisses.", "Not valid: the flowers that wilt quickly may not be roses; the conclusion may be true without following from the premises."],
   ["Valide : on voit bien des roses faner en quelques jours.", "Valid: you can see roses wilt within a few days."],
   ["Tous les poissons vivent dans l'eau.", "All fish live in water."],
   ["Les truites vivent dans l'eau.", "Trout live in water."],
@@ -351,4 +351,5 @@ EN_AJOUTER([
   ["cas", "case"],
   ["cas (pluriel)", "cases"],
   ["prévisions", "forecasts"]
-]);
+]
+);
