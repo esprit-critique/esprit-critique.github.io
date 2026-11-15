@@ -34,6 +34,13 @@ f.onload = async () => {
     ok("jeu noté : répondre au hasard donne 0", mN(noteNiveau(2, 0.25), 0.25) === 0 && mN(noteNiveau(2, 0.5), 0.5) === 0);
     ok("jeu noté : la meilleure valeur des niveaux est gardée", mN({ niveaux: { 1: noteNiveau(1, 1).niveaux[1], 3: noteNiveau(3, 0.4).niveaux[3] } }, 0.25) === 500);
     ok("jeu noté : une partie à 100 % au niveau 3 sur trois parties donne 1 000", mN(noteNiveau(3, 1), 0) === 1000);
+    // Plafonds proportionnels à la difficulté : 500 au niveau 1, 1 000 au plus haut niveau de l'atelier (3 ou 5)
+    const pl = ev("plafondNiveau");
+    ok("plafonds : 500 / 750 / 1 000 (trois niveaux), 500 / 625 / 750 / 875 / 1 000 (cinq niveaux)",
+      [1, 2, 3].map(L => pl(L, 3)).join() === "500,750,1000" && [1, 2, 3, 4, 5].map(L => pl(L, 5)).join() === "500,625,750,875,1000");
+    const mN5 = (r, c) => Math.round(ev("maitriseNotee")(r, c, 5));
+    ok("jeu à cinq niveaux : 100 % au niveau 5 donne 1 000, au niveau 3 donne 750", mN5(noteNiveau(5, 1), 0) === 1000 && mN5(noteNiveau(3, 1), 0) === 750,
+      mN5(noteNiveau(5, 1), 0) + " / " + mN5(noteNiveau(3, 1), 0));
     // Mesures particulières
     const vide = { aujourdhui: 20000 };
     ok("mesures : ancrage nul sur trois parties → 1 000 ; effet de 50 % → 0", Math.round(ev("MESURES").ancre({ ancrages: [1, 2, 3].map(() => ({ h: 1, b: 1 })) })) === 1000 && Math.round(ev("MESURES").ancre({ ancrages: [1, 2, 3].map(() => ({ h: 1.5, b: 1 })) })) === 0);
