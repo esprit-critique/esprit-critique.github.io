@@ -1205,15 +1205,53 @@ function coordonnees(v) {
   return fr(Math.abs(lat)) + "° " + (lat >= 0 ? "N" : "S") + ", " + fr(Math.abs(lon)) + "° " + (lon >= 0 ? "E" : (LANGUE === "en" ? "W" : "O"));
 }
 
-// Planisphère schématique : méridiens et parallèles tous les 30°, et les deux villes
+// Planisphère : terres, méridiens et parallèles, et les villes
 // numeros : les points portent leur rang (1, 2…) au lieu du nom, pour quatre villes parfois très proches
+// Cadrage sur la région des villes (au moins 40° sur 20°, rapport 2:1 de la projection), les terres de Natural Earth
+// (découpées au cadre) dessinées dessous, la grille par-dessus, avec un pas qui suit le zoom et ses degrés écrits sur les bords.
+let terresPlanisphere = null;   // [[xmin, ymin, xmax, ymax, [[lon, lat]…]]…], décodé à la première carte
 function planisphere(villes, sens, numeros) {
   const s = svg("svg", { viewBox: "0 0 320 170", class: "planisphere", role: "img", "aria-label": numeros ? "Position des villes sur un planisphère, numérotées dans l'ordre" : "Position des deux villes sur un planisphère" });
-  const x = lon => 10 + 300 * (lon + 180) / 360, y = lat => 10 + 150 * (90 - lat) / 180;
+  const lons = villes.map(v => VILLES[v][2]), lats = villes.map(v => VILLES[v][1]);
+  const largeur = Math.min(360, Math.max(40, 1.4 * (Math.max(...lons) - Math.min(...lons)) + 10, 2 * (1.4 * (Math.max(...lats) - Math.min(...lats)) + 10)));
+  const hauteur = largeur / 2;
+  const borne = (v, demi, lim) => Math.max(-lim + demi, Math.min(lim - demi, v));
+  const lonC = borne((Math.max(...lons) + Math.min(...lons)) / 2, largeur / 2, 180), latC = borne((Math.max(...lats) + Math.min(...lats)) / 2, hauteur / 2, 90);
+  const lon0 = lonC - largeur / 2, lat1 = latC + hauteur / 2;
+  const x = lon => 10 + 300 * (lon - lon0) / largeur, y = lat => 10 + 150 * (lat1 - lat) / hauteur;
   s.appendChild(svg("rect", { x: 10, y: 10, width: 300, height: 150, class: "graphe-fond" }));
-  for (let lon = -150; lon <= 150; lon += 30) s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: "graphe-grille" }));
-  for (let lat = -60; lat <= 60; lat += 30) s.appendChild(svg("line", { x1: 10, y1: y(lat), x2: 310, y2: y(lat), class: lat === 0 ? "equateur" : "graphe-grille" }));
-  s.appendChild(texteSvg(306, y(0) - 3, "équateur", { class: "sch-petit", "text-anchor": "end" }));
+  // Terres : seulement celles qui touchent le cadre, rognées par un chemin de découpe
+  if (!terresPlanisphere) terresPlanisphere = TERRES_PLANISPHERE.split(";").map(t => {
+    const pts = t.split(" ").map(p => p.split(",").map(n => Number(n) / 10));
+    return [Math.min(...pts.map(p => p[0])), Math.min(...pts.map(p => p[1])), Math.max(...pts.map(p => p[0])), Math.max(...pts.map(p => p[1])), pts];
+  });
+  const d = terresPlanisphere.filter(([a, b, c, e]) => c >= lon0 && a <= lon0 + largeur && e >= lat1 - hauteur && b <= lat1)
+    .map(([, , , , pts]) => decouperAuCadre(pts.map(([lo, la]) => [x(lo), y(la)])))
+    .filter(pts => pts.length >= 3).map(pts => "M" + pts.map(([px, py]) => px.toFixed(1) + " " + py.toFixed(1)).join("L") + "Z").join("");
+  if (d) s.appendChild(svg("path", { d, class: "terre" }));
+  // Grille par-dessus les terres : 30° pour le monde entier, 10° pour un continent, 5° de plus près
+  const pas = largeur > 120 ? 30 : largeur > 50 ? 10 : 5;
+  // Degrés écrits sur une ligne sur deux (ou trois) quand la grille est serrée : « 140°O » prend 35 unités
+  const saut = Math.ceil(40 / (300 * pas / largeur));
+  const reperes = [];
+  for (let lon = Math.ceil(lon0 / pas) * pas; lon <= lon0 + largeur; lon += pas) {
+    s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: "graphe-grille" }));
+    if (sens !== "nord" && (lon / pas) % saut === 0 && x(lon) > 24 && x(lon) < 296) reperes.push([x(lon), 157, fr(Math.abs(lon)) + "°" + (lon > 0 ? "E" : lon < 0 ? (LANGUE === "en" ? "W" : "O") : ""), "middle"]);
+  }
+  for (let lat = Math.ceil((lat1 - hauteur) / pas) * pas; lat <= lat1; lat += pas) {
+    s.appendChild(svg("line", { x1: 10, y1: y(lat), x2: 310, y2: y(lat), class: lat === 0 ? "equateur" : "graphe-grille" }));
+    if (sens === "nord" && y(lat) > 20 && y(lat) < 154) reperes.push([13, y(lat) - 2, fr(Math.abs(lat)) + "°" + (lat > 0 ? "N" : lat < 0 ? "S" : ""), "start"]);
+  }
+  const obstacles = [];
+  reperes.forEach(([rx, ry, texte, ancre]) => {
+    s.appendChild(texteSvg(rx, ry, texte, { class: "sch-petit", "text-anchor": ancre }));
+    const w = 6.5 * texte.length;   // petit corps : environ 6,5 unités par caractère, avec marge
+    obstacles.push([ancre === "start" ? rx - 1 : rx - w / 2, ry - 10, ancre === "start" ? rx + w : rx + w / 2, ry + 3]);
+  });
+  if (y(0) > 14 && y(0) < 156) {
+    s.appendChild(texteSvg(306, y(0) - 3, "équateur", { class: "sch-petit", "text-anchor": "end" }));
+    obstacles.push([306 - 44, y(0) - 13, 306, y(0) - 1]);
+  }
   const points = villes.map((v, k) => ({ nom: numeros ? String(k + 1) : VILLES[v][0], px: x(VILLES[v][2]), py: y(VILLES[v][1]) }));
   villes.forEach((v, k) => {
     const [, lat, lon] = VILLES[v];
@@ -1222,9 +1260,23 @@ function planisphere(villes, sens, numeros) {
     else s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: k === 0 ? "repere-a" : "repere-b" }));
     s.appendChild(svg("circle", { cx: x(lon), cy: y(lat), r: 4.5, class: k === 0 ? "ville-a" : "ville-b" }));
   });
-  placerEtiquettes(points, [[306 - 44, y(0) - 13, 306, y(0) - 1]])
+  placerEtiquettes(points, obstacles)
     .forEach(e => s.appendChild(texteSvg(e.x, e.y, e.nom, { class: "sch-texte sch-gras", "text-anchor": e.ancre })));
   return s;
+}
+
+// Découpe d'un contour par le cadre de la carte (10 à 310, 10 à 160), algorithme de Sutherland-Hodgman : le tracé
+// reste dans le dessin (le contrôle d'affichage refuse ce qui en sort, même masqué)
+function decouperAuCadre(points) {
+  const bords = [[p => p[0] >= 10, (a, b) => [10, a[1] + (b[1] - a[1]) * (10 - a[0]) / (b[0] - a[0])]],
+    [p => p[0] <= 310, (a, b) => [310, a[1] + (b[1] - a[1]) * (310 - a[0]) / (b[0] - a[0])]],
+    [p => p[1] >= 10, (a, b) => [a[0] + (b[0] - a[0]) * (10 - a[1]) / (b[1] - a[1]), 10]],
+    [p => p[1] <= 160, (a, b) => [a[0] + (b[0] - a[0]) * (160 - a[1]) / (b[1] - a[1]), 160]]];
+  return bords.reduce((pts, [dedans, croise]) => pts.flatMap((p, i) => {
+    const prec = pts[(i + pts.length - 1) % pts.length];
+    if (dedans(p)) return dedans(prec) ? [p] : [croise(prec, p), p];
+    return dedans(prec) ? [croise(prec, p)] : [];
+  }), points);
 }
 
 // Étiquettes des villes du planisphère : la ville la plus au nord porte la sienne au-dessus, l'autre en dessous.

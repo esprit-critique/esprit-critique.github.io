@@ -25,6 +25,8 @@ conditions de sa source, indiquée à côté de lui.
 - EM-DAT (CRED / UCLouvain) : deux chiffres agrégés cités, attribution « EM-DAT, CRED / UCLouvain, Bruxelles,
   Belgique, www.emdat.be » ; la base n'est pas redistribuée.
 - Gapminder : « Based on free material from GAPMINDER.ORG, CC-BY LICENSE ».
+- Natural Earth : contours des terres du planisphère (`TERRES_PLANISPHERE`, `static/jeux-donnees.js`), « Made with
+  Natural Earth », naturalearthdata.com, domaine public ; simplifiés par `tests/pays/terres.py`.
 - Les autres chiffres cités dans les fiches et les ateliers (ONU, Insee, NASA, Our World in Data, études
   scientifiques…) restent soumis aux conditions de leur source, indiquée à côté de chaque chiffre.
 - Les citations reproduites dans l'atelier « Qui l'a vraiment dit ? » sont de courts extraits, utilisés pour
