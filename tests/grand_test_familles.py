@@ -250,7 +250,7 @@ if R:
         a1, na1, a2, na2, b1, nb1, b2, nb2 = f["nombres"][x["i"] % len(f["nombres"])]
         return a1 / na1 > b1 / nb1 and a2 / na2 > b2 / nb2 and (b1 + b2) / (nb1 + nb2) > (a1 + a2) / (na1 + na2) and x["choix"][x["juste"]] == "La méthode A"
     verifier("b-simpson", simpson)
-    verifier("b-joueur", lambda f, x: x["choix"][x["juste"]] == "1 chance sur " + str(x["valeurs"]["k"]))
+    verifier("b-joueur", lambda f, x: x["choix"][x["juste"]] == "Toujours 1 chance sur " + str(x["valeurs"]["k"]) + ", comme à chaque coup")
     verifier("b-denominateur", lambda f, x: x["choix"][x["juste"]].startswith("La part"))
     def unites(f, x):
         opts = f["surfaces"][x["i"]][2]

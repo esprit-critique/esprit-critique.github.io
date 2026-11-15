@@ -114,6 +114,15 @@ function legende(elements) {
   return l;
 }
 
+// Mélange l'ordre d'affichage des options d'une question { options, juste } : une bonne réponse qui revient à la
+// même place (la dernière, la deuxième…) se devine sans lire. Rend une copie ; les données restent dans leur ordre.
+// Sans options ou sans bonne réponse numérotée, la question est rendue telle quelle.
+function melangerOptions(q, alea = Math.random) {
+  if (!q || !Array.isArray(q.options) || typeof q.juste !== "number") return q;
+  const ordre = melanger(q.options.map((_, k) => k), alea);
+  return { ...q, options: ordre.map(k => q.options[k]), juste: ordre.indexOf(q.juste) };
+}
+
 // Bouton de réponse, avec le numéro de la touche clavier correspondante (1 à 4)
 function boutonChoix(texte, k) {
   const b = el("button", "choix");

@@ -80,7 +80,7 @@ const JEUX = [
     lancer(zone) {
       deroulerNiveaux(zone, {
         id: "monde", n: 10, relancer: () => JEUX.find(j => j.id === "monde").lancer(zone),
-        tirer: niveau => tirerSelonNiveau("monde", MONDE, 1, niveau)[0]
+        tirer: niveau => melangerOptions(tirerSelonNiveau("monde", MONDE, 1, niveau)[0])
       }, (q, zone, fini) => {
         zone.appendChild(el("p", "cas", q.question));
         const boutons = q.options.map((texte, k) => {

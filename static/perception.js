@@ -461,7 +461,7 @@ JEUX.push(
           ? (x => Object.assign(x.creer(), { id: x.id, nommer: niveau }))(tirerSelonNiveau("graphiques-procedes", PIEGES_GRAPHIQUES, 1, niveau, x => x.id, () => niveau)[0])
           : niveau === 3 && i % 4 === 1
           ? (id => Object.assign(PIEGES_GRAPHIQUES.find(x => x.id === id).creer(), { double: id }))(doubles[(i - 1) / 4])
-          : tirerSelonNiveau("graphiques", niveau === 3 ? PIEGES_GRAPHIQUES.filter(x => !DOUBLES_PIEGES[x.id]) : PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer()
+          : melangerOptions(tirerSelonNiveau("graphiques", niveau === 3 ? PIEGES_GRAPHIQUES.filter(x => !DOUBLES_PIEGES[x.id]) : PIEGES_GRAPHIQUES, 1, niveau, x => x.id)[0].creer())
       }, (p, zone, fini) => {
         if (p.double) return afficherDoublePiege(p, zone, fini);
         if (p.nommer) return afficherProcedesNiveau(p, zone, fini, p.nommer);
@@ -926,7 +926,7 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], min, max, { unite: PC, tronque: true, pas: (max - min) / 4 }),
         honnete: () => grapheBarres([{ libelle: "2024", valeur: v1 }, { libelle: "2025", valeur: v2, forte: true }], 0, 100, { unite: PC, pas: 25 }),
         question: "D'après ce graphique, comment la satisfaction a-t-elle évolué ?",
-        options: ["Elle a environ triplé", T("Elle a progressé de {0} points, soit environ {1} %", fr(Number((v2 - v1).toFixed(1))), hausse), "Elle a doublé"],
+        options: ["Elle a environ triplé, à en juger par la hauteur des barres", T("Elle a progressé de {0} points, soit environ {1} %", fr(Number((v2 - v1).toFixed(1))), hausse), "Elle a à peu près doublé d'une année sur l'autre"],
         juste: 1,
         piege: T("L'axe vertical commence à {0} %, et non à zéro.", fr(min)),
         procedes: [0],
@@ -956,7 +956,8 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheCourbe([{ points: fenetre }], fenetre[0][0], fenetre[5][0], fmin, fmax, { etiquettesX: [fenetre[0][0], fenetre[5][0]] }),
         honnete: () => grapheCourbe([{ points: annees }, { points: fenetre, classe: "courbe-fenetre" }], 1996, 2025, ymin, ymax, { etiquettesX: [1996, 2005, 2015, 2025] }),
         question: "D'après ce graphique, quelle est la tendance de long terme ?",
-        options: ["À la baisse", "Impossible à dire avec ce seul graphique", "À la hausse"],
+        // Leurres aussi longs que la bonne réponse : « on ne peut pas savoir » ne doit pas se reconnaître à sa longueur
+        options: ["À la baisse, comme le montre toute la courbe", "Impossible à dire avec ce seul graphique", "À la hausse, malgré un creux sur la fin"],
         juste: 1,
         piege: "Six années ne disent rien de la tendance de long terme.",
         procedes: [1, 0],
@@ -978,7 +979,7 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheCourbe([{ points: cumul.map((c, k) => [2018 + k, c]) }], 2018, 2025, 0, max, { etiquettesX: [2018, 2021, 2025] }),
         honnete: () => grapheBarres(annuel.map((a, k) => ({ libelle: String(2018 + k).slice(2), valeur: a, forte: k === 7 })), 0, Math.ceil(annuel[0] / 50) * 50, { pas: Math.ceil(annuel[0] / 50) * 50 / 4 }),
         question: "Les ventes annuelles sont-elles en hausse ?",
-        options: ["Oui, nettement", "Non, elles baissent chaque année", "On ne peut pas le savoir"],
+        options: ["Oui, nettement : la courbe ne cesse de monter", "Non, elles baissent chaque année", "On ne peut pas le savoir sans autre source"],
         juste: 1,
         piege: "Une courbe de cumul monte toujours, même quand chaque année est moins bonne que la précédente.",
         procedes: [3],
@@ -1009,7 +1010,7 @@ const PIEGES_GRAPHIQUES = [
         ], 2016, 2025, 0, 1000, { etiquettesX: [2016, 2020, 2025] }),
         legende: "Courbe pleine : entreprise A (axe de gauche). Courbe pointillée : entreprise B (axe de droite). Données fictives.",
         question: "L'entreprise B a-t-elle dépassé l'entreprise A ?",
-        options: ["Oui, vers 2020", "Non : B reste plus de dix fois plus petite", "Oui, en 2025"],
+        options: ["Oui, vers 2020, quand les deux courbes se croisent", "Non : B reste plus de dix fois plus petite", "Oui, en 2025, où sa courbe passe au-dessus"],
         juste: 1,
         piege: "Les deux courbes n'utilisent pas la même échelle.",
         procedes: [2, 0],
@@ -1028,7 +1029,7 @@ const PIEGES_GRAPHIQUES = [
         trompeur: () => grapheBarres([{ libelle: "2024", valeur: t1 }, { libelle: "2025", valeur: t2, forte: true }], 0, 10, { unite: PC, pas: 2.5 }),
         honnete: null,
         question: T("Le taux passe de {0} % à {1} %. De combien a-t-il augmenté ?", t1, t2),
-        options: [T("De {0} %", t2 - t1), t2 - t1 > 1 ? T("De {0} points, soit +{1} %", t2 - t1, relatif) : T("De {0} point, soit +{1} %", t2 - t1, relatif), T("De {0} points", relatif)],
+        options: [T("De {0} %, l'écart entre les deux taux", t2 - t1), t2 - t1 > 1 ? T("De {0} points, soit +{1} %", t2 - t1, relatif) : T("De {0} point, soit +{1} %", t2 - t1, relatif), T("De {0} points, d'après la hauteur des barres", relatif)],
         juste: 1,
         piege: "Il faut distinguer points de pourcentage et pourcentage.",
         procedes: [6],

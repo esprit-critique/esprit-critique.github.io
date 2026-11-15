@@ -581,12 +581,14 @@ EXPERIENCES.push(
         conteneur.append(affichage, actions);
       }
 
+      // Ordre des options mélangé une fois par partie : réponses individuelles et réponse du groupe portent sur le même
+      const problemesMelanges = PROBLEMES_GROUPE.map(p => melangerOptions(p));
       function problemes(joueurs) {
         const resultats = [];
         let i = 0;
         const probleme = () => {
           if (i >= PROBLEMES_GROUPE.length) return bilanProblemes();
-          const p = PROBLEMES_GROUPE[i];
+          const p = problemesMelanges[i];
           const individuelles = [];
           tourDeTable(joueurs, (k, nom, ok) => {
             entete(zone, i + 1, PROBLEMES_GROUPE.length, "Problème");
