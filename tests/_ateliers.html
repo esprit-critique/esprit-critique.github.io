@@ -403,7 +403,7 @@ f.onload = async () => {
     // Niveau 4 : le sophisme n'est plus annoncé, « Aucun » est toujours proposé, et des arguments pièges tiennent
     w.localStorage.setItem("niveaux", JSON.stringify({ reparer: { niveau: 4, mode: "choisi" } }));
     await aller("accueil"); await aller("tests/reparer");
-    ok("réparer niveau 4 : trois sophismes et « Aucun »", visibles(".choix").length === 4 && /Aucun : l'argument tient/.test(visibles(".choix")[3].textContent));
+    ok("réparer niveau 4 : trois sophismes et « Aucun »", visibles(".choix").length === 4 && /Aucun\s?: l.argument tient/.test(visibles(".choix")[3].textContent));
     const finiRep4 = await jouer("#tests/reparer");
     ok("réparer niveau 4 : partie jusqu'au bilan", finiRep4 && textesSuspects().length === 0, textesSuspects().join());
     w.localStorage.removeItem("niveaux");
