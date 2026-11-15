@@ -79,7 +79,7 @@ EN_AJOUTER([
   ["{0} sur les seize dernières semaines, dont {1} sur les quatre dernières.", "{0} over the last sixteen weeks, {1} of them in the last four."],
   ["jour d'entraînement", "training day"],
   ["jours d'entraînement", "training days"],
-  ["{0} : maîtrise de chaque jeu (repères 500, 750, 1 000 : plafonds des niveaux 1, 2 et 3)", "{0}: mastery of each game (marks at 500, 750, 1,000: ceilings of levels 1, 2 and 3)"],
+  ["{0} : maîtrise de chaque jeu (repères 500 et 750 : plafonds des niveaux 1 et 2 d'un atelier à trois niveaux)", "{0}: mastery of each game (marks at 500 and 750: ceilings of levels 1 and 2 of a three-level game)"],
   ["Maîtrise du domaine : {0}. Un jeu jamais joué compte pour zéro.", "Domain mastery: {0}. A game never played counts as zero."],
   ["rencontrée au quiz", "met in the quiz"],
   ["consolidée", "consolidated"],

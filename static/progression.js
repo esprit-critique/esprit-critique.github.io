@@ -68,7 +68,9 @@ const DOMAINES = [
   ["monde", "Le monde en chiffres"], ["confiance", "Mesurer sa confiance"], ["perception", "Percevoir"],
   ["raisonner", "Raisonner"], ["debattre", "Débattre"], ["notions", "Notions"]
 ];
-const PLAFONDS_NIVEAU = { 1: 500, 2: 750, 3: 1000 };
+// Plafond de maîtrise d'un niveau : 500 au niveau 1, 1 000 au plus haut niveau de l'atelier (3 ou 5, niveauMax()),
+// régulier entre les deux. Un niveau plus difficile rapporte donc plus, et tout atelier peut atteindre 1 000.
+const plafondNiveau = (L, max = 3) => Math.round(500 + 500 * (Math.min(L, max) - 1) / Math.max(1, max - 1));
 
 // ===================== Maîtrise d'un jeu =====================
 const moyenneDe = l => l.reduce((s, x) => s + x, 0) / l.length;
@@ -76,7 +78,8 @@ const borner = (x, a, b) => Math.max(a, Math.min(b, x));
 
 // Jeu noté : pour chaque niveau joué, réussite des 5 dernières parties, corrigée du hasard, pondérée par la confiance
 // (min(1, parties / 3)), sous le plafond du niveau ; la maîtrise du jeu est la plus grande de ces valeurs.
-function maitriseNotee(resultat, c) {
+// max : nombre de niveaux de l'atelier (3 par défaut)
+function maitriseNotee(resultat, c, max = 3) {
   if (!resultat) return 0;
   const niveaux = resultat.niveaux && Object.keys(resultat.niveaux).length ? resultat.niveaux
     : (resultat.historique && resultat.historique.length && resultat.sur ? { 0: resultat } : {});
@@ -87,7 +90,7 @@ function maitriseNotee(resultat, c) {
     const reussite = borner(moyenneDe(h.slice(-5)) / r.sur, 0, 1);
     const q = Math.max(0, (reussite - c) / (1 - c));
     const f = Math.min(1, (r.n || h.length) / 3);
-    const plafond = Number(L) ? PLAFONDS_NIVEAU[L] || 1000 : 1000;
+    const plafond = Number(L) ? plafondNiveau(Number(L), max) : 1000;
     meilleure = Math.max(meilleure, plafond * q * f);
   });
   return meilleure;
@@ -123,7 +126,7 @@ function maitriseEtalonnage(d) {
 
 function maitriseJeu(id, d) {
   const [, type, c] = MAITRISE_JEUX[id] || [];
-  if (type === "note") return maitriseNotee((d.resultatsAteliers || {})[id], c);
+  if (type === "note") return maitriseNotee((d.resultatsAteliers || {})[id], c, niveauMax(id));
   if (type === "mesure") return MESURES[id] ? MESURES[id](d) : 0;
   return 0;
 }

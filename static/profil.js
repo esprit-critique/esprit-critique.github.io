@@ -441,7 +441,7 @@ function ongletJeux(p, m) {
     const lignes = tousLesAteliers().filter(a => a.atelier.section === section.id && MAITRISE_JEUX[a.atelier.id] && MAITRISE_JEUX[a.atelier.id][1] !== "aucun")
       .map(a => { const v = m.jeux[a.atelier.id] ? m.jeux[a.atelier.id][1] : 0; return [a.atelier.titre, resultatAtelier(a.atelier.id) ? v : null, a.atelier.couleur]; });
     if (!lignes.length) return;
-    p.appendChild(graphiqueBarres(T("{0} : maîtrise de chaque jeu (repères 500, 750, 1 000 : plafonds des niveaux 1, 2 et 3)", section.titre), lignes, 1000, [500, 750], messageJeuxSection(lignes)));
+    p.appendChild(graphiqueBarres(T("{0} : maîtrise de chaque jeu (repères 500 et 750 : plafonds des niveaux 1 et 2 d'un atelier à trois niveaux)", section.titre), lignes, 1000, [500, 750], messageJeuxSection(lignes)));
     if (domaineConnu) p.appendChild(el("p", "source", T("Maîtrise du domaine : {0}. Un jeu jamais joué compte pour zéro.", m.domaines[dom])));
   });
 }
@@ -666,8 +666,8 @@ function blocMaitriseJeu(id, avant) {
   bloc.appendChild(graphiqueBarres(T("Maîtrise de ce jeu, avant et après la partie"), [[T("Avant"), avant.jeu], [T("Après"), apres]], 1000, [500, 750],
     ecart > 0 ? T("Cette partie a fait monter votre maîtrise de ce jeu de {0} points.", ecart) : ecart < 0 ? T("Cette partie a fait baisser votre maîtrise de ce jeu de {0} points.", -ecart) : T("Cette partie n'a pas changé votre maîtrise de ce jeu.")));
   const r = resultatAtelier(id);
-  const niveauMax = r && r.niveaux ? Math.max(...Object.keys(r.niveaux).map(Number)) : 0;
-  if (MAITRISE_JEUX[id][1] === "note" && niveauMax && niveauMax < 3) bloc.appendChild(el("p", "source", T("Pour dépasser {0}, jouez au niveau {1}.", PLAFONDS_NIVEAU[niveauMax], niveauMax + 1)));
+  const plusHaut = r && r.niveaux ? Math.max(...Object.keys(r.niveaux).map(Number)) : 0;
+  if (MAITRISE_JEUX[id][1] === "note" && plusHaut && plusHaut < niveauMax(id)) bloc.appendChild(el("p", "source", T("Pour dépasser {0}, jouez au niveau {1}.", plafondNiveau(plusHaut, niveauMax(id)), plusHaut + 1)));
   return bloc;
 }
 function maitriseAvant(id) {
