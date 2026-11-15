@@ -275,203 +275,203 @@ const NIVEAU_1_REPARATIONS = ["ad-hominem", "tu-quoque", "popularite", "traditio
 const REPARATIONS = [
   { s: "ad-hominem", arg: "Ne suis pas son projet de budget pour le club : il a raté son bac.",
     rep: ["Ne suis pas son projet de budget : il oublie l'assurance des locaux, 900 € par an, et il est donc en déficit.", "La critique porte sur le contenu du budget, ce qui peut réellement le mettre en défaut."],
-    autre: ["Ne suis pas son projet de budget : tout le bureau le trouve mauvais.", "popularite"],
-    acc: "Ton reproche sur son bac est une attaque personnelle.",
+    autre: ["Ne suis pas son projet de budget : sur les neuf membres du bureau, huit l'ont jugé mauvais dès la première lecture, et ils connaissent le club depuis des années.", "popularite"],
+    acc: "Son bac n'a rien à voir avec la qualité d'un budget : ton reproche vise la personne, pas les chiffres qu'elle présente.",
     concl: "Il a raté son bac, mais son budget est peut-être bon." },
   { s: "tu-quoque", arg: "Tu me dis de ranger mon téléphone pendant les repas, alors que tu passes tes soirées sur le tien : ton conseil ne vaut rien.",
     rep: ["Ton conseil ne me concerne pas vraiment : je ne regarde mon téléphone à table que pour les appels d'astreinte, une fois par semaine.", "La réponse porte sur le bien-fondé du conseil dans son cas, et non sur la conduite de celui qui le donne."],
-    autre: ["Ton conseil ne vaut rien : dans ma famille, on a toujours gardé le téléphone à table.", "tradition"],
-    acc: "Tu me fais la morale : c'est un sophisme.",
+    autre: ["Ton conseil ne vaut rien : chez nous, depuis trois générations, le téléphone reste sur la table pendant les repas, et personne ne s'en est jamais plaint.", "tradition"],
+    acc: "Mes soirées sur le téléphone ne rendent pas mon conseil mauvais : tu réponds à ma conduite, pas à ce que je te conseille.",
     concl: "Tu passes aussi beaucoup de temps sur ton téléphone : rangeons-les tous les deux pendant les repas." },
   { s: "association", arg: "Ne votons pas pour la réduction de l'éclairage nocturne : c'est ce que réclame un groupuscule extrémiste.",
     rep: ["Ne votons pas pour la réduction de l'éclairage nocturne dans les passages souterrains : la police municipale y a relevé la moitié des agressions de l'an dernier, de nuit.", "Le refus s'appuie sur une conséquence de la mesure elle-même, et non sur ceux qui la défendent."],
-    autre: ["Ne votons pas pour la réduction de l'éclairage : on a toujours éclairé les rues toute la nuit.", "tradition"],
-    acc: "Comparer vos adversaires à des extrémistes, c'est un sophisme.",
+    autre: ["Ne votons pas pour la réduction de l'éclairage nocturne : depuis que la ville existe, les rues sont éclairées toute la nuit, et nos parents comme nos grands-parents ont toujours vécu ainsi.", "tradition"],
+    acc: "Qu'un groupuscule extrémiste réclame aussi cette mesure ne dit rien de ses effets : l'argument vise ceux qui la défendent, pas la mesure.",
     concl: "Ce groupuscule réclame la mesure, mais elle peut quand même être bonne." },
   { s: "autorite", arg: "Ce matelas soigne le mal de dos : un champion de tennis l'affirme dans la publicité.",
-    rep: ["Ce matelas soulage le mal de dos : dans un essai comparant deux groupes de patients tirés au sort, ceux qui l'utilisaient avaient moins de douleurs après trois mois.", "Une étude comparative remplace le témoignage d'une célébrité hors de son domaine."],
-    autre: ["Ce matelas soigne le mal de dos : il s'en vend des milliers chaque mois.", "popularite"],
-    acc: "Invoquer un champion de tennis, c'est un argument d'autorité.",
+    rep: ["Ce matelas soulage le mal de dos : dans un essai tiré au sort, ses utilisateurs souffraient moins que les autres après trois mois.", "Une étude comparative remplace le témoignage d'une célébrité hors de son domaine."],
+    autre: ["Ce matelas soigne le mal de dos : il s'en vend plus de 3 000 par mois dans le pays, et il est en tête des ventes de literie depuis deux ans.", "popularite"],
+    acc: "Un champion de tennis n'est pas médecin : son avis sur le mal de dos ne vaut pas plus que celui d'un autre client.",
     concl: "Ce champion de tennis aime son matelas." },
   { s: "popularite", arg: "Cette crème anti-rides est efficace : c'est la plus vendue du pays.",
     rep: ["Cette crème atténue les rides : dans un essai en double aveugle, les rides mesurées ont diminué davantage qu'avec une crème neutre.", "Une mesure contrôlée remplace le nombre d'acheteurs, qui ne dit rien de l'efficacité."],
-    autre: ["Cette crème anti-rides est efficace : elle est 100 % naturelle.", "nature"],
-    acc: "« La plus vendue », c'est un appel à la popularité.",
+    autre: ["Cette crème anti-rides est efficace : ses quinze ingrédients sont tous d'origine naturelle, sans conservateur ni parfum de synthèse.", "nature"],
+    acc: "Le nombre de personnes qui achètent une crème ne dit rien de son effet sur les rides : on peut très bien vendre beaucoup d'un produit inutile.",
     concl: "Cette crème est très populaire." },
   { s: "tradition", arg: "Il faut garder la réunion du lundi à 8 heures : on l'a toujours faite à cette heure-là.",
     rep: ["Il faut garder la réunion du lundi à 8 heures : c'est le seul créneau où les équipes de nuit et de jour sont présentes en même temps.", "La raison invoquée est une utilité actuelle, et non l'ancienneté de l'habitude."],
     autre: ["Il faut garder la réunion à 8 heures : sinon, on finira par ne plus faire de réunion du tout, et l'équipe se désorganisera.", "pente-glissante"],
-    acc: "Dire « on a toujours fait comme ça » est un sophisme.",
+    acc: "Avoir toujours fait la réunion à 8 heures n'est pas une raison de la garder : une habitude peut être ancienne et mauvaise.",
     concl: "On a toujours fait la réunion à 8 heures, mais on pourrait la déplacer." },
   { s: "nature", arg: "Ce sirop à base de plantes est sans danger pour les enfants : il est entièrement naturel.",
     rep: ["Ce sirop est sans danger pour les enfants aux doses indiquées : ses effets indésirables ont été étudiés chez l'enfant et sont rares et bénins.", "La sécurité repose sur des données de tolérance, pas sur l'origine naturelle des ingrédients."],
-    autre: ["Ce sirop est sans danger : nos grands-mères le donnaient déjà à leurs enfants.", "tradition"],
-    acc: "« Naturel » ne veut rien dire : c'est un sophisme.",
+    autre: ["Ce sirop est sans danger pour les enfants : sa recette se transmet depuis le XIXe siècle, et des générations de grands-mères l'ont donné à leurs petits-enfants.", "tradition"],
+    acc: "Bien des plantes sont toxiques, la digitale ou le laurier-rose par exemple : être naturel ne garantit pas d'être sans danger.",
     concl: "Ce sirop est fabriqué à partir de plantes." },
   { s: "emotion", arg: "Il faut acheter ce détecteur de fumée : imaginez vos enfants pris au piège dans les flammes.",
     rep: ["Il faut acheter un détecteur de fumée : il donne l'alerte dès les premières fumées, y compris la nuit, quand toute la maison dort.", "Le danger est décrit par ses mécanismes, sans chercher à effrayer pour emporter l'accord."],
-    autre: ["Il faut acheter ce détecteur : tous vos voisins en ont déjà un.", "popularite"],
-    acc: "Vous jouez sur la peur, c'est un sophisme.",
-    concl: "Les incendies domestiques sont terrifiants." },
+    autre: ["Il faut acheter ce détecteur de fumée : dans notre rue, quatorze maisons sur quinze en sont déjà équipées, il ne reste plus que la vôtre.", "popularite"],
+    acc: "Décrire des enfants pris au piège des flammes cherche à faire peur, pas à montrer que ce détecteur est utile.",
+    concl: "Les incendies domestiques sont terrifiants, surtout quand ils surviennent la nuit." },
   { s: "consequences", arg: "Mon équipe ne peut pas avoir commis d'erreur de calcul dans ce dossier : sinon, tout le projet serait à refaire.",
     rep: ["Mon équipe n'a pas commis d'erreur de calcul dans ce dossier : un second ingénieur a refait tous les calculs indépendamment et trouve les mêmes résultats.", "Une vérification indépendante remplace le refus d'envisager une conséquence désagréable."],
     autre: ["Mon équipe ne peut pas s'être trompée : elle a toujours rendu des calculs justes jusqu'ici, donc elle ne se trompera jamais.", "generalisation-hative"],
-    acc: "Refuser l'erreur à cause de ses conséquences, c'est un sophisme.",
+    acc: "Qu'une erreur oblige à tout refaire ne la rend pas moins probable : les conséquences d'une erreur ne disent pas si elle a eu lieu.",
     concl: "Si mon équipe s'est trompée, tout le projet est à refaire." },
   { s: "genetique", arg: "La semaine de quatre jours est une mauvaise idée : elle a été inventée par un patron qui voulait faire de la publicité à son entreprise.",
-    rep: ["La semaine de quatre jours est une mauvaise idée pour notre service d'accueil : il doit rester ouvert cinq jours, et nos effectifs ne permettent pas de couvrir le cinquième.", "L'objection porte sur les effets de la mesure dans ce cas précis, et non sur son origine."],
+    rep: ["La semaine de quatre jours ne convient pas à notre accueil : il doit ouvrir cinq jours, et nos effectifs ne couvrent pas le cinquième.", "L'objection porte sur les effets de la mesure dans ce cas précis, et non sur son origine."],
     autre: ["La semaine de quatre jours est une mauvaise idée : avec elle, on finira par ne plus travailler que trois jours, puis deux.", "pente-glissante"],
-    acc: "Juger une idée d'après son inventeur, c'est un sophisme génétique.",
+    acc: "Qu'un patron ait inventé cette idée pour sa publicité ne dit rien de ses effets : tu juges son origine, pas la mesure.",
     concl: "La semaine de quatre jours a une origine publicitaire." },
   { s: "ad-baculum", arg: "Tu vas soutenir mon projet en réunion, sinon je ne t'aiderai plus pour tes dossiers.",
     rep: ["Soutiens mon projet en réunion : il réduit de moitié les délais de livraison, et tes clients s'en plaignent depuis des mois.", "Une raison qui concerne l'intérêt du projet remplace la menace."],
-    autre: ["Soutiens mon projet : tout le monde dans l'équipe le soutient déjà.", "popularite"],
-    acc: "Me menacer, c'est un appel à la force.",
+    autre: ["Soutiens mon projet en réunion : sur les douze personnes de l'équipe, onze l'ont déjà soutenu, et tu serais le seul à t'y opposer.", "popularite"],
+    acc: "Ta menace ne dit rien de la valeur de ton projet : tu cherches à me faire céder, pas à me convaincre.",
     concl: "Je ne t'aiderai plus pour tes dossiers." },
   { s: "homme-de-paille", arg: "Tu proposes de limiter les écrans à une heure par jour pour les enfants ? Donc tu veux les priver de toute technologie et en faire des marginaux.",
     rep: ["Une limite d'une heure par jour est trop basse : les devoirs de collège demandent déjà souvent plus d'une heure d'ordinateur.", "L'objection porte sur la proposition réelle (une heure par jour), et non sur une caricature."],
-    autre: ["Ta proposition ne vaut rien : tu passes toi-même des heures devant ton écran.", "tu-quoque"],
-    acc: "Ta proposition est un sophisme.",
+    autre: ["Ta proposition ne vaut rien : tu passes toi-même trois ou quatre heures par soir devant ton écran, et tu voudrais en priver les enfants.", "tu-quoque"],
+    acc: "Personne n'a parlé de priver les enfants de toute technologie : tu déformes sa proposition pour la rendre plus facile à attaquer.",
     concl: "Les enfants ont besoin de technologie." },
   { s: "hareng-rouge", arg: "On me reproche le retard du chantier de l'école ? Parlons plutôt de la propreté des rues, qui s'est beaucoup améliorée.",
-    rep: ["Le chantier de l'école a pris trois mois de retard parce que l'entreprise de charpente a fait faillite ; la nouvelle entreprise s'est engagée sur une livraison en mars.", "La réponse porte enfin sur la question posée : le retard et ses causes."],
-    autre: ["Le retard ? Vous préférez donc qu'on bâcle le chantier et que le toit s'effondre sur les enfants ?", "homme-de-paille"],
-    acc: "Votre question sur le retard est un piège.",
+    rep: ["Le chantier de l'école a trois mois de retard : l'entreprise de charpente a fait faillite, et la nouvelle s'est engagée à livrer en mars.", "La réponse porte enfin sur la question posée : le retard et ses causes."],
+    autre: ["Le retard ? Vous préférez donc qu'on bâcle le chantier pour gagner trois mois, et que le toit de l'école s'effondre un jour sur les enfants ?", "homme-de-paille"],
+    acc: "La propreté des rues n'a rien à voir avec le chantier de l'école : vous changez de sujet au lieu de répondre sur le retard.",
     concl: "La propreté des rues s'est beaucoup améliorée." },
   { s: "question-piege", arg: "Pourquoi as-tu encore oublié de payer la facture d'électricité ce mois-ci ?",
     rep: ["La facture d'électricité de ce mois-ci n'apparaît pas sur le relevé : l'as-tu payée ?", "La question ne présuppose plus ce qui reste à établir : elle demande d'abord le fait."],
-    autre: ["Tu as oublié la facture : tu ne m'as montré aucun reçu, c'est donc que tu ne l'as pas payée.", "ignorance"],
-    acc: "Ta question est un sophisme.",
+    autre: ["Tu as oublié la facture : je n'ai trouvé aucun reçu dans le tiroir ni dans tes courriels, c'est bien la preuve que tu ne l'as pas payée.", "ignorance"],
+    acc: "Ta question suppose que j'ai oublié de payer, ce que tu n'as jamais vérifié : y répondre, c'est déjà l'admettre.",
     concl: "Il faudrait penser à payer la facture." },
   { s: "poteaux", arg: "Tu voulais une preuve que le nouveau logiciel fait gagner du temps ? Ce test chronométré ne compte pas : il faudrait le refaire sur six mois avec toute l'équipe.",
-    rep: ["Ton test chronométré montre un gain de temps sur une tâche ; je l'accepte. Mais il ne porte que sur la saisie : pour conclure au gain global, il faudrait aussi mesurer la relecture.", "Il reconnaît que la preuve demandée a été fournie, puis justifie précisément ce qui manque encore."],
-    autre: ["Ton test ne compte pas : tu es payé par l'éditeur du logiciel.", "ad-hominem"],
-    acc: "Tu fais un sophisme avec ton test.",
+    rep: ["Ton test montre un gain de temps à la saisie, je l'accepte ; pour conclure à un gain global, il faudrait aussi mesurer la relecture.", "Il reconnaît que la preuve demandée a été fournie, puis justifie précisément ce qui manque encore."],
+    autre: ["Ton test chronométré ne compte pas : tu es payé par l'éditeur du logiciel depuis deux ans, et tu as tout intérêt à ce qu'il soit adopté.", "ad-hominem"],
+    acc: "Tu réclames une nouvelle preuve chaque fois qu'on t'en apporte une : tu changes les règles pour ne jamais avoir tort.",
     concl: "Le logiciel fait gagner du temps." },
   { s: "brandolini", arg: "Ce restaurant est le pire de la ville : la serveuse était lente, la musique trop forte, les prix exagérés, le parking trop loin, les chaises inconfortables, le menu trop court, la lumière trop vive, et je pourrais continuer.",
-    rep: ["Ce restaurant est le pire que j'aie essayé en ville : sur les trois plats commandés, deux étaient froids, et l'addition comptait un plat que nous n'avions pas pris.", "Deux faits précis et vérifiables remplacent une liste de griefs impossibles à examiner."],
-    autre: ["Ce restaurant est le pire de la ville : tous mes collègues le disent.", "popularite"],
-    acc: "Tu accumules les reproches, c'est un sophisme.",
+    rep: ["Ce restaurant est le pire que j'aie essayé en ville : deux plats sur trois arrivés froids, et un plat facturé que nous n'avions pas pris.", "Deux faits précis et vérifiables remplacent une liste de griefs impossibles à examiner."],
+    autre: ["Ce restaurant est le pire de la ville : mes huit collègues y sont allés ce mois-ci, et tous m'ont dit qu'ils n'y remettraient jamais les pieds.", "popularite"],
+    acc: "Une longue liste de petits reproches n'en fait pas un grave : tu accumules les détails pour impressionner, sans rien démontrer.",
     concl: "Je n'ai pas aimé ma soirée dans ce restaurant." },
   { s: "faux-dilemme", arg: "Soit on achète la voiture neuve, soit on ne part plus jamais en vacances.",
-    rep: ["Pour partir en vacances, il nous faut une voiture fiable : la nôtre est tombée en panne trois fois cette année, et la réparation coûterait plus que sa valeur. Une neuve, ou une bonne occasion, réglerait le problème.", "Le raisonnement part d'un besoin réel et laisse ouvertes les autres options."],
-    autre: ["Il faut acheter la voiture neuve : nos voisins viennent tous de changer la leur.", "popularite"],
-    acc: "Tu présentes un faux dilemme.",
+    rep: ["Il nous faut une voiture fiable pour partir : la nôtre est tombée trois fois en panne cette année. Une neuve ou une bonne occasion ferait l'affaire.", "Le raisonnement part d'un besoin réel et laisse ouvertes les autres options."],
+    autre: ["Il faut acheter la voiture neuve : dans notre rue, sept voisins sur dix ont changé de voiture l'an dernier, et nous sommes les derniers à rouler dans une aussi vieille.", "popularite"],
+    acc: "Acheter une voiture neuve ou renoncer aux vacances : il existe bien d'autres possibilités, que tu passes sous silence.",
     concl: "On pourrait aussi louer une voiture pour les vacances." },
   { s: "juste-milieu", arg: "Le vendeur dit que la maison vaut 400 000 €, l'acheteur 300 000 € : elle vaut donc 350 000 €.",
     rep: ["La maison vaut environ 350 000 € : c'est le prix moyen au mètre carré des cinq ventes comparables du quartier cette année.", "L'estimation vient de données de marché, et non du point médian entre deux prétentions intéressées."],
-    autre: ["La maison vaut 350 000 € : un ami de l'acheteur, professeur de mathématiques, en est sûr.", "autorite"],
-    acc: "Couper la poire en deux, c'est un sophisme.",
+    autre: ["La maison vaut 350 000 € : un ami de l'acheteur, professeur de mathématiques depuis vingt ans, a refait le calcul et en est absolument certain.", "autorite"],
+    acc: "Couper la poire en deux ne donne pas la valeur d'une maison : le milieu entre deux prix peut être aussi faux que chacun d'eux.",
     concl: "Le vendeur et l'acheteur pourraient s'entendre à 350 000 €." },
   { s: "fausse-analogie", arg: "Un employé, c'est comme une machine : il suffit de l'entretenir régulièrement pour qu'il produise toujours autant.",
-    rep: ["Un employé reste plus productif s'il prend régulièrement des congés : dans notre service, les arrêts maladie baissent nettement l'année qui suit les congés pris en entier.", "Le constat porte sur les employés eux-mêmes, sans transférer des propriétés d'une machine."],
-    autre: ["Un employé produit toujours autant s'il est bien traité : tous les managers le savent.", "popularite"],
-    acc: "Comparer un employé à une machine, c'est une fausse analogie.",
+    rep: ["Un employé reste plus productif s'il prend ses congés : dans notre service, les arrêts maladie baissent l'année qui suit des congés pris en entier.", "Le constat porte sur les employés eux-mêmes, sans transférer des propriétés d'une machine."],
+    autre: ["Un employé produit toujours autant s'il est bien traité : c'est ce que répètent les deux cents managers interrogés par notre fédération professionnelle.", "popularite"],
+    acc: "Un employé n'est pas une machine : il se fatigue, se lasse, change d'emploi, et la comparaison oublie tout ce qui les distingue.",
     concl: "Les machines doivent être entretenues régulièrement." },
   { s: "fausse-equivalence", arg: "Oublier de rendre un livre à la bibliothèque ou voler dans un magasin, c'est pareil : dans les deux cas, on garde ce qui ne nous appartient pas.",
-    rep: ["Oublier de rendre un livre est un tort, même s'il est sans commune mesure avec un vol : on prive les autres lecteurs, et le retard est pénalisé pour cette raison.", "Le tort est reconnu pour lui-même, sans être assimilé à une faute bien plus grave."],
+    rep: ["Oublier de rendre un livre est un tort, bien moindre qu'un vol : on prive les autres lecteurs, d'où la pénalité de retard.", "Le tort est reconnu pour lui-même, sans être assimilé à une faute bien plus grave."],
     autre: ["Oublier de rendre un livre, c'est grave : aujourd'hui un livre, demain un vol, après-demain un cambriolage.", "pente-glissante"],
-    acc: "Comparer un oubli et un vol, c'est une fausse équivalence.",
+    acc: "Oublier un livre et voler dans un magasin n'ont ni la même intention ni la même gravité : les mettre sur le même plan est trompeur.",
     concl: "Voler dans un magasin est un délit." },
   { s: "nirvana", arg: "Ce casque de vélo ne protège pas de tous les accidents : autant ne pas le porter.",
     rep: ["Ce casque ne protège pas de tout, mais il réduit le risque de blessure grave à la tête : il vaut donc la peine d'être porté.", "La solution est jugée sur ce qu'elle améliore, et non comparée à une protection parfaite qui n'existe pas."],
-    autre: ["Pas besoin de casque : mon grand-père n'en a jamais porté et il n'a jamais eu d'accident.", "generalisation-hative"],
-    acc: "Exiger une protection parfaite, c'est le sophisme du nirvana.",
+    autre: ["Pas besoin de casque : mon grand-père a fait du vélo pendant soixante ans sans jamais en porter, et il n'a jamais eu le moindre accident.", "generalisation-hative"],
+    acc: "Aucune protection n'est parfaite : rejeter le casque parce qu'il ne protège pas de tout, c'est exiger l'impossible.",
     concl: "Aucun casque ne protège de tous les accidents." },
   { s: "post-hoc", arg: "J'ai changé de coiffeur, et le lendemain j'ai décroché l'emploi : ce nouveau coiffeur me porte chance.",
     rep: ["J'ai décroché cet emploi parce que j'avais préparé l'entretien : la recruteuse m'a dit avoir retenu ma présentation du dossier.", "La cause invoquée est appuyée par une information directe, et non par une simple succession."],
-    autre: ["Ce coiffeur porte chance : tous ses clients le disent.", "popularite"],
-    acc: "Tu confonds avant et cause.",
+    autre: ["Ce coiffeur porte chance : sur la vingtaine de clients que je connais chez lui, presque tous disent que leurs affaires vont mieux depuis.", "popularite"],
+    acc: "Avoir changé de coiffeur la veille ne montre pas que le coiffeur y est pour quelque chose : ce qui précède n'est pas forcément une cause.",
     concl: "J'ai changé de coiffeur la veille de mon entretien." },
   { s: "correlation", arg: "Les élèves qui dorment le plus ont les meilleures notes : dormir davantage améliore donc les résultats.",
-    rep: ["Dormir davantage améliore les résultats : dans une expérience où des classes tirées au sort ont commencé les cours une heure plus tard, leurs élèves ont dormi plus et obtenu de meilleures notes que les autres.", "Une expérience avec tirage au sort écarte les facteurs communs (motivation, milieu familial) qui pouvaient expliquer le lien observé."],
-    autre: ["Dormir davantage améliore les résultats : tous les professeurs le disent.", "popularite"],
-    acc: "Tu confonds corrélation et causalité.",
+    rep: ["Dormir davantage améliore les résultats : des classes tirées au sort pour commencer une heure plus tard ont dormi plus et eu de meilleures notes.", "Une expérience avec tirage au sort écarte les facteurs communs (motivation, milieu familial) qui pouvaient expliquer le lien observé."],
+    autre: ["Dormir davantage améliore les résultats : les quarante professeurs du lycée en sont convaincus, et ils le répètent aux parents à chaque réunion.", "popularite"],
+    acc: "Les bons élèves dorment peut-être plus pour une autre raison, un emploi du temps plus léger par exemple : un lien ne prouve pas une cause.",
     concl: "Les élèves qui dorment le plus ont les meilleures notes." },
   { s: "pente-glissante", arg: "Si on autorise les chiens dans le parc, bientôt il y aura des chevaux, puis des vaches, et le parc deviendra une ferme.",
-    rep: ["Si on autorise les chiens dans le parc, il faudra des sacs et des poubelles adaptés : dans le parc voisin, les déjections ont triplé la première année faute d'équipement.", "La conséquence annoncée est directe et appuyée sur un exemple, sans chaîne d'étapes imaginaires."],
-    autre: ["N'autorisons pas les chiens : ce parc a toujours été interdit aux animaux.", "tradition"],
-    acc: "Ton raisonnement est une pente glissante.",
+    rep: ["Autoriser les chiens au parc demande des poubelles adaptées : au parc voisin, faute d'équipement, les déjections ont triplé en un an.", "La conséquence annoncée est directe et appuyée sur un exemple, sans chaîne d'étapes imaginaires."],
+    autre: ["N'autorisons pas les chiens : depuis son ouverture en 1920, ce parc a toujours été interdit aux animaux, et ses habitués y sont attachés.", "tradition"],
+    acc: "Rien ne permet de passer des chiens aux chevaux puis aux vaches : chaque étape de ton enchaînement est supposée, jamais montrée.",
     concl: "Les chevaux n'ont rien à faire dans un parc." },
   { s: "tireur-elite", arg: "Les trois dernières pannes de la photocopieuse ont eu lieu un mardi : le mardi lui porte malheur.",
-    rep: ["Le mardi est le jour le plus risqué pour la photocopieuse : c'est le jour où l'on imprime les fiches de paie, trois fois plus de pages que les autres jours, et douze des vingt pannes de l'année ont eu lieu un mardi.", "Le lien est établi sur toutes les pannes de l'année, et non sur les trois dernières repérées après coup, avec un mécanisme plausible."],
-    autre: ["Le mardi porte malheur à la photocopieuse : le technicien de maintenance en est persuadé.", "autorite"],
-    acc: "Tu dessines la cible autour des impacts.",
+    rep: ["La photocopieuse tombe plus souvent en panne le mardi : douze des vingt pannes de l'année, le jour où l'on imprime les fiches de paie.", "Le lien est établi sur toutes les pannes de l'année, et non sur les trois dernières repérées après coup, avec un mécanisme plausible."],
+    autre: ["Le mardi porte malheur à la photocopieuse : le technicien de maintenance, qui répare ces machines depuis vingt-cinq ans, en est persuadé.", "autorite"],
+    acc: "Trois pannes un mardi peuvent très bien tenir du hasard : tu remarques les coïncidences et oublies les pannes des autres jours.",
     concl: "La photocopieuse est souvent en panne." },
   { s: "cause-unique", arg: "Si les élèves ont de moins bons résultats en lecture, c'est uniquement à cause des téléphones portables.",
-    rep: ["Les téléphones portables jouent sans doute un rôle dans la baisse des résultats en lecture, parmi d'autres facteurs comme le temps de lecture à l'école ou le sommeil.", "Le facteur est conservé, mais à sa place parmi les autres."],
-    autre: ["C'est la faute des téléphones : depuis qu'ils existent, les résultats baissent.", "post-hoc"],
-    acc: "Tu ne vois qu'une seule cause : c'est un sophisme.",
+    rep: ["Les téléphones jouent sans doute un rôle dans la baisse en lecture, parmi d'autres facteurs, comme le sommeil ou le temps de lecture.", "Le facteur est conservé, mais à sa place parmi les autres."],
+    autre: ["C'est la faute des téléphones : depuis leur arrivée dans les poches des collégiens, vers 2010, les résultats en lecture n'ont cessé de baisser.", "post-hoc"],
+    acc: "Une baisse des résultats en lecture a sûrement plusieurs causes : n'en retenir qu'une seule simplifie à l'excès.",
     concl: "Les élèves passent beaucoup de temps sur leur téléphone." },
   { s: "generalisation-hative", arg: "Les deux stagiaires de l'an dernier étaient en retard tous les matins : les stagiaires ne sont jamais ponctuels.",
     rep: ["Les deux stagiaires de l'an dernier étaient souvent en retard : il faudra préciser les horaires dès le premier jour avec le prochain.", "La conclusion reste à la mesure des deux cas observés, sans les étendre à tous les stagiaires."],
-    autre: ["Les stagiaires ne sont jamais ponctuels : c'est bien connu, tout le monde le dit.", "popularite"],
-    acc: "Tu généralises.",
+    autre: ["Les stagiaires ne sont jamais ponctuels : demande à n'importe qui dans l'entreprise, tout le monde te dira la même chose, sans exception.", "popularite"],
+    acc: "Deux stagiaires ne disent rien de tous les autres : tu tires une règle générale de deux cas seulement.",
     concl: "Nos deux derniers stagiaires étaient en retard." },
   { s: "vrai-ecossais", arg: "Aucun vrai cuisinier n'utilise de bouillon en cube. — Le chef du restaurant étoilé d'à côté en utilise. — Alors ce n'est pas un vrai cuisinier.",
     rep: ["Beaucoup de cuisiniers préfèrent un bouillon maison, plus savoureux ; certains, même réputés, utilisent du bouillon en cube.", "La généralisation est corrigée face au contre-exemple, au lieu de redéfinir « vrai cuisinier »."],
-    autre: ["Aucun vrai cuisinier n'utilise de cube : c'est contraire à la cuisine naturelle.", "nature"],
-    acc: "Tu fais un « aucun vrai Écossais ».",
+    autre: ["Aucun vrai cuisinier n'utilise de bouillon en cube : un vrai bouillon se fait avec des os, des légumes et des herbes, comme le veut la nature.", "nature"],
+    acc: "Exclure ce chef des « vrais cuisiniers » dès qu'il contredit ta règle, c'est rendre ta règle impossible à démentir.",
     concl: "Ce chef utilise du bouillon en cube." },
   { s: "composition", arg: "Chaque ingrédient de ce gâteau est délicieux : le gâteau sera forcément délicieux.",
     rep: ["Ce gâteau a de bonnes chances d'être délicieux : la recette a été testée plusieurs fois, et ses ingrédients sont de qualité.", "C'est la recette elle-même, déjà éprouvée, qui justifie la conclusion, et non la seule qualité de chaque ingrédient."],
-    autre: ["Ce gâteau sera délicieux : ma grand-mère le fait comme ça depuis cinquante ans.", "tradition"],
-    acc: "Tu fais un sophisme de composition.",
+    autre: ["Ce gâteau sera délicieux : ma grand-mère le prépare exactement de cette façon depuis cinquante ans, à chaque anniversaire de la famille.", "tradition"],
+    acc: "Des ingrédients délicieux séparément peuvent donner un mélange raté : ce qui vaut pour chaque partie ne vaut pas forcément pour le tout.",
     concl: "Chaque ingrédient de ce gâteau est délicieux." },
   { s: "cherry-picking", arg: "Notre newsletter marche très bien : regardez ces trois numéros qui ont été lus par 60 % des abonnés.",
-    rep: ["Notre newsletter marche plutôt bien : sur l'année, 38 % des abonnés en moyenne l'ont ouverte, contre 25 % pour les lettres comparables de notre secteur.", "La conclusion s'appuie sur l'ensemble des numéros et sur un point de comparaison, et non sur les meilleurs seulement."],
-    autre: ["Notre newsletter marche très bien : depuis qu'on l'envoie le mardi, les ventes ont augmenté.", "post-hoc"],
-    acc: "Tu choisis tes chiffres.",
+    rep: ["Notre newsletter marche plutôt bien : 38 % d'ouverture en moyenne sur l'année, contre 25 % pour les lettres comparables du secteur.", "La conclusion s'appuie sur l'ensemble des numéros et sur un point de comparaison, et non sur les meilleurs seulement."],
+    autre: ["Notre newsletter marche très bien : depuis qu'on l'envoie le mardi matin, il y a six mois, nos ventes en ligne ont augmenté de 15 %.", "post-hoc"],
+    acc: "Trois numéros choisis parmi des dizaines ne disent rien de l'ensemble : tu montres seulement ceux qui t'arrangent.",
     concl: "Trois de nos numéros ont été très lus." },
   { s: "affirmation-consequent", arg: "Si le chat a mangé, sa gamelle est vide. Sa gamelle est vide : donc il a mangé.",
     rep: ["La gamelle n'a pu se vider que si le chat a mangé : elle était pleine ce matin et personne d'autre n'y a accès. Elle est vide : donc il a mangé.", "La prémisse affirme cette fois que seul le repas du chat peut vider la gamelle : la conclusion découle alors du raisonnement."],
-    autre: ["Le chat a mangé : il mange toujours à cette heure-ci.", "tradition"],
-    acc: "Tu affirmes le conséquent.",
+    autre: ["Le chat a mangé : depuis trois ans, il mange tous les jours à cette heure-ci, et il n'a jamais sauté un seul repas.", "tradition"],
+    acc: "La gamelle peut s'être vidée autrement, si le chien l'a trouvée par exemple : une gamelle vide ne prouve pas que le chat a mangé.",
     concl: "La gamelle du chat est vide." },
   { s: "negation-antecedent", arg: "Si on prend le train de 8 heures, on sera à l'heure. On ne prend pas le train de 8 heures : donc on sera en retard.",
-    rep: ["On ne sera à l'heure que si on prend le train de 8 heures, car le suivant arrive après le début de la réunion. On ne le prend pas : donc on sera en retard.", "La prémisse établit cette fois une condition nécessaire (« seulement si ») : la conclusion découle alors du raisonnement."],
-    autre: ["On sera en retard : on est toujours en retard quand on ne prend pas ce train, tout le monde le sait.", "popularite"],
-    acc: "Tu nies l'antécédent.",
+    rep: ["Seul le train de 8 heures arrive avant la réunion, le suivant arrive trop tard. On ne le prend pas : donc on sera en retard.", "La prémisse établit cette fois une condition nécessaire (« seulement si ») : la conclusion découle alors du raisonnement."],
+    autre: ["On sera en retard : tout le monde au bureau le sait, quand on ne prend pas ce train-là, on arrive toujours en retard, sans exception.", "popularite"],
+    acc: "Le train de 8 heures n'est peut-être pas le seul moyen d'arriver à l'heure : ne pas le prendre ne condamne pas au retard.",
     concl: "On ne prendra pas le train de 8 heures." },
   { s: "petition-principe", arg: "Ce guide de voyage est fiable, car il est écrit par des auteurs dignes de confiance ; et ces auteurs sont dignes de confiance, puisqu'ils écrivent un guide fiable.",
     rep: ["Ce guide de voyage est fiable : sur les vingt adresses que nous avons vérifiées sur place, dix-neuf correspondaient à sa description.", "La fiabilité est établie par une vérification extérieure, et non par un cercle qui suppose la conclusion."],
-    autre: ["Ce guide est fiable : c'est le plus vendu en librairie.", "popularite"],
-    acc: "Ton argument tourne en rond.",
+    autre: ["Ce guide de voyage est fiable : c'est le plus vendu en librairie depuis cinq ans, avec plus de 200 000 exemplaires écoulés.", "popularite"],
+    acc: "Les auteurs sont fiables parce que le guide l'est, et le guide parce que les auteurs le sont : ton argument tourne en rond.",
     concl: "Les auteurs de ce guide sont connus." },
   { s: "ignorance", arg: "Personne n'a prouvé que ce complément alimentaire est inefficace : il marche donc.",
     rep: ["Ce complément alimentaire n'a pas encore fait ses preuves : en attendant des essais comparatifs, on ne peut pas dire qu'il marche.", "L'absence de preuve conduit à suspendre le jugement, au lieu d'être prise pour une preuve."],
-    autre: ["Ce complément marche : il est fait à partir de plantes.", "nature"],
-    acc: "Tu inverses la charge de la preuve.",
+    autre: ["Ce complément alimentaire marche : il est fait à 100 % de plantes cueillies à la main, sans additif ni produit de synthèse.", "nature"],
+    acc: "Que personne n'ait prouvé qu'il est inefficace ne prouve pas qu'il marche : c'est à celui qui le vend d'apporter la preuve.",
     concl: "Personne n'a étudié ce complément alimentaire." },
   { s: "sophisme-sophisme", arg: "Pour défendre ce sirop contre le rhume, tu as seulement dit que « tout le monde le prend » : c'est un appel à la popularité, donc ce sirop est inefficace.",
-    rep: ["Ce sirop est sans doute inefficace : dans les essais comparatifs publiés, il ne fait pas mieux qu'un sirop sans principe actif. Et ton appel à la popularité ne prouve rien dans un sens ni dans l'autre.", "La conclusion s'appuie sur des essais, et non sur la faiblesse de l'argument adverse."],
-    autre: ["Ce sirop est inefficace : il vient d'un laboratoire qui a déjà vendu des produits douteux.", "genetique"],
-    acc: "Tu fais un appel à la popularité.",
+    rep: ["Ce sirop est sans doute inefficace : dans les essais publiés, il ne fait pas mieux qu'un placebo. Ton appel à la popularité ne prouvait rien.", "La conclusion s'appuie sur des essais, et non sur la faiblesse de l'argument adverse."],
+    autre: ["Ce sirop est inefficace : le laboratoire qui le fabrique a déjà été condamné deux fois pour publicité mensongère, sur d'autres produits vendus en pharmacie.", "genetique"],
+    acc: "Dire « tout le monde le prend » est un appel à la popularité : cet argument ne prouve pas que le sirop marche.",
     concl: "Ton argument pour ce sirop est fallacieux." },
   { s: "equivoque", arg: "Une loi doit être respectée. La gravité est une loi. Donc il faut respecter la gravité.",
-    rep: ["La gravité est une loi de la nature : on ne peut pas s'y soustraire. Il faut donc en tenir compte, par exemple en calculant la charge que supporte une étagère.", "« Loi » garde un seul sens (une loi de la nature), et « respecter » devient « tenir compte » : le raisonnement ne joue plus sur les mots."],
-    autre: ["Il faut respecter la gravité : c'est naturel.", "nature"],
-    acc: "Tu joues sur les mots.",
+    rep: ["La gravité est une loi de la nature, à laquelle on ne peut pas se soustraire : il faut en tenir compte, pour charger une étagère par exemple.", "« Loi » garde un seul sens (une loi de la nature), et « respecter » devient « tenir compte » : le raisonnement ne joue plus sur les mots."],
+    autre: ["Il faut respecter la gravité : c'est une force de la nature, et ce qui est naturel mérite toujours d'être respecté, comme on respecte une forêt ou une rivière.", "nature"],
+    acc: "Le mot « loi » n'a pas le même sens en droit et en physique : ton raisonnement passe de l'un à l'autre sans le dire.",
     concl: "La gravité est une loi de la physique." },
   { s: "hors-contexte", arg: "Le maire veut fermer la piscine : il a déclaré « Il faut fermer la piscine ». (Sa phrase complète : « Il faut fermer la piscine l'été prochain pour refaire le toit, puis la rouvrir en septembre. »)",
-    rep: ["Le maire veut fermer la piscine l'été prochain : il a déclaré « Il faut fermer la piscine l'été prochain pour refaire le toit, puis la rouvrir en septembre ».", "La citation est rendue en entier, et la conclusion ne dit que ce qu'elle dit : une fermeture temporaire."],
-    autre: ["Le maire veut fermer la piscine : tous les habitants le disent.", "popularite"],
-    acc: "Tu cites hors contexte.",
+    rep: ["Le maire veut fermer la piscine l'été prochain, le temps de refaire le toit : il l'a dit dans sa phrase complète.", "La citation est rendue en entier, et la conclusion ne dit que ce qu'elle dit : une fermeture temporaire."],
+    autre: ["Le maire veut fermer la piscine : au marché ce matin, tous les habitants que j'ai croisés en parlaient, et ils en étaient sûrs.", "popularite"],
+    acc: "Sa phrase complète dit tout autre chose : citer seulement le début lui fait dire ce qu'il n'a pas dit.",
     concl: "Le maire a parlé de la piscine." },
   { s: "continuum", arg: "Un euro de plus ne fait pas de quelqu'un un riche. Donc, en ajoutant un euro à la fois, personne ne devient jamais riche : la richesse n'existe pas.",
-    rep: ["Il n'y a pas de seuil précis où l'on devient riche, mais la différence entre 1 000 € et 10 millions d'euros de patrimoine est bien réelle : un seuil conventionnel peut servir.", "L'absence de frontière nette est reconnue sans nier la différence entre les extrêmes."],
-    autre: ["La richesse n'existe pas : c'est une invention des journaux.", "genetique"],
-    acc: "Tu fais un sophisme du continuum.",
+    rep: ["Il n'y a pas de seuil précis de richesse, mais 1 000 € et 10 millions d'euros de patrimoine, ce n'est pas pareil : un seuil conventionnel peut servir.", "L'absence de frontière nette est reconnue sans nier la différence entre les extrêmes."],
+    autre: ["La richesse n'existe pas : c'est une notion inventée par les journaux au XIXe siècle pour vendre des histoires de millionnaires.", "genetique"],
+    acc: "Qu'il n'y ait pas de limite nette entre deux états ne veut pas dire qu'ils sont identiques : le jour et la nuit existent malgré le crépuscule.",
     concl: "Un euro de plus ne change rien." },
   { s: "definition-persuasive", arg: "Être un bon parent, c'est ne jamais dire non à son enfant : ceux qui posent des limites sont donc de mauvais parents.",
-    rep: ["Poser des limites peut nuire à un enfant quand elles sont arbitraires ou jamais expliquées : c'est ce que reprochent certains psychologues aux interdits sans raison.", "Le reproche porte sur des pratiques précises, avec leurs raisons, au lieu de redéfinir « bon parent » pour condamner tous ceux qui posent des limites."],
-    autre: ["Ceux qui posent des limites sont de mauvais parents : ils ont eux-mêmes été élevés trop sévèrement.", "genetique"],
-    acc: "Tu redéfinis les mots à ta convenance.",
+    rep: ["Des limites arbitraires ou jamais expliquées peuvent nuire à un enfant : c'est ce que certains psychologues reprochent aux interdits sans raison.", "Le reproche porte sur des pratiques précises, avec leurs raisons, au lieu de redéfinir « bon parent » pour condamner tous ceux qui posent des limites."],
+    autre: ["Ceux qui posent des limites sont de mauvais parents : la plupart ont eux-mêmes été élevés trop sévèrement, et ils reproduisent ce qu'ils ont subi.", "genetique"],
+    acc: "Tu définis « bon parent » à ta façon pour que ta conclusion soit vraie d'avance : personne n'accepterait cette définition.",
     concl: "Certains parents disent souvent non." },
   { s: "cherry-picking", id: "cherry-sport", arg: "Ce club de sport est très efficace : sur sa page, cinq membres montrent leurs 20 kilos perdus.",
-    rep: ["Ce club de sport est plutôt efficace : sur l'ensemble de ses membres inscrits depuis un an, la perte de poids moyenne est de 4 kilos, d'après le bilan publié par le club.", "La conclusion s'appuie sur tous les membres, et non sur les cinq meilleurs résultats."],
-    autre: ["Ce club est très efficace : il existe depuis trente ans.", "tradition"],
-    acc: "Tu ne montres que les meilleurs cas.",
+    rep: ["Ce club est plutôt efficace : d'après son bilan publié, ses membres inscrits depuis un an ont perdu 4 kilos en moyenne.", "La conclusion s'appuie sur tous les membres, et non sur les cinq meilleurs résultats."],
+    autre: ["Ce club de sport est très efficace : il a ouvert il y a trente ans, et il a vu passer des générations entières de sportifs du quartier.", "tradition"],
+    acc: "Cinq réussites affichées sur une page ne disent rien des centaines de membres qui n'ont rien perdu : ce sont les meilleurs cas.",
     concl: "Cinq membres de ce club ont perdu 20 kilos." }
 ];
 
@@ -753,6 +753,29 @@ DEBATS.push(
 // Niveaux des débats : 1, sophismes nets ; 2, sophismes plus discrets ; 3, 4 et 5 : les débats ci-dessus
 ["trottinettes", "cantine", "teletravail", "vacances"].forEach(id => { DEBATS.find(d => d.id === id).niveau = 1; });
 ["barbecues", "football", "bibliotheque", "marche"].forEach(id => { DEBATS.find(d => d.id === id).niveau = 2; });
+
+// ===================== Réparer l'argument : arguments pièges (niveaux 4 et 5) =====================
+// Arguments recevables qui ressemblent à un sophisme : au niveau où le sophisme n'est plus annoncé, il faut aussi
+// savoir dire qu'un argument tient. « ressemble » : le sophisme qu'on croit y voir ; « pourquoi » : ce qui le sauve.
+// Situations fictives, sans chiffre à sourcer.
+const PIEGES_REPARER = [
+  { id: "piege-pharmacienne", ressemble: "autorite", arg: "Ne prends pas ce médicament avec du jus de pamplemousse : la notice et ma pharmacienne disent toutes deux que le pamplemousse modifie son effet.",
+    pourquoi: "La notice et une pharmacienne sont compétentes sur ce point précis, et elles concordent : s'en remettre à une autorité est légitime quand elle parle de son domaine." },
+  { id: "piege-temoin", ressemble: "ad-hominem", arg: "Ne te fie pas à son récit de l'accident : il a reconnu lui-même qu'il était dans la pièce d'à côté et n'a rien vu.",
+    pourquoi: "Le reproche vise la seule chose qui compte pour un témoignage : la personne a-t-elle vu ce qu'elle raconte ? Ce n'est pas une attaque personnelle hors sujet." },
+  { id: "piege-fuite", ressemble: "pente-glissante", arg: "Si on ne répare pas cette fuite du toit, l'eau va imbiber la charpente, qui finira par pourrir : c'est ce que le couvreur a constaté sur la maison voisine.",
+    pourquoi: "Chaque étape est un mécanisme connu, et un cas comparable l'a montré : une chaîne de conséquences n'est un sophisme que si ses étapes ne sont pas justifiées." },
+  { id: "piege-ampoules", ressemble: "generalisation-hative", arg: "Nous avons testé deux mille ampoules tirées au hasard dans ce lot, et près d'un tiers ne s'allument pas : refusons la livraison.",
+    pourquoi: "Un grand échantillon tiré au hasard représente bien le lot : la généralisation est fondée, et non hâtive." },
+  { id: "piege-conduite", ressemble: "popularite", arg: "Dans ce pays, roule à droite : tout le monde le fait, et rouler de l'autre côté serait dangereux.",
+    pourquoi: "Pour une convention, ce que fait tout le monde est justement la bonne raison : la règle n'est utile que si chacun la suit." },
+  { id: "piege-recette", ressemble: "tradition", arg: "Gardons la recette du pain telle quelle : les deux fois où nous l'avons modifiée, les clients se sont plaints et les ventes ont baissé.",
+    pourquoi: "L'argument ne s'appuie pas sur l'ancienneté de la recette, mais sur ce qui s'est passé quand on l'a changée." },
+  { id: "piege-filtre", ressemble: "post-hoc", arg: "Depuis qu'on a changé le filtre, l'eau n'a plus le goût de chlore ; on a remis l'ancien une semaine pour vérifier, et le goût est revenu.",
+    pourquoi: "Remettre l'ancien filtre et voir le goût revenir est une petite expérience : elle écarte la simple coïncidence dans le temps." },
+  { id: "piege-ecole", ressemble: "emotion", arg: "Ralentis devant l'école : à la sortie des classes, des enfants traversent sans regarder, et à faible vitesse on peut encore s'arrêter à temps.",
+    pourquoi: "L'argument peut toucher, mais il repose sur des raisons : la conduite des enfants et la distance de freinage. Émouvoir n'est un sophisme que si l'émotion remplace les raisons." }
+];
 
 // ===================== Réparer l'argument : prémisse cachée (niveau 3) =====================
 // La première proposition est la prémisse dont dépend l'argument ; les autres sont vraies ou plausibles,
@@ -1094,19 +1117,24 @@ EXPERIENCES.push(
         concl: "Changement de conclusion"
       };
       // Niveaux : 1 et 2, réparer ; 3, trouver d'abord la prémisse cachée dont dépend l'argument ; 4, le sophisme n'est
-      // plus annoncé : le reconnaître (parmi quatre, dont son voisin), puis réparer ; 5, le reconnaître, trouver la
-      // prémisse cachée, puis réparer. Chaque étape compte pour une part égale.
+      // plus annoncé : le reconnaître (parmi trois, dont son voisin, ou « Aucun »), puis réparer ; 5, le reconnaître,
+      // trouver la prémisse cachée, puis réparer. Chaque étape compte pour une part égale. Aux niveaux 4 et 5, environ
+      // une question sur cinq est un argument qui tient (PIEGES_REPARER) : la bonne réponse est alors « Aucun ».
       const niveauDe = x => NIVEAU_1_REPARATIONS.includes(x.s) && !x.id ? 1 : 2;
       deroulerNiveaux(zone, {
         id: "reparer", n: 10, libelle: "Argument", relancer: () => EXPERIENCES.find(e => e.id === "reparer").lancer(zone),
         estJuste: justeOuPresque,
-        tirer: niveau => niveau === 3 || niveau === 5
+        // Niveaux 4 et 5 : une question sur cinq environ est un argument qui tient, pour que « il y a forcément un
+        // sophisme » ne devienne pas une certitude
+        tirer: niveau => niveau >= 4 && Math.random() < 0.2
+          ? Object.assign({ piege: true, identifier: true }, tirerSelonNiveau("reparer:piege", PIEGES_REPARER, 1, 4, x => x.id, () => 4)[0])
+          : niveau === 3 || niveau === 5
           ? Object.assign({ premisse: true, identifier: niveau === 5 }, tirerSelonNiveau("reparer:" + niveau, REPARATIONS.filter(x => PREMISSES[x.s] && !x.id), 1, niveau, x => x.s, () => niveau)[0])
           : niveau === 4
             ? Object.assign({ identifier: true }, tirerSelonNiveau("reparer:4", REPARATIONS, 1, 4, x => x.id || x.s, () => 4)[0])
             : tirerSelonNiveau("reparer", REPARATIONS, 1, niveau, x => x.id || x.s, niveauDe)[0]
       }, (x, zone, fini) => {
-        zone.appendChild(el("p", "consigne", x.identifier ? T("Cet argument commet un sophisme.") : T("Cet argument commet un sophisme : {0}", ficheSophisme(x.s).nom.toLowerCase())));
+        zone.appendChild(el("p", "consigne", x.identifier ? T("Cet argument tient-il ?") : T("Cet argument commet un sophisme : {0}", ficheSophisme(x.s).nom.toLowerCase())));
         zone.appendChild(el("p", "cas", x.arg));
         // Étapes avant la réparation (niveaux 3 à 5) : points obtenus à chacune, 0 ou 1
         const pointsEtapes = [];
@@ -1147,14 +1175,30 @@ EXPERIENCES.push(
         };
         // Niveaux 4 et 5 : reconnaître le sophisme, parmi quatre dont son voisin ; la note dit ce qui les sépare
         const etapeIdentifier = suite => {
-          zone.appendChild(el("p", "consigne", "D'abord : quel sophisme commet-il ?"));
-          const options = optionsSophisme(x.s);
+          zone.appendChild(el("p", "consigne", x.piege ? "Quel sophisme commet-il, s'il en commet un ?" : "D'abord : quel sophisme commet-il, s'il en commet un ?"));
+          // Trois sophismes (le bon, ou celui auquel le piège ressemble, et sa voisine en font partie), puis « Aucun »
+          const cible = x.piege ? x.ressemble : x.s;
+          const gardes = new Set([cleSophisme(cible), ficheSophisme(cible).distinction[0]]);
+          const quatre = optionsSophisme(cible);
+          const retiree = quatre.find(o => !gardes.has(o.cle));
+          const options = [...quatre.filter(o => o !== retiree), { cle: "aucun", fiche: { nom: T("Aucun : l'argument tient") } }];
           const boutonsS = options.map((o, k) => {
             const b = boutonChoix(o.fiche.nom, k);
             b.addEventListener("click", () => {
               boutonsS.forEach(y => { y.disabled = true; });
-              const bon = options.findIndex(y => y.cle === cleSophisme(x.s));
+              const bon = options.findIndex(y => y.cle === (x.piege ? "aucun" : cleSophisme(x.s)));
               boutonsS[bon].classList.add("juste");
+              if (x.piege) {
+                const tient = o.cle === "aucun";
+                if (!tient) b.classList.add("faux");
+                const retourP = el("div", "retour-quiz");
+                const l = el("div", "voir-aussi");
+                l.appendChild(lienSophisme(x.ressemble));
+                retourP.append(el("p", "verdict " + (tient ? "juste" : "faux"), tient ? T("Juste : l'argument tient.") : T("L'argument tient : il ne commet aucun sophisme.")),
+                  paragraphe(x.pourquoi), paragraphe(T("Il ressemble pourtant à : {0}.", ficheSophisme(x.ressemble).nom.toLowerCase()), "source"), l);
+                zone.appendChild(retourP);
+                return fini(tient, retourP);
+              }
               const nomme = nommeJuste(x.s, o.cle.startsWith("sophismes:") ? o.cle.slice(10) : null);
               if (!nomme) b.classList.add("faux");
               pointsEtapes.push(nomme ? 1 : 0);
@@ -1171,6 +1215,7 @@ EXPERIENCES.push(
             return b;
           });
         };
+        if (x.piege) return etapeIdentifier();
         if (!x.premisse) return x.identifier ? etapeIdentifier(etapeReparation) : etapeReparation();
         if (x.identifier) return etapeIdentifier(etapePremisse);
         etapePremisse();
