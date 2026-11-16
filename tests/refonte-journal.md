@@ -398,6 +398,10 @@ style des vases grecs à figures noires, costume selon le grade ; graphiques du 
   Fiche et image : échelle des dix grades, barres des six domaines avec leur emblème, points des 14 derniers jours avec
   l'objectif en pointillé, une médaille par distinction (vide si à gagner, « ? » si secrète). Graphiques décoratifs
   (aria-hidden), chacun doublé de son texte.
+- Deuxième retour (pointes mal alignées, traits qui coupent le visage, « le soldat » seul jugé réussi) : la tête suit
+  le modèle du casque. Cheveux en masse pleine un peu plus grosse que le crâne, un seul trait gravé (la limite des
+  cheveux, derrière la tempe), oreille et mèches retirées ; chignon séparé d'un trait ; laurier en bandeau plein et
+  neuf feuilles identiques, également espacées et inclinées ; diadème en cimier plein ; pas de cheveux sous le casque.
 - Vérifié (Chromium, Linux) : planche des 4 formes × 10 grades en buste et en pied ; fiche avec aucune, quelques,
   toutes les distinctions, à 390 px clair et 1 280 px sombre, en français et en anglais ; bancs csp, progression,
   test, aleatoire (390 clair). Non vérifié : Safari (flou du fond), partage natif sur un vrai téléphone.

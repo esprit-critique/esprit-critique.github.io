@@ -223,7 +223,7 @@ const surArcPersonnage = (cx, cy, r, de, a, n) => Array.from({ length: n }, (_, 
 // « incise » (détail gravé, couleur argile). Ancrages : « tete », « main » (main droite), « corps » ; décalés par forme.
 const calquePersonnage = (genre, d, epaisseur, ancrage) => [genre, d, epaisseur || 0, ancrage || ""];
 // La tête est presque un cercle de centre (60.5, 21) et de rayon 9.6 : couronnes et diadèmes s'y posent
-const TETE_CENTRE = [60.5, 21, 9.6];
+const TETE_CENTRE_PERSONNAGE = [60.5, 21, 9.6];
 const BRAS_PERSONNAGE = "M71 40L77 55L84 52";
 const ROBES_PERSONNAGE = {
   // Tunique courte : jambes, ourlet bordé de points, encolure, ceinture double, manche
@@ -240,21 +240,30 @@ const PIEDS_PERSONNAGE = [calquePersonnage("plein", "M48 101H56L59 106H46ZM66 10
 const DRAPE_PERSONNAGE = [calquePersonnage("plein", "M50 40Q42 60 46 90L51 90Q47 62 55 42Z"),
   calquePersonnage("incise", "M50 44Q62 53 76 46M49.5 47Q62 56.5 76.5 49M49 55Q62 66 77 58", 1),
   calquePersonnage("incise", pointsPersonnage([0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map(t => [(1 - t) ** 2 * 49.5 + 2 * t * (1 - t) * 62 + t * t * 76.8, (1 - t) ** 2 * 51 + 2 * t * (1 - t) * 61 + t * t * 53.5]), 0.5), 0.8)];
-// Diadème (stéphané) : un croissant posé sur la tête, orné d'une rangée de points
+// Point à l'angle a (degrés) et au rayon rr autour du centre de la tête, et arc de cercle entre deux angles
+const ptTetePersonnage = (a, rr) => [TETE_CENTRE_PERSONNAGE[0] + rr * Math.cos(a * Math.PI / 180), TETE_CENTRE_PERSONNAGE[1] + rr * Math.sin(a * Math.PI / 180)].map(arrondiPersonnage).join(" ");
+const arcTetePersonnage = (de, a, rr) => "A" + rr + " " + rr + " 0 0 " + (a > de ? 1 : 0) + " " + ptTetePersonnage(a, rr);
+// Bandeau plein qui épouse le crâne entre deux angles : la base commune des parures de tête (comme la calotte du
+// casque, il fait corps avec la silhouette au lieu d'y flotter)
+const bandeauTetePersonnage = (de, a, interieur, exterieur) => "M" + ptTetePersonnage(de, interieur) + arcTetePersonnage(de, a, interieur)
+  + "L" + ptTetePersonnage(a, exterieur) + arcTetePersonnage(a, de, exterieur) + "Z";
+// Diadème (stéphané) : un croissant plein qui s'élève au-dessus des cheveux, séparé d'eux par un seul trait gravé
 const DIADEME_PERSONNAGE = (() => {
-  const [cx, cy, r] = TETE_CENTRE, pt = (a, rr) => [cx + rr * Math.cos(a * Math.PI / 180), cy + rr * Math.sin(a * Math.PI / 180)].map(arrondiPersonnage).join(" ");
-  return [calquePersonnage("plein", "M" + pt(-158, r - 0.5) + "Q" + pt(-102, r + 13) + " " + pt(-48, r - 0.5) + "A" + r + " " + r + " 0 0 0 " + pt(-158, r - 0.5) + "Z", 0, "tete"),
-    calquePersonnage("incise", pointsPersonnage(surArcPersonnage(cx - 0.8, cy, r + 2.4, -140, -66, 5), 0.6), 0.8, "tete")];
+  const r = TETE_CENTRE_PERSONNAGE[2];
+  return [calquePersonnage("plein", "M" + ptTetePersonnage(-158, r) + "Q" + ptTetePersonnage(-104, r + 19) + " " + ptTetePersonnage(-50, r) + arcTetePersonnage(-50, -158, r) + "Z", 0, "tete"),
+    calquePersonnage("incise", "M" + ptTetePersonnage(-146, r + 2.6) + arcTetePersonnage(-146, -62, r + 2.6), 0.9, "tete")];
 })();
-// Couronne de laurier : feuilles posées sur le contour de la tête, inclinées vers l'arrière, et leur tige gravée
+// Couronne de laurier : un bandeau plein et neuf feuilles identiques, régulièrement espacées, toutes inclinées du même
+// angle vers l'arrière : une rangée nette, comme sur une couronne peinte
 const LAURIER_PERSONNAGE = (() => {
-  const [cx, cy, r] = TETE_CENTRE;
-  const feuilles = surArcPersonnage(cx, cy, r - 0.3, -166, -62, 7).map(([x, y], k) => {
-    const a = -166 + 104 * k / 6;
-    return feuillePersonnage(x, y, a - 55, 5, 1.5) + feuillePersonnage(x, y, a - 15, 3.6, 1.1);
+  const r = TETE_CENTRE_PERSONNAGE[2], n = 9, de = -60, a = -168;
+  const feuilles = Array.from({ length: n }, (_, k) => {
+    const angle = de + (a - de) * k / (n - 1);
+    const [x, y] = ptTetePersonnage(angle, r + 1.6).split(" ").map(Number);
+    return feuillePersonnage(x, y, angle - 62, 5.2, 1.35);
   }).join("");
-  return [calquePersonnage("plein", feuilles, 0, "tete"),
-    calquePersonnage("incise", "M" + surArcPersonnage(cx, cy, r - 1.4, -168, -64, 2).map(p => p.map(arrondiPersonnage).join(" ")).join("A" + (r - 1.4) + " " + (r - 1.4) + " 0 0 1 "), 0.9, "tete")];
+  return [calquePersonnage("plein", bandeauTetePersonnage(a - 4, de + 4, r - 0.6, r + 1.9) + feuilles, 0, "tete"),
+    calquePersonnage("incise", "M" + ptTetePersonnage(a + 2, r + 0.6) + arcTetePersonnage(a + 2, de, r + 0.6), 0.8, "tete")];
 })();
 
 // Costume de chaque grade : [description, robe, bras droit, drapé, calques]
@@ -294,13 +303,15 @@ const COSTUMES_PERSONNAGE = [
 
 // Têtes de profil. La tête humaine change de coiffure selon le genre ; oreille et mèches gravées.
 const TETE_HUMAINE = "M57 37V34C52 30 51 21 55 15C59 10 66 10 68 15L69 19L72.5 23.5L69.5 24.5L70 26.5L69 27.5L69.5 30C67 32.5 65 32.5 63.5 32L63.5 37Z";
-const OEIL_PERSONNAGE = calquePersonnage("incise", "M65 19.2a1.1 1.1 0 1 0 2.2 0a1.1 1.1 0 1 0-2.2 0M64.2 17.4Q66.2 16.4 68 17.6", 0.9);
-const OREILLE_PERSONNAGE = calquePersonnage("incise", "M59 20.3q-1.8 1.7 0 3.6", 0.9);
-const CHEVEUX_PERSONNAGE = calquePersonnage("incise", "M67 13.5Q62.5 16 63 22Q61.5 26 58 27.5M64.5 12.3Q59.5 13.5 57.5 18M60.5 11.7Q55.5 13.5 54.5 19M55 25.5q1.3 .9 .3 2.2M56.8 27.3q1.3 .9 .3 2.2", 0.9);
+const OEIL_PERSONNAGE = calquePersonnage("incise", "M64.9 19.2a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0", 0.9);
+// Cheveux : une masse pleine un peu plus grosse que le crâne (comme la calotte du casque), et un seul trait gravé, la
+// limite des cheveux, qui passe derrière l'œil et la tempe : rien ne traverse le visage
+const CHEVEUX_PERSONNAGE = [calquePersonnage("plein", "M67.8 14.5Q66 9.2 59.5 9.4Q51.5 10 50.8 19Q50.6 27 55.5 31.5L57.5 29Q60.5 23 60.8 19Q61.3 15.5 67.8 14.5Z"),
+  calquePersonnage("incise", "M67.4 14.6Q61.6 15.5 60.9 19.2Q60.6 23.4 57.3 29", 0.9)];
 // Formes : [id, nom, distinction qui la débloque (null : d'emblée), calques propres, porte robe et costume,
 //   décalage des ancrages { tete, main, corps } par rapport à l'humain, cadrages { buste, pied } : [x, y, côté]]
 const FORMES_PERSONNAGE = [
-  ["humain", "Humain", null, [calquePersonnage("plein", TETE_HUMAINE), OEIL_PERSONNAGE, OREILLE_PERSONNAGE], true, {}, { buste: [38, 0, 62], pied: [4, -4, 112] }],
+  ["humain", "Humain", null, [calquePersonnage("plein", TETE_HUMAINE), OEIL_PERSONNAGE], true, {}, { buste: [38, 0, 62], pied: [4, -4, 112] }],
   // La chouette d'Athéna, motif des vases et des monnaies : pas de robe, l'objet tenu au bout de l'aile
   ["hibou", "Hibou", "bien-etalonne", [
     calquePersonnage("plein", "M60 30C75 30 80 46 80 64C80 86 72 102 60 104C48 102 40 86 40 64C40 46 45 30 60 30ZM45 35L43 25L53 31ZM75 35L77 25L67 31Z"),
@@ -323,13 +334,13 @@ const FORMES_PERSONNAGE = [
     calquePersonnage("incise", pointsPersonnage([[55, 12.5], [69, 12.5], [55, 29.5], [69, 29.5]], 0.5), 0.8)],
     true, {}, { buste: [38, 0, 62], pied: [4, -4, 112] }]
 ];
-const GENRES_PERSONNAGE = [["neutre", "Neutre", [CHEVEUX_PERSONNAGE]],
-  // Féminin : chignon (krobylos) lié d'un ruban, mèches gravées
-  ["feminin", "Féminin", [calquePersonnage("plein", "M50 18a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0-9 0"),
-    calquePersonnage("incise", "M55 16Q61 11.5 67.5 14.5M63 15.5Q61.5 22 58 27.5M51.5 16.5Q54.5 15.5 56 18M51.5 20Q54 21 56 19M66 16.3Q62 18 60.5 23", 0.9)]],
-  // Masculin : barbe en pointe, poils gravés
-  ["masculin", "Masculin", [calquePersonnage("plein", "M63 27L69.5 28.5L71 33Q67 36 62 33Z"), CHEVEUX_PERSONNAGE,
-    calquePersonnage("incise", "M64.5 29.5L65.5 33.5M67 30L67.8 33.5", 0.8)]]];
+const GENRES_PERSONNAGE = [["neutre", "Neutre", CHEVEUX_PERSONNAGE],
+  // Féminin : les cheveux et un chignon (krobylos) à l'arrière, séparé d'eux par un trait
+  ["feminin", "Féminin", [...CHEVEUX_PERSONNAGE, calquePersonnage("plein", "M45.6 17.5a5 5 0 1 0 10 0a5 5 0 1 0-10 0"),
+    calquePersonnage("incise", "M52.6 12.9Q55.3 17.5 52.6 22.1", 0.9)]],
+  // Masculin : les cheveux et une barbe en pointe, deux traits gravés
+  ["masculin", "Masculin", [...CHEVEUX_PERSONNAGE, calquePersonnage("plein", "M63 27L69.5 28.5L71 33Q67 36 62 33Z"),
+    calquePersonnage("incise", "M65 30L65.8 33.6M67.4 30.3L68 33.4", 0.8)]]];
 // Équipements : [id, nom, distinction, calques]
 const EQUIPEMENTS_PERSONNAGE = [
   ["", "Aucun", null, []],
@@ -373,7 +384,8 @@ function dessinPersonnage(etat, pied, rayon) {
     if (drape) calques.push(...DRAPE_PERSONNAGE);
     calques.push(...ROBES_PERSONNAGE[robe], ...PIEDS_PERSONNAGE);
     calques.push(...calquesForme);
-    if (forme[0] === "humain") calques.push(...genre[2]);
+    // Sous le casque du stratège, les cheveux ne se voient pas (leur trait gravé passerait sur la joue) ; la barbe, si
+    if (forme[0] === "humain") calques.push(...genre[2].filter(c => rang !== 5 || !CHEVEUX_PERSONNAGE.includes(c)));
     calques.push(calquePersonnage("epais", "M52 40L47 55L50 66", 5), calquePersonnage("epais", bras, 5));
   } else {
     calques.push(...calquesForme);
