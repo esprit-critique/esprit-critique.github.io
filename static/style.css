@@ -1714,15 +1714,20 @@ label[for] { display: block; margin: 0 0 8px; }
 .insigne-plein { fill: var(--accent); }
 .insigne.revele .insigne-trait { animation: revelation-insigne var(--duree-longue) var(--courbe); }
 @keyframes revelation-insigne { from { opacity: 0; } }
-.blason-fond { fill: color-mix(in srgb, var(--c) 18%, var(--carte)); stroke: var(--c); stroke-width: 1.5; }
-.blason-trait { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.portrait { flex: none; overflow: visible; }
+/* Personnage en figure noire sur médaillon de terre cuite (profil.js) : mêmes couleurs dans les deux thèmes, comme une
+   image (TERRE_PERSONNAGE et FIGURE_PERSONNAGE) ; contraste figure / argile 4,9:1 */
+.portrait { --terre: #c8693a; --figure: #1b120c; flex: none; overflow: visible; }
 .apercu-personnage { margin: 4px 0 6px; }
 .puce:disabled { border-style: dashed; cursor: not-allowed; }
-.portrait .blason-fond { stroke-width: 1; }
-.portrait .blason-trait { stroke-width: 2.8; }
-.portrait-plein { fill: var(--c); }
-.portrait-objet { stroke-width: 1.8; }
+.medaillon-fond { fill: var(--terre); }
+.medaillon-bord { fill: none; stroke: var(--figure); stroke-width: 1.5; }
+.figure-plein { fill: var(--figure); }
+.figure-epais, .figure-incise { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.figure-epais { stroke: var(--figure); }
+.figure-incise { stroke: var(--terre); }
+.medaillon-objet { fill: var(--figure); }
+.medaillon-objet-bord { fill: var(--c); }
+.medaillon-objet-trait { fill: none; stroke: var(--terre); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .portrait-piste, .portrait-arc { fill: none; stroke-width: 5; stroke-linecap: round; }
 .portrait-piste { stroke: var(--trait-doux); }
 .portrait-arc { stroke: var(--c); }
@@ -1785,8 +1790,6 @@ label[for] { display: block; margin: 0 0 8px; }
 .profil-noms { min-width: 0; }
 .profil-noms .page-titre { overflow-wrap: anywhere; }
 .profil-noms .page-titre.titre-long { font-size: clamp(26px, 5vw, 40px); }
-.bouton-profil .portrait .blason-trait { stroke-width: 6; }
-.bouton-profil .portrait .portrait-plein { display: none; }
 .profil-grade { display: flex; gap: 8px; align-items: center; margin: 0; font-family: var(--titre); font-size: 18px; font-weight: 650; }
 .profil-maitrise { text-align: right; }
 .grand-nombre { display: block; font-family: var(--titre); font-size: clamp(64px, 2vw + 56px, 80px); font-weight: 700; line-height: 1; font-variant-numeric: oldstyle-nums; }
@@ -1883,6 +1886,36 @@ label[for] { display: block; margin: 0 0 8px; }
 .liste-raccourcis dd { margin: 0; }
 
 .bouton-partage { margin: 10px 0 0; display: block; }
+
+/* Portrait du profil : bouton qui ouvre la fiche à partager */
+.bouton-portrait { flex: none; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; line-height: 0; }
+.bouton-portrait .portrait { transition: transform var(--duree-courte) var(--courbe); }
+.bouton-portrait:hover .portrait { transform: scale(1.03); }
+
+/* Fiche à partager : boîte de dialogue native, sans marge intérieure (un clic sur la boîte elle-même est un clic sur le
+   fond) ; fond flouté, avec un voile seul pour les navigateurs sans backdrop-filter */
+.fiche-personnage { width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--trait);
+  border-radius: var(--rayon-carte); background: var(--carte-haute); color: var(--texte); box-shadow: var(--ombre-2); }
+.fiche-personnage::backdrop { background: rgba(20, 14, 8, 0.45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.fiche-contenu { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 20px 18px; text-align: center; }
+.fiche-contenu:focus { outline: none; }
+.fiche-contenu:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
+.frise-grecque { display: block; width: 100%; height: auto; max-height: 16px; }
+.frise-trait { fill: none; stroke: var(--texte); stroke-width: 1.1; }
+.fiche-titre { margin: 4px 0 0; font-family: var(--titre); font-size: 24px; }
+.fiche-pseudo { margin: 0; font-family: var(--titre); font-size: 20px; font-weight: 650; overflow-wrap: anywhere; }
+.fiche-contenu .portrait { width: min(240px, 70vw); height: auto; }
+.fiche-grade { justify-content: center; }
+.fiche-chiffres { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.fiche-chiffres > div { display: flex; flex-direction: column; align-items: center; }
+.fiche-nombre { font-family: var(--titre); font-size: 44px; font-weight: 700; line-height: 1.05; font-variant-numeric: oldstyle-nums; }
+.fiche-distinctions-titre { margin: 4px 0 0; font-weight: 700; }
+.fiche-distinctions { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.fiche-distinctions li { padding: 3px 10px; border: 1px solid var(--trait); border-radius: 999px; font-size: 14px; }
+.fiche-option { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.fiche-option input { width: 20px; height: 20px; margin: 0; }
+.fiche-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.fiche-actions .bouton { min-height: 44px; }
 .pied-fiche .bouton.large { margin-top: 10px; }
 
 /* Accueil du nouveau visiteur (profil.js) */
