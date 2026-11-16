@@ -541,6 +541,11 @@ function essaiPiece(niveau, jour, graine, monde, format, pieges, alea, libre, ra
   const cible = pieceEntier(alea, N.zones[0], N.zones[1]);
   for (const z of melanger(piece.zones, alea)) { if (garder.size >= cible) break; garder.add(z.role); }
   if (garder.size < N.zones[0] || garder.size > N.zones[1]) return null;
+  // Parties de figure non retenues comme zones : dessinées sans être touchables (un axe sans tracé ne se lirait pas).
+  // Elles sont saines par construction (toute zone piégée, tolérée ou leurre est gardée).
+  const figure = ["figure-axe", "figure-trace", "figure-legende"];
+  piece.decor = piece.zones.some(z => figure.includes(z.role) && garder.has(z.role))
+    ? piece.zones.filter(z => figure.includes(z.role) && !garder.has(z.role)).map(z => ({ role: z.role, d: z.d })) : [];
   piece.zones = piece.zones.filter(z => garder.has(z.role));
   // Garantie de composition : au moins deux zones saines ou leurres, non tolérées, par piège
   const libres = piece.zones.filter(z => z.etat !== "piegee" && !z.toleres.length).length;

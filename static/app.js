@@ -27,7 +27,7 @@
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
     [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
-    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof PIECE_MONDES, "piece-donnees.js"], [() => typeof pieceDuJour, "piece.js"], [() => typeof gagner, "profil.js"], [() => typeof PARCOURS, "parcours.js"], [() => typeof SYNCHRO, "coffre.js"], [() => typeof MESSAGES_ENLIGNE, "enligne.js"]
+    [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof PIECE_MONDES, "piece-donnees.js"], [() => typeof pieceDuJour, "piece.js"], [() => typeof afficherPiece, "piece-interface.js"], [() => typeof gagner, "profil.js"], [() => typeof PARCOURS, "parcours.js"], [() => typeof SYNCHRO, "coffre.js"], [() => typeof MESSAGES_ENLIGNE, "enligne.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;
   // Construit sans HTML ni gestionnaire en ligne : la CSP bloquait l'ancien onclick, le bouton ne faisait rien
@@ -1688,8 +1688,9 @@ function afficherBilan(zone) {
 // #ateliers, #chiffres/monde, #tests/crt, #guide, #guide/methode…
 // Le bouton « retour » du navigateur fonctionne, et chaque page a son propre lien.
 
-const ONGLET_DE = { parcours: "parcours", profil: "profil", accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
-const SECTION_DE = { parcours: "vue-parcours", profil: "vue-profil", accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
+// La pièce du jour (piece-interface.js) n'a de route que si son drapeau est levé : sinon #piece est une adresse inconnue
+const ONGLET_DE = { ...(PIECE_VISIBLE ? { piece: "accueil" } : {}), parcours: "parcours", profil: "profil", accueil: "accueil", biais: "fiches", sophismes: "fiches", cartes: "fiches", quiz: "quiz", ateliers: "ateliers", chiffres: "ateliers", tests: "ateliers", portrait: "ateliers", guide: "guide", bingo: "ateliers" };
+const SECTION_DE = { ...(PIECE_VISIBLE ? { piece: "vue-piece" } : {}), parcours: "vue-parcours", profil: "vue-profil", accueil: "vue-accueil", biais: "vue-fiches", sophismes: "vue-fiches", cartes: "vue-fiches", quiz: "vue-quiz", ateliers: "vue-ateliers", chiffres: "vue-chiffres", tests: "vue-tests", portrait: "vue-portrait", guide: "vue-guide", bingo: "vue-tests" };
 let precedent = { vue: null, id: null, titre: "" };
 // Partie d'atelier quittée pour lire une carte : { adresse, titre, defilement }. Elle reste dans sa section, masquée ;
 // y revenir (lien en tête de la carte, ou bouton Retour) la retrouve au même point au lieu de la relancer de zéro.
@@ -1744,7 +1745,7 @@ function afficherPage() {
   let defilement = 0;
 
   const versCarte = (vue === "biais" || vue === "sophismes") && !!id && !inconnue;
-  if (versCarte && ["chiffres", "tests", "bingo"].includes(precedent.vue)) {
+  if (versCarte && ["chiffres", "tests", "bingo", "piece"].includes(precedent.vue)) {
     partieMiseDeCote = { adresse: "#" + precedent.vue + (precedent.id ? "/" + precedent.id : ""), titre: precedent.titre, defilement: window.scrollY };
   }
   let reprise = false;
@@ -1786,6 +1787,7 @@ function afficherPage() {
     }
   }
 
+  if (vue === "piece") { afficherPiece(id); titre = T("La pièce du jour"); }
   if (vue === "profil") { afficherPageProfil(id); titre = T("Profil"); }
   if (vue === "parcours") { afficherParcours(id, adresse.split("/")[2]); titre = T("Parcours"); }
 

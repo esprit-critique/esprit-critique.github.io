@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body style="font: 13px monospace; background: #fff; color: #000; margin: 8px">
+<pre id="out">en cours…</pre>
+<iframe id="f" src="/_site.html#accueil" style="border: 0; display: block"></iframe>
+<script>
+// Banc de la pièce du jour (tests/piece-brief.md, § 10). Deux temps :
+//  1. le site publié (_site.html, PIECE_VISIBLE à false) : rien n'expose la pièce ;
+//  2. la copie d'essai (_site-piece.html, qui charge _piece-essai.js, drapeau à true), fabriquée par tests/lancer.sh :
+//     une pièce jouée jusqu'à la contre-expertise à chaque niveau, les six formats recto et verso, aucune trace de
+//     l'état des zones avant la correction, contrôle d'affichage à chaque étape, animations réduites, partage.
+// Taille : ?l=390&h=844
+const params = new URLSearchParams(location.search);
+const f = document.getElementById("f");
+f.style.width = (params.get("l") || 390) + "px";
+f.style.height = (params.get("h") || 844) + "px";
+const lignes = [];
+const ok = (nom, cond, detail) => { const l = (cond ? "OK    " : "ÉCHEC ") + nom + (cond || !detail ? "" : " — " + detail); lignes.push(l); console.log("BANC: " + l); };
+const pause = ms => new Promise(r => setTimeout(r, ms));
+const erreursJS = [];
+let w, d;
+const brancher = () => { w = f.contentWindow; d = f.contentDocument; w.addEventListener("error", e => erreursJS.push(e.message)); };
+const charger = async adresse => { const fin = new Promise(res => { f.onload = res; }); f.src = adresse; await fin; await pause(250); brancher(); };
+const aller = async h => { w.location.hash = h; await pause(150); };
+const vue = () => d.querySelector("main > section:not([hidden])");
+const q = s => d.querySelector("#vue-piece " + s), qa = s => [...d.querySelectorAll("#vue-piece " + s)];
+const bouton = re => qa(".pdj-rail .bouton").find(b => re.test(b.textContent));
+// Défauts d'affichage de la vue, notés une fois chacun (type, endroit)
+const defauts = new Set();
+const controler = etape => { (w.controleAffichage ? w.controleAffichage() : []).forEach(x => defauts.add(etape + " : " + x.type + " " + (x.ou || "") + " " + (x.detail || "").slice(0, 60))); };
+// Aucune trace de l'état : chaque zone n'a que type, classe (pdj-zone pdj-r-<rôle>), data-zone, aria-pressed, aria-label
+const traces = () => qa(".pdj-zone").flatMap(b => {
+  const t = [];
+  [...b.attributes].forEach(a => { if (!["type", "class", "data-zone", "aria-pressed", "aria-label"].includes(a.name)) t.push(a.name); });
+  [...b.classList].forEach(c => { if (!/^pdj-(zone|r-[a-z0-9-]+|f-(axe|trace|legende))$/.test(c)) t.push(c); });
+  return t;
+});
+
+// Joue la pièce affichée : marques sur les zones voulues, noms, certitude, chiffre, verdict
+async function jouer(marques, noms, rien, chiffre, verdict) {
+  if (rien) { bouton(/Rien à signaler/).click(); await pause(30); }
+  for (const id of marques) { q('[data-zone="' + id + '"]').click(); await pause(20); }
+  controler("repérer");
+  bouton(/Continuer/).click(); await pause(40);
+  if (!rien) {
+    controler("nommer");
+    qa(".pdj-nommer").forEach((g, k) => { const voulu = noms[k] ? w.eval("typo(T(PIECE_PROCEDES[" + JSON.stringify(noms[k]) + "].nom))") : null; const c = [...g.querySelectorAll(".choix")]; (c.find(x => x.textContent === voulu) || c[0]).click(); });
+    await pause(20);
+    q(".pdj-suite").click(); await pause(40);
+  }
+  controler("certitude");
+  qa(".pdj-certitude .puce")[0].click(); await pause(20);
+  bouton(/Verrouiller/).click(); await pause(40);
+  if (q(".pdj-question")) {
+    controler("chiffrer");
+    if (q(".pdj-saisie")) { q("#pdj-champ").value = String(chiffre); q(".pdj-saisie .bouton").click(); }
+    else qa(".pdj-options .choix").find(c => c.textContent.replace(/[^\d−-]/g, "").replace("−", "-") === String(chiffre)).click();
+    await pause(40);
+    controler("conclure");
+    const nomVerdict = { etablie: /établie par/, "non-etablie": /non établie/, contredite: /contredite/ }[verdict];
+    qa(".pdj-options .choix").find(c => nomVerdict.test(c.textContent)).click();
+    await pause(40);
+  }
+}
+
+f.onload = async () => {
+  f.onload = null;
+  try {
+    // =============== 1. Le site publié ===============
+    brancher();
+    w.localStorage.clear();
+    ok("publié : drapeau à false, relecture non déclarée", w.eval("PIECE_VISIBLE === false && RELECTURE_PIECE.relu === false"));
+    const source = await (await fetch("/piece.js", { cache: "no-store" })).text();
+    ok("publié : piece.js déclare PIECE_VISIBLE à false", /^const PIECE_VISIBLE = false;$/m.test(source));
+    await aller("piece");
+    ok("publié : #piece n'ouvre pas la pièce (accueil)", vue().id === "vue-accueil" && !w.eval("'piece' in ONGLET_DE"));
+    ok("publié : aucun lien vers #piece", !d.querySelector('a[href^="#piece"]'));
+    const scripts = [...(await (await fetch("/index.html", { cache: "no-store" })).text()).matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
+    ok("index.html : données, moteur puis interface de la pièce, avant app.js",
+      scripts.indexOf("piece-donnees.js") > -1 && scripts.indexOf("piece-donnees.js") < scripts.indexOf("piece.js")
+      && scripts.indexOf("piece.js") < scripts.indexOf("piece-interface.js") && scripts.indexOf("piece-interface.js") < scripts.indexOf("app.js"));
+
+    // =============== 2. La copie d'essai ===============
+    await charger("/_site-piece.html#accueil");
+    w.localStorage.clear();
+    await new Promise((res, rej) => { const sc = d.createElement("script"); sc.src = "/controle-affichage.js"; sc.onload = res; sc.onerror = rej; d.head.appendChild(sc); });
+    ok("essai : drapeau à true", w.eval("PIECE_VISIBLE === true"));
+    await aller("piece");
+    ok("essai : #piece ouvre la pièce du jour", vue().id === "vue-piece" && !!q(".pdj-feuille") && /La pièce du jour/.test(vue().querySelector("h1").textContent));
+    ok("essai : étiquette « Pièce n° … · Niveau … · Document fictif »", /Pièce n°\s?\d+ · Niveau 1, découverte · Document fictif/.test(q(".pdj-etiquette").textContent), q(".pdj-etiquette").textContent);
+
+    // Une pièce par format et par niveau, trouvée parmi les pièces libres
+    const graines = w.eval(`(() => { const r = {}; for (let n = 1; n <= 4; n++) for (let g = 1; g < 400; g++) { const p = pieceLibre(n, g), k = n + "-" + p.format; if (!r[k]) r[k] = g; } return r; })()`);
+    const formats = new Set(Object.keys(graines).map(k => k.split("-")[1]));
+    ok("six formats trouvés parmi les pièces libres", formats.size === 6, [...formats].join(", "));
+
+    // --- Recto et verso de chaque format, sans trace de l'état avant la correction ---
+    const traceVue = [], zonesSansNom = [];
+    for (const k of Object.keys(graines)) {
+      const [n, format] = k.split("-");
+      await aller("piece/" + n + "-" + graines[k]);
+      const t = traces();
+      if (t.length) traceVue.push(k + " : " + t.join(" "));
+      qa(".pdj-zone").forEach(b => { if (!(b.getAttribute("aria-label") || b.textContent).trim()) zonesSansNom.push(k); });
+      controler("recto " + k);
+    }
+    ok("aucune trace de l'état des zones dans le DOM avant la correction (attributs, classes)", !traceVue.length, traceVue.slice(0, 4).join(" | "));
+    ok("chaque zone a un nom accessible (son texte, ou ce que montre la figure)", !zonesSansNom.length, zonesSansNom.join(", "));
+    ok("toutes les zones sont des boutons (jouables au clavier : Tab, Entrée, Espace)", w.eval("[...document.querySelectorAll('#vue-piece .pdj-zone')].every(b => b.tagName === 'BUTTON' && b.type === 'button')"));
+
+    // --- Une partie parfaite à chaque niveau, puis une partie avec fausses alertes ---
+    for (let n = 1; n <= 4; n++) {
+      const g = Object.keys(graines).find(k => k.startsWith(n + "-") && !w.eval(`pieceLibre(${n}, ${graines[k]}).zones.every(z => z.etat !== "piegee")`));
+      const graine = graines[g];
+      await aller("piece/" + n + "-" + graine);
+      const p = w.eval(`pieceEnCours.piece`);
+      const pieges = p.zones.filter(z => z.etat === "piegee");
+      await jouer(pieges.map(z => z.id), pieges.map(z => z.procede), false, (p.chiffrer[0] || {}).reponse, p.verdict);
+      const r = w.eval("pieceEnCours.resultat");
+      ok(`niveau ${n} : relevé parfait, contre-expertise à 10 / 10`, r && r.note === 10 && r.exact && /10\s?\/\s?10/.test(q(".pdj-note-finale").textContent), JSON.stringify(r && r.parts));
+      ok(`niveau ${n} : chaque piège annoté « Trouvé », avec son procédé et la version honnête`,
+        qa(".pdj-note-trouve").length === pieges.length && qa(".pdj-note-trouve .pdj-note-nom").length === pieges.length && qa(".pdj-note-trouve .pdj-honnete ins").length === pieges.length);
+      ok(`niveau ${n} : les zones ne se touchent plus après le verrouillage`, (() => { const avant = w.eval("pieceEnCours.ordre.length"); q(".pdj-zone").click(); return w.eval("pieceEnCours.ordre.length") === avant; })());
+      controler("correction n" + n);
+      // Retournement : la pièce rectifiée, puis retour au recto annoté
+      q(".pdj-bascule").click(); await pause(60);
+      ok(`niveau ${n} : « Voir la pièce rectifiée » affiche la version honnête (aria-pressed)`, q(".pdj-bascule").getAttribute("aria-pressed") === "true" && /Version rectifiée/.test(q(".pdj-etiquette").textContent) && !qa(".pdj-note").length);
+      controler("verso n" + n);
+      q(".pdj-bascule").click(); await pause(60);
+      ok(`niveau ${n} : retour au recto, annotations reposées`, q(".pdj-bascule").getAttribute("aria-pressed") === "false" && qa(".pdj-note-trouve").length === pieges.length);
+      ok(`niveau ${n} : relevé à partager sans position (signes triés)`, (() => { const t = w.eval("pieceTextePartage()").split("\n"); return /^Pièce libre · niveau \d · 10\/10$/.test(t[0]) && /^●+$/.test(t[1]) && /Document fictif/.test(t[2]); })(), w.eval("pieceTextePartage()"));
+    }
+
+    // Fausses alertes : toutes les zones marquées → repérage nul, chaque fausse alerte expliquée
+    {
+      const g = graines["2-breve"] || graines["2-publicite"];
+      await aller("piece/2-" + g);
+      const p = w.eval("pieceEnCours.piece");
+      await jouer(p.zones.map(z => z.id), [], false);
+      const r = w.eval("pieceEnCours.resultat");
+      ok("tout marquer : repérage nul", r.parts.reperage === 0, JSON.stringify(r.parts));
+      const marquees = p.zones.filter(z => !z.toleres.length && z.etat !== "piegee").length;
+      ok("chaque fausse alerte barrée et expliquée", qa(".pdj-note-fausse").length === marquees && qa(".pdj-etat-fausse").length === marquees, qa(".pdj-note-fausse").length + " / " + marquees);
+      ok("relevé à partager : × pour chaque fausse alerte", (w.eval("pieceTextePartage()").split("\n")[1].match(/×/g) || []).length === r.A);
+    }
+
+    // Pièce saine reconnue : « Rien à signaler »
+    {
+      const saine = w.eval(`(() => { for (let g = 1; g < 3000; g++) { const p = pieceLibre(2, g); if (p.zones.every(z => z.etat !== "piegee")) return g; } return null; })()`);
+      w.eval("pieceEnCours = null");   // la même graine a pu servir plus haut : partie neuve
+      await aller("accueil"); await aller("piece/2-" + saine);
+      await jouer([], [], true);
+      const r = w.eval("pieceEnCours.resultat");
+      ok("pièce saine reconnue : 10 / 10 et « Pièce saine, reconnue comme telle »", r.note === 10 && /reconnue comme telle/.test(q(".pdj-rail").textContent), JSON.stringify(r));
+    }
+
+    // Correction reconstruite après un détour par une fiche (partie mise de côté)
+    {
+      const avant = q(".pdj-note-finale").textContent;
+      const lien = q('.pdj-fiche a[href^="#"]') || null;
+      await aller("biais/ancrage");
+      ok("une fiche ouverte depuis la pièce propose de revenir à la partie", /Revenir à la partie/.test(vue().textContent));
+      await aller("piece/2-" + w.eval("pieceEnCours.piece.graine"));
+      ok("retour : la contre-expertise est toujours là", !!q(".pdj-note-finale") && q(".pdj-note-finale").textContent === avant && lien !== undefined);
+    }
+
+    // Animations réduites : l'état final est posé sans attendre
+    {
+      w.eval("reglages.animations = 'reduites'; document.documentElement.dataset.animations = 'reduites'");
+      w.eval("pieceEnCours = null");
+      const g = graines["1-breve"] || graines["1-publicite"];
+      await aller("accueil"); await aller("piece/1-" + g);
+      const p = w.eval("pieceEnCours.piece"), z = p.zones.find(x => x.etat === "piegee");
+      await jouer([z.id], [z.procede], false);
+      const animations = w.eval("document.getAnimations().filter(a => a.playState === 'running').length");
+      ok("animations réduites : aucune animation en cours, note et annotations posées", animations === 0 && !!q(".pdj-note-finale") && qa(".pdj-note").every(n => w.getComputedStyle(n).opacity === "1"), "animations : " + animations);
+      q(".pdj-bascule").click();
+      ok("animations réduites : retournement en échange simple", w.eval("document.getAnimations().filter(a => a.playState === 'running').length") === 0 && /Version rectifiée/.test(q(".pdj-etiquette").textContent));
+      w.eval("reglages.animations = 'auto'; delete document.documentElement.dataset.animations");
+    }
+
+    ok("aucun défaut d'affichage (controle-affichage.js), à chaque étape", defauts.size === 0, [...defauts].slice(0, 6).join(" | "));
+  } catch (e) {
+    lignes.push("EXCEPTION " + e.message + "\n" + e.stack);
+  }
+  ok("aucune erreur JavaScript" + (erreursJS.length ? " : " + erreursJS.join(" | ") : ""), erreursJS.length === 0);
+  const echecs = lignes.filter(l => !l.startsWith("OK")).length;
+  lignes.unshift("RÉSUMÉ : " + (lignes.length - echecs) + " / " + lignes.length + " vérifications réussies");
+  document.getElementById("out").textContent = lignes.join("\n");
+  lignes.forEach(l => String(l).split("\n").forEach(x => console.log("RAPPORT: " + x)));
+  console.log("RAPPORT-FIN");
+  f.remove();
+};
+</script>

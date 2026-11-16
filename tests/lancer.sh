@@ -12,19 +12,19 @@
 # Code de sortie 1 si un banc échoue (tests/verdict.py), pour l'intégration continue.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire progression synchro piece-moteur"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire progression synchro piece-moteur piece"}
 export CHROME=${CHROME:-$(python3 tests/navigateur.py)}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
 1280 clair
 1280 sombre"}
-COPIES="_progression.html _aleatoire.html _affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js _grand-test.html"
+COPIES="_progression.html _aleatoire.html _affichage.html _ateliers.html _test.html _niveaux.html niveaux.html controle-affichage.js _grand-test.html _piece.html"
 # Les bancs chargent _site.html : la page du site sans sa politique de sécurité (CSP), qui interdit eval,
 # dont les bancs se servent pour lire l'état du site. La vraie page est contrôlée par le banc « csp ».
 mkdir -p tests/rapports
 
 nettoyer() {
-  for f in $COPIES _site.html _site-grand.html _grand-test-essai.js _site-synchro.html _coffre-essai.js; do rm -f "static/$f"; done
+  for f in $COPIES _site.html _site-grand.html _grand-test-essai.js _site-synchro.html _coffre-essai.js _site-piece.html _piece-essai.js; do rm -f "static/$f"; done
   [ -n "$SERVEUR_SYNCHRO" ] && kill "$SERVEUR_SYNCHRO" 2>/dev/null
   [ -n "$SERVEUR" ] && kill "$SERVEUR" 2>/dev/null
 }
@@ -54,6 +54,9 @@ grep -v 'http-equiv="Content-Security-Policy"' static/index.html > static/_site.
 sed -e 's/^const GRAND_TEST_VISIBLE = false;$/const GRAND_TEST_VISIBLE = true;/' -e 's/^const GRAND_TEST_ESSAI = false;$/const GRAND_TEST_ESSAI = true;/' \
   static/grand-test.js > static/_grand-test-essai.js
 sed 's/src="grand-test.js"/src="_grand-test-essai.js"/' static/_site.html > static/_site-grand.html
+# Copie d'essai de la pièce du jour : PIECE_VISIBLE à true ; la version publiée garde false (vérifié par le banc « piece »)
+sed 's/^const PIECE_VISIBLE = false;$/const PIECE_VISIBLE = true;/' static/piece.js > static/_piece-essai.js
+sed 's/src="piece.js"/src="_piece-essai.js"/' static/_site.html > static/_site-piece.html
 # Copie d'essai de la synchronisation : coffre pointé sur le serveur local (serveur/serveur-local.mjs) ; rien n'est modifié dans static/
 sed 's|^const SYNCHRO_URL = "[^"]*";|const SYNCHRO_URL = "http://localhost:8787";|' static/coffre.js > static/_coffre-essai.js
 sed 's/src="coffre.js"/src="_coffre-essai.js"/' static/_site.html > static/_site-synchro.html

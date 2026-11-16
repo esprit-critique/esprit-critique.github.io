@@ -188,6 +188,7 @@ EN_AJOUTER([
   ["Réviser ({0})", "Review ({0})"],
   ["Cette page n'existe pas.", "This page does not exist."],
   ["Défi libre", "Free challenge"],
+  ["La pièce du jour", "The item of the day"],
   ["Profil", "Profile"],
   ["Parcours", "Paths"],
   ["Cartes", "Cards"],

@@ -9,6 +9,7 @@ tests/rapports/
 
 # Copies temporaires des bancs d'essai dans static/ (tests/lancer.sh, tests/capturer.py) : jamais publiées
 static/_*.html
+static/_*.js
 static/niveaux.html
 static/controle-affichage.js
 

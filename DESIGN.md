@@ -202,6 +202,32 @@ autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une s
   une distinction ; jamais bloquants, fermés seuls.
 - **Images à partager** : 1 080 × 1 350, papier clair, barre de couleur de catégorie, Newsreader.
 
+## La pièce du jour
+
+Écran `#piece` (`static/piece-interface.js`, classes `pdj-`), derrière le drapeau `PIECE_VISIBLE`.
+
+- **La feuille** : surface `--carte`, filet de 1 px, `--ombre-2`, coins de `--rayon-carte`, 680 px au plus ; une seule
+  couleur de catégorie, celle du monde (`--c`). Étiquette en tête, au style des étiquettes : « Pièce n° 12 · Niveau 3,
+  expert · Document fictif ». Dès 1 040 px : la feuille à gauche, la barre d'étapes et le rail d'expertise à droite
+  (rail collant) ; sur téléphone, la barre d'étapes colle en haut de l'écran, avec le seul nom de l'étape courante.
+- **Six habillages**, avec les seules polices et les seuls jetons du site : brève (rubrique, titre Newsreader, chapô
+  21 px, figure en trois parties touchables, signature), publicité (aplat `--c-clair`, chiffre-clé en grand,
+  petites lignes de 13 px), communiqué d'étude (encadré « Méthode » sur `--encadre`, conclusion en exergue), sondage
+  (question en exergue, barres horizontales à valeurs et axe écrits, fiche technique), réseau fictif (avatar fait
+  d'un triangle, jamais un visage), bulletin municipal (blason aux ailettes de l'emblème, bandeau à double filet,
+  colonnes avant / après).
+- **Zones** : de vrais boutons, cibles de 44 px, 8 px d'écart ; au repos rien ne les signale, au survol et au focus
+  un fond `--c-clair`. Leur classe dit leur rôle (`pdj-r-titre`), jamais leur état. **La marque** : trait d'encre
+  sous le texte, filet autour de la zone, pastille numérotée (le numéro porte l'information).
+- **Contre-expertise** : quatre états, chacun glyphe au trait, mot et couleur — « Trouvé » (vert, coche),
+  « Manqué » (rouge, filet tireté), « Fausse alerte » (rouge, texte barré), « Leurre évité » (gris, filet pointillé) ;
+  plus « Ni juste ni faux » pour une conclusion tolérée. L'annotation suit la zone (sous la figure entière pour une
+  partie de figure) : état, procédé en italique Newsreader 19 px, ce qui trompe, la preuve (lien qui mène à la zone),
+  l'original barré puis la version honnête, « ≠ » et le procédé confondu, la fiche. Rapport dans le rail : note en
+  grand nombre, parts en barres, phrase d'étalonnage en italique, chiffre et verdict corrigés comme au quiz.
+- **Mouvements** : la révélation (annotations l'une après l'autre), le retournement (pièce rectifiée, bouton à
+  `aria-pressed`), la chute (la note) ; tous par `animer()`, état final posé d'abord.
+
 ## Proscrit
 
 Le dégradé violet, le verre dépoli, les ombres lourdes, les émojis en guise d'icônes, les illustrations de banque
