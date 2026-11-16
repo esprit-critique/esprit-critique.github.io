@@ -1203,8 +1203,6 @@ function donneesFiche() {
     jours: Array.from({ length: 14 }, (_, k) => ((luc.jours || {})[jour - 13 + k]) || 0), objectif: lire("objectif", 60),
     // État de chaque distinction, dans l'ordre de la liste : obtenue ou non, secrète ou non
     medailles: DISTINCTIONS.map(x => [obtenues.has(x[0]), !!x[5], x[1]]),
-    // Ce que récompense chaque distinction obtenue (non secrète) : [nom, raison]
-    detail: gagnees.filter(x => !x[5]).map(x => [T(x[1]), x[3]]),
     nombre: gagnees.length };
 }
 
@@ -1499,18 +1497,11 @@ function ouvrirFichePersonnage(declencheur) {
     domaines.appendChild(ligne);
   });
   contenu.append(section("Domaines"), domaines);
-  // Distinctions, en compact : le compte dans le titre, une médaille par distinction (pleine si obtenue), et ce que
-  // récompensent les obtenues dans un repli fermé
+  // Distinctions, en compact : le compte dans le titre, une médaille par distinction (pleine si obtenue, nommée au
+  // survol) ; ce que chacune récompense est dans l'onglet « Distinctions » du profil, pas ici
   const titreDistinctions = section("Distinctions");
   titreDistinctions.appendChild(el("span", "fiche-compte", " " + f.nombre + "/" + DISTINCTIONS.length));
   contenu.append(titreDistinctions, svgMedailles(f.medailles));
-  if (f.detail.length) {
-    const repli = el("details", "fiche-detail");
-    const liste = el("dl", "fiche-detail-liste");
-    f.detail.forEach(([nom, raison]) => liste.append(el("dt", null, nom), el("dd", null, raison)));
-    repli.append(el("summary", null, "Ce qu'elles récompensent"), liste);
-    contenu.appendChild(repli);
-  }
   // Pseudo sur l'image : non par défaut (il peut être un vrai nom) ; le choix n'est pas enregistré. La case vient avec le
   // pseudo : plus bas s'il existait déjà, à la place du champ s'il vient d'être donné
   if (f.pseudo) contenu.appendChild(casePseudoImage());

@@ -1947,15 +1947,6 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-chiffres > div { display: flex; flex-direction: column; align-items: center; }
 .fiche-nombre { font-family: var(--titre); font-size: 44px; font-weight: 700; line-height: 1.05; font-variant-numeric: oldstyle-nums; }
 .fiche-compte { font-family: var(--police); font-size: 14px; font-weight: 600; color: var(--discret); font-variant-numeric: tabular-nums; }
-.fiche-detail { width: 100%; text-align: left; font-size: 14px; }
-.fiche-detail summary { min-height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--accent); font-weight: 600; }
-.fiche-detail summary { list-style: none; }
-.fiche-detail summary::-webkit-details-marker { display: none; }   /* Safari : sinon une seconde flèche */
-.fiche-detail summary::after { content: "▾"; margin-left: 6px; }
-.fiche-detail[open] summary::after { content: "▴"; }
-.fiche-detail-liste { margin: 0 0 4px; }
-.fiche-detail-liste dt { font-weight: 700; }
-.fiche-detail-liste dd { margin: 0 0 8px; color: var(--discret); }
 .fiche-option { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
 .fiche-option input { width: 20px; height: 20px; margin: 0; }
 .fiche-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }

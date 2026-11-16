@@ -252,7 +252,6 @@ EN_AJOUTER([
   ["Votre nom sur la fiche (il reste sur cet appareil)", "Your name on the card (it stays on this device)"],
   ["14 jours, objectif {0}", "14 days, goal {0}"],
   ["Domaines", "Domains"],
-  ["Ce qu'elles récompensent", "What they reward"],
   ["Partager l'image", "Share the image"],
   ["Mettre mon pseudo sur l'image", "Put my nickname on the image"],
   ["Bienvenue", "Welcome"],
