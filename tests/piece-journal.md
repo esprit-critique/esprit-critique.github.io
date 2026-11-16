@@ -8,7 +8,7 @@ Pour reprendre dans une nouvelle session : lire `CLAUDE.md`, ce journal (« Éta
 | Lot | Branche | Pull request | État |
 |---|---|---|---|
 | P0 — Cadrage | `piece/p0` | #26 | brief, plan, journal, catalogue |
-| P1 — Moteur (niveaux 1 à 4) | `piece/p1` | — | à faire |
+| P1 — Moteur (niveaux 1 à 4) | `piece/p1` | voir la branche | moteur, données, banc `piece-moteur` (91/91), français et anglais ; rien de visible (`PIECE_VISIBLE = false`) |
 | P2 — Jeu et contre-expertise | `piece/p2` | — | à faire |
 | P3 — Intégration | `piece/p3` | — | à faire |
 | P4 — Profondeur (niveau 5, manques, tableau, distinctions) | `piece/p4` | — | à faire |
@@ -90,10 +90,33 @@ Pour reprendre dans une nouvelle session : lire `CLAUDE.md`, ce journal (« Éta
   lieu, de produit, d'entreprise ni de rédaction (« la ligne 7 », « l'application de révision », « la rédaction »).
   Seuls les comptes du réseau fictif et les témoins portent un nom : un prénom seul, ou un pseudonyme fait de deux
   noms communs (« Ruelle_Verte »). Tous sont listés dans `tests/piece-a-relire.md`.
-- **Mondes retenus pour P1** : les douze du vivier. `simpson` et `circulaire` n'apparaissent qu'au niveau 5 (P4).
+- **Mondes retenus pour P1** : huit des douze du vivier (ligne 7, radar, application de révision, infusion, club de
+  course, rue piétonne, cantine, fournisseur d'électricité). La jeune entreprise, le lycée, la médiathèque et le
+  portique antivol attendent P4 : la rotation et le banc tiennent avec huit, et chaque monde ajouté demande ses
+  groupes nominaux en deux langues. `simpson` et `circulaire` n'apparaissent qu'au niveau 5 (P4).
+- **Procédés en service en P1 : 25 sur 34** (`PIECE_PROCEDES`). Les neuf autres du catalogue (dont
+  `precision-illusoire`, `pictogramme`, `temoignage`) attendent P4, avec leurs gabarits.
+- **Rotation (P1).** Le format suit un cycle mélangé par niveau ; le procédé principal est, parmi ceux que ce format
+  accepte, celui qui attend depuis le plus longtemps ; le monde suit son propre cycle, sans reprendre celui de la
+  veille avec le même format. Les jours sont simulés depuis `PIECE_JOUR_UN − 60` (≈ 4 ms par pièce, mémoire par
+  niveau). Les procédés principaux des six jours précédents passent en dernier dans le tirage des pièges secondaires :
+  jamais le même ensemble à moins de sept jours.
+- **Leurres.** Un monde n'est retenu que s'il laisse assez de zones de leurre distinctes pour le minimum du niveau
+  (`pieceLeurresPossibles`) ; un essai qui n'en place pas assez est rejeté. Ajouts au catalogue : « ton vif » sur le
+  bandeau du bulletin, « source datée » sur le sondage, l'étude et la publication, « expert du domaine » en réponse
+  sur la publication.
+- **Prix.** Quand la même combinaison (format, monde, procédé) revient, le prix avance d'un cran dans la fourchette du
+  produit : deux publicités du jour ne peuvent pas être identiques (le banc l'exigeait au niveau 1, où la pièce n'a que
+  quatre zones). La boîte d'infusion passe à cinquante sachets, de 6 à 16 €.
+- **À relire (P2) :** `post-hoc` peut dire « en baisse de 31 % : c'est bien la preuve que ça marche » sur une mesure
+  dont la hausse est souhaitable (adhérents du club). Le piège reste juste (aucune preuve de causalité), mais la
+  phrase sonne faux : orienter le sens par monde (`baisseEstMieux` existe pour les études).
 - **Part de hasard `c`** : calculée en P3, par simulation sur le moteur (joueur au hasard ; joueur qui répond toujours
   « Rien à signaler »).
 
 ## Mesures
 
-À faire en P1 (génération, taille des scripts) et en P3 (premier affichage de l'accueil, avant et après).
+- P1 (16 novembre 2026, Node 22, Mac du propriétaire) : génération d'une pièce du jour ≈ 4 ms (rotation simulée
+  comprise) ; banc `piece-moteur` ≈ 5 s. Tailles : `piece.js` 55 Ko, `piece-donnees.js` 25 Ko,
+  `en/dico-piece.js` 10 Ko, `en/dico-piece-donnees.js` 18 Ko (108 Ko au total, sous les 150 Ko).
+- À faire en P3 : premier affichage de l'accueil, avant et après.

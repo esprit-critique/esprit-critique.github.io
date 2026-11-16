@@ -128,6 +128,9 @@ Aucun nom propre de lieu, de produit ou d'organisme (journal, « Décisions »).
 
 Couleur de chaque monde : une couleur de catégorie existante de `donnees.js`, fixée en P1.
 
+En service au lot P1 : mondes 1, 2, 3, 4, 5, 6, 9 et 11 (`PIECE_MONDES`, `static/piece-donnees.js`) ; les autres en P4.
+La boîte d'infusion contient cinquante sachets (6 à 16 €).
+
 ## 6. Formats
 
 | Code | Format | Niv. | Zones (rôles) | Mentions exigées (manques, niveaux 4 et 5) |
