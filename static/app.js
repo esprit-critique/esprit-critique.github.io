@@ -910,7 +910,7 @@ function afficherAccueil() {
   carteProgression.appendChild(el("p", "surtitre", "Votre progression"));
   const tuiles = el("div", "tuiles");
   [
-    [acquis.size + " / " + INDEX.size, "fiches acquises"],
+    [acquis.size + " / " + INDEX.size, T("fiches acquises")],
     [stats.n ? Math.round(100 * stats.justes / stats.n) + PC : "—", stats.n ? T("de réussite sur {0}", pluriel(stats.n, "réponse")) : T("de réussite au quiz")],
     [String(serieDeJours()), serieDeJours() > 1 ? T("jours d'affilée") : T("jour d'affilée")]
   ].forEach(([nombre, libelle]) => {

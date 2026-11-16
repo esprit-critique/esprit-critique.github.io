@@ -801,7 +801,7 @@ function jeuConseille(m) {
   const [domaine] = Object.entries(m.domaines).filter(([d]) => d !== "notions").sort((a, b) => a[1] - b[1])[0] || [];
   const jeux = Object.entries(m.jeux).filter(([id, [d]]) => d === domaine && tousLesAteliers().some(a => a.atelier.id === id)).sort((a, b) => a[1][1] - b[1][1]);
   if (!jeux.length) return T("une série de quiz");
-  return tousLesAteliers().find(a => a.atelier.id === jeux[0][0]).atelier.titre;
+  return T(tousLesAteliers().find(a => a.atelier.id === jeux[0][0]).atelier.titre);
 }
 
 const nomsDomaines = () => DOMAINES.map(([, nom]) => T(nom));
@@ -897,7 +897,7 @@ function ongletJeux(p, m) {
     const lignes = tousLesAteliers().filter(a => a.atelier.section === section.id && MAITRISE_JEUX[a.atelier.id] && MAITRISE_JEUX[a.atelier.id][1] !== "aucun")
       .map(a => { const v = m.jeux[a.atelier.id] ? m.jeux[a.atelier.id][1] : 0; return [a.atelier.titre, resultatAtelier(a.atelier.id) ? v : null, a.atelier.couleur]; });
     if (!lignes.length) return;
-    p.appendChild(graphiqueBarres(T("{0} : maîtrise de chaque jeu (repères 500 et 750 : plafonds des niveaux 1 et 2 d'un atelier à trois niveaux)", section.titre), lignes, 1000, [500, 750], messageJeuxSection(lignes)));
+    p.appendChild(graphiqueBarres(T("{0} : maîtrise de chaque jeu (repères 500 et 750 : plafonds des niveaux 1 et 2 d'un atelier à trois niveaux)", T(section.titre)), lignes, 1000, [500, 750], messageJeuxSection(lignes)));
     if (domaineConnu) p.appendChild(el("p", "source", T("Maîtrise du domaine : {0}. Un jeu jamais joué compte pour zéro.", m.domaines[dom])));
   });
 }
