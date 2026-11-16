@@ -563,8 +563,6 @@ const VRAI_FAUX = [
   // --- Ajouts de novembre 2026 : culture générale et esprit critique (sources vérifiées) ---
   { id: "annee-lumiere", niveau: 1, texte: "Une année-lumière est une unité de temps.", vrai: false,
     explication: "C'est une unité de distance : celle que parcourt la lumière dans le vide en une année, environ 9 460 milliards de kilomètres.", source: "Union astronomique internationale" },
-  { id: "chameaux", niveau: 1, texte: "Les chameaux stockent de l'eau dans leur bosse.", vrai: false,
-    explication: "La bosse est une réserve de graisse, que l'animal utilise quand la nourriture manque.", source: "Bibliothèque du Congrès des États-Unis, « Everyday Mysteries » ; Britannica" },
   { id: "koala", niveau: 1, texte: "Le koala est une espèce d'ours.", vrai: false,
     explication: "C'est un marsupial : la femelle porte son petit dans une poche, comme le kangourou.", source: "Wikipédia, « Koala »" },
   { id: "eau-pure", niveau: 2, texte: "L'eau parfaitement pure conduit très mal l'électricité.", vrai: true,
