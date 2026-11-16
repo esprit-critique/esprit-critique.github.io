@@ -910,7 +910,7 @@ function afficherAccueil() {
   carteProgression.appendChild(el("p", "surtitre", "Votre progression"));
   const tuiles = el("div", "tuiles");
   [
-    [acquis.size + " / " + INDEX.size, "fiches acquises"],
+    [acquis.size + " / " + INDEX.size, T("fiches acquises")],
     [stats.n ? Math.round(100 * stats.justes / stats.n) + PC : "—", stats.n ? T("de réussite sur {0}", pluriel(stats.n, "réponse")) : T("de réussite au quiz")],
     [String(serieDeJours()), serieDeJours() > 1 ? T("jours d'affilée") : T("jour d'affilée")]
   ].forEach(([nombre, libelle]) => {
@@ -1865,6 +1865,17 @@ document.querySelector(".lien-evitement").addEventListener("click", e => { e.pre
 
 // Transition de vue entre deux pages quand le navigateur la connaît (amélioration progressive, DESIGN.md « Mouvement »)
 window.addEventListener("hashchange", () => transitionDeVue(afficherPage));
+
+// Le lendemain, une page restée ouverte (onglet, ou application installée que l'iPhone met en veille sans la
+// recharger) garderait les cartes du jour d'avant : au retour sur la page, l'accueil se redessine si le jour a changé
+let jourAccueilAffiche = aujourdHui();
+function accueilDuNouveauJour() {
+  if (document.visibilityState !== "visible" || aujourdHui() === jourAccueilAffiche) return;
+  jourAccueilAffiche = aujourdHui();
+  if (precedent.vue === "accueil") afficherPage();
+}
+document.addEventListener("visibilitychange", accueilDuNouveauJour);
+window.addEventListener("pageshow", accueilDuNouveauJour);
 
 $("recherche-globale").addEventListener("input", e => {
   if (!rechercheDansFiches()) return;

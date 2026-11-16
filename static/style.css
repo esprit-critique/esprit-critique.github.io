@@ -876,6 +876,7 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Sections d'ateliers pliables : un bouton par section, fermé par défaut sauf si on l'a ouvert */
 .pliant {
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1833,6 +1834,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .codex-cadre { display: flex; justify-content: center; }
 .codex { max-width: 100%; height: auto; }
 .codex-point { fill: var(--c); opacity: 0.25; }
+.codex-cible { fill: transparent; }
 .codex-point.etat-1 { opacity: 0.45; }
 .codex-point.etat-2 { opacity: 0.65; }
 .codex-point.etat-3 { opacity: 0.85; }
@@ -2013,13 +2015,13 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Cibles tactiles : 44 × 44 px au moins, en agrandissant la zone (hauteur minimale, marge intérieure) sans changer
    le dessin ; les liens placés dans une phrase n'en ont pas besoin */
-.puce, .langue-entete, .marque, .segment a, .bouton-acquis, .champ, .lien.retour, button.lien, .lien-discret,
+.puce, .langue-entete, .marque, .segment a, .bouton-acquis, .lien-bouton, .champ, .lien.retour, button.lien, .lien-discret,
   .voir-aussi a, .sommaire a, .pied a, .pied button, .option-certitude, .suivantes a, p.contre a, .guide p > a:only-child,
   .verif label { min-height: 44px; }
-.puce, .lien.retour, button.lien, .voir-aussi a, .sommaire a, .pied a, .pied button, .suivantes a, p.contre a,
+.puce, .lien.retour, button.lien, .lien-bouton, .voir-aussi a, .sommaire a, .pied a, .pied button, .suivantes a, p.contre a,
   .guide p > a:only-child { display: inline-flex; align-items: center; }
 .segment a { display: flex; align-items: center; justify-content: center; gap: 0.3em; }   /* gap : l'espace avant le compteur, que flex supprime */
-.lien-discret { display: flex; align-items: center; }
+.lien-discret { display: flex; align-items: center; min-width: 44px; }
 .pied button, .choix-theme button { min-width: 44px; justify-content: center; }
 .bouton-pas { width: 44px; height: 44px; }
 .curseur { height: 44px; }

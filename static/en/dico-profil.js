@@ -268,6 +268,8 @@ EN_AJOUTER([
   ["« Premiers pas » fait le tour du site en trois quarts d'heure : une illusion, deux fiches, un test de réflexion, un quiz. Rien n'est verrouillé : tout reste ouvert.", "“First steps” tours the site in three quarters of an hour: an illusion, two cards, a reflection test, a quiz. Nothing is locked: everything stays open."],
   ["Plutôt le quiz", "The quiz instead"],
   ["Passer l'accueil", "Skip the welcome"],
+  ["jamais ouverte", "never opened"],
+  ["lue", "read"],
   ["Les formes et les équipements à gagner se débloquent avec une distinction difficile (onglet « Distinctions »).", "The shapes and equipment still to earn are unlocked by a difficult distinction (“Distinctions” tab)."],
   ["secrète", "secret one"],
   ["et {0} autres", "and {0} more"],

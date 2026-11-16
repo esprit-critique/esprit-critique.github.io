@@ -44,3 +44,12 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
   aucun nom, aucun mot de passe ne sont collectés ; le site ne peut pas récupérer un code perdu. »
 - **Conditions d'utilisation** : « La synchronisation est un service gratuit, sans garantie de disponibilité ; gardez un
   fichier de sauvegarde (« Enregistrer dans un fichier ») pour ne rien perdre. »
+
+## Contenus écartés faute de source primaire (ajout de culture générale, 16 novembre 2026)
+
+- **« Impossible n'est pas français », Napoléon** (citation, statut « déformée » envisagé) : on la rattache souvent à une
+  lettre au général Lemarois de 1813 (« cela n'est pas français ») ; lettre non retrouvée dans la Correspondance
+  générale (napoleon.org). À vérifier sur le texte de la lettre avant de l'ajouter à `CITATIONS`.
+- **« Les requins existaient avant les arbres »** (vrai ou faux) : vrai selon les sources de vulgarisation (requins
+  vers 450 millions d'années, premiers arbres vers 385 à 390 millions), mais l'écart dépend de ce qu'on appelle un
+  requin et la page du Smithsonian n'a pas pu être lue. À vérifier sur une source de paléontologie.

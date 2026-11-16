@@ -234,6 +234,7 @@ EN_AJOUTER([
   ["Afficher cette aide", "Show this help"],
   ["Raccourcis clavier", "Keyboard shortcuts"],
   ["Installer l'application", "Install the app"],
+  ["fiches acquises", "cards learned"],
   ["Aujourd'hui", "Today"],
   ["Rechercher un biais, un auteur, un cas…", "Search for a bias, an author, a case…"],
   ["Rechercher un sophisme, un auteur, un cas…", "Search for a fallacy, an author, a case…"],
