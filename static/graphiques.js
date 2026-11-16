@@ -49,7 +49,11 @@ function blocGraphique(titre, dessin, entetes, lignes, classe, message) {
 
 // Barres horizontales depuis zéro, valeur écrite au bout : [[libellé, valeur, couleur]], maximum de l'échelle, repères
 function graphiqueBarres(titre, donnees, max, reperes = [], message) {
-  const haut = 26, largeur = 360, gauche = 150, droite = 50;
+  // Colonne des libellés à la mesure du plus long (au plus 6,8 unités par caractère mesurées à 12,6 px) : « Lequel
+  // résiste le plus longtemps ? » sortait du dessin avec une colonne fixe de 150. shortcut: estimation par caractère,
+  // plafonnée à 240 ; un libellé de plus de 32 caractères larges serait encore coupé, passer alors à deux lignes (tspan)
+  const plusLong = Math.max(0, ...donnees.map(([l]) => String(l).length));
+  const haut = 26, largeur = 360, gauche = Math.max(150, Math.min(240, Math.ceil(plusLong * 7) + 12)), droite = 50;
   const s = svg("svg", { viewBox: "0 0 " + largeur + " " + (donnees.length * haut + 18), class: "barres-svg", role: "img", "aria-label": titre });
   const echelle = v => gauche + (largeur - gauche - droite) * Math.max(0, v) / max;
   reperes.forEach(r => {

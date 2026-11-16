@@ -922,6 +922,9 @@ function codex(taille, mini) {
   cles.forEach(([type, f], i) => {
     const a = -Math.PI / 2 + 2 * Math.PI * i / n, etat = etatCodex(cleFiche(type, f));
     const lien = svg("a", { href: "#" + type + "/" + f.id, "aria-label": f.nom + " : " + T(ETATS_CODEX[etat]) });
+    // Zone de toucher : tout l'espace entre deux voisins (90 points sur la roue, 44 px impossibles sans chevauchement ;
+    // « Le codex en liste » reste l'accès complet)
+    if (!mini) lien.appendChild(svg("circle", { cx: 150 + 122 * Math.cos(a), cy: 150 + 122 * Math.sin(a), r: Math.PI * 122 / n, class: "codex-cible" }));
     const point = svg("circle", { cx: 150 + 122 * Math.cos(a), cy: 150 + 122 * Math.sin(a), r: 3 + etat * 1.1, class: "codex-point etat-" + etat });
     point.style.setProperty("--c", COULEURS[f.categorie]);
     if (mini) { s.appendChild(point); return; }
