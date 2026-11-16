@@ -1960,13 +1960,16 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-grade-actuel { stroke: var(--texte); stroke-width: 2.5; }
 .fiche-grade-futur { fill: var(--carte); stroke: var(--trait); stroke-width: 1.5; }
 .fiche-chiffres { align-items: start; }
-.fiche-jours { display: block; width: 100%; max-width: 160px; height: auto; margin-top: 6px; }
+.fiche-jours { display: block; width: auto; max-width: 100%; height: 50px; margin-top: 6px; }
 .fiche-jour { fill: var(--terre); }
 .fiche-jour-actuel { fill: var(--texte); }
 .fiche-jours-base { stroke: var(--trait); stroke-width: 1; }
 .fiche-jours-objectif { stroke: var(--discret); stroke-width: 1; stroke-dasharray: 3 2; }
-.fiche-legende { font-size: 12px; }
-.fiche-vase { display: block; height: 76px; width: auto; margin: 6px auto 0; overflow: visible; }
+.fiche-legende { font-size: 12px; line-height: 1.35; margin-top: 4px; }
+/* Le trait dominant, sous le vase : même ligne que la légende des jours, un peu plus marqué */
+.fiche-trait { margin-top: 4px; font-family: var(--titre); font-size: 14px; font-weight: 650; line-height: 1.2; }
+/* Vase et graphique des jours à la même hauteur : les deux colonnes de la fiche restent alignées ligne à ligne */
+.fiche-vase { display: block; height: 50px; width: auto; margin: 6px auto 0; overflow: visible; }
 .vase-fond, .vase-argile { fill: var(--terre); }
 .vase-noir { fill: var(--figure); }
 .vase-frise { fill: none; stroke: var(--terre); stroke-width: 1.3; }
