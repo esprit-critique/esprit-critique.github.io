@@ -20,9 +20,13 @@ signature ; l'illusion du jour ; quatorze glyphes de catégorie ; des états vid
   latin. Pour les titres, les situations du quiz, les citations, les étiquettes et les verdicts.
   Taille optique automatique (`font-optical-sizing: auto`) sur les titres.
 - **`--police`** : police système, pour tout le texte courant, les boutons et les champs.
-- **Étiquettes** (surtitres, étiquettes de catégorie, intertitres de fiche, consignes) : capitales du caractère de
-  titre, 13 px, graisse 650, espacement 0,07 em. Newsreader n'a pas de glyphes de petites capitales : ne pas
-  utiliser `font-variant-caps: all-small-caps`, que chaque navigateur fabriquerait différemment.
+- **Étiquettes** (surtitres, étiquettes de catégorie, intertitres de fiche, consignes) : casse normale (première
+  lettre en capitale, posée par `::first-letter`), 14 px, graisse 600, sans espacement ajouté, couleur `--discret` ou
+  de catégorie. Pas de capitales espacées : elles crient et se lisent moins bien (passe « unslop », novembre 2026).
+- **Graisses** : 400, 500 et 600, jamais au-delà. Les titres (`h1` à `h4`) sont à 600 ; les grands titres et grands
+  nombres en Newsreader (21 px et plus) à 500 : la hiérarchie vient de la taille et de la couleur, pas de la graisse.
+- **Pas d'italique d'emphase** : l'italique reste aux verdicts, à la phrase de l'accueil, aux variables et aux titres
+  d'œuvres.
 - **Chiffres elzéviriens** (`oldstyle-nums`) pour les scores, les nombres des tuiles et les numéros de fiche.
 - Un caractère absent du sous-ensemble latin (≈, →, exposants ⁴ à ⁹…) est pris dans la police suivante de `--titre`.
   Contrôle : `python3 tests/pages/couverture_police.py`.
@@ -38,7 +42,9 @@ le contrôle d'affichage (`contraste-faible`).
 - **Le spectre** : les 14 couleurs de catégorie (`donnees.js`), dans l'ordre des catégories, biais puis sophismes.
   Elles ne se côtoient que dans le filet du spectre et dans le codex ; partout ailleurs, une seule couleur de
   catégorie par carte.
-- Le bleu `--accent` reste la couleur des actions et des liens hors catégorie.
+- Le bleu `--accent` est **la seule couleur des boutons**, partout, y compris dans une carte de catégorie : une
+  seule couleur d'action par écran. La couleur de catégorie reste à la barre de la carte, à l'étiquette, aux liens et
+  aux puces de filtre actives.
 
 ## Jetons de forme, d'élévation, de mouvement et de mise en page
 
@@ -56,9 +62,18 @@ le contrôle d'affichage (`contraste-faible`).
 
 ## Échelle typographique
 
-Titre de page (h1 des vues) : Newsreader 40 px sur téléphone, jusqu'à 56 px sur ordinateur, interligne 1,05.
+Titre de page (h1 des vues) : Newsreader 40 px sur téléphone, jusqu'à 56 px sur ordinateur, interligne 1,05, graisse 500.
 Grands nombres (score, maîtrise, points) : Newsreader, 64 à 80 px, chiffres elzéviriens. Titres de carte : 21 px.
 Entre deux blocs d'une page : 28 px au moins (40 px sur ordinateur).
+
+**Échelle des tailles** (texte HTML) : 13, 14, 15, 16, 18, 19, 21, 24, 28, 34, 40, 56, 64 px, et les `clamp()` des
+grands titres. Le texte des dessins SVG est en unités du dessin, mis à l'échelle avec lui : il n'entre pas dans
+l'échelle.
+
+**Grille de 4 px** : marges, retraits et écarts sont des multiples de 4 (1 et 2 px permis pour les filets et les
+ajustements dans un petit contrôle ; un centrage calculé, comme les 59 px de l'échelle logarithmique, reste).
+Rayons : seulement `--rayon`, `--rayon-bouton`, `--rayon-carte`, `50 %` pour un rond et une demi-hauteur pour une
+pastille.
 
 ## Cartes à jouer
 
@@ -85,6 +100,15 @@ Le **trait de Müller-Lyer** (le trait du haut de l'emblème, ailettes ouvertes)
 des fiches et des explications (`.section::before`), et entre les blocs des onglets du profil. Il est décoratif. **Réservé aux séparateurs** : ni les bordures
 des cartes, ni les listes. L'emblème lui-même apparaît dans l'en-tête et, pour un nouveau visiteur, dans
 l'ouverture de l'accueil ; toucher l'un ou l'autre révèle les repères verticaux.
+
+## Textes de l'interface
+
+- Pas de point d'exclamation dans la voix du site (records, salutations, objectifs) ; les citations et les faux
+  messages des exercices gardent les leurs : ils sont le contenu étudié.
+- Un titre, une étiquette, un bouton ne prennent pas de point final (« Bonne soirée », pas « Bonne soirée. »).
+- Libellés courts : « Chercher », pas « Chercher partout… ».
+- Réglages du pied de page (thème, animations, langue) : contrôles segmentés discrets, le choix actif sur `--encadre`
+  avec un filet et la graisse 600.
 
 ## Corrections
 
@@ -172,7 +196,9 @@ dégradé. Pour les en-têtes de catégorie, le codex et les distinctions.
 ## États vides
 
 Une page ou un bloc sans contenu (aucune révision, aucun résultat) montre un petit dessin au trait de la même
-grammaire, une phrase qui dit pourquoi c'est vide, et l'action qui le remplira.
+grammaire, une phrase qui dit pourquoi c'est vide, et l'action qui le remplira. Jamais de graphique dessiné vide : le
+profil sans aucune mesure montre un seul état vide à la place de ses quatre graphiques, et la roue du codex de
+l'accueil n'apparaît qu'après la première fiche lue.
 
 ## L'illusion du jour
 
@@ -190,7 +216,7 @@ autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une s
   Le même dessin (chemins SVG, rejoués par `Path2D`) figure sur l'image « Partager mon grade ». Puis l'insigne du grade (galons faits des
   ailettes de l'emblème), maîtrise en grand nombre, jauge vers le grade suivant et la phrase « La maîtrise mesure votre
   réussite dans les jeux de ce site, pas votre intelligence. » ; onglets. Graphiques selon « Graphiques ».
-- **Accueil** : le titre est une salutation (formule selon l'heure et la date, pseudonyme s'il existe) ; l'avatar du
+- **Accueil** : le titre est une salutation, sans point final (formule selon l'heure et la date, pseudonyme s'il existe) ; l'avatar du
   joueur (88 px, 52 px sur téléphone) à gauche de la date, du titre et de la phrase, mène au choix du personnage. L'avatar
   est le même partout, mode sobre compris ; dessous, une phrase en italique selon la situation (retour, révisions, série, parcours), sinon une
   idée du jour (jamais un fait chiffré). Le personnage revient, avec un mot selon la réussite, aux bilans des ateliers,

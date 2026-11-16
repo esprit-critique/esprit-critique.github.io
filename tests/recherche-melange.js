@@ -155,7 +155,7 @@ const ok = (libelle, condition, detail = '') => {
   r = await chercher(p, 'linda');
   ok('version anglaise : la recherche fonctionne', r.length > 0, JSON.stringify(r));
   const placeholder = await p.getAttribute('#recherche-globale', 'placeholder');
-  ok('version anglaise : libellé traduit', placeholder === 'Search everything…', placeholder);
+  ok('version anglaise : libellé traduit', placeholder === 'Search', placeholder);
   await p.close();
 
   // ---------- Sécurité de la vraie page (CSP en balise meta) ----------

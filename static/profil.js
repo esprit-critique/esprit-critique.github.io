@@ -635,14 +635,14 @@ const PHRASES_DU_JOUR = [
   "Le monde est plein d'arguments boiteux. Bonne nouvelle : vous savez maintenant marcher droit."
 ];
 // Situations : plusieurs tournures, une par jour (rotation sans remise)
-const PHRASES_RETOUR = ["Tiens, un revenant ! {0} jours sans nous voir : vos révisions ont gardé votre place au chaud.",
+const PHRASES_RETOUR = ["Tiens, un revenant. {0} jours sans nous voir : vos révisions ont gardé votre place au chaud.",
   "{0} jours d'absence : l'oubli a fait son travail, à vous de défaire le sien.",
   "Vous revoilà, après {0} jours. Vos notions vous attendaient, sagement rangées."];
 const PHRASES_RETOUR_SANS_REVISION = ["Vous revoilà, après {0} jours. Heureux hasard, ou décision éclairée ?",
   "{0} jours sans nous voir. Les biais, eux, n'ont pas pris de vacances.",
   "Quel plaisir de vous revoir après {0} jours. On reprend où vous en étiez ?"];
 const PHRASES_OBJECTIF = ["Objectif du jour dans la poche. Tout ce qui suit, c'est pour le plaisir.",
-  "Objectif atteint ! Votre cortex mérite une ovation (modérée : on reste critiques).",
+  "Objectif atteint. Votre cortex mérite une ovation (modérée : on reste critiques).",
   "Objectif du jour rempli. La suite, c'est du bonus, et du bonus bien mérité."];
 const PHRASES_REVISIONS = ["{0} notions frappent à la porte de votre mémoire. On leur ouvre ?",
   "{0} notions arrivent à échéance : c'est leur moment pour s'ancrer.",
@@ -668,7 +668,8 @@ function salutation(nouveau) {
   else if (mois === 12 && date === 25) formule = T("Joyeux Noël");
   else if (moment !== "nuit" && (semaine === 0 || semaine === 6) && jour % 2) formule = T("Bon week-end");
   const nom = prenomDuJoueur();
-  const titre = nom ? T("{0}, {1}.", formule, nom) : formule + ".";
+  // Un titre ne prend pas de point final (DESIGN.md, « Textes »)
+  const titre = nom ? T("{0}, {1}", formule, nom) : formule;
   // Situation : du plus utile au plus général
   const activite = lire("activite", []), avant = activite.filter(j => j < jour);
   const absence = avant.length ? jour - avant[avant.length - 1] : 0;
@@ -677,7 +678,7 @@ function salutation(nouveau) {
   const etape = typeof prochaineEtape === "function" ? prochaineEtape() : null;
   let phrase;
   if (mois === 4 && date === 1) phrase = T("Premier avril : aujourd'hui plus que jamais, vérifiez avant de croire. (Celle-là, elle est vraie.)");
-  else if (nouveau) phrase = T("Bienvenue ! Ici, on apprend à se tromper moins… en commençant par se tromper un peu.");
+  else if (nouveau) phrase = T("Ici, on apprend à se tromper moins, en commençant par se tromper un peu.");
   else if (absence >= 7) phrase = T(varier(aReviser ? PHRASES_RETOUR : PHRASES_RETOUR_SANS_REVISION, 41), absence);
   else if (!modeSobre() && (luc[jour] || 0) >= lire("objectif", 60)) phrase = T(varier(PHRASES_OBJECTIF, 43));
   else if (aReviser >= 3) phrase = T(varier(PHRASES_REVISIONS, 47), aReviser);
@@ -847,6 +848,13 @@ function messageJeuxSection(lignes) {
 
 function ongletEnsemble(p, m, etat) {
   const jours = Object.entries(etat.jours || {}).map(([j, v]) => [Number(j), v]).sort((a, b) => a[0] - b[0]);
+  // Rien de mesuré : quatre graphiques vides ne disent rien ; un seul état vide, et l'action qui les remplira (DESIGN.md)
+  if (!(etat.meilleure > 0) && !((lire("lucidite", {}) || {}).total > 0)) {
+    p.append(dessinVide(), el("h3", "titre-section", "Pas encore de mesure"),
+      el("p", null, "Une partie d'un atelier ou du quiz suffit : votre courbe de maîtrise, vos six domaines et votre calendrier d'entraînement apparaîtront ici."),
+      lienVers("#ateliers", "Choisir un atelier", "bouton"));
+    return;
+  }
   // Échelle jusqu'au deuxième grade au-dessus de la meilleure maîtrise : une courbe lisible, sans grade qui se chevauche
   const plusHaut = GRADES.find(([s]) => s > (etat.meilleure || 0) * 1.15 + 40) || GRADES[GRADES.length - 1];
   const echelle = Math.min(1000, (GRADES[GRADES.indexOf(plusHaut) + 1] || [1000])[0]);
@@ -1073,12 +1081,16 @@ function carteProgressionAccueil() {
     carte.appendChild(el("p", "source", T("Votre progression passée vaut {0} points.", luc.rattrapage)));
     ecrire("lucidite", { ...luc, rattrapageVu: true });
   }
-  const roue = el("a", "codex-mini");
-  roue.href = "#profil/notions";
-  const dessin = codex(120, true);
-  roue.setAttribute("aria-label", dessin.getAttribute("aria-label"));
-  roue.appendChild(dessin);
-  carte.append(roue, lienVers("#profil", "Votre profil →", "lien-discret"));
+  // Roue vide (aucune fiche lue ni rencontrée) : un cercle pâle qui ne dit rien, on attend la première fiche
+  if (Object.keys(memoire).length || lire("fichesLues", []).length) {
+    const roue = el("a", "codex-mini");
+    roue.href = "#profil/notions";
+    const dessin = codex(120, true);
+    roue.setAttribute("aria-label", dessin.getAttribute("aria-label"));
+    roue.appendChild(dessin);
+    carte.appendChild(roue);
+  }
+  carte.appendChild(lienVers("#profil", "Votre profil →", "lien-discret"));
   return carte;
 }
 
