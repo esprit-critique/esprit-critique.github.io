@@ -119,6 +119,7 @@ EN_AJOUTER([
   ["Graphiques trompeurs", "Misleading graphs"],
   ["Axe tronqué, fenêtre choisie, double échelle, moyenne trompeuse… Huit graphiques à lire sans se faire piéger.", "Truncated axis, chosen window, dual scale, misleading average… Eight graphs to read without being fooled."],
   ["Données fictives.", "Fictional data."],
+  ["Non.", "No."],
   ["Les mêmes données, présentées honnêtement.", "The same data, presented honestly."],
   ["Se méfier des graphiques", "Being wary of graphs"],
   ["Un graphique n'est jamais neutre : le choix de l'axe, de la période, de l'échelle et de l'indicateur change l'impression produite, sans qu'aucun chiffre soit faux.", "A graph is never neutral: the choice of axis, period, scale and indicator changes the impression it gives, without a single figure being false."],
@@ -269,5 +270,4 @@ EN_AJOUTER([
   ["grappe", "cluster"],
   ["grappes", "clusters"],
   ["Réponse : ", "Answer: "]
-]
-);
+]);

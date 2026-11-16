@@ -166,8 +166,9 @@ def ressemble_a_du_texte(s):
     if re.match(r"^(l'|d')[A-ZÀ-Ý]", t):                      # « l'Inde », « d'Allemagne » : un nom précédé de son article
         return True
     if re.fullmatch(r"[#.\[]?[\w\-:.#\[\]=\"'/*>+~, ()]*", t) and not ACCENTS.search(t) and " " not in t:
-        # un seul mot ASCII : identifiant, sauf s'il commence par une majuscule suivie de minuscules (« Accueil »)
-        return bool(re.fullmatch(r"[A-Z][a-z]{2,}[a-z\-']*", t))
+        # un seul mot ASCII : identifiant, sauf s'il commence par une majuscule suivie de minuscules (« Accueil »), avec
+        # ou sans ponctuation finale (« Juste. », « Non. » échappaient au contrôle et restaient en français sur /en/)
+        return bool(re.fullmatch(r"[A-Z][a-z]{2,}[a-z\-']*[.!?]?", t))
     if re.match(r"^(https?://|#|\.|/|data:|[a-z\-]+:[^ ])", t) and " " not in t:
         return False
     if re.fullmatch(r"[MmLlHhVvCcSsQqTtAaZz0-9 ,.\-]+", t):      # tracé SVG

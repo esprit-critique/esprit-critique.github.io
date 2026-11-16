@@ -1,7 +1,7 @@
 // sw.js : mode hors ligne. Stratégie « réseau d'abord » : en ligne, on sert toujours la version publiée (et l'on met
 // le cache à jour) ; hors ligne, on sert la dernière version enregistrée. Seuls les fichiers du site sont mis en cache.
 // À chaque nouveau fichier du site : l'ajouter à FICHIERS et changer le numéro de version du cache.
-const CACHE = "esprit-critique-v36";
+const CACHE = "esprit-critique-v38";
 // Liste lue en JSON par les bancs (_test, _grand-test, _hors-ligne) : pas de commentaire à l'intérieur. Version anglaise :
 // la page et ses dictionnaires (liste complète : python3 tests/en/controle.py).
 const FICHIERS = [
