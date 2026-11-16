@@ -213,6 +213,14 @@ autre illusion ». Chaque illusion a une légende d'une ou deux phrases et une s
   domaine, de longueur proportionnelle à sa maîtrise ; jamais de visage expressif ni d'animation). Quatre formes
   (humain, hibou, chat, robot : aigrettes et moustaches en ailettes), genre neutre, féminin ou masculin pour l'humain,
   et quatre équipements ; les formes et équipements autres que les premiers se gagnent par une distinction difficile.
+  **Équipements** : des objets des vases grecs, jamais un objet moderne (bandelettes du vainqueur, chlamyde, collier à
+  pendeloques, couronne de laurier). Un équipement dépasse de la silhouette ou s'y grave : un objet noir posé sur du
+  noir ne se voit pas. Il est vérifié sur chaque forme, en buste et en pied, aux dix grades (planche de 60 figures) ;
+  il a une variante par forme quand la tête ou le corps diffèrent. Une coiffe ne se pose pas sur le casque du
+  stratège et remplace le diadème des deux derniers grades.
+- **Distinctions** : chacune a son glyphe (`GLYPHES_DISTINCTIONS`, `profil.js`), gravé en argile sur une pièce noire,
+  même grammaire que les objets des domaines ; à gagner, le glyphe pâle dans un cercle tireté ; secrète à trouver,
+  un « ? ». Les mêmes médailles sur la fiche (huit par rangée), dans l'onglet « Distinctions » et sur l'image.
   Le même dessin (chemins SVG, rejoués par `Path2D`) figure sur l'image « Partager mon grade ». Puis l'insigne du grade (galons faits des
   ailettes de l'emblème), maîtrise en grand nombre, jauge vers le grade suivant et la phrase « La maîtrise mesure votre
   réussite dans les jeux de ce site, pas votre intelligence. » ; onglets. Graphiques selon « Graphiques ».
