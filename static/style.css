@@ -1812,12 +1812,17 @@ label[for] { display: block; margin: 0 0 8px; }
 .onglets-profil { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 6px; border-bottom: 1px solid var(--trait); }
 .onglet-profil { min-height: 44px; padding: 8px 12px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--discret); font-weight: 600; }
 .onglet-profil[aria-selected="true"] { color: var(--texte); border-bottom-color: var(--accent); }
-/* Sur téléphone, les six onglets passent sur deux lignes : soulignés seulement, ils ne se lisaient plus comme des
-   boutons. Ils deviennent une grille de boutons encadrés, l'onglet ouvert plein (aussi marqué par aria-selected) */
+/* Sur téléphone, les six onglets passaient sur deux lignes, et la seconde ne se lisait plus comme des onglets. Ils
+   restent sur une ligne qui défile au doigt : le bord droit s'estompe et l'onglet suivant est coupé, signe qu'il y a
+   une suite ; l'onglet ouvert est ramené dans la vue (profil.js) */
 @media (max-width: 759px) {
-  .onglets-profil { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 6px; padding-bottom: 12px; }
-  .onglet-profil { padding: 8px 4px; font-size: 14px; border: 1px solid var(--trait); border-radius: var(--rayon-bouton); background: var(--carte); color: var(--texte); }
-  .onglet-profil[aria-selected="true"] { border-color: var(--accent); background: var(--accent); color: var(--sur-accent); }
+  .onglets-profil { flex-wrap: nowrap; gap: 0; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); }
+  .onglets-profil::-webkit-scrollbar { display: none; }
+  .onglet-profil { flex: none; white-space: nowrap; padding: 8px 14px; }
+  /* Arrivé au bout de la ligne, plus rien à estomper */
+  .onglets-profil.au-bout { -webkit-mask-image: none; mask-image: none; }
 }
 .codex-cadre { display: flex; justify-content: center; }
 .codex { max-width: 100%; height: auto; }

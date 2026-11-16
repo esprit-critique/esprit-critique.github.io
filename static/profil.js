@@ -767,6 +767,18 @@ function afficherPageProfil(onglet) {
     onglets.appendChild(b);
   });
   zone.appendChild(onglets);
+  // Sur téléphone, les onglets défilent sur une ligne : l'onglet ouvert est ramené dans la vue, et l'estompe du bord
+  // droit disparaît quand on arrive au bout
+  const auBout = () => onglets.classList.toggle("au-bout", onglets.scrollLeft + onglets.clientWidth >= onglets.scrollWidth - 2);
+  onglets.addEventListener("scroll", auBout, { passive: true });
+  requestAnimationFrame(() => {
+    const ouvert = onglets.querySelector('[aria-selected="true"]');
+    if (ouvert && onglets.scrollWidth > onglets.clientWidth) {
+      const gauche = ouvert.getBoundingClientRect().left - onglets.getBoundingClientRect().left + onglets.scrollLeft;
+      onglets.scrollLeft = gauche - (onglets.clientWidth - ouvert.offsetWidth) / 2;
+    }
+    auBout();
+  });
   const panneau = el("div", "panneau-profil");
   panneau.setAttribute("role", "tabpanel");
   // Titre de l'onglet, pour les lecteurs d'écran : les blocs du panneau (h3) viennent ainsi après un h2
