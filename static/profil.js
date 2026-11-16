@@ -253,18 +253,30 @@ const DIADEME_PERSONNAGE = (() => {
   return [calquePersonnage("plein", "M" + ptTetePersonnage(-158, r) + "Q" + ptTetePersonnage(-104, r + 19) + " " + ptTetePersonnage(-50, r) + arcTetePersonnage(-50, -158, r) + "Z", 0, "tete"),
     calquePersonnage("incise", "M" + ptTetePersonnage(-146, r + 2.6) + arcTetePersonnage(-146, -62, r + 2.6), 0.9, "tete")];
 })();
-// Couronne de laurier : un bandeau plein et neuf feuilles identiques, régulièrement espacées, toutes inclinées du même
-// angle vers l'arrière : une rangée nette, comme sur une couronne peinte
-const LAURIER_PERSONNAGE = (() => {
-  const r = TETE_CENTRE_PERSONNAGE[2], n = 9, de = -60, a = -168;
+// Couronne de laurier : un bandeau plein et des feuilles identiques, régulièrement espacées, toutes inclinées du même
+// angle vers l'arrière : une rangée nette, comme sur une couronne peinte. Centre, rayon et arc réglables : la même
+// couronne se pose sur la tête humaine, entre les aigrettes du hibou ou derrière les oreilles du chat.
+function laurierPersonnage(cx, cy, r, de, a, n) {
+  const pt = (angle, rr) => [cx + rr * Math.cos(angle * Math.PI / 180), cy + rr * Math.sin(angle * Math.PI / 180)].map(arrondiPersonnage);
+  const arc = (d, f, rr) => "A" + rr + " " + rr + " 0 0 " + (f > d ? 1 : 0) + " " + pt(f, rr).join(" ");
   const feuilles = Array.from({ length: n }, (_, k) => {
-    const angle = de + (a - de) * k / (n - 1);
-    const [x, y] = ptTetePersonnage(angle, r + 1.6).split(" ").map(Number);
-    return feuillePersonnage(x, y, angle - 62, 5.2, 1.35);
+    const angle = de + (a - de) * k / (n - 1), [x, y] = pt(angle, r + 1.6);
+    return feuillePersonnage(x, y, angle - 62 * Math.sign(de - a), 5.2, 1.35);
   }).join("");
-  return [calquePersonnage("plein", bandeauTetePersonnage(a - 4, de + 4, r - 0.6, r + 1.9) + feuilles, 0, "tete"),
-    calquePersonnage("incise", "M" + ptTetePersonnage(a + 2, r + 0.6) + arcTetePersonnage(a + 2, de, r + 0.6), 0.8, "tete")];
-})();
+  const bandeau = "M" + pt(a - 4 * Math.sign(de - a), r - 0.6).join(" ") + arc(a - 4 * Math.sign(de - a), de + 4 * Math.sign(de - a), r - 0.6)
+    + "L" + pt(de + 4 * Math.sign(de - a), r + 1.9).join(" ") + arc(de + 4 * Math.sign(de - a), a - 4 * Math.sign(de - a), r + 1.9) + "Z";
+  return [calquePersonnage("plein", bandeau + feuilles), calquePersonnage("incise", "M" + pt(a + 2 * Math.sign(de - a), r + 0.6).join(" ") + arc(a + 2 * Math.sign(de - a), de, r + 0.6), 0.8)];
+}
+const LAURIER_PERSONNAGE = laurierPersonnage(...TETE_CENTRE_PERSONNAGE, -60, -168, 9).map(c => calquePersonnage(c[0], c[1], c[2], "tete"));
+
+// Ruban plein le long d'une onde (pans des bandelettes) : de (x, y), dans la direction (dx, dy), qui s'affine vers le bout
+function rubanPersonnage(x, y, dx, dy, ondulation, largeur) {
+  const n = 12, l = Math.hypot(dx, dy), [nx, ny] = [-dy / l, dx / l];
+  const axe = Array.from({ length: n + 1 }, (_, k) => { const t = k / n, o = ondulation * Math.sin(t * 2 * Math.PI) * t;
+    return [x + dx * t + nx * o, y + dy * t + ny * o, largeur / 2 * (1 - 0.45 * t)]; });
+  const bord = s => axe.map(([px, py, e]) => [px + nx * e * s, py + ny * e * s].map(arrondiPersonnage).join(" "));
+  return "M" + [...bord(1), ...bord(-1).reverse()].join("L") + "Z";
+}
 
 // Costume de chaque grade : [description, robe, bras droit, drapé, calques]
 const COSTUMES_PERSONNAGE = [
@@ -341,15 +353,48 @@ const GENRES_PERSONNAGE = [["neutre", "Neutre", CHEVEUX_PERSONNAGE],
   // Masculin : les cheveux et une barbe en pointe, deux traits gravés
   ["masculin", "Masculin", [...CHEVEUX_PERSONNAGE, calquePersonnage("plein", "M63 27L69.5 28.5L71 33Q67 36 62 33Z"),
     calquePersonnage("incise", "M65 30L65.8 33.6M67.4 30.3L68 33.4", 0.8)]]];
-// Équipements : [id, nom, distinction, calques]
+// Équipements : [id, nom, distinction, calques, variantes par forme, coiffe ?]. Des objets des vases grecs, qui dépassent
+// de la silhouette (rubans, cape, feuilles) ou s'y gravent (collier) : un objet noir posé sur du noir ne se verrait pas.
+// Les identifiants sont ceux des anciens équipements (écharpe, plume, médaille, novembre 2026) : les choix enregistrés
+// restent valables. Une coiffe ne se dessine pas sous le casque du stratège et remplace le diadème des deux derniers grades.
+const BANDELETTES_PERSONNAGE = (nx, ny, bande) => [calquePersonnage("plein", rubanPersonnage(nx, ny, -11, 12, 1.6, 2.4) + rubanPersonnage(nx, ny, -5, 16, -1.4, 2.2)),
+  ...(bande ? [calquePersonnage("incise", bande, 1)] : [])];
+// Collier : des perles sur une courbe (de, creux, à), et trois pendeloques gravées au milieu
+function collierPersonnage([x0, y0], [xc, yc], [x1, y1]) {
+  const sur = t => [(1 - t) ** 2 * x0 + 2 * t * (1 - t) * xc + t * t * x1, (1 - t) ** 2 * y0 + 2 * t * (1 - t) * yc + t * t * y1];
+  const perles = Array.from({ length: 11 }, (_, k) => sur(k / 10));
+  const pendeloques = [0.3, 0.5, 0.7].map(t => { const [x, y] = sur(t); return [x, y + 2.4]; });
+  return [calquePersonnage("incise", "M" + [x0, y0].join(" ") + "Q" + [xc, yc, x1, y1].join(" ") + [0.3, 0.5, 0.7].map(t => { const [x, y] = sur(t); return "M" + arrondiPersonnage(x) + " " + arrondiPersonnage(y) + "V" + arrondiPersonnage(y + 1.6); }).join(""), 0.6),
+    calquePersonnage("incise", pointsPersonnage(perles, 0.7) + pointsPersonnage(pendeloques, 0.85), 0.8)];
+}
 const EQUIPEMENTS_PERSONNAGE = [
   ["", "Aucun", null, []],
-  ["echarpe", "Une écharpe", "assidu", [calquePersonnage("plein", "M55 35Q48 38 42 47L45.5 48.5Q49 42 57 39Z", 0, "corps"),
-    calquePersonnage("incise", "M56 37Q62 40 68 36.5M54 38.5Q49 41.5 46 46", 0.9, "corps")]],
-  ["plume", "Une plume", "fourchettes", [calquePersonnage("plein", "M58 12Q60 -1 72 -3Q66 4 62 12Z", 0, "tete"),
-    calquePersonnage("incise", "M60.5 11Q63 3 70 -1M62 6.5L64.5 6M63.5 3.5L66 3.3", 0.8, "tete")]],
-  ["medaille", "Une médaille", "polyvalent", [calquePersonnage("incise", "M58 46a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M60.7 46a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0-1.6 0M58.5 37.5L61.5 42.5L64.5 37.5", 1, "corps")]],
-  ["laurier", "Une couronne de laurier", "specialiste", LAURIER_PERSONNAGE]
+  // Bandelettes du vainqueur (ténia) : le bandeau gravé dans les cheveux, noué derrière la tête, deux pans qui flottent
+  ["echarpe", "Les bandelettes du vainqueur", "assidu", BANDELETTES_PERSONNAGE(51.6, 18.4, "M" + ptTetePersonnage(198, 7.6) + arcTetePersonnage(198, 305, 7.6)).map(c => calquePersonnage(c[0], c[1], c[2], "tete")), {
+    // Sur le carré du robot, le bandeau gravé existe déjà (sa ligne haute) ; sur le hibou, les pans partent de l'aigrette
+    robot: BANDELETTES_PERSONNAGE(53, 15.5, ""), hibou: BANDELETTES_PERSONNAGE(45.5, 33, "")
+  }, false],
+  // Chlamyde : la courte cape des éphèbes et d'Hermès, agrafée sur l'épaule, qui flotte derrière le dos
+  ["plume", "Une chlamyde", "fourchettes", [
+    // Elle vole à l'horizontale derrière la nuque, ourlet en dents de scie : assez haute pour rester dans le médaillon
+    // du buste (plus bas, le cercle la coupait)
+    calquePersonnage("plein", "M57 35.2Q51 33 44.4 32.6L42.4 35.2L44.6 37L42.2 39.6L44.8 41.4L42.8 44.4L48 45.6Q50.4 38.8 57 38.6Z", 0, "corps"),
+    calquePersonnage("incise", "M46.2 35.2Q50.6 35.4 54 36.6M46.4 39.6Q49 39.2 51.4 39.2M46.4 43Q47.6 41.8 49.2 41.2", 0.9, "corps"),
+    calquePersonnage("incise", "M55.4 37a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0-2.8 0", 0.9, "corps")], {
+    // Le hibou n'a pas d'épaules : la cape part du flanc, sous l'aigrette (plus haut, elle passait pour une troisième oreille)
+    hibou: [calquePersonnage("plein", "M45.4 39Q38.4 41 34.4 46L31.6 48.6L33.8 50.8L31.4 53.6L34 55.6L31.8 58.8L37.2 60.4L41.2 47.4Q42.6 42.4 46.4 41.6Z"),
+      calquePersonnage("incise", "M35.6 48.2Q38 47.2 40.4 47.4M35.4 53Q37.6 52.6 39.6 53.2M36.2 57.6Q37.8 57.4 39.2 57.8", 0.9)]
+  }, false],
+  // Collier à pendeloques, gravé sous l'encolure (sous le bec, pour le hibou)
+  ["medaille", "Un collier à pendeloques", "polyvalent", collierPersonnage([55.4, 39.4], [62, 46], [68.6, 39.4]).map(c => calquePersonnage(c[0], c[1], c[2], "corps")), {
+    hibou: collierPersonnage([47.5, 50], [60, 63], [72.5, 50])
+  }, false],
+  ["laurier", "Une couronne de laurier", "specialiste", LAURIER_PERSONNAGE, {
+    // Entre les deux aigrettes, au sommet de la tête ; derrière les oreilles du chat ; en rangée sur le carré du robot
+    hibou: laurierPersonnage(60, 44, 13.6, -40, -140, 9),
+    chat: laurierPersonnage(...TETE_CENTRE_PERSONNAGE, -132, -214, 6),
+    robot: [calquePersonnage("plein", "M52.5 9.4H71.5V11.6H52.5Z" + [54, 57, 66, 69].map(x => feuillePersonnage(x, 9.6, -128, 5.2, 1.35)).join("") + [55.5, 67.5].map(x => feuillePersonnage(x, 9.6, -60, 4.4, 1.2)).join(""))]
+  }, true]
 ];
 // Exergue : la bande noire sous les pieds, comme au fond des coupes peintes (cadrage en pied), bordée de points
 const EXERGUE_PERSONNAGE = [calquePersonnage("plein", "M-20 108H140V160H-20Z"), calquePersonnage("incise", "M-20 110H140", 0.8),
@@ -472,15 +517,20 @@ function dessinPersonnage(etat, pied, rayon) {
     // Sans bras (hibou) : le bout de l'aile tendu vers l'objet tenu, ses pennes gravées
     if (tenant) calques.push(calquePersonnage("plein", "M76.5 57Q85 63 87 73L83 74.5Q80 67 75 64Z"), calquePersonnage("incise", "M78.5 62L81 60.5M80.5 65.5L83.5 64M82 69L85 68", 0.8));
   }
-  // Le casque remplace la coiffure : il est dessiné par-dessus, les autres accessoires de tête aussi
-  calques.push(...calquesRole, ...equipement[3]);
+  // Le casque remplace la coiffure : il est dessiné par-dessus, les autres accessoires de tête aussi. Une coiffe
+  // (laurier) ne se pose pas sur le casque, et prend la place du diadème : deux couronnes l'une sur l'autre se brouillent
+  const coiffe = !!equipement[5], casque = rang === 5;
+  const calquesEquipement = coiffe && casque ? [] : ((equipement[4] || {})[forme[0]] || equipement[3]);
+  calques.push(...(coiffe ? calquesRole.filter(c => !DIADEME_PERSONNAGE.includes(c)) : calquesRole), ...calquesEquipement);
   const traits = calques.map(([g, d, e, ancrage]) => [g, d, e, ...((ancrage && decalages[ancrage]) || [0, 0])]);
   // Cadrage : le carré choisi de la grille de la figure remplit le médaillon ; le buste va jusqu'à la main droite, pour
   // que l'objet du rôle reste visible (le buste un peu plus que le pied)
   const [x0, y0, cote] = cadrages[pied ? "pied" : "buste"];
   const echelle = 2 * rayon * (pied ? 0.94 : 1) / cote;
   const cadrage = [60 - echelle * (x0 + cote / 2), 60 - echelle * (y0 + cote / 2) + (pied ? 0 : 4), echelle];
-  const elements = [T(role), ...(equipement[3].length ? [T(equipement[1]).toLowerCase()] : []), ...(fond[0] ? [T("fond : {0}", T(fond[1]).toLowerCase())] : []), ...(objet ? [T("l'emblème de son meilleur domaine, {0} : {1}", T(DOMAINES.find(([d]) => d === fort)[1]), T(objet[1]))] : [])];
+  // Le laurier à la place du diadème : la description ne parle plus du diadème
+  const sansDiademe = coiffe && calquesRole.some(c => DIADEME_PERSONNAGE.includes(c));
+  const elements = [T(sansDiademe ? ({ "un sceptre et un diadème": "un sceptre", "un flambeau et un diadème": "un flambeau" })[role] || role : role), ...(calquesEquipement.length ? [T(equipement[1]).toLowerCase()] : []), ...(fond[0] ? [T("fond : {0}", T(fond[1]).toLowerCase())] : []), ...(objet ? [T("l'emblème de son meilleur domaine, {0} : {1}", T(DOMAINES.find(([d]) => d === fort)[1]), T(objet[1]))] : [])];
   const description = T("Votre personnage ({0}), grade {1}", T(nomForme).toLowerCase(), T(GRADES[rang][1])) + " : " + elements.join(", ") + ". "
     + T("Maîtrise par domaine : {0}.", DOMAINES.map(([, nom], i) => T(nom) + " " + valeurs[i][1]).join(", "));
   return { couleur: objet ? objet[0] : null, objet, valeurs, traits, cadrage, description, fond: fond[3](rayon) };
@@ -960,9 +1010,13 @@ function ongletDistinctions(p) {
   const grille = el("div", "distinctions");
   DISTINCTIONS.forEach(([id, nom, , pourquoi, lien, secrete]) => {
     const a = obtenues.has(id);
-    if (secrete && !a) { grille.appendChild(el("div", "distinction-carte secrete", T("Distinction secrète"))); return; }
+    if (secrete && !a) {
+      const carte = el("div", "distinction-carte secrete");
+      carte.append(medailleDistinction(id, false, true, 40), el("p", "distinction-nom", T("Distinction secrète")));
+      grille.appendChild(carte); return;
+    }
     const carte = el("div", "distinction-carte" + (a ? " obtenue" : ""));
-    carte.append(el("p", "distinction-nom", (a ? "✓ " : "") + T(nom)), el("p", "source", pourquoi));
+    carte.append(medailleDistinction(id, a, !!secrete, 40), el("p", "distinction-nom", (a ? "✓ " : "") + T(nom)), el("p", "source", pourquoi));
     const cadeau = [...FORMES_PERSONNAGE, ...EQUIPEMENTS_PERSONNAGE, ...FONDS_PERSONNAGE].find(x => x[2] === id);
     if (cadeau) carte.appendChild(el("p", "source", T("Débloque pour votre personnage : {0}.", T(cadeau[1]).toLowerCase())));
     const adresse = lien.startsWith("#") ? lien : "#" + lien.replace(":", "/");
@@ -1217,7 +1271,7 @@ function donneesFiche() {
     // Points des quatorze derniers jours, du plus ancien à aujourd'hui
     jours: Array.from({ length: 14 }, (_, k) => ((luc.jours || {})[jour - 13 + k]) || 0), objectif: lire("objectif", 60),
     // État de chaque distinction, dans l'ordre de la liste : obtenue ou non, secrète ou non
-    medailles: DISTINCTIONS.map(x => [obtenues.has(x[0]), !!x[5], x[1]]),
+    medailles: DISTINCTIONS.map(x => [obtenues.has(x[0]), !!x[5], x[1], x[0]]),
     nombre: gagnees.length };
 }
 
@@ -1236,11 +1290,65 @@ function formesJours(jours, objectif, largeur, hauteur) {
 }
 // Médailles des distinctions : en rangées de « parRangee »
 function formesMedailles(medailles, parRangee, pas) {
-  return medailles.map(([obtenue, secrete, nom], k) => ({ x: (k % parRangee) * pas + pas / 2, y: Math.floor(k / parRangee) * pas + pas / 2, obtenue, secrete, nom }));
+  return medailles.map(([obtenue, secrete, nom, id], k) => ({ x: (k % parRangee) * pas + pas / 2, y: Math.floor(k / parRangee) * pas + pas / 2, obtenue, secrete, nom, id }));
 }
-// Motif gravé d'une médaille obtenue (une couronne) ou secrète (un point d'interrogation), centré sur 0, dans un rayon de 6
-const MOTIF_MEDAILLE = "M-3.6 2.5Q-5.5-2 -1.8-4.6M3.6 2.5Q5.5-2 1.8-4.6M-4.4-0.5l-1.6-.6M-4.2 1.6l-1.7.2M4.4-0.5l1.6-.6M4.2 1.6l1.7.2";
+// Point d'interrogation d'une distinction secrète pas encore trouvée, centré sur 0, dans un rayon de 6
 const MOTIF_SECRET = "M-2.2-1.8Q-2.2-4.3 0-4.3Q2.3-4.3 2.3-2Q2.3-.3 0 .4V1.6M0 3.6V3.7";
+// Glyphes des distinctions : un dessin par distinction, gravé en trait sur la pièce (centré sur 0, dans un rayon de 7,
+// réduit à l'affichage). Même grammaire que les objets des domaines ; une référence grecque quand elle va de soi
+// (trépied de Delphes, scytale, colonne dorique, navire). Une distinction sans glyphe garderait le motif de couronne.
+const cerclePiece = (x, y, r) => "M" + (x - r) + " " + y + "a" + r + " " + r + " 0 1 0 " + 2 * r + " 0a" + r + " " + r + " 0 1 0 " + -2 * r + " 0";
+const pointsPiece = (n, r, depart, taille) => Array.from({ length: n }, (_, k) => {
+  const a = (depart + 360 * k / n) * Math.PI / 180;
+  return cerclePiece(arrondiPersonnage(r * Math.cos(a)), arrondiPersonnage(r * Math.sin(a)), taille);
+}).join("");
+const MOTIF_MEDAILLE = "M-3.6 2.5Q-5.5-2 -1.8-4.6M3.6 2.5Q5.5-2 1.8-4.6M-4.4-0.5l-1.6-.6M-4.2 1.6l-1.7.2M4.4-0.5l1.6-.6M4.2 1.6l1.7.2";
+const GLYPHES_DISTINCTIONS = {
+  "premier-doute": "M-2.8-2.4Q-2.8-5.6 0-5.6Q2.8-5.6 2.8-2.9Q2.8-1 .6-.2Q0 .2 0 1.8" + cerclePiece(0, 4.6, 0.5),
+  "regulier": pointsPiece(7, 5, -90, 0.9),
+  "assidu": "M-4.5-4.5V4.5M-1.5-4.5V4.5M1.5-4.5V4.5M4.5-4.5V4.5M-6.5 3L6.5-3",
+  "a-l-heure": cerclePiece(0, 0, 5.8) + "M0 0V-3.8M0 0L2.8 1.8",
+  "memoire-longue": "M-5.6 5.5V3.5M-2.8 5.5V1.5M0 5.5V-.5M2.8 5.5V-2.5M5.6 5.5V-4.5",
+  "cartographe": "M0-6.2L1.5-1.5L6.2 0L1.5 1.5L0 6.2L-1.5 1.5L-6.2 0L-1.5-1.5Z",
+  "codex-complet": "M-4.5-5.8H4V5.8H-4.5ZM-2.4-5.8V5.8M0-2.4H2.2M0 0H2.2",
+  "bien-etalonne": "M0-5.6V4.8M-3.6 5.2H3.6M-5.6-3.4H5.6M-5.6-3.4L-7.2.6H-4ZM5.6-3.4L4 .6H7.2Z",
+  "je-sais": "M-5.4-5.4H5.4V5.4H-5.4Z" + cerclePiece(-2.6, -2.6, 0.8) + cerclePiece(0, 0, 0.8) + cerclePiece(2.6, 2.6, 0.8),
+  "lecon-retenue": "M-5.6.8A5.6 5.6 0 1 0-3.4-4.4M-3.4-4.4L-.6-4.6M-3.4-4.4L-3.6-1.6M-2.4.6L-.4 2.6L3.2-1.6",
+  "fourchettes": "M-3.6-5.4H-6V5.4H-3.6M3.6-5.4H6V5.4H3.6" + cerclePiece(0, 0, 1.1),
+  "previsionniste": "M-5.4-3.4H5.4Q4.6.8 0 .8Q-4.6.8-5.4-3.4ZM-3 .6L-5 6M3 .6L5 6M0 .8V6M-2-5.6Q-1-4.4-2-3.6M1.6-6Q2.6-4.8 1.6-3.8",
+  "bayesien": cerclePiece(-2.2, 0, 4) + cerclePiece(2.2, 0, 4),
+  "porte-deux": "M-3.6 5.6V-2.2A3.6 3.6 0 0 1 3.6-2.2V5.6ZM-6.4 5.6H6.4" + cerclePiece(1.8, 1.6, 0.5),
+  "sans-ancre": "M0-4.2V5M-2.8-2.4H2.8M-5 1.4Q-4.4 5 0 5Q4.4 5 5 1.4" + cerclePiece(0, -5.4, 1.2) + "M-6.2 6.2L6.2-6.2",
+  "p-005": "M-6.6 4.6Q-3.4 4.6-1.8-.6Q0-6 1.8-.6Q3.4 4.6 6.6 4.6M-6.6 4.6H6.6M4 4.6V2.2",
+  "oreille-fine": "M-1.2 6Q-3.4 3.6-3.4-.4Q-3.4-5.8 1-5.8Q4.6-5.8 4.6-2.2Q4.6.2 2.6 1.6Q1.2 2.6 1.6 4.4Q1.8 6-.4 6.2M-.6-2.4Q1.4-3 1.6-1.2Q1.6 0 .6.6",
+  "homme-acier": "M-4.6-5.6H4.6M-3.6-4.2H3.6M-2.6-4.2V4.6M2.6-4.2V4.6M0-4.2V4.6M-4.6 6H4.6M-3.6 4.6H3.6",
+  "bingo": "M-5.4-5.4H5.4V5.4H-5.4ZM-5.4-1.8H5.4M-5.4 1.8H5.4M-1.8-5.4V5.4M1.8-5.4V5.4M-4.2 4.2L4.2-4.2",
+  "sur-le-terrain": "M-4.8 1.2a1.8 3 0 1 0 3.6 0a1.8 3 0 1 0-3.6 0M1.2-3a1.8 3 0 1 0 3.6 0a1.8 3 0 1 0-3.6 0M-3.4 5.4H-2.6M2.6 1.2H3.4",
+  "naturaliste": "M-5.4 5.4Q-5.4-3.2 5.4-5.4Q3.6 4-5.4 5.4ZM-5.4 5.4L2.4-2.4M-2 2Q-2.2 0-1 -1M0 0Q1.6.6 2.4 0",
+  "decision-eclairee": "M0 6.2V.4M0 .4L-4.6-4.2M0 .4L4.6-4.2M-4.6-4.2H-2M-4.6-4.2V-1.6M4.6-4.2H2M4.6-4.2V-1.6",
+  "explorateur": "M-6.2 1.8H6.2L3.8 5.4H-3.8ZM-.4 1.8V-6.2M0-5.6L4.8.4H0M-.8-5Q-4.8-1.6-4.2.4H-.8",
+  "tour-complet": "M4.6-2.8A5.6 5.6 0 1 0 5.4 1.6M4.6-2.8L5.2-5.8M4.6-2.8L1.6-2.4",
+  "grand-test": "M-6 2.8A6 6 0 0 1 6 2.8M0 2.8L3.4-1.8M-6 2.8H-4.4M6 2.8H4.4M0-3.2V-1.8M-4.2-1.4L-3.2-.4M4.2-1.4L3.2-.4" + cerclePiece(0, 2.8, 0.9),
+  "specialiste": cerclePiece(0, 0, 5.8) + cerclePiece(0, 0, 3.2) + cerclePiece(0, 0, 0.9),
+  "polyvalent": "M0-6L5.2-3V3L0 6L-5.2 3V-3Z" + cerclePiece(0, 0, 1.4),
+  "apparences": "M-4.4-2.6H4.4M-4.4-2.6L-2.6-4.4M-4.4-2.6L-2.6-.8M4.4-2.6L2.6-4.4M4.4-2.6L2.6-.8M-3.4 3H3.4M-3.4 3L-5.2 1.2M-3.4 3L-5.2 4.8M3.4 3L5.2 1.2M3.4 3L5.2 4.8",
+  "demonteur": "M0-5.6L-1.8-2.6M0-5.6L1.8-2.6M-5.6 4.4H-2.4M-5.6 4.4L-3.8 1.4M5.6 4.4H2.4M5.6 4.4L3.8 1.4" + cerclePiece(0, 1, 0.6),
+  "chercheur": cerclePiece(-1.4, -1.4, 3.8) + "M1.4 1.4L5.6 5.6",
+  "noctambule": "M1.2-5.6A5.8 5.8 0 1 0 1.2 5.6A4.4 4.4 0 1 1 1.2-5.6ZM4.8-4.2L5.4-2.8L6.8-2.2L5.4-1.6L4.8-.2L4.2-1.6L2.8-2.2L4.2-2.8Z",
+  "bilingue": "M-6.6 5L-4.2-4.6L-1.8 5M-5.6 1.6H-2.8M5.8 1.4Q4.4 5 2.6 5Q.6 5 .6 2.6Q.6 0 2.6 0Q4.2 0 5 3.6Q5.4 5.2 6.4 5",
+  "sesame": cerclePiece(-3.4, 0, 2.6) + "M-.8 0H6.2M4 0V2.6M6.2 0V2.6",
+  // Fer à cheval porte-bonheur, ouverture en haut (à l'envers, il ressemblait à la porte de Monty Hall) : un fer plein,
+  // les trous des clous dans son épaisseur (posés dans le vide, ils dessinaient un visage)
+  "vendredi-13": "M-5.4-5.4V.2A5.4 5.4 0 0 0 5.4.2V-5.4H2.8V.2A2.8 2.8 0 0 1-2.8.2V-5.4Z" + cerclePiece(-4.1, -2.8, 0.35) + cerclePiece(4.1, -2.8, 0.35) + cerclePiece(-3.2, 2.6, 0.35) + cerclePiece(3.2, 2.6, 0.35),
+  "oeil-de-lynx": "M-6.6 0Q0-6.2 6.6 0Q0 6.2-6.6 0ZM0-3.4Q1.4 0 0 3.4Q-1.4 0 0-3.4Z",
+  "seize-sceaux": cerclePiece(0, -1, 4) + pointsPiece(8, 2.2, 0, 0.5).replace(/M(-?[\d.]+) (-?[\d.]+)/g, (m, x, y) => "M" + x + " " + arrondiPersonnage(Number(y) - 1)) + "M-2.2 2.6L-3.8 6.2M2.2 2.6L3.8 6.2",
+  // Cadenas : l'énigme à ouvrir (une scytale, trop rare à cette taille, se lisait comme une règle)
+  "cryptographe": "M-4.6-.4H4.6V6H-4.6ZM-2.8-.4V-3Q-2.8-6.2 0-6.2Q2.8-6.2 2.8-3V-.4M0 3.4V4.6" + cerclePiece(0, 2.4, 0.9)
+};
+// Le dessin d'une médaille, pour la page et le canvas : glyphe de la distinction, ou « ? » pour une secrète à trouver
+const motifMedaille = f => !f.obtenue && f.secrete ? MOTIF_SECRET : GLYPHES_DISTINCTIONS[f.id] || MOTIF_MEDAILLE;
+// Le glyphe est réduit pour laisser de l'air jusqu'au filet de la pièce
+const ECHELLE_GLYPHE = 0.78;
 
 // Emblème d'un domaine : médaillon noir, cerné de sa couleur, l'objet gravé (même dessin que sur le personnage)
 function emblemeDomaine(d, taille) {
@@ -1330,8 +1438,26 @@ function svgVase(domaines, rang) {
   s.append(masque, g, svg("path", { d: contour, class: "vase-contour" }), svg("path", { d: anses, class: "vase-anse" }));
   return s;
 }
+// Une médaille en SVG (rayon 10, centrée sur 0) : pièce noire et glyphe si obtenue ; sinon cercle tireté et glyphe pâle
+// (on voit ce qu'il reste à gagner), ou « ? » pour une secrète
+function pieceMedaille(f) {
+  const g = svg("g");
+  if (f.obtenue) g.append(svg("circle", { r: 10, class: "medaille-obtenue" }), svg("circle", { r: 8.4, class: "medaille-filet" }));
+  else g.appendChild(svg("circle", { r: 9, class: "medaille-a-gagner" }));
+  const motif = svg("path", { d: motifMedaille(f), class: f.obtenue ? "medaille-motif" : "medaille-motif-a-gagner" });
+  if (!(f.secrete && !f.obtenue)) motif.setAttribute("transform", "scale(" + ECHELLE_GLYPHE + ")");
+  g.appendChild(motif);
+  return g;
+}
+// Médaille seule, pour une carte de l'onglet « Distinctions » (décorative : le nom est écrit à côté)
+function medailleDistinction(id, obtenue, secrete, taille) {
+  const s = svg("svg", { viewBox: "-11 -11 22 22", width: taille, height: taille, class: "medaille-distinction", "aria-hidden": "true" });
+  s.appendChild(pieceMedaille({ id, obtenue, secrete }));
+  return s;
+}
 function svgMedailles(medailles) {
-  const parRangee = 13, pas = 24, rangees = Math.ceil(medailles.length / parRangee);
+  // Huit par rangée (au lieu de treize) : chaque glyphe se lit, autour de 40 px de large sur la fiche
+  const parRangee = 8, pas = 24, rangees = Math.ceil(medailles.length / parRangee);
   const s = svg("svg", { viewBox: "0 0 " + parRangee * pas + " " + rangees * pas, class: "fiche-medailles", "aria-hidden": "true" });
   formesMedailles(medailles, parRangee, pas).forEach(f => {
     const g = svg("g", { transform: "translate(" + f.x + " " + f.y + ")" });
@@ -1339,9 +1465,7 @@ function svgMedailles(medailles) {
     const nom = svg("title");
     nom.textContent = f.secrete ? T("Distinction secrète") : f.obtenue ? T(f.nom) : T("{0} (à gagner)", T(f.nom));
     g.appendChild(nom);
-    if (f.obtenue) g.append(svg("circle", { r: 10, class: "medaille-obtenue" }), svg("circle", { r: 8.4, class: "medaille-filet" }),
-      svg("path", { d: f.secrete ? MOTIF_SECRET : MOTIF_MEDAILLE, class: "medaille-motif" }));
-    else g.appendChild(svg("circle", { r: 9, class: "medaille-a-gagner" }));
+    g.appendChild(pieceMedaille(f));
     s.appendChild(g);
   });
   return s;
@@ -1380,8 +1504,12 @@ function peindreMedailles(ctx, medailles, x, y, pas) {
     if (f.obtenue) {
       ctx.beginPath(); ctx.arc(0, 0, 10, 0, 2 * Math.PI); ctx.fillStyle = FIGURE_PERSONNAGE; ctx.fill();
       ctx.beginPath(); ctx.arc(0, 0, 8.4, 0, 2 * Math.PI); ctx.strokeStyle = TERRE_PERSONNAGE; ctx.lineWidth = 0.6; ctx.stroke();
-      ctx.lineWidth = 1.1; ctx.lineCap = "round"; ctx.stroke(new Path2D(f.secrete ? MOTIF_SECRET : MOTIF_MEDAILLE));
-    } else { ctx.beginPath(); ctx.arc(0, 0, 9, 0, 2 * Math.PI); ctx.setLineDash([2.5, 2]); ctx.strokeStyle = "#b9b2a5"; ctx.lineWidth = 1; ctx.stroke(); }
+    } else { ctx.beginPath(); ctx.arc(0, 0, 9, 0, 2 * Math.PI); ctx.setLineDash([2.5, 2]); ctx.strokeStyle = "#b9b2a5"; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]); }
+    // Le glyphe : argile sur la pièce noire, gris pâle sur une médaille à gagner (« ? » pour une secrète)
+    const reduit = !(f.secrete && !f.obtenue);
+    if (reduit) ctx.scale(ECHELLE_GLYPHE, ECHELLE_GLYPHE);
+    ctx.strokeStyle = f.obtenue ? TERRE_PERSONNAGE : "#b9b2a5"; ctx.lineWidth = 1.3 / (reduit ? ECHELLE_GLYPHE : 1) * (reduit ? 0.92 : 0.85);
+    ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke(new Path2D(motifMedaille(f)));
     ctx.restore();
   });
 }
