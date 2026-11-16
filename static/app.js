@@ -1866,6 +1866,17 @@ document.querySelector(".lien-evitement").addEventListener("click", e => { e.pre
 // Transition de vue entre deux pages quand le navigateur la connaît (amélioration progressive, DESIGN.md « Mouvement »)
 window.addEventListener("hashchange", () => transitionDeVue(afficherPage));
 
+// Le lendemain, une page restée ouverte (onglet, ou application installée que l'iPhone met en veille sans la
+// recharger) garderait les cartes du jour d'avant : au retour sur la page, l'accueil se redessine si le jour a changé
+let jourAccueilAffiche = aujourdHui();
+function accueilDuNouveauJour() {
+  if (document.visibilityState !== "visible" || aujourdHui() === jourAccueilAffiche) return;
+  jourAccueilAffiche = aujourdHui();
+  if (precedent.vue === "accueil") afficherPage();
+}
+document.addEventListener("visibilitychange", accueilDuNouveauJour);
+window.addEventListener("pageshow", accueilDuNouveauJour);
+
 $("recherche-globale").addEventListener("input", e => {
   if (!rechercheDansFiches()) return;
   etat.recherche = e.target.value;
