@@ -441,7 +441,7 @@ function afficherBingo(zone, graine) {
   const maj = () => {
     ecrire("bingo", { graine, cochees: [...cochees] });
     const bingo = lignes.some(l => l.every(k => cochees.has(k)));
-    message.textContent = bingo ? T("Bingo ! Une ligne complète.") : T("{0} sur 16.", pluriel(cochees.size, "case cochée", "cases cochées"));
+    message.textContent = bingo ? T("Bingo : une ligne complète.") : T("{0} sur 16.", pluriel(cochees.size, "case cochée", "cases cochées"));
   };
   fiches.forEach((f, k) => {
     const b = el("button", "bingo-case" + (cochees.has(k) ? " cochee" : ""), f.nom);

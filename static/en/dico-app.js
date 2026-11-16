@@ -199,7 +199,7 @@ EN_AJOUTER([
   ["Guide", "Guide"],
   ["Chercher un biais, un cas…", "Search a bias, a case…"],
   ["Chercher un sophisme, un cas…", "Search a fallacy, a case…"],
-  ["Chercher partout…", "Search everything…"],
+  ["Chercher", "Search"],
   ["Sauvegardes automatiques, gardées dans ce navigateur :", "Automatic backups, kept in this browser:"],
   ["Sauvegardes automatiques : une copie de votre progression sera faite chaque jour, dans ce navigateur.", "Automatic backups: a copy of your progress will be made every day, in this browser."],
   ["copie du jour", "daily copy"],

@@ -23,7 +23,7 @@ EN_AJOUTER([
   ["{0}, {1} (chaque erreur retire 2 points).", "{0}, {1} (each mistake costs 2 points)."],
   ["Aucune réponse : rien n'est enregistré.", "No answer: nothing is recorded."],
   ["Premier record enregistré.", "First record saved."],
-  ["Nouveau record ! L'ancien était de {0} points.", "New record! The previous one was {0} points."],
+  ["Nouveau record. L'ancien était de {0} points.", "New record. The previous one was {0} points."],
   ["Votre record : {0} points.", "Your record: {0} points."],
   ["Rejouer le chrono", "Play the timed round again"],
   ["Revenir à l'atelier", "Back to the workshop"],

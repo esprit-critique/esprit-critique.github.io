@@ -1356,7 +1356,7 @@ function afficherFiche(type, fiche) {
   hasard.addEventListener("click", () => tirerCarte(TIRAGE.actif ? undefined : "tout"));
   rail.appendChild(hasard);
   // Image de la carte, à partager (profil.js)
-  const partage = el("button", "bouton secondaire large", "Partager cette carte");
+  const partage = el("button", "bouton secondaire", "Partager cette carte");
   partage.type = "button";
   partage.addEventListener("click", () => partagerFiche(type, fiche).catch(e => annoncer(e.message)));
   pied.appendChild(partage);
@@ -1849,7 +1849,7 @@ function afficherPage() {
     champ.placeholder = vue === "biais" ? "Chercher un biais, un cas…" : "Chercher un sophisme, un cas…";
   } else {
     if (rechercheEnFiches) champ.value = "";
-    champ.placeholder = "Chercher partout…";
+    champ.placeholder = "Chercher";
   }
   rechercheEnFiches = dansFiches;
 

@@ -262,7 +262,7 @@ function partieChrono(zone, options) {
     zone.replaceChildren();
     zone.append(el("p", "consigne", "Temps écoulé"), el("p", "grand-score", typo(signe(score) + " points")),
       paragraphe(T("{0}, {1} (chaque erreur retire 2 points).", pluriel(bonnes, "bonne réponse", "bonnes réponses"), pluriel(erreurs, "erreur"))),
-      el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", !joue ? "Aucune réponse : rien n'est enregistré." : ancien === undefined ? "Premier record enregistré." : nouveau ? T("Nouveau record ! L'ancien était de {0} points.", signe(ancien)) : T("Votre record : {0} points.", signe(ancien))));
+      el("p", nouveau && ancien !== undefined ? "verdict juste" : "source", !joue ? "Aucune réponse : rien n'est enregistré." : ancien === undefined ? "Premier record enregistré." : nouveau ? T("Nouveau record. L'ancien était de {0} points.", signe(ancien)) : T("Votre record : {0} points.", signe(ancien))));
     if (options.retour) boutonRejouer(zone, () => partieChrono(zone, { ...options, demarrer: false }), "Rejouer le chrono");
     boutonRejouer(zone, options.relancer, options.retour || "Revenir à l'atelier");
   };

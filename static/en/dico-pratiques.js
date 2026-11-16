@@ -113,7 +113,7 @@ EN_AJOUTER([
   ["Cette expérience ne se fait qu'une fois : maintenant que vous en connaissez le principe, vous seriez sur vos gardes. Vous pouvez la proposer à quelqu'un d'autre.", "This experiment can only be done once: now that you know the principle, you would be on your guard. You can suggest it to someone else."],
   ["Pendant un débat, une émission ou un repas, cochez chaque sophisme que vous entendez. Une ligne, une colonne ou une diagonale complète : bingo. Avec la même adresse, chacun a la même grille.", "During a debate, a programme or a meal, tick each fallacy you hear. A complete row, column or diagonal: bingo. With the same address, everyone has the same card."],
   ["Grille de bingo des sophismes", "Fallacy bingo card"],
-  ["Bingo ! Une ligne complète.", "Bingo! A complete line."],
+  ["Bingo : une ligne complète.", "Bingo: a complete line."],
   ["{0} sur 16.", "{0} out of 16."],
   ["case cochée", "box ticked"],
   ["cases cochées", "boxes ticked"],
