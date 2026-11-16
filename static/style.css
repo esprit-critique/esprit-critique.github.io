@@ -1793,6 +1793,12 @@ label[for] { display: block; margin: 0 0 8px; }
 .profil-noms .page-titre.titre-long { font-size: clamp(26px, 5vw, 40px); }
 .profil-grade { display: flex; gap: 8px; align-items: center; margin: 0; font-family: var(--titre); font-size: 18px; font-weight: 650; }
 .profil-maitrise { text-align: right; }
+/* Sur mobile, le bloc passe sous le portrait et n'est pas plus large que sa légende : aligné à droite, le chiffre
+   flottait au milieu. Il se met en ligne, chiffre puis légende, sur la même ligne de base */
+@media (max-width: 759px) {
+  .profil-maitrise { display: flex; align-items: baseline; gap: 10px; text-align: left; }
+  .profil-maitrise .grand-nombre { font-size: 56px; }
+}
 .grand-nombre { display: block; font-family: var(--titre); font-size: clamp(64px, 2vw + 56px, 80px); font-weight: 700; line-height: 1; font-variant-numeric: oldstyle-nums; }
 .grand-nombre.petit { font-size: 34px; margin-left: auto; display: inline; }
 .avertissement-maitrise { font-style: italic; }
