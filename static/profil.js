@@ -1249,44 +1249,70 @@ function svgJours(jours, objectif) {
   s.appendChild(svg("path", { d: "M0 " + f.objectif + "H140", class: "fiche-jours-objectif" }));
   return s;
 }
-// Amphore : ce dont votre esprit est fait. Elle se remplit de strates, une par domaine, à la couleur du domaine et
-// d'épaisseur proportionnelle à sa part dans votre maîtrise (la plus grosse au fond) ; vide tant que rien n'est mesuré.
-// Épaule et pied noirs comme une amphore à figures noires, points d'argile sur l'épaule.
-// Panse, col et pied
-const AMPHORE_PERSONNAGE = "M23 3H37V6H35V13Q51 18 52 34Q52 54 36 66V70H40V75H20V70H24V66Q8 54 8 34Q9 18 25 13V6H23Z";
+// Le vase de la fiche : sa forme dit le trait dominant (domaine le plus fort), son décor dit le grade atteint. Argile
+// et noir seulement, comme le médaillon. Repère 60 × 78, base à 75.
+// Vases : [domaine, nom, contour, anses, zone noire du haut (jusqu'à y), zone noire du bas (depuis y), bande décorée
+//   [y1, y2] ou null, base des rayons (y)]
+const VASES_PERSONNAGE = [
+  ["raisonner", "une amphore", "M23 3H37V6H35V13Q51 18 52 34Q52 54 36 66V70H40V75H20V70H24V66Q8 54 8 34Q9 18 25 13V6H23Z",
+    "M25 8Q11 7 12.5 19.5M35 8Q49 7 47.5 19.5", 21, 66, [34, 42], 66],
+  ["monde", "un cratère", "M6 8H54V12H51Q52 30 44 40Q40 46 33 48V66H40V75H20V66H27V48Q20 46 16 40Q8 30 9 12H6Z",
+    "M9.5 18Q1 19 5 29M50.5 18Q59 19 55 29", 15, 48, [22, 30], 48],
+  ["confiance", "un lécythe", "M27 3H33V8H32V14Q44 15 44 22V63Q44 68 36 68V70H40V75H20V70H24V68Q16 68 16 63V22Q16 15 28 14V8H27Z",
+    "M32 9.5Q40.5 9 40 15", 21, 63, [34, 42], 63],
+  // La coupe à yeux : deux grands yeux peints sur la vasque, à la place de la bande
+  ["perception", "une coupe à yeux", "M4 22H56Q55 38 38 42V64H44V70H16V64H22V42Q5 38 4 22Z",
+    "M6 25Q-1.5 25 2.5 31.5M54 25Q61.5 25 57.5 31.5", 24.5, 42, [25.5, 29.5], null],
+  ["debattre", "une œnochoé", "M22 6Q26 2 30 5Q34 2 38 6Q36 10 34 12V16Q48 22 48 40Q48 58 36 66V70H40V75H20V70H24V66Q12 58 12 40Q12 22 26 16V12Q24 10 22 6Z",
+    "M35.5 10Q51 8 46.5 29", 24, 64, [37, 45], 64],
+  ["notions", "une hydrie", "M24 4H36V7H34V14Q50 18 51 32Q52 52 37 66V70H41V75H19V70H23V66Q8 52 9 32Q10 18 26 14V7H24Z",
+    "M34.5 9Q49 8 47 21M10.5 37Q3 37 5.5 44M49.5 37Q57 37 54.5 44", 22, 64, [39, 47], 64]
+];
 // Le trait qui vous décrit : celui de votre domaine le plus fort (des expressions sans genre grammatical)
 const TRAITS_PERSONNAGE = { monde: "Sens des ordres de grandeur", confiance: "Juste mesure de soi", perception: "Regard aiguisé",
   raisonner: "Esprit logique", debattre: "Art de la réplique", notions: "Mémoire d'encyclopédie" };
+const domaineDominant = domaines => DOMAINES.map(([id]) => [id, domaines[id] || 0]).reduce((a, x) => x[1] > a[1] ? x : a, ["", 0]);
 function traitDominant(domaines) {
-  const [d, v] = DOMAINES.map(([id]) => [id, domaines[id] || 0]).reduce((a, x) => x[1] > a[1] ? x : a, ["", 0]);
+  const [d, v] = domaineDominant(domaines);
   return v > 0 ? T(TRAITS_PERSONNAGE[d]) : T("Esprit en devenir");
 }
-function svgAmphore(domaines) {
-  const valeurs = DOMAINES.map(([d]) => [d, domaines[d] || 0]).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
-  const total = valeurs.reduce((t, [, v]) => t + v, 0);
-  const s = svg("svg", { viewBox: "0 0 60 78", class: "fiche-amphore", role: "img",
-    "aria-label": total ? T("Amphore de vos domaines : {0}", valeurs.map(([d, v]) => T(DOMAINES.find(x => x[0] === d)[1]) + " " + Math.round(100 * v / total) + " %").join(", "))
-      : T("Amphore vide : aucun domaine mesuré pour l'instant") });
-  const id = "amphore-masque-" + (++numeroPortrait);
+// Décors gagnés avec les grades, du plus simple au plus riche : [grade minimal, nom] (la coupe à yeux n'a ni rayons ni
+// laurier : ses yeux occupent la vasque)
+const DECORS_VASE = [[1, "un filet"], [2, "des points"], [3, "une frise grecque"], [5, "des rayons"], [7, "une couronne de laurier"]];
+
+function svgVase(domaines, rang) {
+  const [d, v] = domaineDominant(domaines);
+  // Rien de mesuré : l'amphore, nue
+  const [, nom, contour, anses, haut, bas, bande, rayons] = VASES_PERSONNAGE.find(x => v > 0 && x[0] === d) || VASES_PERSONNAGE[0];
+  const decors = DECORS_VASE.filter(([r]) => rang >= r);
+  const s = svg("svg", { viewBox: "0 0 60 78", class: "fiche-vase", role: "img",
+    "aria-label": (rayons === null ? decors.filter(([r]) => r < 5) : decors).length ? T("{0}, décor : {1}", T(nom), (rayons === null ? decors.filter(([r]) => r < 5) : decors).map(([, n]) => T(n)).join(", ")) : T(nom) });
+  const id = "vase-masque-" + (++numeroPortrait);
   const masque = svg("clipPath", { id });
-  masque.appendChild(svg("path", { d: AMPHORE_PERSONNAGE }));
-  const contenu = svg("g", { "clip-path": "url(#" + id + ")" });
-  contenu.appendChild(svg("rect", { x: 0, y: 0, width: 60, height: 78, class: "amphore-vide" }));
-  // Strates de la plus petite (en haut) à la plus grosse (au fond) : chacune descend jusqu'en bas et la suivante la
-  // recouvre en dessous de son bord ondulé
-  let haut = 21;
-  [...valeurs].reverse().forEach(([d, v]) => {
-    const y = haut;
-    haut += 45 * v / total;
-    const strate = svg("path", { d: "M0 " + y + "Q7.5 " + (y - 1.6) + " 15 " + y + "T30 " + y + "T45 " + y + "T60 " + y + "V78H0Z", class: "amphore-strate" });
-    strate.style.setProperty("--c", DOMAINES_PERSONNAGE[d][0]);
-    contenu.appendChild(strate);
-  });
-  contenu.appendChild(svg("path", { d: "M0 0H60V21H0ZM0 66H60V78H0Z", class: "amphore-noir" }));
-  // Anses : du col à l'épaule, à l'extérieur de la panse
-  s.append(masque, contenu, svg("path", { d: AMPHORE_PERSONNAGE, class: "amphore-contour" }),
-    svg("path", { d: "M25 8Q11 7 12.5 19.5M35 8Q49 7 47.5 19.5", class: "amphore-anse" }),
-    svg("path", { d: pointsPersonnage([19, 24.5, 30, 35.5, 41].map(x => [x, 17.5]), 1), class: "amphore-points" }));
+  masque.appendChild(svg("path", { d: contour }));
+  const g = svg("g", { "clip-path": "url(#" + id + ")" });
+  const noir = d => svg("path", { d, class: "vase-noir" }), argile = d => svg("path", { d, class: "vase-argile" });
+  g.append(svg("rect", { x: 0, y: 0, width: 60, height: 78, class: "vase-fond" }), noir("M0 0H60V" + haut + "H0ZM0 " + bas + "H60V78H0Z"));
+  // La coupe à yeux : ses deux yeux, toujours, sous la lèvre (la seule forme sans rayons au pied)
+  if (rayons === null) g.append(noir("M12 34.5Q19 29.5 26 34.5Q19 39.5 12 34.5ZM34 34.5Q41 29.5 48 34.5Q41 39.5 34 34.5Z"),
+    argile("M16.8 34.5a2.2 2.2 0 1 0 4.4 0a2.2 2.2 0 1 0-4.4 0M38.8 34.5a2.2 2.2 0 1 0 4.4 0a2.2 2.2 0 1 0-4.4 0"));
+  if (rang >= 1) g.appendChild(noir("M0 " + (haut + 2.5) + "H60V" + (haut + 3.5) + "H0Z"));
+  if (rang >= 2) g.appendChild(argile(pointsPersonnage([24, 30, 36].map(x => [x, haut - 3]), 1)));
+  if (rang >= 3 && bande) {
+    const [y1, y2] = bande, k = (y2 - y1) / 10;
+    g.append(noir("M0 " + y1 + "H60V" + y2 + "H0Z"));
+    const frise = svg("path", { d: traceMeandre(60 / k), class: "vase-frise", transform: "translate(0 " + y1 + ") scale(" + k + ")" });
+    g.appendChild(frise);
+  }
+  if (rang >= 5 && rayons !== null) g.appendChild(noir(Array.from({ length: 12 }, (_, i) => "M" + (i * 5) + " " + rayons + "L" + (i * 5 + 2.5) + " " + (rayons - 8) + "L" + (i * 5 + 5) + " " + rayons + "Z").join("")));
+  if (rang >= 7 && rayons !== null) {
+    // Laurier : une branche au-dessus de la bande, feuilles par paires de part et d'autre de la tige, pointées vers la
+    // gauche comme une couronne qui fait le tour du vase
+    const y = bande[0] - 4.5;
+    g.appendChild(noir(Array.from({ length: 9 }, (_, i) => feuillePersonnage(4 + i * 7, y, 205, 5.5, 1.5) + feuillePersonnage(4 + i * 7, y, 155, 5.5, 1.5)).join("")
+      + "M0 " + (y - 0.35) + "H60V" + (y + 0.35) + "H0Z"));
+  }
+  s.append(masque, g, svg("path", { d: contour, class: "vase-contour" }), svg("path", { d: anses, class: "vase-anse" }));
   return s;
 }
 function svgMedailles(medailles) {
@@ -1407,8 +1433,37 @@ function ouvrirFichePersonnage(declencheur) {
   };
   const section = titre => el("h3", "fiche-section", titre);
   // Titre : le pseudo du joueur, sur sa propre fiche (l'image ne le porte que si la case est cochée)
+  let casePseudo = null;
   const titre = el("h2", "fiche-perso-titre", f.pseudo || T("Votre personnage"));
   titre.id = "titre-fiche-personnage";
+  // Sans pseudo, la fiche propose d'en donner un : il devient le titre (et celui du profil), comme dans les réglages
+  let nomChange = false;
+  const champNom = f.pseudo ? null : el("div", "fiche-nom");
+  if (champNom) {
+    const saisie = el("input", "champ champ-texte");
+    saisie.id = "fiche-nom-saisie";
+    saisie.maxLength = 24;
+    saisie.autocomplete = "nickname";
+    const etiquette = el("label", "source", "Votre nom sur la fiche (il reste sur cet appareil)");
+    etiquette.htmlFor = saisie.id;
+    const valider = el("button", "bouton secondaire", "Valider");
+    valider.type = "button";
+    const enregistrer = () => {
+      const nom = saisie.value.trim().slice(0, 24);
+      if (!nom) { saisie.focus(); return; }
+      ecrire("profil", { ...(lire("profil", {}) || {}), pseudo: nom });
+      nomChange = true;
+      titre.textContent = nom;
+      champNom.replaceWith(casePseudoImage());
+      titre.focus();
+    };
+    valider.addEventListener("click", enregistrer);
+    saisie.addEventListener("keydown", e => { if (e.key === "Enter") enregistrer(); });
+    const ligne = el("div", "fiche-nom-ligne");
+    ligne.append(saisie, valider);
+    champNom.append(etiquette, ligne);
+  }
+  titre.tabIndex = -1;
   const grade = el("p", "profil-grade fiche-grade");
   grade.append(insigne(f.grade.rang, 26), texteNoeud(" " + T(f.grade.nom)));
   // Le prochain grade n'est plus écrit sous l'échelle : il en est le nom accessible
@@ -1416,12 +1471,12 @@ function ouvrirFichePersonnage(declencheur) {
   echelle.removeAttribute("aria-hidden");
   echelle.setAttribute("role", "img");
   echelle.setAttribute("aria-label", texteProchainGrade(f.grade, f.etat.meilleure || 0));
-  contenu.append(frise(), titre, personnage(f.etat, 240, true, true), grade, echelle);
+  contenu.append(frise(), titre, ...(champNom ? [champNom] : []), personnage(f.etat, 240, true, true), grade, echelle);
   // Maîtrise et points de lucidité, chacun avec son graphique
   const chiffres = el("div", "fiche-chiffres");
   const blocMaitrise = el("div"), blocLucidite = el("div");
   blocMaitrise.append(el("span", "fiche-nombre", String(f.m.globale)), el("span", "source", "de maîtrise, sur 1 000"),
-    svgAmphore(f.m.domaines), el("span", "fiche-trait", traitDominant(f.m.domaines)));
+    svgVase(f.m.domaines, f.grade.rang), el("span", "fiche-trait", traitDominant(f.m.domaines)));
   blocLucidite.append(el("span", "fiche-nombre", String(f.lucidite)), el("span", "source", "points de lucidité"), svgJours(f.jours, f.objectif),
     el("span", "source fiche-legende", T("14 jours, objectif {0}", f.objectif)));
   chiffres.append(blocMaitrise, blocLucidite);
@@ -1445,19 +1500,20 @@ function ouvrirFichePersonnage(declencheur) {
     f.noms.forEach(nom => liste.appendChild(el("li", null, nom)));
     contenu.appendChild(liste);
   }
-  // Pseudo sur l'image : non par défaut (il peut être un vrai nom) ; le choix n'est pas enregistré
-  let casePseudo = null;
-  if (f.pseudo) {
-    const option = el("label", "fiche-option");
-    casePseudo = el("input");
-    casePseudo.type = "checkbox";
-    option.append(casePseudo, texteNoeud(" " + T("Mettre mon pseudo sur l'image")));
-    contenu.appendChild(option);
-  }
+  // Pseudo sur l'image : non par défaut (il peut être un vrai nom) ; le choix n'est pas enregistré. La case vient avec le
+  // pseudo : plus bas s'il existait déjà, à la place du champ s'il vient d'être donné
+  if (f.pseudo) contenu.appendChild(casePseudoImage());
   const actions = el("div", "fiche-actions");
   const partager = el("button", "bouton", "Partager l'image");
   partager.type = "button";
   partager.addEventListener("click", () => partagerGrade(!!(casePseudo && casePseudo.checked)).catch(e => annoncer(e.message)));
+  function casePseudoImage() {
+    const option = el("label", "fiche-option");
+    casePseudo = el("input");
+    casePseudo.type = "checkbox";
+    option.append(casePseudo, texteNoeud(" " + T("Mettre mon pseudo sur l'image")));
+    return option;
+  }
   const fermer = el("button", "bouton secondaire", "Fermer");
   fermer.type = "button";
   fermer.addEventListener("click", () => boite.close());
@@ -1468,7 +1524,12 @@ function ouvrirFichePersonnage(declencheur) {
   boite.addEventListener("click", e => { if (e.target === boite) boite.close(); });
   boite.addEventListener("close", () => {
     boite.remove();
-    if (declencheur && declencheur.isConnected) declencheur.focus();
+    // Un nom donné dans la fiche : le profil derrière est réaffiché pour le prendre en titre ; le focus va au portrait
+    if (nomChange && typeof afficherPageProfil === "function" && document.querySelector("#vue-profil .profil-tete")) {
+      afficherPageProfil();
+      const portrait = document.querySelector(".bouton-portrait");
+      if (portrait) portrait.focus();
+    } else if (declencheur && declencheur.isConnected) declencheur.focus();
   });
   document.body.appendChild(boite);
   boite.showModal();

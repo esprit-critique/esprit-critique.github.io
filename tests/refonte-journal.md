@@ -413,6 +413,10 @@ style des vases grecs à figures noires, costume selon le grade ; graphiques du 
   `profil.personnage.fond` (facultatif, ajouté à `SCHEMAS_SAUVEGARDE` ; données existantes valides). Amphore de la fiche :
   strates des six domaines (part de chacun) et trait dominant (« Esprit logique »…) au lieu du grade suivant. Onglets du
   profil : la page ne remonte plus en haut (app.js), le focus revient sur l'onglet touché.
+- Vase de la fiche (remplace l'amphore à strates colorées, jugée trop colorée) : la forme suit le trait dominant
+  (amphore, cratère, lécythe, coupe à yeux, œnochoé, hydrie), le décor suit le grade (filet, points, frise, rayons,
+  laurier) ; argile et noir seulement. Sans pseudo, la fiche propose de saisir un nom (même clé `profil.pseudo` que les
+  réglages), qui devient son titre et celui du profil.
 - Vérifié (Chromium, Linux) : planche des 4 formes × 10 grades en buste et en pied ; fiche avec aucune, quelques,
   toutes les distinctions, à 390 px clair et 1 280 px sombre, en français et en anglais ; bancs csp, progression,
   test, aleatoire (390 clair). Non vérifié : Safari (flou du fond), partage natif sur un vrai téléphone.
