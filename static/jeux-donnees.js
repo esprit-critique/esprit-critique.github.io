@@ -559,7 +559,30 @@ const VRAI_FAUX = [
   { id: "araignees", niveau: 1, texte: "Les araignées ne sont pas des insectes.", vrai: true,
     explication: "Ce sont des arachnides : huit pattes et deux parties du corps, contre six pattes et trois parties chez les insectes.", source: "Wikipédia, « Araneae »" },
   { id: "coeur", niveau: 1, texte: "Le cœur humain compte quatre cavités.", vrai: true,
-    explication: "Deux oreillettes et deux ventricules : le côté droit envoie le sang aux poumons, le côté gauche vers le reste du corps.", source: "Wikipédia, « Cœur »" }
+    explication: "Deux oreillettes et deux ventricules : le côté droit envoie le sang aux poumons, le côté gauche vers le reste du corps.", source: "Wikipédia, « Cœur »" },
+  // --- Ajouts de novembre 2026 : culture générale et esprit critique (sources vérifiées) ---
+  { id: "annee-lumiere", niveau: 1, texte: "Une année-lumière est une unité de temps.", vrai: false,
+    explication: "C'est une unité de distance : celle que parcourt la lumière dans le vide en une année, environ 9 460 milliards de kilomètres.", source: "Union astronomique internationale" },
+  { id: "chameaux", niveau: 1, texte: "Les chameaux stockent de l'eau dans leur bosse.", vrai: false,
+    explication: "La bosse est une réserve de graisse, que l'animal utilise quand la nourriture manque.", source: "Bibliothèque du Congrès des États-Unis, « Everyday Mysteries » ; Britannica" },
+  { id: "koala", niveau: 1, texte: "Le koala est une espèce d'ours.", vrai: false,
+    explication: "C'est un marsupial : la femelle porte son petit dans une poche, comme le kangourou.", source: "Wikipédia, « Koala »" },
+  { id: "eau-pure", niveau: 2, texte: "L'eau parfaitement pure conduit très mal l'électricité.", vrai: true,
+    explication: "Ce sont les sels dissous, sous forme d'ions, qui rendent conductrice l'eau du robinet ou de la mer. L'eau pure est un bon isolant, mais il suffit de très peu d'impuretés pour qu'elle conduise.", source: "USGS, « Conductivity (Electrical Conductance) and Water »" },
+  { id: "australie-lune", niveau: 2, texte: "L'Australie est plus large que la Lune.", vrai: true,
+    explication: "D'ouest en est, l'Australie s'étend sur environ 4 000 km ; le diamètre de la Lune est de 3 475 km. La surface de la Lune reste près de cinq fois plus grande que celle de l'Australie.", source: "Guinness World Records ; NASA" },
+  { id: "or-dense", niveau: 2, texte: "L'or est le métal le plus dense.", vrai: false,
+    explication: "L'osmium et l'iridium, environ 22,6 g/cm³, sont plus denses que l'or (19,3 g/cm³) ; les deux se disputent la première place selon la méthode de mesure.", source: "Royal Society of Chemistry, tableau périodique" },
+  { id: "vitamine-c", niveau: 2, texte: "Prendre de la vitamine C tous les jours évite d'attraper des rhumes.", vrai: false,
+    explication: "Une synthèse de 29 essais (11 306 participants) ne trouve aucun effet sur le nombre de rhumes dans la population générale ; leur durée baisse un peu (8 % chez l'adulte). Seule exception : les personnes soumises à un effort physique extrême, comme les marathoniens.", source: "Hemilä et Chalker, revue Cochrane, 2013" },
+  { id: "cerveau-gauche", niveau: 2, texte: "Certaines personnes sont « cerveau gauche » (logiques), d'autres « cerveau droit » (créatives).", vrai: false,
+    explication: "Certaines fonctions sont latéralisées, comme le langage, surtout à gauche ; mais une étude de plus de 1 000 cerveaux n'a trouvé personne dont un hémisphère entier soit plus connecté que l'autre.", source: "Nielsen et al., PLoS ONE, 2013" },
+  { id: "neandertal", niveau: 2, texte: "Néandertal a disparu sans laisser de trace dans l'ADN des humains actuels.", vrai: false,
+    explication: "Les humains dont les ancêtres ont vécu hors d'Afrique tiennent environ 1 à 4 % de leur génome de Néandertal : les deux populations se sont croisées.", source: "Green et al., Science, 2010" },
+  { id: "placebo-ouvert", niveau: 3, texte: "Un placebo peut soulager même quand le patient sait qu'il prend un placebo.", vrai: true,
+    explication: "Dans un essai de 2010, 80 patients atteints du syndrome de l'intestin irritable : ceux qui prenaient des pilules présentées comme sans principe actif allaient mieux que ceux sans traitement. L'essai est petit et court ; le résultat demande à être confirmé.", source: "Kaptchuk et al., PLoS ONE, 2010" },
+  { id: "styles-apprentissage", niveau: 3, texte: "On apprend mieux quand l'enseignement suit son style d'apprentissage (visuel, auditif…).", vrai: false,
+    explication: "Une revue de la littérature n'a trouvé presque aucune étude capable de le tester, et celles qui le pouvaient contredisent l'idée. Chacun a des préférences ; leur effet sur l'apprentissage n'est pas démontré.", source: "Pashler, McDaniel, Rohrer et Bjork, Psychological Science in the Public Interest, 2008" }
 ];
 
 // ===================== Avant ou après ? =====================
@@ -568,15 +591,19 @@ const VRAI_FAUX = [
 const EVENEMENTS = [
   { id: "pyramide", nom: "Construction de la grande pyramide de Khéops", annee: -2560, vers: true },
   { id: "mammouths", nom: "Disparition des derniers mammouths laineux (île Wrangel)", annee: -2000, vers: true },
+  { id: "alexandre", nom: "Mort d'Alexandre le Grand, à Babylone", annee: -323 },
   { id: "cleopatre", nom: "Mort de Cléopâtre", annee: -30 },
   { id: "pompei", nom: "Éruption du Vésuve qui ensevelit Pompéi", annee: 79 },
+  { id: "empire-occident", nom: "Déposition de Romulus Augustule, dernier empereur romain d'Occident", annee: 476 },
   { id: "charlemagne", nom: "Couronnement de Charlemagne", annee: 800 },
   { id: "hastings", nom: "Bataille d'Hastings", annee: 1066 },
   { id: "oxford", nom: "Premiers enseignements attestés à Oxford", annee: 1096 },
+  { id: "magna-carta", nom: "Scellement de la Grande Charte (Magna Carta) par Jean sans Terre", annee: 1215, date: "1215-06-15" },
   { id: "tenochtitlan", nom: "Fondation de Tenochtitlan, la capitale aztèque", annee: 1325 },
   { id: "peste", nom: "Arrivée de la peste noire en Europe", annee: 1347 },
   { id: "jeanne", nom: "Mort de Jeanne d'Arc", annee: 1431 },
   { id: "constantinople", nom: "Prise de Constantinople par les Ottomans", annee: 1453 },
+  { id: "gutenberg", nom: "Achèvement de la Bible de Gutenberg, premier grand livre imprimé en Europe", annee: 1455, vers: true },
   { id: "colomb", nom: "Premier voyage de Colomb aux Amériques", annee: 1492 },
   { id: "luther", nom: "Luther publie ses 95 thèses", annee: 1517 },
   { id: "vinci", nom: "Mort de Léonard de Vinci", annee: 1519 },
@@ -602,7 +629,8 @@ const EVENEMENTS = [
   { id: "metro-londres", sujet: "metro", nom: "Ouverture du métro de Londres", annee: 1863 },
   { id: "secession", nom: "Fin de la guerre de Sécession", annee: 1865 },
   { id: "capital", nom: "Marx publie le premier livre du « Capital »", annee: 1867 },
-  { id: "suez", nom: "Ouverture du canal de Suez", annee: 1869 },
+  { id: "suez", nom: "Ouverture du canal de Suez", annee: 1869, date: "1869-11-17" },
+  { id: "mendeleiev", nom: "Présentation du tableau périodique des éléments par Mendeleïev", annee: 1869, date: "1869-03-06" },
   { id: "empire-allemand", nom: "Proclamation de l'Empire allemand", annee: 1871 },
   { id: "telephone", nom: "Brevet du téléphone (Graham Bell)", annee: 1876 },
   { id: "satsuma", nom: "Dernière révolte de samouraïs au Japon (rébellion de Satsuma)", annee: 1877 },
@@ -633,6 +661,7 @@ const EVENEMENTS = [
   { id: "fin-guerre", sujet: "guerres", nom: "Fin de la Seconde Guerre mondiale", annee: 1945 },
   { id: "vote-francaises", nom: "Premier vote des Françaises", annee: 1945 },
   { id: "inde", nom: "Indépendance de l'Inde", annee: 1947 },
+  { id: "dudh", nom: "Adoption de la Déclaration universelle des droits de l'homme", annee: 1948, date: "1948-12-10" },
   { id: "adn", nom: "Découverte de la structure de l'ADN", annee: 1953 },
   { id: "spoutnik", sujet: "espace", nom: "Lancement de Spoutnik, premier satellite artificiel", annee: 1957 },
   { id: "gagarine", sujet: "espace", nom: "Premier humain dans l'espace (Gagarine)", annee: 1961, date: "1961-04-12" },
@@ -648,13 +677,15 @@ const EVENEMENTS = [
   { id: "peine-de-mort", sujet: "peine", nom: "Abolition de la peine de mort en France", annee: 1981 },
   { id: "tchernobyl", nom: "Catastrophe de Tchernobyl", annee: 1986 },
   { id: "chute-mur", sujet: "berlin", nom: "Chute du mur de Berlin", annee: 1989 },
+  { id: "mandela", nom: "Libération de Nelson Mandela", annee: 1990, date: "1990-02-11" },
   { id: "web", sujet: "internet", nom: "Premier site web (Tim Berners-Lee)", annee: 1991 },
   { id: "urss", nom: "Dissolution de l'URSS", annee: 1991, date: "1991-12-26" },
   { id: "tunnel", nom: "Ouverture du tunnel sous la Manche", annee: 1994 },
   { id: "wikipedia", sujet: "internet", nom: "Création de Wikipédia", annee: 2001 },
   { id: "euro", nom: "Mise en circulation des pièces et billets en euros", annee: 2002 },
   { id: "facebook", sujet: "internet", nom: "Création de Facebook", annee: 2004 },
-  { id: "iphone", sujet: "internet", nom: "Présentation du premier iPhone", annee: 2007 }
+  { id: "iphone", sujet: "internet", nom: "Présentation du premier iPhone", annee: 2007 },
+  { id: "trou-noir", nom: "Première image d'un trou noir (galaxie M87)", annee: 2019, date: "2019-04-10" }
 ];
 
 // Paires célèbres pour leur effet de surprise : on les propose en priorité.
@@ -916,5 +947,19 @@ const CITATIONS = [
   { id: "hume-passions", niveau: 3, texte: "La raison est, et ne doit être, que l'esclave des passions.", auteur: "David Hume", statut: "authentique",
     explication: "« Traité de la nature humaine » (1739-1740), livre II : pour Hume, la raison éclaire les moyens, mais ce sont les désirs qui fixent les fins." },
   { id: "pasteur-hasard", niveau: 3, texte: "Le hasard ne favorise que les esprits préparés.", auteur: "Louis Pasteur", statut: "authentique",
-    explication: "Leçon inaugurale à l'université de Lille, en 1854 : « Dans les champs de l'observation, le hasard ne favorise que les esprits préparés. »" }
+    explication: "Leçon inaugurale à l'université de Lille, en 1854 : « Dans les champs de l'observation, le hasard ne favorise que les esprits préparés. »" },
+  { id: "cesar", niveau: 1, texte: "Je suis venu, j'ai vu, j'ai vaincu.", auteur: "Jules César", statut: "authentique",
+    explication: "« Veni, vidi, vici » : selon Suétone (« Vie de César », 37), la formule était inscrite sur un écriteau porté lors de son triomphe sur le Pont, pour dire la rapidité de sa victoire." },
+  { id: "hamlet", niveau: 1, texte: "Être ou ne pas être, telle est la question.", auteur: "William Shakespeare", statut: "authentique",
+    explication: "« To be, or not to be, that is the question » : début du monologue d'Hamlet, acte III, scène 1." },
+  { id: "franklin-temps", niveau: 2, texte: "Le temps, c'est de l'argent.", auteur: "Benjamin Franklin", statut: "authentique",
+    explication: "« Remember that time is money » : « Conseils à un jeune artisan » (1748). Franklin a popularisé la maxime ; elle circulait peut-être déjà avant lui." },
+  { id: "santayana-passe", niveau: 2, texte: "Ceux qui ne peuvent se souvenir du passé sont condamnés à le répéter.", auteur: "George Santayana", statut: "authentique",
+    explication: "« La Vie de la raison », premier volume (1905). La phrase est souvent prêtée à Churchill, qui l'a paraphrasée devant la Chambre des communes en 1948." },
+  { id: "sagan-preuves", niveau: 2, texte: "Les affirmations extraordinaires exigent des preuves extraordinaires.", auteur: "Carl Sagan", statut: "authentique",
+    explication: "Il l'a dite dès 1977 et écrite dans « Broca's Brain » (1979). L'idée est plus ancienne : Laplace écrivait déjà que « plus un fait est extraordinaire, plus il a besoin d'être appuyé de fortes preuves »." },
+  { id: "edison-genie", niveau: 2, texte: "Le génie, c'est 1 % d'inspiration et 99 % de transpiration.", auteur: "Thomas Edison", statut: "authentique",
+    explication: "Edison s'en est réclamé dans une lettre de 1927 ; des versions plus anciennes de ses propos, dès 1898, donnaient 2 % et 98 %." },
+  { id: "twain-mensonge", niveau: 3, texte: "Un mensonge peut faire le tour de la Terre pendant que la vérité met ses chaussures.", auteur: "Mark Twain", statut: "apocryphe",
+    explication: "Aucune trace dans ses écrits : l'attribution apparaît vers 1919-1921, après sa mort. L'idée remonte au moins à Jonathan Swift, en 1710 : « Le mensonge vole, et la vérité le suit en boitant. »" }
 ];
