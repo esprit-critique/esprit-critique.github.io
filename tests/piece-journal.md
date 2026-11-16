@@ -8,8 +8,8 @@ Pour reprendre dans une nouvelle session : lire `CLAUDE.md`, ce journal (« Éta
 | Lot | Branche | Pull request | État |
 |---|---|---|---|
 | P0 — Cadrage | `piece/p0` | #26 | brief, plan, journal, catalogue |
-| P1 — Moteur (niveaux 1 à 4) | `piece/p1` | voir la branche | moteur, données, banc `piece-moteur` (91/91), français et anglais ; rien de visible (`PIECE_VISIBLE = false`) |
-| P2 — Jeu et contre-expertise | `piece/p2` | — | à faire |
+| P1 — Moteur (niveaux 1 à 4) | `piece/p1` | #43 | moteur, données, banc `piece-moteur` (91/91), français et anglais ; rien de visible (`PIECE_VISIBLE = false`) |
+| P2 — Jeu et contre-expertise | `piece/p2` | voir la branche | interface, six habillages, contre-expertise, banc `piece` (46/46, quatre configurations) ; route sur la copie d'essai seulement |
 | P3 — Intégration | `piece/p3` | — | à faire |
 | P4 — Profondeur (niveau 5, manques, tableau, distinctions) | `piece/p4` | — | à faire |
 | P5 — Finitions | `piece/p5` | — | à faire |
@@ -111,6 +111,17 @@ Pour reprendre dans une nouvelle session : lire `CLAUDE.md`, ce journal (« Éta
 - **À relire (P2) :** `post-hoc` peut dire « en baisse de 31 % : c'est bien la preuve que ça marche » sur une mesure
   dont la hausse est souhaitable (adhérents du club). Le piège reste juste (aucune preuve de causalité), mais la
   phrase sonne faux : orienter le sens par monde (`baisseEstMieux` existe pour les études).
+- **P2, figure de la brève.** La figure a trois zones (axe, tracé, légende) ; le moteur peut n'en garder qu'une
+  partie. Les parties non retenues sont gardées dans `piece.decor` et dessinées sans être touchables : elles sont
+  saines par construction (toute zone piégée, tolérée ou leurre est retenue). Rien ne change pour les pièces.
+- **P2, écarts avec le brief (§ 6).** Annotations dans le flux, sous la zone, à toutes les largeurs (pas en marge
+  reliée par un filet sur ordinateur) ; figure trompeuse et figure honnête par retournement à toutes les largeurs (pas
+  côte à côte). « Ce qui sépare » d'un voisin : la phrase « ce qui trompe » du procédé confondu, précédée de « ≠ »
+  (le catalogue n'a pas de phrase par paire). Image à partager (1 080 × 1 350) : P3, avec la carte de l'accueil.
+  Le banc ne peut pas presser de touches réelles : il vérifie que chaque contrôle est un bouton natif (Tab, Entrée,
+  Espace) et joue au pointeur.
+- **P2, « Une seule tentative par jour », correction après rechargement, schémas des clés** : avec l'enregistrement
+  (P3). En P2, la partie vit en mémoire : un détour par une fiche la retrouve (« Revenir à la partie »).
 - **Part de hasard `c`** : calculée en P3, par simulation sur le moteur (joueur au hasard ; joueur qui répond toujours
   « Rien à signaler »).
 

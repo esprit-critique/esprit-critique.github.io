@@ -1921,3 +1921,172 @@ label[for] { display: block; margin: 0 0 8px; }
   .echelle-sept-boutons { grid-template-columns: repeat(4, minmax(44px, 1fr)); }
   .echelle-neuf .echelle-sept-boutons { grid-template-columns: repeat(5, minmax(44px, 1fr)); }
 }
+
+/* ===================== La pièce du jour (piece-interface.js, DESIGN.md « La pièce du jour ») ===================== */
+/* Une feuille posée sur la page ; une seule couleur de catégorie (--c, celle du monde). Les zones ne se signalent
+   qu'au survol et au focus : pas de cadre permanent qui ferait de la pièce un formulaire. */
+.pdj-mise {
+  --c-fort: color-mix(in srgb, var(--c) 86%, black);
+  --c-texte: color-mix(in srgb, var(--c) 80%, black);
+  --c-clair: color-mix(in srgb, var(--c) 10%, var(--carte));
+  --sur-c: #ffffff;
+  display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .pdj-mise { --c-fort: color-mix(in srgb, var(--c) 72%, white); --c-texte: color-mix(in srgb, var(--c) 55%, white); --c-clair: color-mix(in srgb, var(--c) 22%, var(--carte)); --sur-c: #16130f; }
+}
+:root[data-theme="dark"] .pdj-mise { --c-fort: color-mix(in srgb, var(--c) 72%, white); --c-texte: color-mix(in srgb, var(--c) 55%, white); --c-clair: color-mix(in srgb, var(--c) 22%, var(--carte)); --sur-c: #16130f; }
+.pdj-barre { position: sticky; top: 0; z-index: 4; background: var(--fond); padding: 8px 0; margin: -8px 0; }
+.pdj-etapes { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: 14px; color: var(--discret); }
+.pdj-etapes li { display: flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border: 1px solid var(--trait); border-radius: 999px; }
+.pdj-etape-num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--encadre); font-weight: 650; font-size: 13px; }
+.pdj-etapes [aria-current="step"] { color: var(--texte); border-color: var(--c-texte); font-weight: 650; }
+.pdj-etapes [aria-current="step"] .pdj-etape-num { background: var(--c-fort); color: var(--sur-c); }
+/* Téléphone : le nom des étapes autres que la courante est lu, pas affiché (quatre étapes tiendraient mal sur 390 px) */
+@media (max-width: 520px) {
+  .pdj-etapes li:not([aria-current]) { padding-right: 4px; }
+  .pdj-etapes li:not([aria-current]) .pdj-etape-nom { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+.pdj-feuille {
+  background: var(--carte); border: 1px solid var(--trait); border-radius: var(--rayon-carte); box-shadow: var(--ombre-2);
+  padding: 18px 18px 20px; max-width: var(--largeur-lecture); transform-origin: center;
+}
+.pdj-etiquette { font-family: var(--titre); font-size: 13px; font-weight: 650; letter-spacing: 0.07em; text-transform: uppercase; color: var(--c-texte); margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--trait); }
+.pdj-rubrique, .pdj-intertitre { font-family: var(--titre); font-size: 13px; font-weight: 650; letter-spacing: 0.07em; text-transform: uppercase; color: var(--discret); margin: 0 0 8px; }
+.pdj-signature { font-style: italic; color: var(--discret); font-size: 14px; margin: 10px 0 0; }
+
+/* Zones : de vrais boutons, rendus comme le texte qu'ils portent */
+.pdj-zone {
+  position: relative; display: block; width: 100%; min-height: 44px; margin: 0 0 8px; padding: 8px 10px;
+  font: inherit; color: inherit; text-align: left; line-height: 1.45; background: transparent;
+  border: 1px solid transparent; border-radius: var(--rayon); cursor: pointer;
+  transition: background-color var(--duree-courte) var(--courbe), border-color var(--duree-courte) var(--courbe);
+}
+@media (hover: hover) { .pdj-zone:not([aria-disabled="true"]):hover { background: var(--c-clair); } }
+.pdj-zone:focus-visible { background: var(--c-clair); outline: 2px solid var(--c-texte); outline-offset: 1px; }
+.pdj-zone[aria-disabled="true"] { cursor: default; }
+/* La marque : un trait d'encre sous le texte et une pastille numérotée (le numéro porte l'information) */
+.pdj-zone[aria-pressed="true"] .pdj-texte { text-decoration: underline; text-decoration-color: var(--c-texte); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.pdj-zone[aria-pressed="true"] { border-color: var(--c-texte); }
+.pdj-pastille { position: absolute; top: -9px; right: -6px; display: grid; place-items: center; min-width: 24px; height: 24px; padding: 0 5px; border-radius: 12px; background: var(--c-fort); color: var(--sur-c); font-size: 13px; font-weight: 700; line-height: 1; }
+
+/* Rôles : la hiérarchie typographique de chaque habillage */
+.pdj-r-titre { font-family: var(--titre); font-size: 26px; line-height: 1.15; font-weight: 600; }
+.pdj-r-chapo { font-family: var(--titre); font-size: 21px; line-height: 1.4; }
+.pdj-r-source, .pdj-r-date, .pdj-r-partages, .pdj-r-fiche-dates, .pdj-r-fiche-recueil, .pdj-r-fiche-effectif { font-size: 14px; color: var(--discret); }
+.pdj-r-source { border-top: 1px solid var(--trait-doux); border-radius: 0; margin-top: 8px; }
+
+/* Figure de la brève : axe et tracé côte à côte, légende dessous */
+.pdj-figure { margin: 6px 0 10px; }
+.pdj-figure-rang { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px; margin-bottom: 8px; }
+.pdj-figure .pdj-zone, .pdj-decor { margin: 0; padding: 4px; }
+.pdj-figure svg { display: block; width: 100%; height: auto; }
+.pdj-f-legende { font-size: 14px; color: var(--discret); text-align: center; }
+.pdj-graduation { font: 12px var(--police); fill: var(--discret); }
+.pdj-trait { stroke: var(--texte); stroke-width: 1.2; }
+.pdj-grille { stroke: var(--trait-doux); stroke-width: 1; }
+.pdj-barre { fill: var(--c-fort); }
+.pdj-courbe { fill: none; stroke: var(--c-fort); stroke-width: 2.5; stroke-linejoin: round; }
+.pdj-point { fill: var(--c-fort); }
+
+/* Publicité : aplat de la couleur, chiffre-clé en grand */
+.pdj-aplat { background: var(--c-clair); border-radius: var(--rayon-bouton); padding: 10px; margin: 0 0 10px; }
+.pdj-r-slogan { font-family: var(--titre); font-size: 28px; line-height: 1.15; font-weight: 600; }
+.pdj-r-chiffre-cle { font-family: var(--titre); font-size: 34px; line-height: 1.1; font-variant-numeric: oldstyle-nums; color: var(--c-texte); }
+.pdj-r-prix { font-family: var(--titre); font-size: 24px; font-weight: 600; }
+.pdj-r-temoignage, .pdj-r-citation, .pdj-r-phrase-citation { font-family: var(--titre); font-style: italic; font-size: 19px; }
+.pdj-r-petites-lignes { font-size: 13px; color: var(--discret); line-height: 1.4; }
+
+/* Communiqué d'étude et sondage : encadré « Méthode » ou fiche technique, exergue */
+.pdj-methode { background: var(--encadre); border-radius: var(--rayon); padding: 10px 8px 6px; margin: 6px 0 10px; }
+.pdj-methode .pdj-intertitre { padding: 0 10px; }
+.pdj-methode .pdj-zone { font-size: 15px; }
+.pdj-exergue { border-left: 3px solid var(--c-fort); padding-left: 8px; margin: 8px 0 10px; }
+.pdj-r-conclusion, .pdj-r-question { font-family: var(--titre); font-size: 21px; line-height: 1.3; }
+.pdj-r-tableau { font-variant-numeric: tabular-nums; border-top: 1px solid var(--trait); border-bottom: 1px solid var(--trait); border-radius: 0; }
+.pdj-r-barres { font-variant-numeric: tabular-nums; }
+
+/* Réseau fictif : carte, avatar géométrique, image chiffrée */
+.pdj-reseau .pdj-compte { display: flex; align-items: center; gap: 8px; }
+.pdj-reseau .pdj-compte .pdj-zone { width: auto; flex: 1; font-weight: 650; }
+.pdj-avatar, .pdj-blason { flex: none; width: 40px; height: 40px; }
+.pdj-avatar-fond { fill: var(--c-clair); stroke: var(--c-texte); stroke-width: 1.5; }
+.pdj-avatar-trait { fill: none; stroke: var(--c-texte); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pdj-image { border: 1px solid var(--trait); border-radius: var(--rayon-bouton); padding: 6px; margin: 4px 0 8px; }
+.pdj-r-image-chiffre { font-family: var(--titre); font-size: 28px; line-height: 1.2; text-align: center; font-variant-numeric: oldstyle-nums; color: var(--c-texte); background: var(--c-clair); }
+.pdj-r-image-legende { font-size: 14px; color: var(--discret); }
+.pdj-reponses { border-left: 2px solid var(--trait); margin: 6px 0 6px 10px; padding-left: 6px; }
+.pdj-reponses .pdj-zone { font-size: 15px; }
+
+/* Bulletin municipal : bandeau et blason, deux colonnes avant / après */
+.pdj-bandeau { display: flex; align-items: center; gap: 10px; border-bottom: 3px double var(--c-texte); margin: 0 0 10px; padding-bottom: 6px; }
+.pdj-bandeau .pdj-zone, .pdj-bandeau-texte { font-family: var(--titre); font-size: 22px; font-weight: 650; margin: 0; flex: 1; }
+.pdj-colonnes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+.pdj-colonnes .pdj-zone { border-top: 3px solid var(--c-clair); border-radius: 0; margin: 0; }
+@media (max-width: 420px) { .pdj-colonnes { grid-template-columns: 1fr; } }
+
+/* Rail d'expertise */
+.pdj-rail { max-width: var(--largeur-lecture); }
+.pdj-titre-etape { font-family: var(--titre); font-size: 24px; margin: 0 0 8px; }
+.pdj-titre-etape:focus { outline: none; }
+.pdj-compteur { font-weight: 650; }
+.pdj-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.pdj-actions .bouton { flex: 1 1 160px; }
+.pdj-nommer { border: 0; padding: 0; margin: 0 0 14px; }
+.pdj-nommer legend { font-weight: 650; margin-bottom: 10px; padding: 0; }
+.pdj-nommer .choix[aria-pressed="true"], .pdj-options .choix[aria-pressed="true"] { border-color: var(--c-texte); background: var(--c-clair); font-weight: 650; }
+.pdj-question { font-family: var(--titre); font-size: 19px; line-height: 1.4; }
+.pdj-saisie { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pdj-saisie label { flex: 1 0 100%; font-weight: 650; }
+.pdj-saisie input { flex: 1; min-height: 44px; font-size: 18px; padding: 6px 10px; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); color: var(--texte); }
+.pdj-erreur { flex: 1 0 100%; color: var(--rouge); margin: 0; }
+.pdj-erreur:empty { display: none; }
+
+/* Contre-expertise : quatre états, chacun avec glyphe, mot et couleur (jamais la couleur seule) */
+.pdj-etat-trouve { border-color: var(--vert); }
+.pdj-etat-manque { border-color: var(--rouge); border-style: dashed; }
+.pdj-etat-fausse .pdj-texte { text-decoration: line-through; text-decoration-color: var(--rouge); text-decoration-thickness: 2px; }
+.pdj-etat-fausse { border-color: var(--rouge); }
+.pdj-etat-evite { border-color: var(--trait); border-style: dotted; }
+.pdj-notes { margin: 0 0 10px; }
+.pdj-note { border-left: 3px solid var(--trait); padding: 4px 0 4px 12px; margin: 0 0 8px 6px; font-size: 15px; }
+.pdj-note p { margin: 0 0 4px; }
+.pdj-note-etat { display: flex; align-items: center; gap: 6px; font-family: var(--titre); font-size: 13px; font-weight: 650; letter-spacing: 0.07em; text-transform: uppercase; }
+.pdj-glyphe { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pdj-note-trouve { border-color: var(--vert); } .pdj-note-trouve .pdj-note-etat { color: var(--vert); }
+.pdj-note-manque, .pdj-note-fausse { border-color: var(--rouge); } .pdj-note-manque .pdj-note-etat, .pdj-note-fausse .pdj-note-etat { color: var(--rouge); }
+.pdj-note-evite .pdj-note-etat, .pdj-note-tolere .pdj-note-etat { color: var(--discret); }
+.pdj-note-nom { font-family: var(--titre); font-style: italic; font-size: 19px; line-height: 1.3; }
+.pdj-honnete del, .pdj-nomme del, .pdj-correction-etape del { color: var(--rouge); text-decoration-thickness: 2px; }
+.pdj-honnete ins { text-decoration: none; background: var(--vert-doux); color: var(--texte); }
+.pdj-fleche { color: var(--discret); }
+.pdj-separe { color: var(--discret); }
+.pdj-preuve .lien { font-size: 15px; text-align: left; min-height: 44px; }
+.pdj-fiche { margin-top: 4px; }
+
+/* Rapport : la note, le détail par part */
+.pdj-note-finale { margin-top: 0; }
+.pdj-parts { margin: 0 0 12px; }
+.pdj-part { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 8px; align-items: center; margin-bottom: 6px; }
+.pdj-part dt { font-weight: 650; }
+.pdj-part dd { margin: 0; display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pdj-part-barre { flex: 1; height: 10px; border-radius: 5px; background: linear-gradient(to right, var(--c-fort) calc(var(--part) * 100%), var(--trait-doux) 0); }
+.pdj-etalonnage { font-family: var(--titre); font-style: italic; font-size: 19px; }
+.pdj-correction-etape { border-top: 1px solid var(--trait); padding-top: 10px; margin-top: 10px; }
+.pdj-attendu { font-weight: 650; }
+
+@media (min-width: 1040px) {
+  .pdj-mise { grid-template-columns: minmax(0, 680px) minmax(0, 1fr); grid-template-areas: "feuille barre" "feuille rail"; grid-template-rows: auto 1fr; gap: 16px 40px; align-items: start; }
+  .pdj-feuille { grid-area: feuille; padding: 26px 30px 28px; }
+  .pdj-barre { grid-area: barre; position: static; margin: 0; padding: 0; }
+  .pdj-rail { grid-area: rail; position: sticky; top: 16px; }
+  .pdj-r-titre { font-size: 30px; }
+}
+
+/* Sondage : barres horizontales, valeurs écrites, axe écrit (un axe tronqué se lit donc sur la pièce) */
+.pdj-sondage { display: grid; gap: 6px; }
+.pdj-sondage-ligne { display: grid; grid-template-columns: 76px minmax(0, 1fr) 48px; gap: 8px; align-items: center; }
+.pdj-sondage-barre { height: 18px; border-radius: 3px; background: linear-gradient(to right, var(--c-fort) calc(var(--part) * 100%), var(--trait-doux) 0); }
+.pdj-sondage-valeur { text-align: right; font-variant-numeric: tabular-nums; font-weight: 650; }
+.pdj-sondage-axe { font-size: 13px; color: var(--discret); }
