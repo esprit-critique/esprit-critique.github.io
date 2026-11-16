@@ -408,7 +408,8 @@ function pieceAnnoter(animer_) {
     b.classList.remove("pdj-etat-trouve", "pdj-etat-manque", "pdj-etat-fausse", "pdj-etat-evite", "pdj-etat-tolere");
     if (!etat) return;
     b.classList.add("pdj-etat-" + etat);
-    const ancre = b.closest(".pdj-figure") || b;
+    // Sous la rangée entière quand la zone est dans une rangée (figure, bandeau, colonnes, compte) : la note est un bloc
+    const ancre = b.closest(".pdj-figure, .pdj-bandeau, .pdj-colonnes, .pdj-compte") || b;
     let notes = ancre.nextElementSibling;
     if (!notes || !notes.classList.contains("pdj-notes")) { notes = el("div", "pdj-notes"); ancre.after(notes); }
     const note = pieceNote(p, z, etat);
