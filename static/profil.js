@@ -1146,6 +1146,29 @@ function svgJours(jours, objectif) {
   s.appendChild(svg("path", { d: "M0 " + f.objectif + "H140", class: "fiche-jours-objectif" }));
   return s;
 }
+// Amphore : elle se remplit d'argile du grade actuel au suivant (pleine au grade suivant, pleine aussi au dernier
+// grade) ; une ligne ondulée marque la surface. Panse claire, col et pied noirs comme une amphore à figures noires.
+// Panse, col et pied ; l'épaule et le pied sont peints en noir
+const AMPHORE_PERSONNAGE = "M23 3H37V6H35V13Q51 18 52 34Q52 54 36 66V70H40V75H20V70H24V66Q8 54 8 34Q9 18 25 13V6H23Z";
+function svgAmphore(grade, meilleure) {
+  const part = grade.suivant ? Math.max(0, Math.min(1, (meilleure - grade.seuil) / Math.max(1, grade.suivant[0] - grade.seuil))) : 1;
+  const s = svg("svg", { viewBox: "0 0 60 78", class: "fiche-amphore", "aria-hidden": "true" });
+  const id = "amphore-masque-" + (++numeroPortrait);
+  const masque = svg("clipPath", { id });
+  masque.appendChild(svg("path", { d: AMPHORE_PERSONNAGE }));
+  // Niveau : de la base de la panse (66) au bas de l'épaule noire (21)
+  const y = 66 - part * 45;
+  const contenu = svg("g", { "clip-path": "url(#" + id + ")" });
+  contenu.append(svg("rect", { x: 0, y: 0, width: 60, height: 78, class: "amphore-vide" }),
+    svg("path", { d: "M0 " + y + "Q7.5 " + (y - 2.2) + " 15 " + y + "T30 " + y + "T45 " + y + "T60 " + y + "V78H0Z", class: "amphore-argile" }),
+    // Col, épaule et pied noirs, et une frise de points sur l'épaule
+    svg("path", { d: "M0 0H60V21H0ZM0 66H60V78H0Z", class: "amphore-noir" }));
+  // Anses : du col à l'épaule, à l'extérieur de la panse ; points d'argile sur l'épaule noire
+  s.append(masque, contenu, svg("path", { d: AMPHORE_PERSONNAGE, class: "amphore-contour" }),
+    svg("path", { d: "M25 8Q11 7 12.5 19.5M35 8Q49 7 47.5 19.5", class: "amphore-anse" }),
+    svg("path", { d: pointsPersonnage([19, 24.5, 30, 35.5, 41].map(x => [x, 17.5]), 1), class: "amphore-points" }));
+  return s;
+}
 function svgMedailles(medailles) {
   const parRangee = 13, pas = 24, rangees = Math.ceil(medailles.length / parRangee);
   const s = svg("svg", { viewBox: "0 0 " + parRangee * pas + " " + rangees * pas, class: "fiche-medailles", "aria-hidden": "true" });
@@ -1263,20 +1286,25 @@ function ouvrirFichePersonnage(declencheur) {
     return s;
   };
   const section = titre => el("h3", "fiche-section", titre);
-  const titre = el("h2", "fiche-titre", "Votre personnage");
+  // Titre : le pseudo du joueur, sur sa propre fiche (l'image ne le porte que si la case est cochée)
+  const titre = el("h2", "fiche-perso-titre", f.pseudo || T("Votre personnage"));
   titre.id = "titre-fiche-personnage";
-  const pseudo = el("p", "fiche-pseudo", f.pseudo);
-  pseudo.hidden = true;
   const grade = el("p", "profil-grade fiche-grade");
   grade.append(insigne(f.grade.rang, 26), texteNoeud(" " + T(f.grade.nom)));
-  contenu.append(frise(), titre, pseudo, personnage(f.etat, 240, true, true), grade, svgEchelleGrades(f.grade.rang),
-    el("p", "source", texteProchainGrade(f.grade, f.etat.meilleure || 0)));
+  // Le prochain grade n'est plus écrit sous l'échelle : il est son nom accessible, et l'amphore le montre
+  const echelle = svgEchelleGrades(f.grade.rang);
+  echelle.removeAttribute("aria-hidden");
+  echelle.setAttribute("role", "img");
+  echelle.setAttribute("aria-label", texteProchainGrade(f.grade, f.etat.meilleure || 0));
+  contenu.append(frise(), titre, personnage(f.etat, 240, true, true), grade, echelle);
   // Maîtrise et points de lucidité, chacun avec son graphique
   const chiffres = el("div", "fiche-chiffres");
   const blocMaitrise = el("div"), blocLucidite = el("div");
-  blocMaitrise.append(el("span", "fiche-nombre", String(f.m.globale)), el("span", "source", "de maîtrise, sur 1 000"));
+  blocMaitrise.append(el("span", "fiche-nombre", String(f.m.globale)), el("span", "source", "de maîtrise, sur 1 000"),
+    svgAmphore(f.grade, f.etat.meilleure || 0),
+    el("span", "source fiche-legende", f.grade.suivant ? T("vers {0}", T(f.grade.suivant[1])) : T("grade le plus haut")));
   blocLucidite.append(el("span", "fiche-nombre", String(f.lucidite)), el("span", "source", "points de lucidité"), svgJours(f.jours, f.objectif),
-    el("span", "source fiche-legende", T("14 derniers jours ; en pointillé, l'objectif ({0})", f.objectif)));
+    el("span", "source fiche-legende", T("14 jours, objectif {0}", f.objectif)));
   chiffres.append(blocMaitrise, blocLucidite);
   contenu.appendChild(chiffres);
   // Les six domaines : emblème, nom, valeur, barre à la couleur du domaine
@@ -1298,18 +1326,15 @@ function ouvrirFichePersonnage(declencheur) {
     f.noms.forEach(nom => liste.appendChild(el("li", null, nom)));
     contenu.appendChild(liste);
   }
-  if (f.secretes) contenu.appendChild(el("p", "source", T("Dont {0} : leur nom reste caché.", pluriel(f.secretes, "secrète"))));
-  // Pseudo : masqué par défaut, sur la fiche comme sur l'image ; le choix n'est pas enregistré
+  // Pseudo sur l'image : non par défaut (il peut être un vrai nom) ; le choix n'est pas enregistré
   let casePseudo = null;
   if (f.pseudo) {
     const option = el("label", "fiche-option");
     casePseudo = el("input");
     casePseudo.type = "checkbox";
-    casePseudo.addEventListener("change", () => { pseudo.hidden = !casePseudo.checked; });
-    option.append(casePseudo, texteNoeud(" " + T("Afficher mon pseudo")));
+    option.append(casePseudo, texteNoeud(" " + T("Mettre mon pseudo sur l'image")));
     contenu.appendChild(option);
   }
-  contenu.appendChild(el("p", "source", "La maîtrise mesure votre réussite dans les jeux de ce site, pas votre intelligence."));
   const actions = el("div", "fiche-actions");
   const partager = el("button", "bouton", "Partager l'image");
   partager.type = "button";

@@ -402,6 +402,11 @@ style des vases grecs à figures noires, costume selon le grade ; graphiques du 
   le modèle du casque. Cheveux en masse pleine un peu plus grosse que le crâne, un seul trait gravé (la limite des
   cheveux, derrière la tempe), oreille et mèches retirées ; chignon séparé d'un trait ; laurier en bandeau plein et
   neuf feuilles identiques, également espacées et inclinées ; diadème en cimier plein ; pas de cheveux sous le casque.
+- Après publication (retours sur iPhone) : maîtrise du profil en ligne sur mobile (le chiffre flottait) ; fiche titrée
+  du pseudo, textes du prochain grade, des secrètes et de l'avertissement retirés (le prochain grade devient le nom
+  accessible de l'échelle), légende « 14 jours, objectif 60 », amphore qui se remplit jusqu'au grade suivant ; onglets
+  du profil en grille de boutons sous 760 px. Corrigé : la classe `fiche-titre` de la fiche (#46) écrasait le titre des
+  fiches de notions (24 px au lieu de 36 à 50) ; renommée `fiche-perso-titre`.
 - Vérifié (Chromium, Linux) : planche des 4 formes × 10 grades en buste et en pied ; fiche avec aucune, quelques,
   toutes les distinctions, à 390 px clair et 1 280 px sombre, en français et en anglais ; bancs csp, progression,
   test, aleatoire (390 clair). Non vérifié : Safari (flou du fond), partage natif sur un vrai téléphone.

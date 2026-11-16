@@ -1805,6 +1805,13 @@ label[for] { display: block; margin: 0 0 8px; }
 .onglets-profil { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 6px; border-bottom: 1px solid var(--trait); }
 .onglet-profil { min-height: 44px; padding: 8px 12px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--discret); font-weight: 600; }
 .onglet-profil[aria-selected="true"] { color: var(--texte); border-bottom-color: var(--accent); }
+/* Sur téléphone, les six onglets passent sur deux lignes : soulignés seulement, ils ne se lisaient plus comme des
+   boutons. Ils deviennent une grille de boutons encadrés, l'onglet ouvert plein (aussi marqué par aria-selected) */
+@media (max-width: 759px) {
+  .onglets-profil { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 6px; padding-bottom: 12px; }
+  .onglet-profil { padding: 8px 4px; font-size: 14px; border: 1px solid var(--trait); border-radius: var(--rayon-bouton); background: var(--carte); color: var(--texte); }
+  .onglet-profil[aria-selected="true"] { border-color: var(--accent); background: var(--accent); color: var(--sur-accent); }
+}
 .codex-cadre { display: flex; justify-content: center; }
 .codex { max-width: 100%; height: auto; }
 .codex-point { fill: var(--c); opacity: 0.25; }
@@ -1909,8 +1916,8 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-contenu:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
 .frise-grecque { display: block; width: 100%; height: auto; max-height: 16px; }
 .frise-trait { fill: none; stroke: var(--texte); stroke-width: 1.1; }
-.fiche-titre { margin: 4px 0 0; font-family: var(--titre); font-size: 24px; }
-.fiche-pseudo { margin: 0; font-family: var(--titre); font-size: 20px; font-weight: 650; overflow-wrap: anywhere; }
+/* Titre de la fiche du personnage (« fiche-titre » est le titre des fiches de notions) */
+.fiche-perso-titre { margin: 4px 0 0; font-family: var(--titre); font-size: 24px; overflow-wrap: anywhere; }
 .fiche-contenu > .portrait { width: min(240px, 70vw); height: auto; }
 .fiche-grade { justify-content: center; }
 .fiche-chiffres { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
@@ -1926,7 +1933,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-section { margin: 10px 0 0; font-family: var(--titre); font-size: 18px; }
 /* Graphiques de la fiche : terre cuite et noir des vases, couleurs des domaines ; décoratifs, doublés d'un texte */
 .fiche-contenu { --terre: #c8693a; --figure: #1b120c; }
-.fiche-echelle { display: block; width: min(300px, 100%); height: auto; }
+.fiche-echelle { display: block; width: min(300px, 100%); height: auto; margin-bottom: 8px; }
 .fiche-echelle-trait { stroke: var(--trait); stroke-width: 2; }
 .fiche-grade-atteint, .fiche-grade-actuel { fill: var(--terre); }
 .fiche-grade-actuel { stroke: var(--texte); stroke-width: 2.5; }
@@ -1938,6 +1945,13 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-jours-base { stroke: var(--trait); stroke-width: 1; }
 .fiche-jours-objectif { stroke: var(--discret); stroke-width: 1; stroke-dasharray: 3 2; }
 .fiche-legende { font-size: 12px; }
+.fiche-amphore { display: block; height: 76px; width: auto; margin: 6px auto 0; overflow: visible; }
+.amphore-vide { fill: var(--trait-doux); }
+.amphore-argile { fill: var(--terre); }
+.amphore-noir { fill: var(--figure); }
+.amphore-contour, .amphore-anse { fill: none; stroke: var(--texte); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.amphore-anse { stroke-width: 2.4; }
+.amphore-points { fill: var(--terre); }
 .fiche-domaines { display: grid; gap: 6px; width: 100%; margin: 0; padding: 0; list-style: none; text-align: left; }
 .fiche-domaine { display: grid; grid-template-columns: 26px 1fr auto; grid-template-rows: auto 6px; column-gap: 8px; align-items: center; }
 .fiche-domaine .embleme-domaine { grid-row: 1 / 3; }
