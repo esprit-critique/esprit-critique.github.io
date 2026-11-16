@@ -1557,17 +1557,28 @@ label[for] { display: block; margin: 0 0 8px; }
 .avec-personnage-textes { min-width: 0; }
 .avec-personnage-textes > * { margin-top: 0; margin-bottom: 0; }
 .accueil-tete .page-titre.salut { font-size: clamp(34px, 6vw, 56px); }
-/* Accueil : l'avatar à gauche du bloc date, salutation, phrase, centré sur lui ; plus petit sur téléphone */
-.salut-accueil { display: flex; align-items: center; gap: 18px; }
-.salut-textes { min-width: 0; }
+/* Accueil : une grille. L'avatar occupe les lignes de la date et de la salutation, centré sur elles ; la phrase vient
+   dessous, alignée sur le titre (ordinateur) ou sur toute la largeur (téléphone). Le bloc des textes s'efface
+   (display: contents) pour que ses trois lignes se placent dans la grille */
+.salut-accueil { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; align-items: center; }
+.salut-textes { display: contents; }
+.lien-avatar { grid-column: 1; grid-row: 1 / 3; }
+.salut-textes > * { grid-column: 2; min-width: 0; }
+.salut-textes .date-du-jour { grid-row: 1; align-self: end; }
+.salut-textes .page-titre { grid-row: 2; align-self: start; }
+.salut-textes .salut-phrase { grid-row: 3; }
 .salut-textes .date-du-jour { margin-bottom: 12px; }   /* la pastille de série ne touche pas le grand titre */
 .salut-textes .page-titre { margin: 2px 0 0; }
 .salut-textes .salut-phrase { margin-bottom: 0; }
-.lien-avatar { flex: none; display: block; border-radius: 50%; }
+.lien-avatar { display: block; justify-self: start; border-radius: 50%; }
 .lien-avatar .portrait { display: block; width: 88px; height: 88px; transition: transform var(--duree-courte) var(--courbe); }
 .lien-avatar:hover .portrait { transform: scale(1.04); }
-/* Téléphone : le titre passe souvent sur deux lignes ; l'avatar s'aligne sur la première, sous la date */
-@media (max-width: 759px) { .salut-accueil { align-items: flex-start; gap: 12px; } .lien-avatar { margin-top: 30px; } .lien-avatar .portrait { width: 52px; height: 52px; } }
+/* Téléphone : avatar plus petit ; la phrase reprend toute la largeur au lieu de laisser une colonne vide sous l'avatar */
+@media (max-width: 759px) {
+  .salut-accueil { column-gap: 12px; }
+  .lien-avatar .portrait { width: 56px; height: 56px; }
+  .salut-textes .salut-phrase { grid-column: 1 / -1; }
+}
 .salut-accueil + .page-intro { margin-top: 14px; }
 .avec-personnage .portrait { flex: none; }
 .page-titre.salut { overflow-wrap: anywhere; }
@@ -1935,9 +1946,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-chiffres { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
 .fiche-chiffres > div { display: flex; flex-direction: column; align-items: center; }
 .fiche-nombre { font-family: var(--titre); font-size: 44px; font-weight: 700; line-height: 1.05; font-variant-numeric: oldstyle-nums; }
-.fiche-distinctions-titre { margin: 4px 0 0; font-weight: 700; }
-.fiche-distinctions { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.fiche-distinctions li { padding: 3px 10px; border: 1px solid var(--trait); border-radius: 999px; font-size: 14px; }
+.fiche-compte { font-family: var(--police); font-size: 14px; font-weight: 600; color: var(--discret); font-variant-numeric: tabular-nums; }
 .fiche-option { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
 .fiche-option input { width: 20px; height: 20px; margin: 0; }
 .fiche-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
@@ -1957,14 +1966,17 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-jours-base { stroke: var(--trait); stroke-width: 1; }
 .fiche-jours-objectif { stroke: var(--discret); stroke-width: 1; stroke-dasharray: 3 2; }
 .fiche-legende { font-size: 12px; }
-.fiche-amphore { display: block; height: 76px; width: auto; margin: 6px auto 0; overflow: visible; }
-.amphore-vide { fill: var(--trait-doux); }
-.amphore-strate { fill: var(--c); stroke: var(--figure); stroke-width: 0.6; }
-.fiche-trait { margin-top: 4px; font-family: var(--titre); font-size: 15px; font-weight: 650; }
-.amphore-noir { fill: var(--figure); }
-.amphore-contour, .amphore-anse { fill: none; stroke: var(--texte); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
-.amphore-anse { stroke-width: 2.4; }
-.amphore-points { fill: var(--terre); }
+.fiche-vase { display: block; height: 76px; width: auto; margin: 6px auto 0; overflow: visible; }
+.vase-fond, .vase-argile { fill: var(--terre); }
+.vase-noir { fill: var(--figure); }
+.vase-frise { fill: none; stroke: var(--terre); stroke-width: 1.3; }
+.vase-contour, .vase-anse { fill: none; stroke: var(--texte); stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+.vase-anse { stroke-width: 2.4; }
+.fiche-nom { width: 100%; text-align: left; }
+.fiche-nom-ligne { display: flex; gap: 8px; }
+.fiche-nom-ligne .champ { flex: 1; min-width: 0; min-height: 44px; }
+.fiche-nom-ligne .bouton { min-height: 44px; }
+.fiche-perso-titre:focus { outline: none; }
 .fiche-domaines { display: grid; gap: 6px; width: 100%; margin: 0; padding: 0; list-style: none; text-align: left; }
 .fiche-domaine { display: grid; grid-template-columns: 26px 1fr auto; grid-template-rows: auto 6px; column-gap: 8px; align-items: center; }
 .fiche-domaine .embleme-domaine { grid-row: 1 / 3; }
