@@ -407,6 +407,12 @@ style des vases grecs à figures noires, costume selon le grade ; graphiques du 
   accessible de l'échelle), légende « 14 jours, objectif 60 », amphore qui se remplit jusqu'au grade suivant ; onglets
   du profil en grille de boutons sous 760 px. Corrigé : la classe `fiche-titre` de la fiche (#46) écrasait le titre des
   fiches de notions (24 px au lieu de 36 à 50) ; renommée `fiche-perso-titre`.
+- Fonds du médaillon à gagner (`FONDS_PERSONNAGE`) : argile nue, frise grecque (grade Élève), vagues (Détective), temple
+  (Philosophe), rameaux d'olivier (« Régulier »), ciel étoilé (« Explorateur »), rayons d'Hélios (« Grand test »).
+  Bordures noires, motifs en argile sombre ou claire, derrière la figure ; choix dans les réglages, champ
+  `profil.personnage.fond` (facultatif, ajouté à `SCHEMAS_SAUVEGARDE` ; données existantes valides). Amphore de la fiche :
+  strates des six domaines (part de chacun) et trait dominant (« Esprit logique »…) au lieu du grade suivant. Onglets du
+  profil : la page ne remonte plus en haut (app.js), le focus revient sur l'onglet touché.
 - Vérifié (Chromium, Linux) : planche des 4 formes × 10 grades en buste et en pied ; fiche avec aucune, quelques,
   toutes les distinctions, à 390 px clair et 1 280 px sombre, en français et en anglais ; bancs csp, progression,
   test, aleatoire (390 clair). Non vérifié : Safari (flou du fond), partage natif sur un vrai téléphone.

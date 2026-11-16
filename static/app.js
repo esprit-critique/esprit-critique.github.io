@@ -1788,7 +1788,8 @@ function afficherPage() {
   }
 
   if (vue === "piece") { afficherPiece(id); titre = T("La pièce du jour"); }
-  if (vue === "profil") { afficherPageProfil(id); titre = T("Profil"); }
+  // D'un onglet du profil à l'autre, la page ne remonte pas en haut (on vient de toucher les onglets, plus bas)
+  if (vue === "profil") { afficherPageProfil(id); titre = T("Profil"); if (precedent.vue === "profil") defilement = null; }
   if (vue === "parcours") { afficherParcours(id, adresse.split("/")[2]); titre = T("Parcours"); }
 
   if (vue === "cartes") {

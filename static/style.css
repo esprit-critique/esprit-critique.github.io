@@ -1716,7 +1716,14 @@ label[for] { display: block; margin: 0 0 8px; }
 @keyframes revelation-insigne { from { opacity: 0; } }
 /* Personnage en figure noire sur médaillon de terre cuite (profil.js) : mêmes couleurs dans les deux thèmes, comme une
    image (TERRE_PERSONNAGE et FIGURE_PERSONNAGE) ; contraste figure / argile 4,9:1 */
-.portrait { --terre: #c8693a; --figure: #1b120c; flex: none; overflow: visible; }
+.portrait { --terre: #c8693a; --figure: #1b120c; --motif: #a4532b; --motif-clair: #f2c39a; flex: none; overflow: visible; }
+/* Fonds du médaillon : bordures noires, motifs du champ en argile plus cuite (MOTIF_PERSONNAGE) */
+.motif-noir, .motif-sombre { fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.motif-noir { stroke: var(--figure); }
+.motif-sombre { stroke: var(--motif); }
+.motif-noir.motif-plein { fill: var(--figure); stroke: none; }
+.motif-sombre.motif-plein { fill: var(--motif); stroke: none; }
+.motif-clair.motif-plein { fill: var(--motif-clair); stroke: none; }
 .apercu-personnage { margin: 4px 0 6px; }
 .puce:disabled { border-style: dashed; cursor: not-allowed; }
 .medaillon-fond { fill: var(--terre); }
@@ -1947,7 +1954,8 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-legende { font-size: 12px; }
 .fiche-amphore { display: block; height: 76px; width: auto; margin: 6px auto 0; overflow: visible; }
 .amphore-vide { fill: var(--trait-doux); }
-.amphore-argile { fill: var(--terre); }
+.amphore-strate { fill: var(--c); stroke: var(--figure); stroke-width: 0.6; }
+.fiche-trait { margin-top: 4px; font-family: var(--titre); font-size: 15px; font-weight: 650; }
 .amphore-noir { fill: var(--figure); }
 .amphore-contour, .amphore-anse { fill: none; stroke: var(--texte); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
 .amphore-anse { stroke-width: 2.4; }
