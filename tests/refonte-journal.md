@@ -391,6 +391,13 @@ style des vases grecs à figures noires, costume selon le grade ; graphiques du 
   points de lucidité, distinctions. Pseudo masqué par défaut (case non enregistrée) ; distinctions secrètes comptées,
   jamais nommées (« Noctambule » dirait une habitude). L'image (canvas 1 080 × 1 350, frises à méandres) suit la
   fiche ; la toile des domaines n'y est plus (les arcs du personnage la remplacent).
+- Retouches demandées (finitions, détails, graphiques) : couronne de laurier en feuilles posées sur le contour de la tête
+  (`feuillePersonnage`), diadème en croissant orné de points, fer de lance en feuille, sceptre à fleur de lotus, flamme à
+  trois langues gardée dans le buste, aile du hibou qui tient l'objet ; détails gravés (oreille, mèches, sourcil, barbe,
+  ourlets bordés de points, ceintures, sandales, bouclier, plumes du hibou, rivets du robot, filet du médaillon, exergue).
+  Fiche et image : échelle des dix grades, barres des six domaines avec leur emblème, points des 14 derniers jours avec
+  l'objectif en pointillé, une médaille par distinction (vide si à gagner, « ? » si secrète). Graphiques décoratifs
+  (aria-hidden), chacun doublé de son texte.
 - Vérifié (Chromium, Linux) : planche des 4 formes × 10 grades en buste et en pied ; fiche avec aucune, quelques,
   toutes les distinctions, à 390 px clair et 1 280 px sombre, en français et en anglais ; bancs csp, progression,
   test, aleatoire (390 clair). Non vérifié : Safari (flou du fond), partage natif sur un vrai téléphone.

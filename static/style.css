@@ -1721,6 +1721,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .puce:disabled { border-style: dashed; cursor: not-allowed; }
 .medaillon-fond { fill: var(--terre); }
 .medaillon-bord { fill: none; stroke: var(--figure); stroke-width: 1.5; }
+.medaillon-filet { fill: none; stroke: var(--figure); stroke-width: 0.6; }
 .figure-plein { fill: var(--figure); }
 .figure-epais, .figure-incise { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .figure-epais { stroke: var(--figure); }
@@ -1904,7 +1905,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .frise-trait { fill: none; stroke: var(--texte); stroke-width: 1.1; }
 .fiche-titre { margin: 4px 0 0; font-family: var(--titre); font-size: 24px; }
 .fiche-pseudo { margin: 0; font-family: var(--titre); font-size: 20px; font-weight: 650; overflow-wrap: anywhere; }
-.fiche-contenu .portrait { width: min(240px, 70vw); height: auto; }
+.fiche-contenu > .portrait { width: min(240px, 70vw); height: auto; }
 .fiche-grade { justify-content: center; }
 .fiche-chiffres { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
 .fiche-chiffres > div { display: flex; flex-direction: column; align-items: center; }
@@ -1916,6 +1917,38 @@ label[for] { display: block; margin: 0 0 8px; }
 .fiche-option input { width: 20px; height: 20px; margin: 0; }
 .fiche-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .fiche-actions .bouton { min-height: 44px; }
+.fiche-section { margin: 10px 0 0; font-family: var(--titre); font-size: 18px; }
+/* Graphiques de la fiche : terre cuite et noir des vases, couleurs des domaines ; décoratifs, doublés d'un texte */
+.fiche-contenu { --terre: #c8693a; --figure: #1b120c; }
+.fiche-echelle { display: block; width: min(300px, 100%); height: auto; }
+.fiche-echelle-trait { stroke: var(--trait); stroke-width: 2; }
+.fiche-grade-atteint, .fiche-grade-actuel { fill: var(--terre); }
+.fiche-grade-actuel { stroke: var(--texte); stroke-width: 2.5; }
+.fiche-grade-futur { fill: var(--carte); stroke: var(--trait); stroke-width: 1.5; }
+.fiche-chiffres { align-items: start; }
+.fiche-jours { display: block; width: 100%; max-width: 160px; height: auto; margin-top: 6px; }
+.fiche-jour { fill: var(--terre); }
+.fiche-jour-actuel { fill: var(--texte); }
+.fiche-jours-base { stroke: var(--trait); stroke-width: 1; }
+.fiche-jours-objectif { stroke: var(--discret); stroke-width: 1; stroke-dasharray: 3 2; }
+.fiche-legende { font-size: 12px; }
+.fiche-domaines { display: grid; gap: 6px; width: 100%; margin: 0; padding: 0; list-style: none; text-align: left; }
+.fiche-domaine { display: grid; grid-template-columns: 26px 1fr auto; grid-template-rows: auto 6px; column-gap: 8px; align-items: center; }
+.fiche-domaine .embleme-domaine { grid-row: 1 / 3; }
+.fiche-domaine-nom { font-size: 14px; }
+.fiche-domaine-valeur { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.fiche-barre { grid-column: 2 / 4; height: 6px; border-radius: 3px; background: var(--trait-doux); overflow: hidden; }
+.fiche-barre > span { display: block; height: 100%; width: calc(var(--part) * 100%); background: var(--c); }
+.fiche-medailles { display: block; width: 100%; max-width: 312px; height: auto; }
+.medaille-obtenue { fill: var(--figure); }
+.medaille-filet { fill: none; stroke: var(--terre); stroke-width: 0.6; }
+.medaille-motif { fill: none; stroke: var(--terre); stroke-width: 1.1; stroke-linecap: round; }
+.medaille-a-gagner { fill: none; stroke: var(--discret); stroke-width: 1; stroke-dasharray: 2.5 2; }
+@media (prefers-color-scheme: dark) {
+  /* Sur le fond sombre, la médaille noire garde un liseré d'argile pour rester visible */
+  :root:not([data-theme="light"]) .medaille-obtenue { stroke: var(--terre); stroke-width: 1; }
+}
+:root[data-theme="dark"] .medaille-obtenue { stroke: var(--terre); stroke-width: 1; }
 .pied-fiche .bouton.large { margin-top: 10px; }
 
 /* Accueil du nouveau visiteur (profil.js) */
