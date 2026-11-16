@@ -184,11 +184,15 @@ function insigne(rang, taille) {
   return s;
 }
 
-// Personnage : figure au trait de l'emblème qui s'équipe à chaque grade, tient l'objet de son meilleur domaine et en
-// prend la couleur ; autour, six arcs : la maîtrise de chaque domaine. Forme (humain, hibou, chat, robot), genre et
-// équipement se choisissent dans les réglages (clé « profil », champ personnage) ; les formes et les équipements autres
-// que les premiers se gagnent par une distinction difficile. Les tracés sont des chemins SVG : le même dessin sert à la
-// page (svg()) et à l'image à partager (Path2D sur un canvas). Coordonnées dans un carré de 120.
+// Personnage : figure noire sur médaillon de terre cuite, à la manière des vases grecs (silhouette pleine, détails
+// incisés couleur argile) : une silhouette reste lisible jusqu'à 26 px, là où l'ancienne figure au trait se perdait.
+// Le costume dit le rôle du grade (tunique du novice, casque du stratège, lyre du virtuose…) ; un médaillon noir, en bas
+// à gauche, porte l'objet du meilleur domaine, cerné de sa couleur ; autour, six arcs : la maîtrise de chaque domaine.
+// Forme (humain, hibou, chat, robot), genre et équipement se choisissent dans les réglages (clé « profil », champ
+// personnage) ; les formes et les équipements autres que les premiers se gagnent par une distinction difficile.
+// Deux cadrages du même dessin : le buste (avatars, profil) et le personnage en pied (fiche à partager, réglages). Les
+// tracés sont des chemins SVG : le même dessin sert à la page (svg()) et à l'image à partager (Path2D sur un canvas).
+// Coordonnées : la figure dans une grille de 120, tournée vers la droite ; le médaillon dans un carré de 120.
 const DOMAINES_PERSONNAGE = {
   monde: ["#0e7c86", "un globe", "M-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0M-6 0h12M0-6c-3 3-3 9 0 12c3-3 3-9 0-12"],
   confiance: ["#c23b5a", "une jauge", "M-7 3a7 7 0 0 1 14 0M0 3l4-6"],
@@ -197,45 +201,159 @@ const DOMAINES_PERSONNAGE = {
   debattre: ["#c2412d", "deux bulles de dialogue", "M-7-6h8v6h-5l-3 3zM1-1h6v6h-1v3l-3-3h-2z"],
   notions: ["#a77a12", "un livre ouvert", "M0-4q-3-2-7-1v10q4-1 7 1zM0-4q3-2 7-1v10q-4-1-7 1z"]
 };
-// Formes : [id, nom, distinction qui la débloque (null : d'emblée), tracé du corps (m : 1 mains ouvertes, -1 rentrées),
-//   décalage des ancrages { tete, mainD, mainG, corps } par rapport à l'humain]
+// Couleurs du vase, les mêmes dans les deux thèmes (comme une image) ; reprises par --terre et --figure dans style.css.
+// Contraste figure / argile : 4,9:1.
+const TERRE_PERSONNAGE = "#c8693a", FIGURE_PERSONNAGE = "#1b120c";
+
+// Outils de tracé, purs (appelés au chargement : rien d'app.js). Nombres arrondis au dixième, pour des chemins courts.
+const arrondiPersonnage = v => Math.round(v * 10) / 10;
+// Feuille en amande : de la base (x, y) vers l'angle donné (degrés, 0 = droite, sens des aiguilles), pointe arrondie
+function feuillePersonnage(x, y, angle, longueur, largeur) {
+  const a = angle * Math.PI / 180, [ux, uy] = [Math.cos(a), Math.sin(a)], [nx, ny] = [-uy, ux];
+  const [mx, my] = [x + ux * longueur * 0.5, y + uy * longueur * 0.5], [tx, ty] = [x + ux * longueur, y + uy * longueur];
+  const p = (...v) => v.map(arrondiPersonnage).join(" ");
+  return "M" + p(x, y) + "Q" + p(mx + nx * largeur, my + ny * largeur, tx, ty) + "Q" + p(mx - nx * largeur, my - ny * largeur, x, y) + "Z";
+}
+// Rangée de petits ronds (bordures de vêtements, de bouclier) : un cercle de rayon r à chaque point
+const pointsPersonnage = (points, r) => points.map(([x, y]) => "M" + arrondiPersonnage(x - r) + " " + arrondiPersonnage(y) + "a" + r + " " + r + " 0 1 0 " + 2 * r + " 0a" + r + " " + r + " 0 1 0 " + -2 * r + " 0").join("");
+// Points répartis sur un arc de cercle (centre, rayon, angles en degrés)
+const surArcPersonnage = (cx, cy, r, de, a, n) => Array.from({ length: n }, (_, k) => { const t = (de + (a - de) * k / (n - 1)) * Math.PI / 180; return [cx + r * Math.cos(t), cy + r * Math.sin(t)]; });
+
+// Un calque : [genre, tracé, épaisseur, ancrage]. Genres : « plein » (silhouette), « epais » (trait noir : bras, hampes),
+// « incise » (détail gravé, couleur argile). Ancrages : « tete », « main » (main droite), « corps » ; décalés par forme.
+const calquePersonnage = (genre, d, epaisseur, ancrage) => [genre, d, epaisseur || 0, ancrage || ""];
+// La tête est presque un cercle de centre (60.5, 21) et de rayon 9.6 : couronnes et diadèmes s'y posent
+const TETE_CENTRE_PERSONNAGE = [60.5, 21, 9.6];
+const BRAS_PERSONNAGE = "M71 40L77 55L84 52";
+const ROBES_PERSONNAGE = {
+  // Tunique courte : jambes, ourlet bordé de points, encolure, ceinture double, manche
+  courte: [calquePersonnage("epais", "M55 72L53 102M67 72L70 102", 4.5), calquePersonnage("plein", "M56 36H67Q73 37 75 43L76 74H47L48 43Q50 37 56 36Z"),
+    calquePersonnage("incise", "M48.5 57H75M48.5 59H75M55 61L54 69M61.5 61V69M68 61L69 69M47.3 70H75.7M57 37.6Q62 40.2 67 37.6M71.5 38Q74.5 41 74 45", 1),
+    calquePersonnage("incise", pointsPersonnage(Array.from({ length: 9 }, (_, k) => [49.5 + k * 3.1, 72]), 0.55), 0.8)],
+  // Robe longue : plis, ourlet à double trait et rangée de points
+  longue: [calquePersonnage("plein", "M56 36H67Q73 37 75 43L78 103H45L48 43Q50 37 56 36Z"),
+    calquePersonnage("incise", "M48.5 57H75.5M48.5 59H75.5M55 61L52.5 94M61.5 61V94M68 61L70.5 94M58 64L57 94M65 64L66 94M45.8 95.5H77.4M45.6 100H77.6M57 37.6Q62 40.2 67 37.6M71.5 38Q74.5 41 74 45", 1),
+    calquePersonnage("incise", pointsPersonnage(Array.from({ length: 10 }, (_, k) => [48 + k * 3.2, 97.8]), 0.55), 0.8)]
+};
+// Pieds et lanières des sandales ; puis bras gauche et bras droit, dessinés après la robe (les avant-bras dépassent)
+const PIEDS_PERSONNAGE = [calquePersonnage("plein", "M48 101H56L59 106H46ZM66 101H73L79 106H66Z"), calquePersonnage("incise", "M50.5 104.5L53 101.5M69 104.5L71.5 101.5", 0.8)];
+const DRAPE_PERSONNAGE = [calquePersonnage("plein", "M50 40Q42 60 46 90L51 90Q47 62 55 42Z"),
+  calquePersonnage("incise", "M50 44Q62 53 76 46M49.5 47Q62 56.5 76.5 49M49 55Q62 66 77 58", 1),
+  calquePersonnage("incise", pointsPersonnage([0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map(t => [(1 - t) ** 2 * 49.5 + 2 * t * (1 - t) * 62 + t * t * 76.8, (1 - t) ** 2 * 51 + 2 * t * (1 - t) * 61 + t * t * 53.5]), 0.5), 0.8)];
+// Point à l'angle a (degrés) et au rayon rr autour du centre de la tête, et arc de cercle entre deux angles
+const ptTetePersonnage = (a, rr) => [TETE_CENTRE_PERSONNAGE[0] + rr * Math.cos(a * Math.PI / 180), TETE_CENTRE_PERSONNAGE[1] + rr * Math.sin(a * Math.PI / 180)].map(arrondiPersonnage).join(" ");
+const arcTetePersonnage = (de, a, rr) => "A" + rr + " " + rr + " 0 0 " + (a > de ? 1 : 0) + " " + ptTetePersonnage(a, rr);
+// Bandeau plein qui épouse le crâne entre deux angles : la base commune des parures de tête (comme la calotte du
+// casque, il fait corps avec la silhouette au lieu d'y flotter)
+const bandeauTetePersonnage = (de, a, interieur, exterieur) => "M" + ptTetePersonnage(de, interieur) + arcTetePersonnage(de, a, interieur)
+  + "L" + ptTetePersonnage(a, exterieur) + arcTetePersonnage(a, de, exterieur) + "Z";
+// Diadème (stéphané) : un croissant plein qui s'élève au-dessus des cheveux, séparé d'eux par un seul trait gravé
+const DIADEME_PERSONNAGE = (() => {
+  const r = TETE_CENTRE_PERSONNAGE[2];
+  return [calquePersonnage("plein", "M" + ptTetePersonnage(-158, r) + "Q" + ptTetePersonnage(-104, r + 19) + " " + ptTetePersonnage(-50, r) + arcTetePersonnage(-50, -158, r) + "Z", 0, "tete"),
+    calquePersonnage("incise", "M" + ptTetePersonnage(-146, r + 2.6) + arcTetePersonnage(-146, -62, r + 2.6), 0.9, "tete")];
+})();
+// Couronne de laurier : un bandeau plein et neuf feuilles identiques, régulièrement espacées, toutes inclinées du même
+// angle vers l'arrière : une rangée nette, comme sur une couronne peinte
+const LAURIER_PERSONNAGE = (() => {
+  const r = TETE_CENTRE_PERSONNAGE[2], n = 9, de = -60, a = -168;
+  const feuilles = Array.from({ length: n }, (_, k) => {
+    const angle = de + (a - de) * k / (n - 1);
+    const [x, y] = ptTetePersonnage(angle, r + 1.6).split(" ").map(Number);
+    return feuillePersonnage(x, y, angle - 62, 5.2, 1.35);
+  }).join("");
+  return [calquePersonnage("plein", bandeauTetePersonnage(a - 4, de + 4, r - 0.6, r + 1.9) + feuilles, 0, "tete"),
+    calquePersonnage("incise", "M" + ptTetePersonnage(a + 2, r + 0.6) + arcTetePersonnage(a + 2, de, r + 0.6), 0.8, "tete")];
+})();
+
+// Costume de chaque grade : [description, robe, bras droit, drapé, calques]
+const COSTUMES_PERSONNAGE = [
+  ["une tunique courte", "courte", BRAS_PERSONNAGE, false, []],
+  ["une tablette pour écrire", "longue", BRAS_PERSONNAGE, false, [calquePersonnage("plein", "M82 40H93V52H82Z", 0, "main"),
+    calquePersonnage("incise", "M87.5 41V51M83.5 44H86.5M83.5 47H86.5M89 44H92M89 47H92", 0.9, "main"), calquePersonnage("epais", "M94.5 38L91 47", 1, "main")]],
+  ["la main au menton, l'air de douter", "longue", "M71 40L79 47L72 31", false, []],
+  ["une lampe à huile", "longue", BRAS_PERSONNAGE, false, [
+    calquePersonnage("plein", "M80 50Q88 43 96 49Q90 54 80 50ZM95 48.5L100 46.5L100 49.5ZM100.3 46.5Q97 43 99 39.5Q99.8 41.5 100.6 41.5Q100 38.5 102 36.5Q103.5 41 102.8 43.5Q102.3 46 100.3 46.5Z", 0, "main"),
+    calquePersonnage("incise", "M86 48.5a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0M82.5 50Q88 52.5 93.5 50", 0.8, "main")]],
+  ["un rouleau", "longue", BRAS_PERSONNAGE, false, [calquePersonnage("plein", "M81 47H97V54H81ZM79.5 46.5h3v8h-3zM95.5 46.5h3v8h-3z", 0, "main"),
+    calquePersonnage("incise", "M84.5 49.5H93M84.5 52H91", 0.8, "main")]],
+  ["un casque, une lance et un bouclier", "courte", BRAS_PERSONNAGE, false, [
+    calquePersonnage("epais", "M86.6 14L82.5 106", 2, "main"), calquePersonnage("plein", feuillePersonnage(86.6, 14.5, -88, 12, 2.2) + feuillePersonnage(82.4, 105, 92, 4, 1), 0, "main"),
+    calquePersonnage("incise", "M86.8 13.5L87.1 5", 0.6, "main"),
+    // Casque corinthien : cimier en crinière, calotte, garde-joue et ouverture de l'œil gravés
+    calquePersonnage("plein", "M49 23Q45 6 61 3.5Q72 2.5 75 9Q67 6.5 61 8.5Q53 11.5 53.5 21ZM52 18Q51.5 10.5 60 9.8Q68.5 9.5 70 16L70.5 21H53Z", 0, "tete"),
+    calquePersonnage("incise", "M53 16.5Q61 13.5 70 16.5M64.5 19.5Q62.5 25.5 64.5 31M65 18.5H69M51.5 14Q57 6 66 5.5M53 10.5Q60 4.5 70 6", 0.9, "tete"),
+    calquePersonnage("plein", "M33 62a14 14 0 1 0 28 0a14 14 0 1 0-28 0", 0, "corps"),
+    calquePersonnage("incise", "M35.5 62a11.5 11.5 0 1 0 23 0a11.5 11.5 0 1 0-23 0M43 62a4 4 0 1 0 8 0a4 4 0 1 0-8 0", 1, "corps"),
+    calquePersonnage("incise", pointsPersonnage(surArcPersonnage(47, 62, 8, 0, 337.5, 16), 0.5), 0.8, "corps")]],
+  ["un manteau drapé et un bâton", "longue", BRAS_PERSONNAGE, true, [calquePersonnage("epais", "M87 30L80 108", 2.2, "main"),
+    calquePersonnage("plein", "M85.6 28.5Q87.5 25 90 26.5Q88.5 27.5 88.5 30Z", 0, "main")]],
+  ["une lyre", "longue", BRAS_PERSONNAGE, true, [calquePersonnage("epais", "M81.5 54Q75 44 81 35M90.5 54Q97 44 91 35M79.5 37H92.5", 2, "main"),
+    calquePersonnage("epais", "M84 37V55M86 37V55M88 37V55", 0.7, "main"), calquePersonnage("plein", "M79 54H93L92 59Q86 64 80 59Z", 0, "main"),
+    calquePersonnage("incise", "M81.5 57.5Q86 61 90.5 57.5", 0.8, "main")]],
+  ["un sceptre et un diadème", "longue", BRAS_PERSONNAGE, true, [calquePersonnage("epais", "M86 26L81 108", 2.2, "main"),
+    // Sceptre à fleur de lotus : un bouton et deux pétales
+    calquePersonnage("plein", "M86.3 26Q82.5 23 83.3 19Q85 21.5 86.4 21Q87.8 21.5 89.5 19Q90.2 23 86.3 26ZM85.2 20.5Q85 16.5 86.8 14.5Q88.3 16.5 87.7 20.5Z", 0, "main"),
+    ...DIADEME_PERSONNAGE]],
+  ["un flambeau et un diadème", "longue", "M71 40L79 37L83.5 31", true, [calquePersonnage("epais", "M82.5 34L86.8 22", 3.4, "main"),
+    // Coupe du flambeau et flamme à trois langues (assez basse pour rester dans le buste)
+    calquePersonnage("plein", "M83.5 23.5L90 25L90.5 21.5L84.5 20ZM87.2 21Q82.8 18 85 13Q86 15.5 87.5 16Q86.8 12 89.5 9.5Q90.3 13.5 92 15Q92.6 19.5 87.2 21Z", 0, "main"),
+    ...DIADEME_PERSONNAGE]]
+];
+
+// Têtes de profil. La tête humaine change de coiffure selon le genre ; oreille et mèches gravées.
+const TETE_HUMAINE = "M57 37V34C52 30 51 21 55 15C59 10 66 10 68 15L69 19L72.5 23.5L69.5 24.5L70 26.5L69 27.5L69.5 30C67 32.5 65 32.5 63.5 32L63.5 37Z";
+const OEIL_PERSONNAGE = calquePersonnage("incise", "M64.9 19.2a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0", 0.9);
+// Cheveux : une masse pleine un peu plus grosse que le crâne (comme la calotte du casque), et un seul trait gravé, la
+// limite des cheveux, qui passe derrière l'œil et la tempe : rien ne traverse le visage
+const CHEVEUX_PERSONNAGE = [calquePersonnage("plein", "M67.8 14.5Q66 9.2 59.5 9.4Q51.5 10 50.8 19Q50.6 27 55.5 31.5L57.5 29Q60.5 23 60.8 19Q61.3 15.5 67.8 14.5Z"),
+  calquePersonnage("incise", "M67.4 14.6Q61.6 15.5 60.9 19.2Q60.6 23.4 57.3 29", 0.9)];
+// Formes : [id, nom, distinction qui la débloque (null : d'emblée), calques propres, porte robe et costume,
+//   décalage des ancrages { tete, main, corps } par rapport à l'humain, cadrages { buste, pied } : [x, y, côté]]
 const FORMES_PERSONNAGE = [
-  ["humain", "Humain", null, m => "M70 34a10 10 0 1 0-20 0a10 10 0 1 0 20 0M60 44v34M60 78l-8 18M60 78l8 18M42 56h36"
-    + "M42 56l" + (-4 * m) + "-4M42 56l" + (-4 * m) + " 4M78 56l" + (4 * m) + "-4M78 56l" + (4 * m) + " 4", {}],
-  // Les aigrettes du hibou sont les ailettes de l'emblème
-  ["hibou", "Hibou", "bien-etalonne", m => "M60 34c12 0 20 12 20 28s-8 28-20 28-20-12-20-28 8-28 20-28z"
-    + "M50 38l" + (-3 * m) + "-8M50 38l" + (3 * m) + "-8M70 38l" + (-3 * m) + "-8M70 38l" + (3 * m) + "-8"
-    + "M52 44a4 4 0 1 0 8 0a4 4 0 1 0-8 0M60 44a4 4 0 1 0 8 0a4 4 0 1 0-8 0M58 50l2 3 2-3"
-    + "M41 58q-7 12 3 22M79 58q7 12-3 22M54 90l-3 6M54 90l3 6M66 90l-3 6M66 90l3 6", { tete: [0, 10], mainD: [0, 16], mainG: [2, 8], corps: [0, 12] }],
-  // Les moustaches du chat aussi
-  ["chat", "Chat", "oreille-fine", m => "M70 34a10 10 0 1 0-20 0a10 10 0 1 0 20 0M52 28l-6-7 9 2M68 28l6-7-9 2"
-    + "M49 37h-8M49 37l" + (-4 * m) + "-3M71 37h8M71 37l" + (4 * m) + "-3"
-    + "M60 44v34M60 78l-8 18M60 78l8 18M42 56h36M60 76q16 2 14-14", {}],
-  ["robot", "Robot", "bayesien", m => "M50 24h20v20h-20zM60 24v-5M58 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0M51 46h18v28h-18z"
-    + "M42 56h9M69 56h9M42 56l" + (-4 * m) + "-4M42 56l" + (-4 * m) + " 4M78 56l" + (4 * m) + "-4M78 56l" + (4 * m) + " 4"
-    + "M55 74v20M65 74v20M51 94h8M61 94h8", {}]
+  ["humain", "Humain", null, [calquePersonnage("plein", TETE_HUMAINE), OEIL_PERSONNAGE], true, {}, { buste: [38, 0, 62], pied: [4, -4, 112] }],
+  // La chouette d'Athéna, motif des vases et des monnaies : pas de robe, l'objet tenu au bout de l'aile
+  ["hibou", "Hibou", "bien-etalonne", [
+    calquePersonnage("plein", "M60 30C75 30 80 46 80 64C80 86 72 102 60 104C48 102 40 86 40 64C40 46 45 30 60 30ZM45 35L43 25L53 31ZM75 35L77 25L67 31Z"),
+    calquePersonnage("epais", "M53 103L50 108M55 103V108M65 103V108M67 103L70 108", 1.6),
+    calquePersonnage("incise", "M47 44a5 5 0 1 0 10 0a5 5 0 1 0-10 0M63 44a5 5 0 1 0 10 0a5 5 0 1 0-10 0M51 44a1 1 0 1 0 2 0a1 1 0 1 0-2 0M67 44a1 1 0 1 0 2 0a1 1 0 1 0-2 0M58 50L60 55L62 50"
+      + "M45.5 37Q52 34.5 58 39M74.5 37Q68 34.5 62 39M43 56Q47 80 54 93M77 56Q73 80 66 93M46 60Q49 76 54 86M74 60Q71 76 66 86"
+      + "M51 68l4.5 3.5 4.5-3.5 4.5 3.5 4.5-3.5M51 77l4.5 3.5 4.5-3.5 4.5 3.5 4.5-3.5M53 86l3.5 3 3.5-3 3.5 3 3.5-3", 1),
+    calquePersonnage("incise", pointsPersonnage([[55, 62], [60, 61], [65, 62]], 0.6), 0.8)],
+    false, { tete: [-0.5, 19], main: [-1, 21], corps: [-1.5, 20] }, { buste: [30, 20, 72], pied: [4, 6, 112] }],
+  ["chat", "Chat", "oreille-fine", [
+    calquePersonnage("epais", "M47 97Q34 95 38 80Q41 72 36 68", 3),
+    calquePersonnage("plein", "M57 37V35C52 31 51 22 55 16L54 7L60.5 12.5Q63 11.5 65.5 12.5L68 6L68.5 15.5C71 18 73 21 73 24L70 26.5C68 30 65 32 63.5 32.5L63.5 37Z"),
+    calquePersonnage("epais", "M71 24.5L80 22M71 25.5L80 26.5M70.5 26.5L78 30", 0.7),
+    calquePersonnage("incise", "M64 19Q66 17.5 68 19Q66 20.5 64 19ZM56 11L58.5 14M66.6 9.5L66.3 13.5M56 22Q58 24 57 27M58.5 21Q60.5 23.5 59.5 26.5", 0.9)],
+    true, {}, { buste: [38, 0, 62], pied: [4, -4, 112] }],
+  // Un automate de bronze, comme ceux que décrivent les mythes grecs : rivets et plaques gravés
+  ["robot", "Robot", "bayesien", [
+    calquePersonnage("epais", "M62 11V5", 1.5), calquePersonnage("plein", "M53 11H71V31H66V37H58V31H53ZM59.8 4a2.2 2.2 0 1 0 4.4 0a2.2 2.2 0 1 0-4.4 0"),
+    calquePersonnage("incise", "M64 17H69V21H64ZM64 26H69M64.5 28H68.5M55 21a2 2 0 1 0 4 0a2 2 0 1 0-4 0M53.5 14H70.5M58.5 33.5H65.5", 0.9),
+    calquePersonnage("incise", pointsPersonnage([[55, 12.5], [69, 12.5], [55, 29.5], [69, 29.5]], 0.5), 0.8)],
+    true, {}, { buste: [38, 0, 62], pied: [4, -4, 112] }]
 ];
-const GENRES_PERSONNAGE = [["neutre", "Neutre", ""], ["feminin", "Féminin", "M51 31q1-10 9-8q8-2 9 8M50 31q-2 10 2 14M70 31q2 10-2 14M60 46l-9 30h18z"],
-  ["masculin", "Masculin", "M51 30q4-9 9-6q5-3 9 6M51 30l3-3M69 30l-3-3"]];
-// Équipements : [id, nom, distinction, ancrage, tracé]
+const GENRES_PERSONNAGE = [["neutre", "Neutre", CHEVEUX_PERSONNAGE],
+  // Féminin : les cheveux et un chignon (krobylos) à l'arrière, séparé d'eux par un trait
+  ["feminin", "Féminin", [...CHEVEUX_PERSONNAGE, calquePersonnage("plein", "M45.6 17.5a5 5 0 1 0 10 0a5 5 0 1 0-10 0"),
+    calquePersonnage("incise", "M52.6 12.9Q55.3 17.5 52.6 22.1", 0.9)]],
+  // Masculin : les cheveux et une barbe en pointe, deux traits gravés
+  ["masculin", "Masculin", [...CHEVEUX_PERSONNAGE, calquePersonnage("plein", "M63 27L69.5 28.5L71 33Q67 36 62 33Z"),
+    calquePersonnage("incise", "M65 30L65.8 33.6M67.4 30.3L68 33.4", 0.8)]]];
+// Équipements : [id, nom, distinction, calques]
 const EQUIPEMENTS_PERSONNAGE = [
-  ["", "Aucun", null, "corps", ""],
-  ["echarpe", "Une écharpe", "assidu", "corps", "M52 45q8 5 16 0M64 47l4 10M64 47l-1 10"],
-  ["plume", "Une plume", "fourchettes", "tete", "M68 27q10-10 12-21q-9 5-12 21M71 19l4-2M73 14l4-1"],
-  ["medaille", "Une médaille", "polyvalent", "corps", "M56 46l4 7 4-7M57 57a3 3 0 1 0 6 0a3 3 0 1 0-6 0"],
-  ["laurier", "Une couronne de laurier", "specialiste", "tete", "M50 31q-2 10 7 14M70 31q2 10-7 14M49 34l-3-1M49 38h-3M51 42l-3 1M71 34l3-1M71 38h3M69 42l3 1"]
+  ["", "Aucun", null, []],
+  ["echarpe", "Une écharpe", "assidu", [calquePersonnage("plein", "M55 35Q48 38 42 47L45.5 48.5Q49 42 57 39Z", 0, "corps"),
+    calquePersonnage("incise", "M56 37Q62 40 68 36.5M54 38.5Q49 41.5 46 46", 0.9, "corps")]],
+  ["plume", "Une plume", "fourchettes", [calquePersonnage("plein", "M58 12Q60 -1 72 -3Q66 4 62 12Z", 0, "tete"),
+    calquePersonnage("incise", "M60.5 11Q63 3 70 -1M62 6.5L64.5 6M63.5 3.5L66 3.3", 0.8, "tete")]],
+  ["medaille", "Une médaille", "polyvalent", [calquePersonnage("incise", "M58 46a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M60.7 46a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0-1.6 0M58.5 37.5L61.5 42.5L64.5 37.5", 1, "corps")]],
+  ["laurier", "Une couronne de laurier", "specialiste", LAURIER_PERSONNAGE]
 ];
-// [rang minimal, ancrage, tracé, plein, description]
-const ATTRIBUTS_PERSONNAGE = [
-  [2, "tete", "M61 29.5l5-1.5", false, "un sourcil levé"],
-  [3, "mainD", "M85 50a5 5 0 1 0 0.1 0M81.5 53.5l-3.5 3.5", false, "une loupe"],
-  [4, "tete", "M54.6 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0M60.2 34a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0-5.2 0", false, "des lunettes"],
-  [5, "tete", "M47 24.5h26M52 24.5v-7h16v7", false, "un chapeau"],
-  [6, "corps", "M55 47l-13 31M65 47l13 31", false, "une cape"],
-  [7, "tete", "M60 4l1.6 3.3 3.6.5-2.6 2.5.6 3.6L60 12.2 56.8 13.9l.6-3.6-2.6-2.5 3.6-.5z", true, "une étoile"],
-  [8, "pieds", "M42 101h36M42 101l-4-4M42 101l-4 4M78 101l4-4M78 101l4 4", false, "un socle"],
-  [9, "tete", "M60 9v-4M77 17l3-3M43 17l-3-3M84 34h4M36 34h-4", false, "des rayons"]
-];
+// Exergue : la bande noire sous les pieds, comme au fond des coupes peintes (cadrage en pied), bordée de points
+const EXERGUE_PERSONNAGE = [calquePersonnage("plein", "M-20 108H140V160H-20Z"), calquePersonnage("incise", "M-20 110H140", 0.8),
+  calquePersonnage("incise", pointsPersonnage(Array.from({ length: 30 }, (_, k) => [-14 + k * 5.4, 113]), 0.6), 0.8)];
 
 // Choix enregistré, ramené aux valeurs permises et débloquées (une donnée importée ou une distinction perdue ne casse rien)
 function choixPersonnage() {
@@ -246,37 +364,61 @@ function choixPersonnage() {
     equipement: permis(EQUIPEMENTS_PERSONNAGE, c.equipement), obtenues };
 }
 
-// Le dessin, indépendant du support : couleur, valeurs des domaines, traits [tracé, plein, dx, dy], description
-function dessinPersonnage(etat) {
+// Le dessin, indépendant du support : couleur et objet du meilleur domaine, valeurs des domaines, calques
+// [genre, tracé, épaisseur, dx, dy], cadrage (translation et échelle de la figure dans le médaillon), description.
+// pied : vrai pour le personnage entier, faux pour le buste ; rayon : celui du médaillon (49 avec les arcs, sinon 58)
+function dessinPersonnage(etat, pied, rayon) {
   const rang = etat ? gradeDe(etat.meilleure || 0).rang : 0;
   const dernier = etat ? Object.entries(etat.jours || {}).sort((a, b) => b[0] - a[0])[0] : null;
   const valeurs = DOMAINES.map(([d], i) => [d, dernier ? dernier[1][i + 1] || 0 : 0]);
   const [fort, vfort] = valeurs.reduce((a, b) => b[1] > a[1] ? b : a, ["", 0]);
   const objet = vfort > 0 ? DOMAINES_PERSONNAGE[fort] : null;
   const { forme, genre, equipement } = etat ? choixPersonnage() : { forme: FORMES_PERSONNAGE[0], genre: GENRES_PERSONNAGE[0], equipement: EQUIPEMENTS_PERSONNAGE[0] };
-  const decalage = ancrage => (forme[4][ancrage] || [0, 0]);
-  // Mains : ailettes rentrées tant qu'on se laisse prendre (novice), ouvertes ensuite, comme les deux traits de l'emblème
-  const traits = [[forme[3](rang ? 1 : -1), false, 0, 0]];
-  if (forme[0] !== "hibou") traits.push(["M56 34a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0M61.6 34a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0-2.4 0", true, 0, 0]);
-  if (forme[0] === "humain" && genre[2]) traits.push([genre[2], false, 0, 0]);
-  const portes = ATTRIBUTS_PERSONNAGE.filter(([r]) => rang >= r);
-  portes.forEach(([, ancrage, d, plein]) => traits.push([d, plein, ...decalage(ancrage)]));
-  if (equipement[4]) traits.push([equipement[4], false, ...decalage(equipement[3])]);
-  if (objet) traits.push([objet[2], false, 35 + decalage("mainG")[0], 68 + decalage("mainG")[1]]);
-  const elements = [...portes.map(a => T(a[4])), ...(equipement[4] ? [T(equipement[1]).toLowerCase()] : []), ...(objet ? [T(objet[1])] : [])];
-  const description = T("Votre personnage ({0}), grade {1}", T(forme[1]).toLowerCase(), T(GRADES[rang][1])) + (elements.length ? " : " + elements.join(", ") : "") + ". "
+  const [, nomForme, , calquesForme, habille, decalages, cadrages] = forme;
+  const [role, robe, bras, drape, calquesRole] = COSTUMES_PERSONNAGE[rang];
+  const tenant = calquesRole.some(c => c[3] === "main");
+  // Ordre de peinture : le drapé derrière, la robe, la tête, les bras, puis les accessoires (le bouclier devant tout)
+  const calques = [];
+  if (pied) calques.push(...EXERGUE_PERSONNAGE);
+  if (habille) {
+    if (drape) calques.push(...DRAPE_PERSONNAGE);
+    calques.push(...ROBES_PERSONNAGE[robe], ...PIEDS_PERSONNAGE);
+    calques.push(...calquesForme);
+    // Sous le casque du stratège, les cheveux ne se voient pas (leur trait gravé passerait sur la joue) ; la barbe, si
+    if (forme[0] === "humain") calques.push(...genre[2].filter(c => rang !== 5 || !CHEVEUX_PERSONNAGE.includes(c)));
+    calques.push(calquePersonnage("epais", "M52 40L47 55L50 66", 5), calquePersonnage("epais", bras, 5));
+  } else {
+    calques.push(...calquesForme);
+    // Sans bras (hibou) : le bout de l'aile tendu vers l'objet tenu, ses pennes gravées
+    if (tenant) calques.push(calquePersonnage("plein", "M76.5 57Q85 63 87 73L83 74.5Q80 67 75 64Z"), calquePersonnage("incise", "M78.5 62L81 60.5M80.5 65.5L83.5 64M82 69L85 68", 0.8));
+  }
+  // Le casque remplace la coiffure : il est dessiné par-dessus, les autres accessoires de tête aussi
+  calques.push(...calquesRole, ...equipement[3]);
+  const traits = calques.map(([g, d, e, ancrage]) => [g, d, e, ...((ancrage && decalages[ancrage]) || [0, 0])]);
+  // Cadrage : le carré choisi de la grille de la figure remplit le médaillon ; le buste va jusqu'à la main droite, pour
+  // que l'objet du rôle reste visible (le buste un peu plus que le pied)
+  const [x0, y0, cote] = cadrages[pied ? "pied" : "buste"];
+  const echelle = 2 * rayon * (pied ? 0.94 : 1) / cote;
+  const cadrage = [60 - echelle * (x0 + cote / 2), 60 - echelle * (y0 + cote / 2) + (pied ? 0 : 4), echelle];
+  const elements = [T(role), ...(equipement[3].length ? [T(equipement[1]).toLowerCase()] : []), ...(objet ? [T("l'emblème de son meilleur domaine, {0} : {1}", T(DOMAINES.find(([d]) => d === fort)[1]), T(objet[1]))] : [])];
+  const description = T("Votre personnage ({0}), grade {1}", T(nomForme).toLowerCase(), T(GRADES[rang][1])) + " : " + elements.join(", ") + ". "
     + T("Maîtrise par domaine : {0}.", DOMAINES.map(([, nom], i) => T(nom) + " " + valeurs[i][1]).join(", "));
-  return { couleur: objet ? objet[0] : null, valeurs, traits, description };
+  return { couleur: objet ? objet[0] : null, objet, valeurs, traits, cadrage, description };
 }
 
 // Arc d'un domaine : 54° (6° d'écart), du haut dans le sens des aiguilles, rayon 56 autour du centre (60, 60)
 const anglesArcPersonnage = i => [(-90 + i * 60 + 3) * Math.PI / 180, (-90 + i * 60 + 57) * Math.PI / 180];
+// Médaillon de l'objet du domaine, en bas à gauche (à droite, la main tient l'objet du rôle) : seulement à partir de 64 px (plus petit, il ne se lirait pas)
+const MEDAILLON_OBJET = [32, 88, 11];
+// Chaque portrait a son masque : identifiant unique dans la page
+let numeroPortrait = 0;
 
-function personnage(etat, taille, anneauDomaines) {
-  const p = dessinPersonnage(etat);
+// taille : en pixels ; anneauDomaines : les six arcs autour ; pied : le personnage entier au lieu du buste
+function personnage(etat, taille, anneauDomaines, pied) {
+  const rayon = anneauDomaines ? 49 : 58;
+  const p = dessinPersonnage(etat, pied, rayon);
   const s = svg("svg", { viewBox: "0 0 120 120", class: "blason portrait", width: taille, height: taille, "aria-hidden": "true" });
   s.style.setProperty("--c", p.couleur || "var(--accent)");
-  s.appendChild(svg("circle", { cx: 60, cy: 60, r: anneauDomaines ? 49 : 58, class: "blason-fond" }));
   if (anneauDomaines) p.valeurs.forEach(([d, v], i) => {
     const [a0, a1] = anglesArcPersonnage(i);
     const d0 = "M" + (60 + 56 * Math.cos(a0)).toFixed(2) + " " + (60 + 56 * Math.sin(a0)).toFixed(2) + "A56 56 0 0 1 " + (60 + 56 * Math.cos(a1)).toFixed(2) + " " + (60 + 56 * Math.sin(a1)).toFixed(2);
@@ -288,7 +430,23 @@ function personnage(etat, taille, anneauDomaines) {
     arc.appendChild(nom);
     if (v > 0) s.appendChild(arc);
   });
-  p.traits.forEach(([d, plein, dx, dy]) => s.appendChild(svg("path", { d, class: plein ? "portrait-plein" : "blason-trait", ...(dx || dy ? { transform: "translate(" + dx + " " + dy + ")" } : {}) })));
+  const id = "portrait-masque-" + (++numeroPortrait);
+  const masque = svg("clipPath", { id });
+  masque.appendChild(svg("circle", { cx: 60, cy: 60, r: rayon }));
+  s.append(masque, svg("circle", { cx: 60, cy: 60, r: rayon, class: "medaillon-fond" }));
+  const [tx, ty, k] = p.cadrage;
+  const cadre = svg("g", { "clip-path": "url(#" + id + ")" });
+  const figure = svg("g", { transform: "translate(" + tx.toFixed(2) + " " + ty.toFixed(2) + ") scale(" + k.toFixed(4) + ")" });
+  p.traits.forEach(([g, d, e, dx, dy]) => figure.appendChild(svg("path", { d, class: "figure-" + g, ...(e ? { "stroke-width": e } : {}),
+    ...(dx || dy ? { transform: "translate(" + dx + " " + dy + ")" } : {}) })));
+  cadre.appendChild(figure);
+  // Bord du médaillon et filet intérieur, comme le cadre d'un médaillon de coupe
+  s.append(cadre, svg("circle", { cx: 60, cy: 60, r: rayon - 2.6, class: "medaillon-filet" }), svg("circle", { cx: 60, cy: 60, r: rayon, class: "medaillon-bord" }));
+  if (p.objet && taille >= 64) {
+    const [cx, cy, r] = MEDAILLON_OBJET;
+    s.append(svg("circle", { cx, cy, r: r + 1.5, class: "medaillon-objet-bord" }), svg("circle", { cx, cy, r, class: "medaillon-objet" }),
+      svg("path", { d: p.objet[2], class: "medaillon-objet-trait", transform: "translate(" + cx + " " + cy + ")" }));
+  }
   if (anneauDomaines) {
     s.setAttribute("role", "img");
     s.removeAttribute("aria-hidden");
@@ -297,31 +455,47 @@ function personnage(etat, taille, anneauDomaines) {
   return s;
 }
 
-// Le même personnage sur l'image à partager : (x, y) coin haut gauche, cote en pixels
-function dessinerPersonnageCanvas(ctx, etat, x, y, cote) {
-  const p = dessinPersonnage(etat), couleur = p.couleur || "#1d4f91";
-  // Fond : 18 % de la couleur sur le papier, comme .blason-fond
-  const melange = parseInt(couleur.slice(1), 16), papier = [0xff, 0xfe, 0xfb];
-  const fond = [16, 8, 0].map((dec, k) => Math.round(((melange >> dec) & 255) * 0.18 + papier[k] * 0.82));
+// Le même personnage sur l'image à partager : (x, y) coin haut gauche, cote en pixels ; toujours avec les arcs
+function dessinerPersonnageCanvas(ctx, etat, x, y, cote, pied) {
+  const rayon = 49, p = dessinPersonnage(etat, pied, rayon);
   ctx.save();
   ctx.translate(x, y); ctx.scale(cote / 120, cote / 120);
   ctx.lineCap = "round"; ctx.lineJoin = "round";
-  ctx.beginPath(); ctx.arc(60, 60, 49, 0, 2 * Math.PI);
-  ctx.fillStyle = "rgb(" + fond.join(",") + ")"; ctx.fill(); ctx.strokeStyle = couleur; ctx.lineWidth = 1; ctx.stroke();
   p.valeurs.forEach(([d, v], i) => {
     const [a0, a1] = anglesArcPersonnage(i);
     ctx.lineWidth = 5;
     ctx.beginPath(); ctx.arc(60, 60, 56, a0, a1); ctx.strokeStyle = "#ebe7df"; ctx.stroke();
     if (v > 0) { ctx.beginPath(); ctx.arc(60, 60, 56, a0, a0 + (a1 - a0) * Math.min(1000, v) / 1000); ctx.strokeStyle = DOMAINES_PERSONNAGE[d][0]; ctx.stroke(); }
   });
-  ctx.lineWidth = 2.8; ctx.strokeStyle = couleur; ctx.fillStyle = couleur;
-  p.traits.forEach(([d, plein, dx, dy]) => {
+  ctx.beginPath(); ctx.arc(60, 60, rayon, 0, 2 * Math.PI); ctx.fillStyle = TERRE_PERSONNAGE; ctx.fill();
+  ctx.save();
+  ctx.clip();
+  const [tx, ty, k] = p.cadrage;
+  ctx.translate(tx, ty); ctx.scale(k, k);
+  p.traits.forEach(([g, d, e, dx, dy]) => {
     ctx.save(); ctx.translate(dx, dy);
     const chemin = new Path2D(d);
-    if (plein) ctx.fill(chemin); else ctx.stroke(chemin);
+    if (g === "plein") { ctx.fillStyle = FIGURE_PERSONNAGE; ctx.fill(chemin); }
+    else { ctx.lineWidth = e; ctx.strokeStyle = g === "incise" ? TERRE_PERSONNAGE : FIGURE_PERSONNAGE; ctx.stroke(chemin); }
     ctx.restore();
   });
   ctx.restore();
+  ctx.beginPath(); ctx.arc(60, 60, rayon - 2.6, 0, 2 * Math.PI); ctx.lineWidth = 0.6; ctx.strokeStyle = FIGURE_PERSONNAGE; ctx.stroke();
+  ctx.beginPath(); ctx.arc(60, 60, rayon, 0, 2 * Math.PI); ctx.lineWidth = 1.5; ctx.stroke();
+  if (p.objet) {
+    const [cx, cy, r] = MEDAILLON_OBJET;
+    ctx.beginPath(); ctx.arc(cx, cy, r + 1.5, 0, 2 * Math.PI); ctx.fillStyle = p.objet[0]; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fillStyle = FIGURE_PERSONNAGE; ctx.fill();
+    ctx.save(); ctx.translate(cx, cy); ctx.lineWidth = 1.4; ctx.strokeStyle = TERRE_PERSONNAGE; ctx.stroke(new Path2D(p.objet[2])); ctx.restore();
+  }
+  ctx.restore();
+}
+
+// Frise à méandres (grecque) : une bande de motifs de 10 sur 10, pour la fiche et l'image à partager
+function traceMeandre(longueur) {
+  let d = "M0 0.6H" + longueur + "M0 9.4H" + longueur;
+  for (let x = 1; x + 9 <= longueur; x += 10) d += "M" + x + " 7.6V2.4H" + (x + 7) + "V6H" + (x + 3.5) + "V4.4";
+  return d;
 }
 
 // ===================== Salutations =====================
@@ -468,7 +642,15 @@ function afficherPageProfil(onglet) {
   // En tête : blason, pseudonyme, insigne du grade, maîtrise, jauge vers le grade suivant
   const tete = el("div", "profil-tete");
   const identite = el("div", "profil-identite");
-  identite.append(personnage(etat, 112, true), el("div", "profil-noms"));
+  // Le portrait ouvre la fiche à partager : le personnage en pied, en grand (sa description complète y est lue)
+  const portrait = el("button", "bouton-portrait");
+  portrait.type = "button";
+  portrait.setAttribute("aria-label", T("Ouvrir la fiche de votre personnage"));
+  const dessin = personnage(etat, 112, true);
+  dessin.setAttribute("aria-hidden", "true");
+  portrait.appendChild(dessin);
+  portrait.addEventListener("click", () => ouvrirFichePersonnage(portrait));
+  identite.append(portrait, el("div", "profil-noms"));
   identite.lastChild.append(el("h1", "page-titre" + ((profil.pseudo || "").length > 12 ? " titre-long" : ""), profil.pseudo || T("Votre profil")), el("p", "profil-grade"));
   identite.querySelector(".profil-grade").append(insigne(grade.rang, 26), texteNoeud(" " + T(grade.nom)));
   tete.appendChild(identite);
@@ -480,9 +662,9 @@ function afficherPageProfil(onglet) {
     T("Encore {0} points de maîtrise. Le jeu qui rapporterait le plus : {1}.", grade.suivant[0] - etat.meilleure, jeuConseille(m))));
   zone.appendChild(el("p", "source avertissement-maitrise", "La maîtrise mesure votre réussite dans les jeux de ce site, pas votre intelligence."));
   zone.appendChild(lienVers("#portrait", "Votre portrait : ce que vos réponses révèlent de votre façon de juger →", "lien-discret"));
-  const partage = el("button", "bouton secondaire bouton-partage", "Partager mon grade");
+  const partage = el("button", "bouton secondaire bouton-partage", "Fiche à partager");
   partage.type = "button";
-  partage.addEventListener("click", () => partagerGrade().catch(e => annoncer(e.message)));
+  partage.addEventListener("click", () => ouvrirFichePersonnage(partage));
   zone.appendChild(partage);
 
   const onglets = el("div", "onglets-profil");
@@ -685,7 +867,7 @@ function reglagesPersonnage(p, profil) {
   const choisir = champ => valeur => { ecrire("profil", { ...profil, personnage: { ...(profil.personnage || {}), [champ]: valeur } }); majBoutonProfil(); afficherPageProfil(); };
   p.appendChild(el("p", "consigne", "Votre personnage"));
   const apercu = el("div", "apercu-personnage");
-  apercu.appendChild(personnage(lire("maitrise", { jours: {}, meilleure: 0 }), 96, true));
+  apercu.appendChild(personnage(lire("maitrise", { jours: {}, meilleure: 0 }), 136, true, true));
   p.appendChild(apercu);
   const rangee = (titre, liste, actuel, champ) => {
     const groupe = el("div", "puces puces-personnage");
@@ -906,28 +1088,247 @@ function partagerFiche(type, fiche) {
   });
 }
 
-function partagerGrade() {
+// Ce que montrent la fiche et l'image à partager. Les distinctions secrètes ne sont que comptées : leur nom dévoilerait
+// le secret, et certaines disent une habitude (« Noctambule » : des points gagnés entre minuit et 5 heures).
+function donneesFiche() {
   const { m, etat } = majMaitrise(false);
-  const grade = gradeDe(etat.meilleure || 0);
-  return partagerImage("esprit-critique-grade.png", ctx => {
-    // En haut, le personnage et ses six arcs ; puis le grade, la maîtrise, la toile des domaines
-    dessinerPersonnageCanvas(ctx, etat, 380, 40, 320);
-    ctx.textAlign = "center"; ctx.fillStyle = "#1c1b19";
-    ctx.font = policeTitre(80); ctx.fillText(T(grade.nom), 540, 450);
-    ctx.font = policeTitre(150); ctx.fillText(String(m.globale), 540, 610);
-    ctx.font = policeTexte(36); ctx.fillStyle = "#6b6862"; ctx.fillText(T("de maîtrise, sur 1 000"), 540, 662);
-    // La toile des six domaines, valeurs écrites après chaque nom (écrites au centre, elles se superposeraient)
-    const c = [540, 915], r = 165, n = DOMAINES.length;
-    const pt = (i, v) => [c[0] + r * v / 1000 * Math.cos(-Math.PI / 2 + 2 * Math.PI * i / n), c[1] + r * v / 1000 * Math.sin(-Math.PI / 2 + 2 * Math.PI * i / n)];
-    ctx.strokeStyle = "#dcd7cc"; ctx.lineWidth = 2;
-    [500, 1000].forEach(v => { ctx.beginPath(); DOMAINES.forEach((_, i) => { const [x, y] = pt(i, v); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.stroke(); });
-    ctx.beginPath(); DOMAINES.forEach(([d], i) => { const [x, y] = pt(i, m.domaines[d]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath();
-    ctx.fillStyle = "rgba(29, 79, 145, 0.18)"; ctx.fill(); ctx.strokeStyle = "#1d4f91"; ctx.lineWidth = 5; ctx.stroke();
-    ctx.font = policeTexte(27); ctx.fillStyle = "#1c1b19";
-    DOMAINES.forEach(([d, nom], i) => { const [x, y] = pt(i, 1180); ctx.textAlign = x < c[0] - 20 ? "right" : x > c[0] + 20 ? "left" : "center"; ctx.fillText(T(nom) + " : " + m.domaines[d], x, y + 9); });
-    ctx.textAlign = "left"; ctx.font = "italic 30px Newsreader, Georgia, serif"; ctx.fillStyle = "#6b6862";
-    ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1200);
+  const obtenues = new Set((lire("distinctions", {}) || {}).obtenues || []);
+  const gagnees = DISTINCTIONS.filter(([id]) => obtenues.has(id));
+  const luc = lire("lucidite", {}) || {}, jour = aujourdHui();
+  return { m, etat, grade: gradeDe(etat.meilleure || 0), pseudo: prenomDuJoueur(), lucidite: luc.total || 0,
+    // Points des quatorze derniers jours, du plus ancien à aujourd'hui
+    jours: Array.from({ length: 14 }, (_, k) => ((luc.jours || {})[jour - 13 + k]) || 0), objectif: lire("objectif", 60),
+    // État de chaque distinction, dans l'ordre de la liste : obtenue ou non, secrète ou non
+    medailles: DISTINCTIONS.map(x => [obtenues.has(x[0]), !!x[5]]),
+    noms: gagnees.filter(x => !x[5]).map(x => T(x[1])), secretes: gagnees.filter(x => x[5]).length, nombre: gagnees.length };
+}
+
+// ===================== Graphiques de la fiche, en SVG et sur le canvas =====================
+// Mêmes géométries pour la page et pour l'image : chaque graphique décrit ses formes, deux fonctions les peignent.
+// Échelle des grades : dix pastilles sur un trait ; atteintes en terre cuite, l'actuelle cerclée, les autres vides
+function formesEchelleGrades(rang, largeur) {
+  const pas = (largeur - 24) / (GRADES.length - 1);
+  return GRADES.map((_, k) => ({ x: 12 + k * pas, r: k === rang ? 9 : 6, etat: k < rang ? "atteint" : k === rang ? "actuel" : "futur" }));
+}
+// Barres des quatorze derniers jours : hauteur selon le plus grand de l'objectif et du meilleur jour
+function formesJours(jours, objectif, largeur, hauteur) {
+  const max = Math.max(objectif, ...jours, 1), pas = largeur / jours.length;
+  return { barres: jours.map((v, k) => ({ x: k * pas + pas * 0.15, l: pas * 0.7, h: v ? Math.max(2, v / max * hauteur) : 0, aujourdhui: k === jours.length - 1 })),
+    objectif: hauteur - objectif / max * hauteur };
+}
+// Médailles des distinctions : en rangées de « parRangee »
+function formesMedailles(medailles, parRangee, pas) {
+  return medailles.map(([obtenue, secrete], k) => ({ x: (k % parRangee) * pas + pas / 2, y: Math.floor(k / parRangee) * pas + pas / 2, obtenue, secrete }));
+}
+// Motif gravé d'une médaille obtenue (une couronne) ou secrète (un point d'interrogation), centré sur 0, dans un rayon de 6
+const MOTIF_MEDAILLE = "M-3.6 2.5Q-5.5-2 -1.8-4.6M3.6 2.5Q5.5-2 1.8-4.6M-4.4-0.5l-1.6-.6M-4.2 1.6l-1.7.2M4.4-0.5l1.6-.6M4.2 1.6l1.7.2";
+const MOTIF_SECRET = "M-2.2-1.8Q-2.2-4.3 0-4.3Q2.3-4.3 2.3-2Q2.3-.3 0 .4V1.6M0 3.6V3.7";
+
+// Emblème d'un domaine : médaillon noir, cerné de sa couleur, l'objet gravé (même dessin que sur le personnage)
+function emblemeDomaine(d, taille) {
+  const s = svg("svg", { viewBox: "-13 -13 26 26", class: "portrait embleme-domaine", width: taille, height: taille, "aria-hidden": "true" });
+  s.style.setProperty("--c", DOMAINES_PERSONNAGE[d][0]);
+  s.append(svg("circle", { r: 12.5, class: "medaillon-objet-bord" }), svg("circle", { r: 11, class: "medaillon-objet" }), svg("path", { d: DOMAINES_PERSONNAGE[d][2], class: "medaillon-objet-trait" }));
+  return s;
+}
+
+function svgEchelleGrades(rang) {
+  const s = svg("svg", { viewBox: "0 0 300 24", class: "fiche-echelle", "aria-hidden": "true" });
+  s.appendChild(svg("path", { d: "M12 12H288", class: "fiche-echelle-trait" }));
+  formesEchelleGrades(rang, 300).forEach(f => s.appendChild(svg("circle", { cx: f.x, cy: 12, r: f.r, class: "fiche-grade-" + f.etat })));
+  return s;
+}
+function svgJours(jours, objectif) {
+  const s = svg("svg", { viewBox: "0 0 140 44", class: "fiche-jours", "aria-hidden": "true" });
+  const f = formesJours(jours, objectif, 140, 40);
+  s.appendChild(svg("path", { d: "M0 40.5H140", class: "fiche-jours-base" }));
+  f.barres.forEach(b => { if (b.h) s.appendChild(svg("rect", { x: b.x, y: 40 - b.h, width: b.l, height: b.h, rx: 1, class: b.aujourdhui ? "fiche-jour-actuel" : "fiche-jour" })); });
+  s.appendChild(svg("path", { d: "M0 " + f.objectif + "H140", class: "fiche-jours-objectif" }));
+  return s;
+}
+function svgMedailles(medailles) {
+  const parRangee = 13, pas = 24, rangees = Math.ceil(medailles.length / parRangee);
+  const s = svg("svg", { viewBox: "0 0 " + parRangee * pas + " " + rangees * pas, class: "fiche-medailles", "aria-hidden": "true" });
+  formesMedailles(medailles, parRangee, pas).forEach(f => {
+    const g = svg("g", { transform: "translate(" + f.x + " " + f.y + ")" });
+    if (f.obtenue) g.append(svg("circle", { r: 10, class: "medaille-obtenue" }), svg("circle", { r: 8.4, class: "medaille-filet" }),
+      svg("path", { d: f.secrete ? MOTIF_SECRET : MOTIF_MEDAILLE, class: "medaille-motif" }));
+    else g.appendChild(svg("circle", { r: 9, class: "medaille-a-gagner" }));
+    s.appendChild(g);
   });
+  return s;
+}
+
+// Peintures sur le canvas de l'image (thème clair, comme le reste de l'image)
+function peindreEmblemeDomaine(ctx, d, x, y, r) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(r / 12.5, r / 12.5);
+  ctx.beginPath(); ctx.arc(0, 0, 12.5, 0, 2 * Math.PI); ctx.fillStyle = DOMAINES_PERSONNAGE[d][0]; ctx.fill();
+  ctx.beginPath(); ctx.arc(0, 0, 11, 0, 2 * Math.PI); ctx.fillStyle = FIGURE_PERSONNAGE; ctx.fill();
+  ctx.lineWidth = 1.4; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = TERRE_PERSONNAGE; ctx.stroke(new Path2D(DOMAINES_PERSONNAGE[d][2]));
+  ctx.restore();
+}
+function peindreEchelleGrades(ctx, rang, x, y, largeur) {
+  ctx.save(); ctx.translate(x, y); const k = largeur / 300; ctx.scale(k, k);
+  ctx.strokeStyle = "#dcd7cc"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(12, 12); ctx.lineTo(288, 12); ctx.stroke();
+  formesEchelleGrades(rang, 300).forEach(f => {
+    ctx.beginPath(); ctx.arc(f.x, 12, f.r, 0, 2 * Math.PI);
+    if (f.etat === "futur") { ctx.fillStyle = "#fffefb"; ctx.fill(); ctx.strokeStyle = "#dcd7cc"; ctx.lineWidth = 1.5; ctx.stroke(); }
+    else { ctx.fillStyle = TERRE_PERSONNAGE; ctx.fill(); if (f.etat === "actuel") { ctx.strokeStyle = FIGURE_PERSONNAGE; ctx.lineWidth = 2.5; ctx.stroke(); } }
+  });
+  ctx.restore();
+}
+function peindreJours(ctx, jours, objectif, x, y, largeur, hauteur) {
+  const f = formesJours(jours, objectif, largeur, hauteur);
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = "#dcd7cc"; ctx.fillRect(0, hauteur, largeur, 2);
+  f.barres.forEach(b => { if (b.h) { ctx.fillStyle = b.aujourdhui ? FIGURE_PERSONNAGE : TERRE_PERSONNAGE; ctx.fillRect(b.x, hauteur - b.h, b.l, b.h); } });
+  ctx.setLineDash([8, 6]); ctx.strokeStyle = "#6b6862"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, f.objectif); ctx.lineTo(largeur, f.objectif); ctx.stroke();
+  ctx.restore();
+}
+function peindreMedailles(ctx, medailles, x, y, pas) {
+  const k = pas / 24;
+  formesMedailles(medailles, 19, pas).forEach(f => {
+    ctx.save(); ctx.translate(x + f.x, y + f.y); ctx.scale(k, k);
+    if (f.obtenue) {
+      ctx.beginPath(); ctx.arc(0, 0, 10, 0, 2 * Math.PI); ctx.fillStyle = FIGURE_PERSONNAGE; ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 0, 8.4, 0, 2 * Math.PI); ctx.strokeStyle = TERRE_PERSONNAGE; ctx.lineWidth = 0.6; ctx.stroke();
+      ctx.lineWidth = 1.1; ctx.lineCap = "round"; ctx.stroke(new Path2D(f.secrete ? MOTIF_SECRET : MOTIF_MEDAILLE));
+    } else { ctx.beginPath(); ctx.arc(0, 0, 9, 0, 2 * Math.PI); ctx.setLineDash([2.5, 2]); ctx.strokeStyle = "#b9b2a5"; ctx.lineWidth = 1; ctx.stroke(); }
+    ctx.restore();
+  });
+}
+
+// Texte du prochain grade, commun à la fiche et à l'image
+const texteProchainGrade = (grade, meilleure) => grade.suivant
+  ? T("Prochain grade : {0}, encore {1} points de maîtrise.", T(grade.suivant[1]), grade.suivant[0] - meilleure)
+  : T("Grade le plus haut atteint.");
+
+// Image à partager : le personnage en pied entre deux frises, le grade et l'échelle des grades, la maîtrise et les
+// points, les six domaines, les quatorze derniers jours, les médailles des distinctions.
+// avecPseudo : faux par défaut (le pseudo peut être un vrai nom) ; la case de la fiche l'ajoute pour cette image seulement.
+function partagerGrade(avecPseudo) {
+  const f = donneesFiche();
+  return partagerImage("esprit-critique-personnage.png", ctx => {
+    const frise = y => { ctx.save(); ctx.translate(96, y); ctx.scale(4, 4); ctx.lineWidth = 1.1; ctx.strokeStyle = FIGURE_PERSONNAGE; ctx.lineCap = "square"; ctx.stroke(new Path2D(traceMeandre(222))); ctx.restore(); };
+    frise(44);
+    dessinerPersonnageCanvas(ctx, f.etat, 360, 96, 360, true);
+    ctx.textAlign = "center"; ctx.fillStyle = "#1c1b19";
+    if (avecPseudo && f.pseudo) { ctx.font = policeTitre(50); ctx.fillText(f.pseudo, 540, 505); }
+    ctx.font = policeTitre(avecPseudo && f.pseudo ? 40 : 52); ctx.fillText(T(f.grade.nom), 540, avecPseudo && f.pseudo ? 552 : 530);
+    peindreEchelleGrades(ctx, f.grade.rang, 300, 568, 480);
+    ctx.font = policeTexte(26); ctx.fillStyle = "#6b6862"; ctx.fillText(texteProchainGrade(f.grade, f.etat.meilleure || 0), 540, 636);
+    // Les deux chiffres
+    ctx.fillStyle = "#1c1b19"; ctx.font = policeTitre(96); ctx.fillText(String(f.m.globale), 308, 742); ctx.fillText(String(f.lucidite), 772, 742);
+    ctx.font = policeTexte(28); ctx.fillStyle = "#6b6862"; ctx.fillText(T("de maîtrise, sur 1 000"), 308, 782); ctx.fillText(T("points de lucidité"), 772, 782);
+    // À gauche, les six domaines : emblème, nom, valeur, barre
+    ctx.textAlign = "left";
+    DOMAINES.forEach(([d, nom], i) => {
+      const y = 822 + i * 44, v = f.m.domaines[d];
+      peindreEmblemeDomaine(ctx, d, 114, y + 16, 17);
+      ctx.font = policeTexte(24); ctx.fillStyle = "#1c1b19"; ctx.fillText(T(nom), 142, y + 12);
+      ctx.textAlign = "right"; ctx.fillText(String(v), 520, y + 12); ctx.textAlign = "left";
+      ctx.fillStyle = "#ebe7df"; ctx.fillRect(142, y + 20, 378, 8);
+      ctx.fillStyle = DOMAINES_PERSONNAGE[d][0]; ctx.fillRect(142, y + 20, 378 * Math.min(1000, v) / 1000, 8);
+    });
+    // À droite, les quatorze derniers jours
+    ctx.textAlign = "center"; ctx.font = policeTexte(24); ctx.fillStyle = "#1c1b19";
+    ctx.fillText(T("Les 14 derniers jours"), 772, 838);
+    peindreJours(ctx, f.jours, f.objectif, 588, 858, 368, 150);
+    ctx.font = policeTexte(22); ctx.fillStyle = "#6b6862"; ctx.fillText(T("en pointillé : l'objectif du jour ({0} points)", f.objectif), 772, 1042);
+    // Les médailles des distinctions
+    ctx.fillStyle = "#1c1b19"; ctx.font = "700 " + policeTexte(30);
+    ctx.fillText(T("{0} sur {1}", pluriel(f.nombre, "distinction"), DISTINCTIONS.length), 540, 1100);
+    peindreMedailles(ctx, f.medailles, 96, 1114, 46.7);
+    ctx.textAlign = "left"; ctx.font = "italic 26px Newsreader, Georgia, serif"; ctx.fillStyle = "#6b6862";
+    ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1236);
+    frise(1290);
+  });
+}
+
+// Fiche à partager : une boîte de dialogue native (showModal) : Échap la ferme, le reste de la page devient inerte
+// (le focus ne peut pas en sortir vers la page), le focus revient ensuite au bouton qui l'a ouverte. Un clic sur le
+// fond (hors du contenu) la ferme aussi. Le fond flouté est dans style.css (::backdrop). Les graphiques sont décoratifs
+// (aria-hidden) : chacun a son texte à côté.
+function ouvrirFichePersonnage(declencheur) {
+  const f = donneesFiche();
+  const boite = el("dialog", "fiche-personnage");
+  boite.setAttribute("aria-labelledby", "titre-fiche-personnage");
+  const contenu = el("div", "fiche-contenu");
+  // Le focus va d'abord au contenu : un lecteur d'écran lit la fiche depuis le début
+  contenu.tabIndex = -1;
+  contenu.autofocus = true;
+  const frise = () => {
+    const s = svg("svg", { viewBox: "0 0 220 10", class: "frise-grecque", "aria-hidden": "true" });
+    s.appendChild(svg("path", { d: traceMeandre(220), class: "frise-trait" }));
+    return s;
+  };
+  const section = titre => el("h3", "fiche-section", titre);
+  const titre = el("h2", "fiche-titre", "Votre personnage");
+  titre.id = "titre-fiche-personnage";
+  const pseudo = el("p", "fiche-pseudo", f.pseudo);
+  pseudo.hidden = true;
+  const grade = el("p", "profil-grade fiche-grade");
+  grade.append(insigne(f.grade.rang, 26), texteNoeud(" " + T(f.grade.nom)));
+  contenu.append(frise(), titre, pseudo, personnage(f.etat, 240, true, true), grade, svgEchelleGrades(f.grade.rang),
+    el("p", "source", texteProchainGrade(f.grade, f.etat.meilleure || 0)));
+  // Maîtrise et points de lucidité, chacun avec son graphique
+  const chiffres = el("div", "fiche-chiffres");
+  const blocMaitrise = el("div"), blocLucidite = el("div");
+  blocMaitrise.append(el("span", "fiche-nombre", String(f.m.globale)), el("span", "source", "de maîtrise, sur 1 000"));
+  blocLucidite.append(el("span", "fiche-nombre", String(f.lucidite)), el("span", "source", "points de lucidité"), svgJours(f.jours, f.objectif),
+    el("span", "source fiche-legende", T("14 derniers jours ; en pointillé, l'objectif ({0})", f.objectif)));
+  chiffres.append(blocMaitrise, blocLucidite);
+  contenu.appendChild(chiffres);
+  // Les six domaines : emblème, nom, valeur, barre à la couleur du domaine
+  const domaines = el("ul", "fiche-domaines");
+  DOMAINES.forEach(([d, nom]) => {
+    const v = f.m.domaines[d], ligne = el("li", "fiche-domaine");
+    const barre = el("span", "fiche-barre"), rempli = el("span");
+    rempli.style.setProperty("--part", Math.min(1000, v) / 1000);
+    barre.style.setProperty("--c", DOMAINES_PERSONNAGE[d][0]);
+    barre.appendChild(rempli);
+    ligne.append(emblemeDomaine(d, 26), el("span", "fiche-domaine-nom", T(nom)), el("span", "fiche-domaine-valeur", String(v)), barre);
+    domaines.appendChild(ligne);
+  });
+  contenu.append(section("Vos six domaines"), domaines);
+  // Distinctions : une médaille par distinction (pleine si obtenue), puis les noms des obtenues
+  contenu.append(section(T("{0} sur {1}", pluriel(f.nombre, "distinction"), DISTINCTIONS.length)), svgMedailles(f.medailles));
+  if (f.noms.length) {
+    const liste = el("ul", "fiche-distinctions");
+    f.noms.forEach(nom => liste.appendChild(el("li", null, nom)));
+    contenu.appendChild(liste);
+  }
+  if (f.secretes) contenu.appendChild(el("p", "source", T("Dont {0} : leur nom reste caché.", pluriel(f.secretes, "secrète"))));
+  // Pseudo : masqué par défaut, sur la fiche comme sur l'image ; le choix n'est pas enregistré
+  let casePseudo = null;
+  if (f.pseudo) {
+    const option = el("label", "fiche-option");
+    casePseudo = el("input");
+    casePseudo.type = "checkbox";
+    casePseudo.addEventListener("change", () => { pseudo.hidden = !casePseudo.checked; });
+    option.append(casePseudo, texteNoeud(" " + T("Afficher mon pseudo")));
+    contenu.appendChild(option);
+  }
+  contenu.appendChild(el("p", "source", "La maîtrise mesure votre réussite dans les jeux de ce site, pas votre intelligence."));
+  const actions = el("div", "fiche-actions");
+  const partager = el("button", "bouton", "Partager l'image");
+  partager.type = "button";
+  partager.addEventListener("click", () => partagerGrade(!!(casePseudo && casePseudo.checked)).catch(e => annoncer(e.message)));
+  const fermer = el("button", "bouton secondaire", "Fermer");
+  fermer.type = "button";
+  fermer.addEventListener("click", () => boite.close());
+  actions.append(partager, fermer);
+  contenu.append(actions, frise());
+  boite.appendChild(contenu);
+  // Clic sur le fond : la cible est la boîte elle-même (le contenu la remplit, sans marge intérieure)
+  boite.addEventListener("click", e => { if (e.target === boite) boite.close(); });
+  boite.addEventListener("close", () => {
+    boite.remove();
+    if (declencheur && declencheur.isConnected) declencheur.focus();
+  });
+  document.body.appendChild(boite);
+  boite.showModal();
+  animer(contenu, [{ transform: "translateY(12px)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 280 });
 }
 
 // ===================== Accueil du nouveau visiteur (lot 8) =====================

@@ -371,6 +371,41 @@ nuancés, répartition des réponses, contexte qui donne la réponse, mots du no
   conjonction du grand test, la bonne réponse est toujours la plus courte (c'est le raisonnement attendu) ;
   Citations, « authentique » juste dans la moitié des cas (faits sourcés, non modifiables).
 
+## Personnage en figure noire et fiche à partager (16 novembre 2026, branche `claude/brave-noether-m75uia`)
+
+Le personnage au trait était illisible : tête de ≈ 19 px dans le profil (112 px), ≈ 4 px dans le bouton de
+l'en-tête, attributs empilés sur la tête, même dessin à toutes les tailles. Choix du propriétaire : buste recadré,
+style des vases grecs à figures noires, costume selon le grade ; graphiques du profil inchangés.
+
+- Dessin (`profil.js`) : silhouette noire sur médaillon de terre cuite (contraste 4,9:1, mêmes couleurs dans les deux
+  thèmes), détails incisés. Un costume par grade (tunique courte, tablette, main au menton, lampe, rouleau, casque,
+  lance et bouclier, manteau et bâton, lyre, sceptre et diadème, flambeau et diadème) au lieu des attributs empilés.
+  Hibou en chouette d'Athéna, robot en automate de bronze ; genre et équipements redessinés. Ids des formes,
+  genres et équipements inchangés (clé `profil` intacte, aucune migration).
+- Deux cadrages du même dessin : buste (avatars, bouton, profil ; il va jusqu'à la main pour montrer l'objet du rôle)
+  et pied (fiche, image, aperçu des réglages, avec exergue). Objet du meilleur domaine dans un médaillon noir en bas à
+  gauche, cerné de la couleur du domaine, à partir de 64 px. Masque circulaire : `clipPath` à identifiant unique.
+- Fiche à partager : `<dialog>` + `showModal()` (Échap, page inerte, focus rendu au bouton d'ouverture), fermeture
+  au clic sur le fond, fond flouté (`backdrop-filter`, voile seul sinon). Ouverte par le portrait du profil et par le
+  bouton « Fiche à partager » (ancien « Partager mon grade »). Contenu : personnage en pied, grade, maîtrise, total des
+  points de lucidité, distinctions. Pseudo masqué par défaut (case non enregistrée) ; distinctions secrètes comptées,
+  jamais nommées (« Noctambule » dirait une habitude). L'image (canvas 1 080 × 1 350, frises à méandres) suit la
+  fiche ; la toile des domaines n'y est plus (les arcs du personnage la remplacent).
+- Retouches demandées (finitions, détails, graphiques) : couronne de laurier en feuilles posées sur le contour de la tête
+  (`feuillePersonnage`), diadème en croissant orné de points, fer de lance en feuille, sceptre à fleur de lotus, flamme à
+  trois langues gardée dans le buste, aile du hibou qui tient l'objet ; détails gravés (oreille, mèches, sourcil, barbe,
+  ourlets bordés de points, ceintures, sandales, bouclier, plumes du hibou, rivets du robot, filet du médaillon, exergue).
+  Fiche et image : échelle des dix grades, barres des six domaines avec leur emblème, points des 14 derniers jours avec
+  l'objectif en pointillé, une médaille par distinction (vide si à gagner, « ? » si secrète). Graphiques décoratifs
+  (aria-hidden), chacun doublé de son texte.
+- Deuxième retour (pointes mal alignées, traits qui coupent le visage, « le soldat » seul jugé réussi) : la tête suit
+  le modèle du casque. Cheveux en masse pleine un peu plus grosse que le crâne, un seul trait gravé (la limite des
+  cheveux, derrière la tempe), oreille et mèches retirées ; chignon séparé d'un trait ; laurier en bandeau plein et
+  neuf feuilles identiques, également espacées et inclinées ; diadème en cimier plein ; pas de cheveux sous le casque.
+- Vérifié (Chromium, Linux) : planche des 4 formes × 10 grades en buste et en pied ; fiche avec aucune, quelques,
+  toutes les distinctions, à 390 px clair et 1 280 px sombre, en français et en anglais ; bancs csp, progression,
+  test, aleatoire (390 clair). Non vérifié : Safari (flou du fond), partage natif sur un vrai téléphone.
+
 ## État des lieux (lot 0, commit cb90ed8)
 
 ### Poids de `static/`
