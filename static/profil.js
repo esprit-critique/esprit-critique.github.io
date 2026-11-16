@@ -1191,7 +1191,7 @@ function partagerFiche(type, fiche) {
   });
 }
 
-// Ce que montrent la fiche et l'image à partager. Les distinctions secrètes ne sont que comptées : leur nom dévoilerait
+// Ce que montrent la fiche et l'image à partager. Les distinctions secrètes ne sont jamais nommées : leur nom dévoilerait
 // le secret, et certaines disent une habitude (« Noctambule » : des points gagnés entre minuit et 5 heures).
 function donneesFiche() {
   const { m, etat } = majMaitrise(false);
@@ -1202,8 +1202,10 @@ function donneesFiche() {
     // Points des quatorze derniers jours, du plus ancien à aujourd'hui
     jours: Array.from({ length: 14 }, (_, k) => ((luc.jours || {})[jour - 13 + k]) || 0), objectif: lire("objectif", 60),
     // État de chaque distinction, dans l'ordre de la liste : obtenue ou non, secrète ou non
-    medailles: DISTINCTIONS.map(x => [obtenues.has(x[0]), !!x[5]]),
-    noms: gagnees.filter(x => !x[5]).map(x => T(x[1])), secretes: gagnees.filter(x => x[5]).length, nombre: gagnees.length };
+    medailles: DISTINCTIONS.map(x => [obtenues.has(x[0]), !!x[5], x[1]]),
+    // Ce que récompense chaque distinction obtenue (non secrète) : [nom, raison]
+    detail: gagnees.filter(x => !x[5]).map(x => [T(x[1]), x[3]]),
+    nombre: gagnees.length };
 }
 
 // ===================== Graphiques de la fiche, en SVG et sur le canvas =====================
@@ -1221,7 +1223,7 @@ function formesJours(jours, objectif, largeur, hauteur) {
 }
 // Médailles des distinctions : en rangées de « parRangee »
 function formesMedailles(medailles, parRangee, pas) {
-  return medailles.map(([obtenue, secrete], k) => ({ x: (k % parRangee) * pas + pas / 2, y: Math.floor(k / parRangee) * pas + pas / 2, obtenue, secrete }));
+  return medailles.map(([obtenue, secrete, nom], k) => ({ x: (k % parRangee) * pas + pas / 2, y: Math.floor(k / parRangee) * pas + pas / 2, obtenue, secrete, nom }));
 }
 // Motif gravé d'une médaille obtenue (une couronne) ou secrète (un point d'interrogation), centré sur 0, dans un rayon de 6
 const MOTIF_MEDAILLE = "M-3.6 2.5Q-5.5-2 -1.8-4.6M3.6 2.5Q5.5-2 1.8-4.6M-4.4-0.5l-1.6-.6M-4.2 1.6l-1.7.2M4.4-0.5l1.6-.6M4.2 1.6l1.7.2";
@@ -1320,6 +1322,10 @@ function svgMedailles(medailles) {
   const s = svg("svg", { viewBox: "0 0 " + parRangee * pas + " " + rangees * pas, class: "fiche-medailles", "aria-hidden": "true" });
   formesMedailles(medailles, parRangee, pas).forEach(f => {
     const g = svg("g", { transform: "translate(" + f.x + " " + f.y + ")" });
+    // Au survol : le nom (une secrète obtenue reste secrète, une secrète à gagner aussi)
+    const nom = svg("title");
+    nom.textContent = f.secrete ? T("Distinction secrète") : f.obtenue ? T(f.nom) : T("{0} (à gagner)", T(f.nom));
+    g.appendChild(nom);
     if (f.obtenue) g.append(svg("circle", { r: 10, class: "medaille-obtenue" }), svg("circle", { r: 8.4, class: "medaille-filet" }),
       svg("path", { d: f.secrete ? MOTIF_SECRET : MOTIF_MEDAILLE, class: "medaille-motif" }));
     else g.appendChild(svg("circle", { r: 9, class: "medaille-a-gagner" }));
@@ -1492,13 +1498,18 @@ function ouvrirFichePersonnage(declencheur) {
     ligne.append(emblemeDomaine(d, 26), el("span", "fiche-domaine-nom", T(nom)), el("span", "fiche-domaine-valeur", String(v)), barre);
     domaines.appendChild(ligne);
   });
-  contenu.append(section("Vos six domaines"), domaines);
-  // Distinctions : une médaille par distinction (pleine si obtenue), puis les noms des obtenues
-  contenu.append(section(T("{0} sur {1}", pluriel(f.nombre, "distinction"), DISTINCTIONS.length)), svgMedailles(f.medailles));
-  if (f.noms.length) {
-    const liste = el("ul", "fiche-distinctions");
-    f.noms.forEach(nom => liste.appendChild(el("li", null, nom)));
-    contenu.appendChild(liste);
+  contenu.append(section("Domaines"), domaines);
+  // Distinctions, en compact : le compte dans le titre, une médaille par distinction (pleine si obtenue), et ce que
+  // récompensent les obtenues dans un repli fermé
+  const titreDistinctions = section("Distinctions");
+  titreDistinctions.appendChild(el("span", "fiche-compte", " " + f.nombre + "/" + DISTINCTIONS.length));
+  contenu.append(titreDistinctions, svgMedailles(f.medailles));
+  if (f.detail.length) {
+    const repli = el("details", "fiche-detail");
+    const liste = el("dl", "fiche-detail-liste");
+    f.detail.forEach(([nom, raison]) => liste.append(el("dt", null, nom), el("dd", null, raison)));
+    repli.append(el("summary", null, "Ce qu'elles récompensent"), liste);
+    contenu.appendChild(repli);
   }
   // Pseudo sur l'image : non par défaut (il peut être un vrai nom) ; le choix n'est pas enregistré. La case vient avec le
   // pseudo : plus bas s'il existait déjà, à la place du champ s'il vient d'être donné
