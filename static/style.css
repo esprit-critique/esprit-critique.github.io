@@ -876,6 +876,7 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Sections d'ateliers pliables : un bouton par section, fermé par défaut sauf si on l'a ouvert */
 .pliant {
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 12px;
