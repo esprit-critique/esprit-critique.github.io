@@ -881,7 +881,7 @@ function phiInverse(p) {
 // Sensibilité d′ de la théorie de la détection du signal, avec la correction de 0,5 (log-linéaire)
 // qui évite les taux de 0 ou de 1 : H = (détections + 0,5) / (sophismes + 1), F = (fausses alertes + 0,5) / (recevables + 1)
 function dPrime(detections, sophismes, faussesAlertes, recevables) {
-  const h = (detections + 0.5) / (sophismes + 1), f = (faussesAlertes + 0.5) / (recevables + 1);
+  const h = tauxCorrige(detections, sophismes), f = tauxCorrige(faussesAlertes, recevables);
   return { d: phiInverse(h) - phiInverse(f), h, f };
 }
 

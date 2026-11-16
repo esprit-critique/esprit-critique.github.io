@@ -9,8 +9,8 @@ Pour reprendre dans une nouvelle session : lire `CLAUDE.md`, ce journal (« Éta
 |---|---|---|---|
 | P0 — Cadrage | `piece/p0` | #26 | brief, plan, journal, catalogue |
 | P1 — Moteur (niveaux 1 à 4) | `piece/p1` | #43 | moteur, données, banc `piece-moteur` (91/91), français et anglais ; rien de visible (`PIECE_VISIBLE = false`) |
-| P2 — Jeu et contre-expertise | `piece/p2` | voir la branche | interface, six habillages, contre-expertise, banc `piece` (46/46, quatre configurations) ; route sur la copie d'essai seulement |
-| P3 — Intégration | `piece/p3` | — | à faire |
+| P2 — Jeu et contre-expertise | `piece/p2` | #44 | interface, six habillages, contre-expertise, banc `piece` (46/46, quatre configurations) ; route sur la copie d'essai seulement |
+| P3 — Intégration | `piece/p3` | voir la branche | accueil, programme du jour, points, maîtrise, niveau automatique, trois clés (schémas, fusion), atelier, archives, pièce libre, raccourci P, article du guide ; banc `piece` 61/61 |
 | P4 — Profondeur (niveau 5, manques, tableau, distinctions) | `piece/p4` | — | à faire |
 | P5 — Finitions | `piece/p5` | — | à faire |
 
@@ -122,6 +122,17 @@ Pour reprendre dans une nouvelle session : lire `CLAUDE.md`, ce journal (« Éta
   Espace) et joue au pointeur.
 - **P2, « Une seule tentative par jour », correction après rechargement, schémas des clés** : avec l'enregistrement
   (P3). En P2, la partie vit en mémoire : un détour par une fiche la retrouve (« Revenir à la partie »).
+- **P3, part de hasard.** Banc `piece-moteur`, 300 pièces par niveau : joueur au hasard 0,20 / 0,11 / 0,14 / 0,09 ;
+  joueur « Rien à signaler » 0,00 / 0,28 / 0,23 / 0,14 (niveaux 1 à 4). Le pire des deux, tous niveaux : 0,28, d'où
+  `MAITRISE_JEUX.piece = ["debattre", "note", 0.28]` (posé par `piece-interface.js` avec l'atelier, drapeau levé).
+- **P3, écarts.** L'atelier propose une pièce libre à la fois (pas une partie de trois) ; ses records sont ceux de
+  `noterPartie` par niveau. Niveau maximal 4 jusqu'au lot P4 (`NIVEAUX_MAX.piece`). Étalonnage : source de points
+  `piece-etalonnage` (barème du quiz, relevé exact ou non), trois fois par jour au plus.
+- **P3, décompte des ateliers.** Les textes fixes (« 51 ateliers » : `index.html`, `en/index.html`, README, générateur
+  des pages fixes) décrivent le site publié ; l'atelier n'existe qu'avec le drapeau levé. À la bascule : passer à 52
+  partout, régénérer les pages fixes (`tests/pages/generer_pages.py`), et adapter les bancs qui comptent les ateliers.
+- **P3, `tauxCorrige(k, n)`** (`niveaux.js`) : la correction de 0,5 du débat truqué et du Grand test, factorisée ; le
+  tableau des procédés (P4) s'en servira pour H et F.
 - **Part de hasard `c`** : calculée en P3, par simulation sur le moteur (joueur au hasard ; joueur qui répond toujours
   « Rien à signaler »).
 

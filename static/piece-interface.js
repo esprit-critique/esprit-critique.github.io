@@ -12,21 +12,32 @@ const PIECE_FIGURE = ["figure-axe", "figure-trace", "figure-legende"];
 let pieceEnCours = null;
 
 // ===================== Route =====================
-// #piece : la pièce du jour, au niveau du joueur ; #piece/<niveau>-<graine> : une pièce libre, partageable
+// #piece : la pièce du jour, au niveau du joueur (une tentative par jour, tous niveaux confondus ; jouée, elle se
+// rouvre sur sa contre-expertise, reconstruite depuis la réponse enregistrée) ; #piece/<niveau>-<graine> : une pièce
+// libre, partageable ; #piece/j-<jour> : une des 30 dernières pièces du jour, rejouée sans point ni effet sur la série
+const PIECE_ARCHIVES = 30;
+const pieceNiveauJoueur = () => Math.min(niveauMax("piece"), niveauAtelier("piece").niveau);
 function afficherPiece(id) {
   const vue = $("vue-piece");
-  const libre = /^([1-4])-(\d{1,9})$/.exec(id || "");
-  const cle = libre ? "libre-" + id : "jour-" + aujourdHui();
+  const libre = /^([1-4])-(\d{1,9})$/.exec(id || ""), archive = /^j-(\d{1,6})$/.exec(id || "");
+  const auj = aujourdHui(), jourArchive = archive ? Number(archive[1]) : null;
+  const archiveValide = jourArchive !== null && jourArchive < auj && jourArchive >= Math.max(PIECE_JOUR_UN, auj - PIECE_ARCHIVES);
+  const origine = libre ? "libre" : archiveValide ? "archive" : "jour";
+  const cle = origine === "libre" ? "libre-" + id : origine === "archive" ? "archive-" + jourArchive : "jour-" + auj;
   if (!pieceEnCours || pieceEnCours.cle !== cle) {
-    const niveau = libre ? Number(libre[1]) : Math.min(4, niveauAtelier("piece").niveau);
-    const piece = libre ? pieceLibre(niveau, Number(libre[2])) : pieceDuJour(aujourdHui(), niveau);
-    pieceEnCours = { cle, piece, etape: "reperer", ordre: [], noms: {}, rien: false, certitude: null, chiffres: [], verdict: null, verso: false, resultat: null };
+    const memo = lire("pieceJour", null), dejaJouee = origine === "jour" && memo && memo.jour === auj;
+    // Le niveau est figé à l'ouverture : celui de la pièce jouée, sinon celui du joueur
+    const niveau = libre ? Number(libre[1]) : dejaJouee ? memo.niveau : pieceNiveauJoueur();
+    const piece = libre ? pieceLibre(niveau, Number(libre[2])) : pieceDuJour(origine === "archive" ? jourArchive : auj, niveau);
+    pieceEnCours = { cle, origine, piece, etape: "reperer", ordre: [], noms: {}, rien: false, certitude: null, chiffres: [], verdict: null, verso: false, resultat: null };
+    if (dejaJouee) pieceReprendre(pieceEnCours, memo.reponse || {});
   }
   vue.replaceChildren();
   const p = pieceEnCours.piece;
   const tete = el("div", "pdj-tete");
-  tete.append(el("p", "surtitre", p.libre ? "Pièce libre" : "La pièce du jour"),
-    el("h1", "page-titre", p.libre ? "Une pièce à expertiser" : "La pièce du jour"),
+  const vueOrigine = pieceEnCours.origine;
+  tete.append(el("p", "surtitre", vueOrigine === "libre" ? "Pièce libre" : vueOrigine === "archive" ? "Archives : sans point" : "La pièce du jour"),
+    el("h1", "page-titre", vueOrigine === "libre" ? "Une pièce à expertiser" : vueOrigine === "archive" ? T("La pièce n° {0}", p.numero) : "La pièce du jour"),
     el("p", "page-intro", "Un document fictif, peut-être truqué. Repérez ce qui trompe, nommez le procédé, puis lisez la contre-expertise."));
   const mise = el("div", "pdj-mise");
   mise.style.setProperty("--c", p.couleur);
@@ -295,12 +306,13 @@ function pieceRail(focus) {
   } else if (e.etape === "certitude") {
     h = titre("Votre relevé est-il exact ?");
     corps.appendChild(el("p", null, e.rien ? T("Votre relevé : rien à signaler.") : pieceCompte(e.ordre.length) + "."));
-    const puces = el("div", "puces pdj-certitude");
+    const puces = el("div", "puces pdj-certitude certitude");
     puces.setAttribute("role", "group");
     puces.setAttribute("aria-label", T("Certitude"));
     NIVEAUX_CERTITUDE.forEach(([id, nom]) => {
       const b = el("button", "puce", nom);
       b.type = "button";
+      b.dataset.niveau = id;   // touches 7, 8, 9 (app.js)
       b.setAttribute("aria-pressed", String(e.certitude === id));
       // Le rail est reconstruit : le focus revient sur la certitude choisie
       b.addEventListener("click", () => { e.certitude = id; pieceRail(); document.querySelector("#vue-piece .pdj-certitude [aria-pressed='true']").focus(); });
@@ -385,6 +397,54 @@ function pieceTerminer() {
   document.querySelectorAll("#vue-piece .pdj-zone").forEach(b => b.setAttribute("aria-disabled", "true"));
   pieceAnnoter(true);
   pieceRail(true);
+  pieceEnregistrer(e);
+}
+
+// ===================== Enregistrement, points, niveau =====================
+// La réponse, compacte : elle suffit à reconstruire la contre-expertise (marques dans l'ordre, noms, « rien à
+// signaler », certitude, chiffres, verdict)
+const pieceReponse = e => ({ o: e.ordre.slice(), n: { ...e.noms }, r: e.rien, c: e.certitude, x: e.chiffres.slice(), d: e.verdict });
+function pieceReprendre(e, r) {
+  const ids = new Set(e.piece.zones.map(z => z.id));
+  e.ordre = (r.o || []).filter(id => ids.has(id));
+  e.noms = Object.fromEntries(Object.entries(r.n || {}).filter(([id, p]) => ids.has(id) && PIECE_PROCEDES[p]));
+  Object.assign(e, { rien: !!r.r, certitude: r.c || "hasard", chiffres: r.x || [], verdict: r.d || null, etape: "fin" });
+  e.resultat = noterPiece(e.piece, { marques: Object.fromEntries(e.ordre.map(id => [id, e.noms[id] || null])), rien: e.rien, chiffres: e.chiffres, verdict: e.verdict });
+}
+// Signes du relevé, triés (jamais dans l'ordre des zones) : ● trouvé, ○ manqué, × fausse alerte
+const pieceSignes = r => "●".repeat(r.F) + "○".repeat(r.P - r.F) + "×".repeat(r.A);
+function pieceEnregistrer(e) {
+  const p = e.piece, r = e.resultat;
+  if (e.origine === "archive") return;   // les archives se rejouent sans point, sans série, sans maîtrise
+  const marques = new Set(e.ordre);
+  const pieges = p.zones.filter(z => z.etat === "piegee"), leurres = p.zones.filter(z => z.etat === "leurre");
+  ecrire("pieces", [...lire("pieces", []), { j: aujourdHui(), n: p.niveau, v: PIECE_VERSION, o: e.origine, note: r.note, e: r.exact, c: e.certitude,
+    p: pieges.map(z => z.procede), t: pieges.filter(z => marques.has(z.id)).map(z => z.procede), l: leurres.filter(z => marques.has(z.id)).map(z => z.leurre) }].slice(-120));
+  // Compteurs cumulés : par procédé [rencontres, trouvés, manqués, manqués en étant sûr], par leurre [rencontres, touchés]
+  const bilan = lire("pieceBilan", {}), bp = bilan.p || {}, bl = bilan.l || {};
+  pieges.forEach(z => { const c = bp[z.procede] || [0, 0, 0, 0]; c[0]++; if (marques.has(z.id)) c[1]++; else { c[2]++; if (e.certitude === "sur") c[3]++; } bp[z.procede] = c; });
+  leurres.forEach(z => { const c = bl[z.leurre] || [0, 0]; c[0]++; if (marques.has(z.id)) c[1]++; bl[z.leurre] = c; });
+  ecrire("pieceBilan", { p: bp, l: bl });
+  if (e.origine === "jour") {
+    ecrire("pieceJour", { jour: p.jour, niveau: p.niveau, v: PIECE_VERSION, note: r.note, s: pieceSignes(r), reponse: pieceReponse(e) });
+    noterActivite();
+    gagner("piece-jour", r.note);
+    gagnerTroisCartes();
+  } else gagner("piece-libre", r.note);
+  // Étalonnage : la certitude annoncée, payée comme au quiz selon que le relevé est exact
+  gagner("piece-etalonnage", pointsReponse(BAREME_QUIZ, e.certitude, r.exact));
+  noterPartie("piece", r.note, 10, p.niveau);
+  pieceSuivreNiveau(p.niveau);
+}
+// Niveau automatique : il monte si la moyenne des trois dernières pièces jouées à ce niveau atteint 8, descend sous 5
+function pieceSuivreNiveau(niveau) {
+  const n = niveauAtelier("piece");
+  if (n.mode !== "auto" || n.niveau !== niveau) return;
+  const notes = lire("pieces", []).filter(x => x.n === niveau && x.o !== "archive").slice(-3).map(x => x.note);
+  if (notes.length < 3) return;
+  const moyenne = notes.reduce((a, b) => a + b, 0) / 3;
+  const suivant = moyenne >= 8 ? Math.min(niveauMax("piece"), niveau + 1) : moyenne < 5 ? Math.max(1, niveau - 1) : niveau;
+  if (suivant !== niveau) enregistrerNiveau("piece", { niveau: suivant, serie: 0 });
 }
 
 // État d'une zone à la correction : trouvé, manqué, fausse alerte, leurre évité, toléré ; null si rien à dire
@@ -536,7 +596,10 @@ function pieceRapport(corps) {
   const partager = el("button", "bouton secondaire", "Partager mon relevé");
   partager.type = "button";
   partager.addEventListener("click", () => piecePartager());
-  actions.append(bascule, partager);
+  const image = el("button", "bouton secondaire", "Image du relevé");
+  image.type = "button";
+  image.addEventListener("click", () => piecePartagerImage(p.libre ? null : p.numero, p.niveau, r.note, pieceSignes(r), p.couleur));
+  actions.append(bascule, partager, image);
   corps.appendChild(actions);
   const suite = lienVers("#piece/" + p.niveau + "-" + (1 + Math.floor(Math.random() * 999999)), "Une pièce libre, au même niveau", "lien-texte pdj-suite-libre");
   corps.appendChild(el("p", null)).appendChild(suite);
@@ -562,12 +625,13 @@ function pieceRetourner() {
 // Relevé à partager : signes triés, jamais dans l'ordre des zones (la position trahirait la réponse)
 function pieceTextePartage() {
   const e = pieceEnCours, p = e.piece, r = e.resultat;
-  const tete = p.libre ? T("Pièce libre · niveau {0} · {1}/10", p.niveau, r.note) : T("Pièce n° {0} · niveau {1} · {2}/10", p.numero, p.niveau, r.note);
-  const signes = "●".repeat(r.F) + "○".repeat(r.P - r.F) + "×".repeat(r.A);
+  return pieceTexteReleve(p.libre ? null : p.numero, p.niveau, r.note, pieceSignes(r));
+}
+function pieceTexteReleve(numero, niveau, note, signes) {
+  const tete = numero === null ? T("Pièce libre · niveau {0} · {1}/10", niveau, note) : T("Pièce n° {0} · niveau {1} · {2}/10", numero, niveau, note);
   return tete + (signes ? "\n" + signes : "") + "\n" + T("Document fictif") + " · " + location.origin + location.pathname;
 }
-async function piecePartager() {
-  const texte = pieceTextePartage();
+async function piecePartager(texte = pieceTextePartage()) {
   try {
     if (navigator.share) { await navigator.share({ text: texte }); return; }
     await navigator.clipboard.writeText(texte);
@@ -576,4 +640,109 @@ async function piecePartager() {
     if (erreur && erreur.name === "AbortError") return;
     annoncer(texte);
   }
+}
+
+// Image à partager (1 080 × 1 350, partagerImage de profil.js) : étiquette, note, relevé ; rien du contenu de la pièce
+function piecePartagerImage(numero, niveau, note, signes, couleur) {
+  return partagerImage("esprit-critique-piece.png", ctx => {
+    ctx.fillStyle = couleur; ctx.fillRect(0, 0, 28, 1350);
+    ctx.textAlign = "left"; ctx.fillStyle = couleur; ctx.font = "650 34px Newsreader, Georgia, serif";
+    ctx.fillText((numero === null ? T("Pièce libre") : T("Pièce n° {0}", numero)).toUpperCase() + " · " + T("Niveau {0}, {1}", niveau, NOMS_NIVEAUX[niveau]).toUpperCase(), 96, 150);
+    ctx.fillStyle = "#6b6862"; ctx.fillText(T("Document fictif").toUpperCase(), 96, 200);
+    ctx.fillStyle = "#1c1b19"; ctx.font = policeTitre(96); ctx.fillText(T("La pièce du jour"), 96, 380);
+    ctx.font = policeTitre(260); ctx.fillText(note + " / 10", 96, 700);
+    ctx.font = "400 110px Newsreader, Georgia, serif"; ctx.fillText(signes || "—", 96, 900);
+    ctx.font = policeTexte(34); ctx.fillStyle = "#6b6862";
+    ctx.fillText(T("● trouvé   ○ manqué   × fausse alerte"), 96, 980);
+  });
+}
+
+// ===================== Carte de l'accueil =====================
+// Remplace « Défi du jour » quand le drapeau est levé (app.js). Ne génère pas la pièce : le choix du jour suffit
+// (format, monde) ; jouée, la carte lit la note et les signes enregistrés.
+const PIECE_DUREES = { 1: "1 min", 2: "2 min", 3: "3 min", 4: "4 min" };
+function cartePieceDuJour() {
+  const jour = aujourdHui(), memo = lire("pieceJour", null), faite = !!(memo && memo.jour === jour);
+  const niveau = faite ? memo.niveau : pieceNiveauJoueur();
+  const choix = pieceChoixDuJour(jour, niveau);
+  const carte = el("article", "carte pdj-carte");
+  carte.style.setProperty("--c", PIECE_MONDES.find(m => m.id === choix.monde).couleur);
+  carte.append(el("p", "surtitre", "La pièce du jour"),
+    el("p", "pdj-etiquette", T("Pièce n° {0}", numeroPiece(jour)) + " · " + T("Niveau {0}, {1}", niveau, NOMS_NIVEAUX[niveau]) + " · " + T("Document fictif")));
+  const actions = el("div", "actions");
+  if (faite) {
+    carte.append(el("p", "grand-score", T("{0} / 10", memo.note)));
+    if (memo.s) { const s = el("p", "pdj-signes", memo.s); s.setAttribute("aria-label", T("Relevé : {0} trouvé(s), {1} manqué(s), {2} fausse(s) alerte(s)", (memo.s.match(/●/g) || []).length, (memo.s.match(/○/g) || []).length, (memo.s.match(/×/g) || []).length)); carte.appendChild(s); }
+    carte.appendChild(el("p", "source", "Une nouvelle pièce demain, la même pour tout le monde à ce niveau."));
+    const partager = el("button", "bouton secondaire", "Partager");
+    partager.type = "button";
+    partager.addEventListener("click", () => piecePartager(pieceTexteReleve(numeroPiece(jour), memo.niveau, memo.note, memo.s || "")));
+    actions.append(lienVers("#piece", "Revoir la contre-expertise", "bouton"), partager);
+  } else {
+    carte.append(el("h2", null, T(PIECE_FORMATS[choix.format].nom) + " · " + PIECE_DUREES[niveau]),
+      el("p", "source", "Un document fictif, le même pour tout le monde à ce niveau. Repérez ce qui trompe, ou déclarez qu'il n'y a rien à signaler. Une seule tentative par jour."));
+    actions.appendChild(lienVers("#piece", "Examiner la pièce", "bouton"));
+  }
+  carte.appendChild(actions);
+  return carte;
+}
+
+// ===================== Atelier « Pièces à expertiser » (#tests/piece) =====================
+// Pièces libres au niveau choisi, records par niveau, archives des 30 derniers jours
+function atelierPiece(zone) {
+  zone.replaceChildren();
+  zone.appendChild(el("p", "page-intro", "Des documents fictifs, peut-être truqués, à expertiser comme la pièce du jour : repérer, nommer, chiffrer, conclure. Les pièces libres se partagent par leur adresse."));
+  zone.appendChild(choixNiveau("piece", () => atelierPiece(zone)));
+  const niveau = pieceNiveauJoueur();
+  const lancer = el("button", "bouton", T("Une pièce libre, niveau {0}", niveau));
+  lancer.type = "button";
+  lancer.addEventListener("click", () => { location.hash = "#piece/" + niveau + "-" + (1 + Math.floor(Math.random() * 999999)); });
+  const actions = el("div", "actions");
+  actions.append(lancer, lienVers("#piece", "La pièce du jour", "bouton secondaire"));
+  zone.appendChild(actions);
+  // Records par niveau (resultatsAteliers, tenus par noterPartie)
+  const r = (lire("resultatsAteliers", {}).piece || {}).niveaux || {};
+  const records = el("dl", "pdj-records");
+  for (let n = 1; n <= niveauMax("piece"); n++) records.append(el("dt", null, T("Niveau {0}, {1}", n, NOMS_NIVEAUX[n])), el("dd", null, r[n] ? T("record {0} / 10, {1} pièce(s)", r[n].record, r[n].n) : T("pas encore joué")));
+  zone.append(el("h2", "titre-bloc", "Vos records"), records);
+  // Archives : les pièces du jour passées, au niveau du joueur, sans point
+  const auj = aujourdHui(), liste = el("ul", "pdj-archives");
+  for (let j = auj - 1; j >= Math.max(PIECE_JOUR_UN, auj - PIECE_ARCHIVES); j--) {
+    const li = el("li");
+    li.appendChild(lienVers("#piece/j-" + j, T("Pièce n° {0}", numeroPiece(j)), "lien-texte"));
+    liste.appendChild(li);
+  }
+  zone.append(el("h2", "titre-bloc", "Archives"), liste.childNodes.length ? liste : el("p", "source", "Les pièces des jours passés apparaîtront ici."));
+  zone.appendChild(el("p", "source", "Archives : rejouées sans point, sans effet sur la série de jours."));
+}
+
+// ===================== Article du guide « Lire une pièce » =====================
+// Inséré au chargement (app.js) seulement si le drapeau est levé : sinon le guide n'en dit rien
+function pieceArticleGuide() {
+  const sommaire = document.querySelector("#vue-guide .sommaire"), apres = $("g-methode");
+  if (!sommaire || !apres || $("g-piece")) return;
+  const li = el("li");
+  li.appendChild(lienVers("#guide/piece", "Lire une pièce"));
+  const ref = sommaire.querySelector('a[href="#guide/methode"]');
+  if (ref) ref.parentNode.after(li); else sommaire.appendChild(li);
+  const art = el("article", "carte");
+  art.id = "g-piece";
+  art.append(el("h2", null, "Lire une pièce"),
+    el("p", null, "La pièce du jour est un document fictif : brève, publicité, sondage, publication, communiqué d'étude ou bulletin municipal. Elle peut cacher des procédés qui trompent, ou ne rien cacher du tout."),
+    el("p", null, "Méthode : lire la conclusion, puis chercher ce qui la soutient. Un chiffre a-t-il sa base ? Un graphique, son axe ? Une étude, un groupe de comparaison ? Une citation, une personne compétente dans ce domaine ? Chaque piège laisse sa preuve sur la page : rien ne se devine."),
+    el("p", null, "Notation, sur 10 : le repérage (pièges trouvés, moins la moitié des fausses alertes), le nom du procédé (un procédé voisin vaut la moitié), puis, dès le niveau 3, une question chiffrée et le verdict sur la conclusion. Tout marquer ne rapporte rien, et reconnaître une pièce saine rapporte autant que trouver un piège."),
+    el("p", null, "Une preuve fautive ne rend pas une conclusion fausse : elle ne l'établit pas. La contre-expertise le dit, et montre la version honnête de la même pièce."));
+  apres.after(art);
+}
+
+// ===================== Inscription =====================
+// Seulement si le drapeau est levé (ou dans la copie d'essai du banc) : sinon aucun atelier, aucune route
+if (PIECE_VISIBLE) {
+  EXPERIENCES.push({
+    id: "piece", section: "debattre", picto: "livre", couleur: "#8a3f8f", duree: "1 à 4 min", titre: "Pièces à expertiser",
+    resume: "Des documents fictifs, peut-être truqués : repérer ce qui trompe, nommer le procédé, puis lire la contre-expertise.",
+    lancer(zone) { atelierPiece(zone); }
+  });
+  // Part de hasard : le pire de deux joueurs simulés (au hasard ; « Rien à signaler » toujours), banc piece-moteur
+  MAITRISE_JEUX.piece = ["debattre", "note", 0.28];
 }

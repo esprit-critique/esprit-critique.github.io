@@ -75,6 +75,8 @@ f.onload = async () => {
     await aller("piece");
     ok("publié : #piece n'ouvre pas la pièce (accueil)", vue().id === "vue-accueil" && !w.eval("'piece' in ONGLET_DE"));
     ok("publié : aucun lien vers #piece", !d.querySelector('a[href^="#piece"]'));
+    ok("publié : accueil avec le défi du jour, sans carte de la pièce", !!d.querySelector("#vue-accueil .defi-jour") && !d.querySelector(".pdj-carte"));
+    ok("publié : ni atelier, ni article du guide, ni raccourci", !w.eval("EXPERIENCES.some(e => e.id === 'piece')") && !d.getElementById("g-piece") && !w.eval("RACCOURCIS.some(r => r[0] === 'P')"));
     const scripts = [...(await (await fetch("/index.html", { cache: "no-store" })).text()).matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
     ok("index.html : données, moteur puis interface de la pièce, avant app.js",
       scripts.indexOf("piece-donnees.js") > -1 && scripts.indexOf("piece-donnees.js") < scripts.indexOf("piece.js")
@@ -177,6 +179,55 @@ f.onload = async () => {
       q(".pdj-bascule").click();
       ok("animations réduites : retournement en échange simple", w.eval("document.getAnimations().filter(a => a.playState === 'running').length") === 0 && /Version rectifiée/.test(q(".pdj-etiquette").textContent));
       w.eval("reglages.animations = 'auto'; delete document.documentElement.dataset.animations");
+    }
+
+    // --- Intégration (lot P3) : pièce du jour enregistrée, une seule tentative, reprise après rechargement ---
+    {
+      w.localStorage.clear();
+      await charger("/_site-piece.html?r=1#accueil");   // une autre adresse que la page en cours : sinon aucun chargement
+      await new Promise((res, rej) => { const sc = d.createElement("script"); sc.src = "/controle-affichage.js"; sc.onload = res; sc.onerror = rej; d.head.appendChild(sc); });
+      ok("accueil : la carte « La pièce du jour » remplace le défi, dans le programme du jour",
+        !!vue().querySelector(".pdj-carte a[href='#piece']") && !vue().querySelector(".defi-jour") && /La pièce du jour/.test(vue().querySelector(".programme").textContent));
+      controler("accueil");
+      await aller("piece");
+      const p = w.eval("pieceEnCours.piece"), pieges = p.zones.filter(z => z.etat === "piegee");
+      await jouer(pieges.map(z => z.id), pieges.map(z => z.procede), !pieges.length && !p.annonce, (p.chiffrer[0] || {}).reponse, p.verdict);
+      const memo = JSON.parse(w.localStorage.getItem("pieceJour"));
+      ok("pièce du jour : enregistrée (jour, niveau, version, note, signes, réponse)", memo && memo.jour === w.aujourdHui() && memo.note === 10 && memo.v === w.eval("PIECE_VERSION") && memo.reponse && Array.isArray(memo.reponse.o), JSON.stringify(memo));
+      const valides = w.eval(`validerSauvegarde({ pieceJour: JSON.parse(localStorage.getItem("pieceJour")), pieces: JSON.parse(localStorage.getItem("pieces")), pieceBilan: JSON.parse(localStorage.getItem("pieceBilan")) })`);
+      ok("schémas : pieceJour, pieces et pieceBilan passent la validation, intacts", valides.ecartees === 0 && JSON.stringify(valides.valides.pieceJour) === JSON.stringify(memo) && valides.valides.pieces.length === 1);
+      ok("clés dans CLES_SAUVEGARDE et FORMES_SAUVEGARDE", w.eval("['pieceJour','pieces','pieceBilan'].every(k => CLES_SAUVEGARDE.includes(k)) && FORMES_SAUVEGARDE.tableau.includes('pieces') && FORMES_SAUVEGARDE.objet.includes('pieceJour') && FORMES_SAUVEGARDE.objet.includes('pieceBilan')"));
+      ok("points de lucidité : pièce du jour comptée", w.eval("(lire('lucidite', {}).journal || []).some(e => e[1] === 'piece-jour')"), JSON.stringify(w.eval("lire('lucidite', {}).journal")));
+      ok("maîtrise : résultat noté par niveau (resultatsAteliers.piece)", w.eval("!!(lire('resultatsAteliers', {}).piece && lire('resultatsAteliers', {}).piece.niveaux[" + p.niveau + "])"));
+      const ordre = w.eval("pieceEnCours.ordre.join()");
+      await charger("/_site-piece.html?r=2#piece");
+      ok("rechargement : la contre-expertise est reconstruite, sans seconde tentative", !!q(".pdj-note-finale") && /10\s?\/\s?10/.test(q(".pdj-note-finale").textContent) && w.eval("pieceEnCours.ordre.join()") === ordre && qa(".pdj-zone").every(b => b.getAttribute("aria-disabled") === "true"));
+      ok("rechargement : pas de second enregistrement", JSON.parse(w.localStorage.getItem("pieces")).length === 1);
+      await aller("accueil");
+      ok("accueil, pièce jouée : note, signes, « Revoir la contre-expertise »", /10\s?\/\s?10/.test(vue().querySelector(".pdj-carte").textContent) && /Revoir la contre-expertise/.test(vue().querySelector(".pdj-carte").textContent));
+      // Archives : sans point ni enregistrement
+      const hier = w.aujourdHui() - 1;
+      await aller("piece/j-" + hier);
+      const archivable = hier >= w.eval("PIECE_JOUR_UN");
+      ok("archives : #piece/j-<jour> rejoue sans point", !archivable || (/Archives/.test(vue().querySelector(".surtitre").textContent) && w.eval("pieceEnCours.origine") === "archive"));
+      if (archivable) {
+        const pa = w.eval("pieceEnCours.piece"), za = pa.zones.find(z => z.etat === "piegee");
+        await jouer(za ? [za.id] : [], za ? [za.procede] : [], !za && !pa.annonce, (pa.chiffrer[0] || {}).reponse, pa.verdict);
+        ok("archives : rien enregistré", JSON.parse(w.localStorage.getItem("pieces")).length === 1);
+      }
+      await aller("tests/piece");
+      ok("atelier « Pièces à expertiser » (#tests/piece), dans la section Débattre", vue().id === "vue-tests" && /Pièces à expertiser/.test(vue().textContent) && w.eval("EXPERIENCES.find(e => e.id === 'piece').section") === "debattre" && w.eval("Array.isArray(MAITRISE_JEUX.piece)"));
+      controler("atelier");
+      await aller("guide/piece");
+      ok("guide : article « Lire une pièce »", !!d.getElementById("g-piece") && !!d.querySelector('#vue-guide a[href="#guide/piece"]'));
+      // Synchronisation : règles de fusion
+      const fusion = w.eval(`(() => {
+        const a = { jour: 10, note: 5 }, b = { jour: 11, note: 7 };
+        const l1 = [{ j: 1, note: 3 }, { j: 2, note: 4 }], l2 = [{ j: 2, note: 4 }, { j: 3, note: 9 }];
+        return [REGLES_FUSION.pieceJour(a, b) === b, REGLES_FUSION.pieceJour(b, a) === b, REGLES_FUSION.pieces(l1, l2).map(x => x.j).join(),
+          JSON.stringify(REGLES_FUSION.pieceBilan({ p: { x: [3, 2, 1, 0] } }, { p: { x: [2, 1, 1, 0] } }, { p: { x: [1, 1, 0, 0] } }))];
+      })()`);
+      ok("synchronisation : pieceJour (le plus récent), pieces (union), pieceBilan (trois voies)", fusion[0] && fusion[1] && fusion[2] === "1,2,3" && fusion[3] === JSON.stringify({ p: { x: [4, 2, 2, 0] } }), JSON.stringify(fusion));
     }
 
     ok("aucun défaut d'affichage (controle-affichage.js), à chaque étape", defauts.size === 0, [...defauts].slice(0, 6).join(" | "));

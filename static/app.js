@@ -195,6 +195,7 @@ function effacer(cle) {
 
 // Toutes les clés enregistrées par l'application (pour l'effacement et la sauvegarde dans un fichier)
 const CLES_SAUVEGARDE = [
+  "pieceJour", "pieces", "pieceBilan",
   "acquis", "memoire", "records", "activite", "jour", "derniereFiche", "modeQuiz", "typeFiches", "erreurs",
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
@@ -206,9 +207,9 @@ const CLES_SAUVEGARDE = [
 // (un texte à la place d'un tableau…) bloquerait le site au chargement suivant. Elle est donc ignorée.
 const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
-    "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions", "fichesLues"],
+    "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions", "fichesLues", "pieces"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
-    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages", "maitrise", "lucidite", "distinctions", "profil", "parcours"],
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages", "maitrise", "lucidite", "distinctions", "profil", "parcours", "pieceJour", "pieceBilan"],
   nombre: ["objectif"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
   booleen: ["certitudeQuiz", "ceciteFaite"]
@@ -679,7 +680,8 @@ function questionsDuDefi(jour, graine) {
 
 // Les trois cartes du jour faites (situation, défi, vrai ou faux) : un bonus, une fois par jour
 function gagnerTroisCartes() {
-  const j = aujourdHui(), s = lire("jour", null), d = lire("defiJour", null), v = lire("vfJour", null);
+  // La pièce du jour remplace le défi quand son drapeau est levé
+  const j = aujourdHui(), s = lire("jour", null), d = lire(PIECE_VISIBLE ? "pieceJour" : "defiJour", null), v = lire("vfJour", null);
   if (s && s.jour === j && d && d.jour === j && v && v.j === j) gagner("trois-cartes", 0);
 }
 
@@ -837,10 +839,11 @@ function afficherAccueil() {
   laterale.setAttribute("aria-label", "L'illusion du jour, révisions et progression");
   colonnes.append(principal, laterale);
   const carteJour = el("article", "carte");
-  const carteDefi = carteDefiDuJour(), carteVF = carteVraiFauxDuJour();
+  const carteDefi = PIECE_VISIBLE ? cartePieceDuJour() : carteDefiDuJour(), carteVF = carteVraiFauxDuJour();
+  const piece = PIECE_VISIBLE ? lire("pieceJour", null) : null;
   principal.appendChild(programmeDuJour([
     ["Situation du jour", !!dejaRepondu, carteJour],
-    ["Défi du jour", !!(defi && defi.jour === aujourdHui()), carteDefi],
+    PIECE_VISIBLE ? ["La pièce du jour", !!(piece && piece.jour === aujourdHui()), carteDefi] : ["Défi du jour", !!(defi && defi.jour === aujourdHui()), carteDefi],
     ["Vrai ou faux du jour", !!(vf && vf.j === aujourdHui()), carteVF]
   ]));
   // Le Grand test, mis en avant (grand-test-interface.js), s'il est publié
@@ -2113,6 +2116,9 @@ function transitionDeVue(majDom) {
 }
 
 // Filet du spectre sous l'en-tête : un segment par catégorie, de largeur proportionnelle à son nombre de fiches
+// Article du guide « Lire une pièce » (piece-interface.js) : seulement quand la pièce du jour est publiée
+if (PIECE_VISIBLE) pieceArticleGuide();
+
 (function dessinerSpectre() {
   const entete = document.querySelector(".entete");
   if (!entete) return;
@@ -2222,6 +2228,9 @@ document.addEventListener("keydown", e => {
     const portee = section.querySelector(".defi-jour .choix:not(:disabled)") ? section.querySelector(".defi-jour") : section;
     const choix = portee.querySelectorAll(".choix:not(:disabled)");
     if (choix[Number(e.key) - 1]) { e.preventDefault(); choix[Number(e.key) - 1].click(); }
+  } else if (PIECE_VISIBLE && (e.key === "p" || e.key === "P") && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    e.preventDefault();
+    location.hash = "#piece";
   } else if (e.key === "r" || e.key === "R") {
     const tirer = section.querySelector("[data-tirer]:not(:disabled)");
     if (tirer) { e.preventDefault(); tirer.click(); }
@@ -2236,7 +2245,7 @@ document.addEventListener("keydown", e => {
 
 // Aide des raccourcis clavier (touche « ? ») : une boîte de dialogue native, fermée par Échap ou par son bouton
 const RACCOURCIS = [["1 à 4", "Choisir une réponse"], ["7, 8, 9", "Certitude : sûr, plutôt sûr, au hasard"], ["Entrée ou →", "Question suivante, valider"],
-  ["R", "Tirer une autre carte, un autre défi"], ["Espace", "Retourner une carte (mode « Cartes »)"], ["?", "Afficher cette aide"]];
+  ["R", "Tirer une autre carte, un autre défi"], ...(PIECE_VISIBLE ? [["P", "Ouvrir la pièce du jour"]] : []), ["Espace", "Retourner une carte (mode « Cartes »)"], ["?", "Afficher cette aide"]];
 function afficherRaccourcis() {
   let boite = document.querySelector(".aide-raccourcis");
   if (!boite) {

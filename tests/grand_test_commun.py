@@ -24,6 +24,7 @@ def outils():
         extraire(lire("app.js"), "function generateur"),
         extraire(lire("app.js"), "function melanger"),
         extraire(lire("debattre.js"), "function phiInverse"),
+        extraire(lire("niveaux.js"), "const tauxCorrige"),
         extraire(lire("chiffres.js"), "const estAnnee"),
         extraire(lire("chiffres.js"), "function echelleFourchette"),
         extraire(lire("chiffres.js"), "function scoreFourchette"),
