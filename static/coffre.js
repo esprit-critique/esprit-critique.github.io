@@ -102,7 +102,10 @@ const REGLES_FUSION = {
   records: (a, b) => parCle(a, b, Math.max),
   chrono: (a, b) => parCle(a, b, Math.max),
   resultatsAteliers: (a, b) => parCle(a, b, (x, y) => ({ ...plusJoue(x, y), record: Math.max(x.record ?? -Infinity, y.record ?? -Infinity) })),
-  confiance: troisVoies, fourchettes: troisVoies, certitudes: troisVoies, duels: troisVoies,
+  confiance: troisVoies, fourchettes: troisVoies, certitudes: troisVoies, duels: troisVoies, pieceBilan: troisVoies,
+  // Pièce du jour : le jour le plus récent, et à jour égal l'entrée qui a une note ; résultats : union, les 120 derniers
+  pieceJour: (a, b) => (b && (!a || b.jour > a.jour || (b.jour === a.jour && typeof a.note !== "number" && typeof b.note === "number")) ? b : a),
+  pieces: (a, b) => { const vus = new Map(); [...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])].forEach(x => vus.set(JSON.stringify(x), x)); return [...vus.values()].sort((x, y) => (x.j || 0) - (y.j || 0)).slice(-120); },
   lucidite: (a, b, base) => ({ ...(a || {}), ...troisVoies(
     { total: (a || {}).total, jours: (a || {}).jours, cumuls: (a || {}).cumuls },
     { total: (b || {}).total, jours: (b || {}).jours, cumuls: (b || {}).cumuls },

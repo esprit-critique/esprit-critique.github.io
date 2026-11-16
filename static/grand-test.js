@@ -395,7 +395,7 @@ function reechantillonnerStrates(strates, statistique, tirages, alea) {
 // c = −(z(H) + z(F)) / 2. c > 0 : tendance à répondre « faux » ; c < 0 : tendance à répondre « vrai ».
 function detectionSignal(vraisJugesVrais, nVrais, fauxJugesVrais, nFaux) {
   if (!gtEntier(nVrais, 1, 1000) || !gtEntier(nFaux, 1, 1000) || !gtEntier(vraisJugesVrais, 0, nVrais) || !gtEntier(fauxJugesVrais, 0, nFaux)) return null;
-  const h = (vraisJugesVrais + 0.5) / (nVrais + 1), f = (fauxJugesVrais + 0.5) / (nFaux + 1);
+  const h = tauxCorrige(vraisJugesVrais, nVrais), f = tauxCorrige(fauxJugesVrais, nFaux);
   const zh = phiInverse(h), zf = phiInverse(f);
   return { d: zh - zf, c: -(zh + zf) / 2, h, f };
 }

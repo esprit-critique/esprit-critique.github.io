@@ -5,8 +5,12 @@
 
 const NOMS_NIVEAUX = { 1: T("découverte"), 2: T("confirmé"), 3: T("expert"), 4: T("maître"), 5: T("virtuose") };
 // Ateliers qui vont au-delà du niveau 3 (plus durs, et mieux payés : barème « atelier-note », progression.js)
-const NIVEAUX_MAX = { points: 5, hasard: 5, correlation: 5, graphiques: 5, crt: 5, classiques: 5, depistage: 5, "mots-de-passe": 5, "regle-246": 5, pays: 5, nord: 5, chronologie: 5, mortalite: 5, grandeurs: 5, hameconnage: 5, reparer: 5, "debat-truque": 5 };
+const NIVEAUX_MAX = { points: 5, hasard: 5, correlation: 5, graphiques: 5, crt: 5, classiques: 5, depistage: 5, "mots-de-passe": 5, "regle-246": 5, pays: 5, nord: 5, chronologie: 5, mortalite: 5, grandeurs: 5, hameconnage: 5, reparer: 5, "debat-truque": 5, piece: 4 };
 const niveauMax = id => NIVEAUX_MAX[id] || 3;
+
+// Taux corrigé de la théorie de la détection du signal (correction log-linéaire de 0,5) : (k + 0,5) / (n + 1) évite
+// les taux de 0 ou de 1, dont le z serait infini. Débat truqué, Grand test, pièce du jour.
+const tauxCorrige = (k, n) => (k + 0.5) / (n + 1);
 
 function niveauAtelier(id) {
   const n = lire("niveaux", {})[id] || {};

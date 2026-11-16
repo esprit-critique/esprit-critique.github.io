@@ -2090,3 +2090,12 @@ label[for] { display: block; margin: 0 0 8px; }
 .pdj-sondage-barre { height: 18px; border-radius: 3px; background: linear-gradient(to right, var(--c-fort) calc(var(--part) * 100%), var(--trait-doux) 0); }
 .pdj-sondage-valeur { text-align: right; font-variant-numeric: tabular-nums; font-weight: 650; }
 .pdj-sondage-axe { font-size: 13px; color: var(--discret); }
+
+/* Carte de l'accueil, atelier */
+.pdj-carte .pdj-etiquette { border-bottom: 0; padding-bottom: 0; margin-bottom: 8px; }
+.pdj-signes { font-family: var(--titre); font-size: 28px; letter-spacing: 0.12em; margin: 0 0 8px; }
+.pdj-records { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; margin: 0 0 12px; }
+.pdj-records dt { font-weight: 650; }
+.pdj-records dd { margin: 0; color: var(--discret); }
+.pdj-archives { columns: 2; padding-left: 18px; margin: 0 0 12px; }
+.pdj-archives li { margin-bottom: 4px; }

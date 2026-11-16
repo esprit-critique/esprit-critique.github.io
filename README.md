@@ -191,6 +191,7 @@ que dans la première configuration.
 | `tests/noms_globaux.py` | noms globaux déclarés deux fois entre les scripts du site (lancé avant tous les bancs) |
 | `tests/_grand-test.html` | Grand test : drapeaux, stockage, migration, parcours simulés, reprise, graphiques à 0/1/3/20 tests, rappels |
 | `tests/grand_test_*.py` | Grand test hors navigateur (Node.js) : calculs contre un oracle Python, familles d'items, banques |
+| `tests/piece_moteur.py`, `tests/_piece.html` | pièce du jour : moteur hors navigateur (non-ambiguïté, variété, oracle, notation) ; interface, enregistrement et accueil sur la copie d'essai |
 
 Les rapports et les captures vont dans `tests/rapports/`, qui n'est pas versionné.
 
@@ -219,6 +220,24 @@ source primaire (marquées « à vérifier » dans les cartes et le fichier à r
 
 Pour l'essayer sur son ordinateur : `tests/lancer.sh grand` fabrique une copie d'essai (`static/_site-grand.html`,
 drapeaux à true) le temps du banc ; on peut aussi le faire à la main, sans jamais modifier `grand-test.js`.
+
+## La pièce du jour (en préparation)
+
+Chaque jour, un document fictif (brève, publicité, sondage, publication, communiqué d'étude, bulletin municipal), le
+même pour tous à un niveau donné, à expertiser : repérer ce qui trompe, nommer le procédé, chiffrer, conclure ; puis la
+contre-expertise, calculée à partir de la vérité cachée de la pièce, et la pièce rectifiée. Elle remplacera la carte
+« Défi du jour » de l'accueil (le défi reste en « Défi libre »).
+
+**Pas encore publiée** : `PIECE_VISIBLE = false` dans `static/piece.js` ; la bascule appartient au propriétaire,
+après relecture de `tests/piece-a-relire.md` (`RELECTURE_PIECE` dans `static/piece-donnees.js`). Brief, plan et
+journal : `tests/piece-brief.md`, `tests/piece-plan.md`, `tests/piece-journal.md`. Pour l'essayer :
+`tests/lancer.sh piece` fabrique une copie d'essai (`static/_site-piece.html`, drapeau à true) le temps du banc.
+
+| Fichier | Contenu |
+|---|---|
+| `static/piece-donnees.js` | mondes, formats, procédés, leurres, niveaux |
+| `static/piece.js` | drapeau, graines, rotation, génération, notation (fonctions pures) |
+| `static/piece-interface.js` | rendu des formats, jeu, contre-expertise, carte de l'accueil, atelier, archives |
 
 ## Licences
 
