@@ -1557,17 +1557,28 @@ label[for] { display: block; margin: 0 0 8px; }
 .avec-personnage-textes { min-width: 0; }
 .avec-personnage-textes > * { margin-top: 0; margin-bottom: 0; }
 .accueil-tete .page-titre.salut { font-size: clamp(34px, 6vw, 56px); }
-/* Accueil : l'avatar à gauche du bloc date, salutation, phrase, centré sur lui ; plus petit sur téléphone */
-.salut-accueil { display: flex; align-items: center; gap: 18px; }
-.salut-textes { min-width: 0; }
+/* Accueil : une grille. L'avatar occupe les lignes de la date et de la salutation, centré sur elles ; la phrase vient
+   dessous, alignée sur le titre (ordinateur) ou sur toute la largeur (téléphone). Le bloc des textes s'efface
+   (display: contents) pour que ses trois lignes se placent dans la grille */
+.salut-accueil { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; align-items: center; }
+.salut-textes { display: contents; }
+.lien-avatar { grid-column: 1; grid-row: 1 / 3; }
+.salut-textes > * { grid-column: 2; min-width: 0; }
+.salut-textes .date-du-jour { grid-row: 1; align-self: end; }
+.salut-textes .page-titre { grid-row: 2; align-self: start; }
+.salut-textes .salut-phrase { grid-row: 3; }
 .salut-textes .date-du-jour { margin-bottom: 12px; }   /* la pastille de série ne touche pas le grand titre */
 .salut-textes .page-titre { margin: 2px 0 0; }
 .salut-textes .salut-phrase { margin-bottom: 0; }
-.lien-avatar { flex: none; display: block; border-radius: 50%; }
+.lien-avatar { display: block; justify-self: start; border-radius: 50%; }
 .lien-avatar .portrait { display: block; width: 88px; height: 88px; transition: transform var(--duree-courte) var(--courbe); }
 .lien-avatar:hover .portrait { transform: scale(1.04); }
-/* Téléphone : le titre passe souvent sur deux lignes ; l'avatar s'aligne sur la première, sous la date */
-@media (max-width: 759px) { .salut-accueil { align-items: flex-start; gap: 12px; } .lien-avatar { margin-top: 30px; } .lien-avatar .portrait { width: 52px; height: 52px; } }
+/* Téléphone : avatar plus petit ; la phrase reprend toute la largeur au lieu de laisser une colonne vide sous l'avatar */
+@media (max-width: 759px) {
+  .salut-accueil { column-gap: 12px; }
+  .lien-avatar .portrait { width: 56px; height: 56px; }
+  .salut-textes .salut-phrase { grid-column: 1 / -1; }
+}
 .salut-accueil + .page-intro { margin-top: 14px; }
 .avec-personnage .portrait { flex: none; }
 .page-titre.salut { overflow-wrap: anywhere; }
@@ -1714,15 +1725,28 @@ label[for] { display: block; margin: 0 0 8px; }
 .insigne-plein { fill: var(--accent); }
 .insigne.revele .insigne-trait { animation: revelation-insigne var(--duree-longue) var(--courbe); }
 @keyframes revelation-insigne { from { opacity: 0; } }
-.blason-fond { fill: color-mix(in srgb, var(--c) 18%, var(--carte)); stroke: var(--c); stroke-width: 1.5; }
-.blason-trait { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.portrait { flex: none; overflow: visible; }
+/* Personnage en figure noire sur médaillon de terre cuite (profil.js) : mêmes couleurs dans les deux thèmes, comme une
+   image (TERRE_PERSONNAGE et FIGURE_PERSONNAGE) ; contraste figure / argile 4,9:1 */
+.portrait { --terre: #c8693a; --figure: #1b120c; --motif: #a4532b; --motif-clair: #f2c39a; flex: none; overflow: visible; }
+/* Fonds du médaillon : bordures noires, motifs du champ en argile plus cuite (MOTIF_PERSONNAGE) */
+.motif-noir, .motif-sombre { fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.motif-noir { stroke: var(--figure); }
+.motif-sombre { stroke: var(--motif); }
+.motif-noir.motif-plein { fill: var(--figure); stroke: none; }
+.motif-sombre.motif-plein { fill: var(--motif); stroke: none; }
+.motif-clair.motif-plein { fill: var(--motif-clair); stroke: none; }
 .apercu-personnage { margin: 4px 0 6px; }
 .puce:disabled { border-style: dashed; cursor: not-allowed; }
-.portrait .blason-fond { stroke-width: 1; }
-.portrait .blason-trait { stroke-width: 2.8; }
-.portrait-plein { fill: var(--c); }
-.portrait-objet { stroke-width: 1.8; }
+.medaillon-fond { fill: var(--terre); }
+.medaillon-bord { fill: none; stroke: var(--figure); stroke-width: 1.5; }
+.medaillon-filet { fill: none; stroke: var(--figure); stroke-width: 0.6; }
+.figure-plein { fill: var(--figure); }
+.figure-epais, .figure-incise { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.figure-epais { stroke: var(--figure); }
+.figure-incise { stroke: var(--terre); }
+.medaillon-objet { fill: var(--figure); }
+.medaillon-objet-bord { fill: var(--c); }
+.medaillon-objet-trait { fill: none; stroke: var(--terre); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .portrait-piste, .portrait-arc { fill: none; stroke-width: 5; stroke-linecap: round; }
 .portrait-piste { stroke: var(--trait-doux); }
 .portrait-arc { stroke: var(--c); }
@@ -1785,16 +1809,32 @@ label[for] { display: block; margin: 0 0 8px; }
 .profil-noms { min-width: 0; }
 .profil-noms .page-titre { overflow-wrap: anywhere; }
 .profil-noms .page-titre.titre-long { font-size: clamp(26px, 5vw, 40px); }
-.bouton-profil .portrait .blason-trait { stroke-width: 6; }
-.bouton-profil .portrait .portrait-plein { display: none; }
 .profil-grade { display: flex; gap: 8px; align-items: center; margin: 0; font-family: var(--titre); font-size: 18px; font-weight: 650; }
 .profil-maitrise { text-align: right; }
+/* Sur mobile, le bloc passe sous le portrait et n'est pas plus large que sa légende : aligné à droite, le chiffre
+   flottait au milieu. Il se met en ligne, chiffre puis légende, sur la même ligne de base */
+@media (max-width: 759px) {
+  .profil-maitrise { display: flex; align-items: baseline; gap: 10px; text-align: left; }
+  .profil-maitrise .grand-nombre { font-size: 56px; }
+}
 .grand-nombre { display: block; font-family: var(--titre); font-size: clamp(64px, 2vw + 56px, 80px); font-weight: 700; line-height: 1; font-variant-numeric: oldstyle-nums; }
 .grand-nombre.petit { font-size: 34px; margin-left: auto; display: inline; }
 .avertissement-maitrise { font-style: italic; }
 .onglets-profil { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 6px; border-bottom: 1px solid var(--trait); }
 .onglet-profil { min-height: 44px; padding: 8px 12px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--discret); font-weight: 600; }
 .onglet-profil[aria-selected="true"] { color: var(--texte); border-bottom-color: var(--accent); }
+/* Sur téléphone, les six onglets passaient sur deux lignes, et la seconde ne se lisait plus comme des onglets. Ils
+   restent sur une ligne qui défile au doigt : le bord droit s'estompe et l'onglet suivant est coupé, signe qu'il y a
+   une suite ; l'onglet ouvert est ramené dans la vue (profil.js) */
+@media (max-width: 759px) {
+  .onglets-profil { flex-wrap: nowrap; gap: 0; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); }
+  .onglets-profil::-webkit-scrollbar { display: none; }
+  .onglet-profil { flex: none; white-space: nowrap; padding: 8px 14px; }
+  /* Arrivé au bout de la ligne, plus rien à estomper */
+  .onglets-profil.au-bout { -webkit-mask-image: none; mask-image: none; }
+}
 .codex-cadre { display: flex; justify-content: center; }
 .codex { max-width: 100%; height: auto; }
 .codex-point { fill: var(--c); opacity: 0.25; }
@@ -1883,6 +1923,80 @@ label[for] { display: block; margin: 0 0 8px; }
 .liste-raccourcis dd { margin: 0; }
 
 .bouton-partage { margin: 10px 0 0; display: block; }
+
+/* Portrait du profil : bouton qui ouvre la fiche à partager */
+.bouton-portrait { flex: none; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; line-height: 0; }
+.bouton-portrait .portrait { transition: transform var(--duree-courte) var(--courbe); }
+.bouton-portrait:hover .portrait { transform: scale(1.03); }
+
+/* Fiche à partager : boîte de dialogue native, sans marge intérieure (un clic sur la boîte elle-même est un clic sur le
+   fond) ; fond flouté, avec un voile seul pour les navigateurs sans backdrop-filter */
+.fiche-personnage { width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--trait);
+  border-radius: var(--rayon-carte); background: var(--carte-haute); color: var(--texte); box-shadow: var(--ombre-2); }
+.fiche-personnage::backdrop { background: rgba(20, 14, 8, 0.45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.fiche-contenu { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 20px 18px; text-align: center; }
+.fiche-contenu:focus { outline: none; }
+.fiche-contenu:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
+.frise-grecque { display: block; width: 100%; height: auto; max-height: 16px; }
+.frise-trait { fill: none; stroke: var(--texte); stroke-width: 1.1; }
+/* Titre de la fiche du personnage (« fiche-titre » est le titre des fiches de notions) */
+.fiche-perso-titre { margin: 4px 0 0; font-family: var(--titre); font-size: 24px; overflow-wrap: anywhere; }
+.fiche-contenu > .portrait { width: min(240px, 70vw); height: auto; }
+.fiche-grade { justify-content: center; }
+.fiche-chiffres { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.fiche-chiffres > div { display: flex; flex-direction: column; align-items: center; }
+.fiche-nombre { font-family: var(--titre); font-size: 44px; font-weight: 700; line-height: 1.05; font-variant-numeric: oldstyle-nums; }
+.fiche-compte { font-family: var(--police); font-size: 14px; font-weight: 600; color: var(--discret); font-variant-numeric: tabular-nums; }
+.fiche-option { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.fiche-option input { width: 20px; height: 20px; margin: 0; }
+.fiche-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.fiche-actions .bouton { min-height: 44px; }
+.fiche-section { margin: 10px 0 0; font-family: var(--titre); font-size: 18px; }
+/* Graphiques de la fiche : terre cuite et noir des vases, couleurs des domaines ; décoratifs, doublés d'un texte */
+.fiche-contenu { --terre: #c8693a; --figure: #1b120c; }
+.fiche-echelle { display: block; width: min(300px, 100%); height: auto; margin-bottom: 8px; }
+.fiche-echelle-trait { stroke: var(--trait); stroke-width: 2; }
+.fiche-grade-atteint, .fiche-grade-actuel { fill: var(--terre); }
+.fiche-grade-actuel { stroke: var(--texte); stroke-width: 2.5; }
+.fiche-grade-futur { fill: var(--carte); stroke: var(--trait); stroke-width: 1.5; }
+.fiche-chiffres { align-items: start; }
+.fiche-jours { display: block; width: auto; max-width: 100%; height: 50px; margin-top: 6px; }
+.fiche-jour { fill: var(--terre); }
+.fiche-jour-actuel { fill: var(--texte); }
+.fiche-jours-base { stroke: var(--trait); stroke-width: 1; }
+.fiche-jours-objectif { stroke: var(--discret); stroke-width: 1; stroke-dasharray: 3 2; }
+.fiche-legende { font-size: 12px; line-height: 1.35; margin-top: 4px; }
+/* Le trait dominant, sous le vase : même ligne que la légende des jours, un peu plus marqué */
+.fiche-trait { margin-top: 4px; font-family: var(--titre); font-size: 14px; font-weight: 650; line-height: 1.2; }
+/* Vase et graphique des jours à la même hauteur : les deux colonnes de la fiche restent alignées ligne à ligne */
+.fiche-vase { display: block; height: 50px; width: auto; margin: 6px auto 0; overflow: visible; }
+.vase-fond, .vase-argile { fill: var(--terre); }
+.vase-noir { fill: var(--figure); }
+.vase-frise { fill: none; stroke: var(--terre); stroke-width: 1.3; }
+.vase-contour, .vase-anse { fill: none; stroke: var(--texte); stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+.vase-anse { stroke-width: 2.4; }
+.fiche-nom { width: 100%; text-align: left; }
+.fiche-nom-ligne { display: flex; gap: 8px; }
+.fiche-nom-ligne .champ { flex: 1; min-width: 0; min-height: 44px; }
+.fiche-nom-ligne .bouton { min-height: 44px; }
+.fiche-perso-titre:focus { outline: none; }
+.fiche-domaines { display: grid; gap: 6px; width: 100%; margin: 0; padding: 0; list-style: none; text-align: left; }
+.fiche-domaine { display: grid; grid-template-columns: 26px 1fr auto; grid-template-rows: auto 6px; column-gap: 8px; align-items: center; }
+.fiche-domaine .embleme-domaine { grid-row: 1 / 3; }
+.fiche-domaine-nom { font-size: 14px; }
+.fiche-domaine-valeur { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.fiche-barre { grid-column: 2 / 4; height: 6px; border-radius: 3px; background: var(--trait-doux); overflow: hidden; }
+.fiche-barre > span { display: block; height: 100%; width: calc(var(--part) * 100%); background: var(--c); }
+.fiche-medailles { display: block; width: 100%; max-width: 312px; height: auto; }
+.medaille-obtenue { fill: var(--figure); }
+.medaille-filet { fill: none; stroke: var(--terre); stroke-width: 0.6; }
+.medaille-motif { fill: none; stroke: var(--terre); stroke-width: 1.1; stroke-linecap: round; }
+.medaille-a-gagner { fill: none; stroke: var(--discret); stroke-width: 1; stroke-dasharray: 2.5 2; }
+@media (prefers-color-scheme: dark) {
+  /* Sur le fond sombre, la médaille noire garde un liseré d'argile pour rester visible */
+  :root:not([data-theme="light"]) .medaille-obtenue { stroke: var(--terre); stroke-width: 1; }
+}
+:root[data-theme="dark"] .medaille-obtenue { stroke: var(--terre); stroke-width: 1; }
 .pied-fiche .bouton.large { margin-top: 10px; }
 
 /* Accueil du nouveau visiteur (profil.js) */
