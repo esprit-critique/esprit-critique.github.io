@@ -47,6 +47,7 @@ EN_AJOUTER([
   ["Faux", "False"],
   ["« {0} » — attribuée à {1}", "“{0}” — attributed to {1}"],
   ["Lequel a eu lieu en premier ?", "Which happened first?"],
+  ["Juste.", "Correct."],
   ["Réponse : {0}.", "Answer: {0}."],
   ["Défi Esprit critique du {0} : {1} / 10.", "Esprit critique challenge, {0}: {1} / 10."],
   ["Défi du jour", "Daily challenge"],
