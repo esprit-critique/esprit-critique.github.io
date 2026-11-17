@@ -1053,6 +1053,9 @@ label[for] { display: block; margin: 0 0 8px; }
 .repere-b { stroke: var(--orange); stroke-width: 1.2; stroke-dasharray: 4 3; }
 .ville-a { fill: var(--c-fort, var(--accent)); stroke: var(--carte); stroke-width: 1.5; }
 .ville-b { fill: var(--orange); stroke: var(--carte); stroke-width: 1.5; }
+.carres-surfaces { display: block; width: 100%; max-width: 440px; height: auto; margin: 8px auto 4px; }
+.carre-surface { fill: color-mix(in srgb, var(--texte) 12%, var(--carte)); stroke: var(--discret); stroke-width: 1; }
+.carre-surface.fort { fill: color-mix(in srgb, var(--c-fort, var(--accent)) 30%, var(--carte)); stroke: var(--c-fort, var(--accent)); }
 
 /* ===================== Perception ===================== */
 

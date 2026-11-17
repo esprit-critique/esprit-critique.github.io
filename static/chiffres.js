@@ -65,6 +65,28 @@ function barresComparees(conteneur, elements, reference) {
   if (reference) conteneur.appendChild(el("p", "barre-source", T("Trait vertical : {0}", T(reference.texte))));
 }
 
+// Surfaces comparées par des carrés d'aire proportionnelle (côté ∝ √surface), posés côte à côte sur une même ligne :
+// une surface se compare mieux par une aire que par une longueur. Deux pays : nom et valeur sous chaque carré ; un
+// classement : un numéro, celui de la barre correspondante juste au-dessus (six noms ne tiendraient pas côte à côte).
+function carresSurfaces(conteneur, elements, numeros) {
+  const cotes = elements.map(e => Math.sqrt(e.valeur));
+  // Le plus grand carré fait au plus 110 de côté, et l'ensemble tient dans 300 de large (écarts de 16)
+  const k = Math.min(110 / Math.max(...cotes), (300 - 16 * (elements.length - 1)) / cotes.reduce((a, b) => a + b, 0));
+  const haut = 110 * Math.min(1, k * Math.max(...cotes) / 110), bas = 10 + haut;
+  const s = svg("svg", { viewBox: "0 0 320 " + (bas + (numeros ? 20 : 34)), class: "carres-surfaces", role: "img",
+    "aria-label": T("Surfaces comparées par des carrés d'aire proportionnelle : {0}", elements.map(e => T(e.nom) + " " + T(e.texte)).join(", ")) });
+  let x = 10 + (300 - (cotes.reduce((a, b) => a + b, 0) * k + 16 * (elements.length - 1))) / 2;
+  elements.forEach((e, i) => {
+    const c = Math.max(1.5, cotes[i] * k);
+    s.appendChild(svg("rect", { x: x, y: bas - c, width: c, height: c, class: "carre-surface" + (e.forte ? " fort" : "") }));
+    s.appendChild(texteSvg(x + c / 2, bas + 14, numeros ? String(i + 1) : T(e.nom), { class: "sch-texte sch-gras", "text-anchor": "middle" }));
+    if (!numeros) s.appendChild(texteSvg(x + c / 2, bas + 28, T(e.texte), { class: "sch-petit", "text-anchor": "middle" }));
+    x += c + 16;
+  });
+  conteneur.appendChild(s);
+  conteneur.appendChild(el("p", "barre-source", numeros ? T("Aire des carrés proportionnelle à la surface ; numéros dans l'ordre des barres.") : T("Aire des carrés proportionnelle à la surface.")));
+}
+
 // ===================== Les jeux =====================
 
 const JEUX = [
@@ -214,6 +236,9 @@ const JEUX = [
             const bon = [...duel.pays].sort((a, b) => b[duel.cle] - a[duel.cle]);
             const retour = el("div", "retour-quiz");
             const part = corrigerClassement(retour, ordre, bon, p => p.nom, p => ind.format(p[duel.cle]) + " (" + source(p) + ")");
+            // Le bon ordre en barres (sauf pour les taux qui peuvent être négatifs, laissés en liste), en carrés pour les surfaces
+            if (ind.barres !== false) barresComparees(retour, bon.map((p, i) => ({ nom: (duel.cle === "surf" ? (i + 1) + ". " : "") + T(p.nom), valeur: p[duel.cle], texte: ind.format(p[duel.cle]) })));
+            if (duel.cle === "surf") carresSurfaces(retour, bon.map(p => ({ nom: p.nom, valeur: p.surf, texte: ind.format(p.surf) })), true);
             zone.appendChild(retour);
             fini(part, retour);
           });
@@ -252,6 +277,7 @@ const JEUX = [
               nom: p.nom, valeur: p[duel.cle], texte: ind.format(p[duel.cle]), forte: p === gagnant, source: source(p)
             })), mondial ? { valeur: MONDE_PAYS[duel.cle], texte: mondial } : null);
           }
+          if (duel.cle === "surf") carresSurfaces(retour, [duel.a, duel.b].map(p => ({ nom: p.nom, valeur: p.surf, texte: ind.format(p.surf), forte: p === gagnant })));
           if (ind.note) retour.appendChild(paragraphe(ind.note, "source"));
           if (duel.cle === "surf" && [duel.a, duel.b].some(p => Math.abs(p.lat) >= 45) && [duel.a, duel.b].some(p => Math.abs(p.lat) < 30)) {
             retour.appendChild(paragraphe("Sur la plupart des cartes du monde (projection de Mercator), les pays éloignés de l'équateur paraissent bien plus grands qu'ils ne le sont : à 60° de latitude, les surfaces apparaissent quatre fois trop grandes.", "source"));
@@ -1255,10 +1281,12 @@ function planisphere(villes, sens, numeros) {
   const points = villes.map((v, k) => ({ nom: numeros ? String(k + 1) : VILLES[v][0], px: x(VILLES[v][2]), py: y(VILLES[v][1]) }));
   villes.forEach((v, k) => {
     const [, lat, lon] = VILLES[v];
-    // Ligne de repère : le parallèle (nord) ou le méridien (est) de chaque ville
-    if (sens === "nord") s.appendChild(svg("line", { x1: 10, y1: y(lat), x2: 310, y2: y(lat), class: k === 0 ? "repere-a" : "repere-b" }));
-    else s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: k === 0 ? "repere-a" : "repere-b" }));
-    s.appendChild(svg("circle", { cx: x(lon), cy: y(lat), r: 4.5, class: k === 0 ? "ville-a" : "ville-b" }));
+    // Ligne de repère : le parallèle (nord) ou le méridien (est) de chaque ville. Deux villes : une couleur chacune ;
+    // un classement : toutes de la même couleur, leur numéro dit l'ordre (une bleue et les autres orange ne voulait rien dire)
+    const b = !numeros && k > 0;
+    if (sens === "nord") s.appendChild(svg("line", { x1: 10, y1: y(lat), x2: 310, y2: y(lat), class: b ? "repere-b" : "repere-a" }));
+    else s.appendChild(svg("line", { x1: x(lon), y1: 10, x2: x(lon), y2: 160, class: b ? "repere-b" : "repere-a" }));
+    s.appendChild(svg("circle", { cx: x(lon), cy: y(lat), r: 4.5, class: b ? "ville-b" : "ville-a" }));
   });
   placerEtiquettes(points, obstacles)
     .forEach(e => s.appendChild(texteSvg(e.x, e.y, e.nom, { class: "sch-texte sch-gras", "text-anchor": e.ancre })));

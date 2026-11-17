@@ -2,6 +2,9 @@
 // Les {0}, {1}… sont remplacés par les valeurs que passe le code : T("… {0} …", valeur).
 EN_AJOUTER([
   ["Trait vertical : {0}", "Vertical line: {0}"],
+  ["Surfaces comparées par des carrés d'aire proportionnelle : {0}", "Areas compared by squares of proportional area: {0}"],
+  ["Aire des carrés proportionnelle à la surface ; numéros dans l'ordre des barres.", "Square areas proportional to land area; numbers follow the order of the bars."],
+  ["Aire des carrés proportionnelle à la surface.", "Square areas proportional to land area."],
   ["Dix questions sur l'état du monde, avec les données les plus récentes. En 2017, des milliers de personnes ont fait moins bien que le hasard.", "Ten questions on the state of the world, with the most recent data. In 2017, thousands of people did worse than chance."],
   ["En 2017, {0} % des personnes interrogées par Gapminder ont répondu juste{1}. Un choix au hasard en donnerait 33 %.", "In 2017, {0}% of the people surveyed by Gapminder answered correctly{1}. A random pick would give 33%."],
   ["Un choix au hasard donnerait en moyenne 3,3 sur 10 : c'est ce que Hans Rosling appelait le score des chimpanzés. Dans l'enquête Gapminder de 2017, les participants obtenaient en moyenne 2,2 bonnes réponses sur 12, soit moins que le hasard.", "A random pick would give 3.3 out of 10 on average: this is what Hans Rosling called the chimpanzee score. In the 2017 Gapminder survey, participants got 2.2 correct answers out of 12 on average, which is worse than chance."],
