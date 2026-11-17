@@ -4,7 +4,7 @@
 #
 #   tests/lancer.sh                       tous les bancs, dans les quatre configurations
 #   tests/lancer.sh affichage             un seul banc (affichage, ateliers, test, niveaux, items, csp, grand, hors-ligne, calculs,
-#                                         familles, banques, recherche, aleatoire, progression, synchro ou piece-moteur)
+#                                         familles, banques, recherche, aleatoire, progression, synchro, piece-moteur ou rotation)
 #   CONFIGS="390 clair" tests/lancer.sh   une seule configuration
 #
 # Les bancs sont copiés dans static/ le temps du test, puis enlevés ; le serveur local est arrêté à la fin.
@@ -12,7 +12,7 @@
 # Code de sortie 1 si un banc échoue (tests/verdict.py), pour l'intégration continue.
 cd "$(dirname "$0")/.."
 RACINE=$(pwd)
-BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire progression synchro piece-moteur piece"}
+BANCS=${*:-"affichage ateliers test niveaux items csp grand hors-ligne calculs familles banques recherche aleatoire progression synchro piece-moteur rotation piece"}
 export CHROME=${CHROME:-$(python3 tests/navigateur.py)}
 CONFIGS=${CONFIGS:-"390 clair
 390 sombre
@@ -74,7 +74,7 @@ while read -r largeur theme; do
     rapport="tests/rapports/$banc-$largeur-$theme.txt"
     page="_$banc.html"; [ "$banc" = items ] && page="niveaux.html"   # items : décompte des items par niveau
     [ "$banc" = grand ] && page="_grand-test.html"
-    case $banc in recherche|calculs|familles|banques|aleatoire|progression|synchro|piece-moteur)
+    case $banc in recherche|calculs|familles|banques|aleatoire|progression|synchro|piece-moteur|rotation)
       # Bancs indépendants de la taille et du thème : une seule fois, dans la première configuration
       [ "$PREMIERE" = "$largeur-$theme" ] || continue
       rapport="tests/rapports/$banc.txt" ;;
@@ -90,6 +90,8 @@ while read -r largeur theme; do
     elif [ "$banc" = recherche ]; then   # Playwright (npm ci), avec ses propres tailles d'écran
       if node tests/recherche-melange.js > "$rapport.tmp" 2>&1; then r="0 échec"; else r="ÉCHEC"; fi
       { echo "RÉSUMÉ : $(grep -c '^OK' "$rapport.tmp") contrôle(s) réussi(s) ; $r"; cat "$rapport.tmp"; } > "$rapport"; rm -f "$rapport.tmp"
+    elif [ "$banc" = rotation ]; then
+      python3 tests/rotation.py "$rapport" > /dev/null   # tirage des cartes du jour, hors navigateur (Node.js)
     elif [ "$banc" = piece-moteur ]; then
       python3 tests/piece_moteur.py "$rapport" > /dev/null   # pièce du jour, hors navigateur (Node.js)
     elif [ "$banc" = calculs ] || [ "$banc" = familles ] || [ "$banc" = banques ]; then
