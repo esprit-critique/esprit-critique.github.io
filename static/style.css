@@ -275,7 +275,7 @@ small { font-size: 13px; }
   .onglet.actif { border-bottom-color: var(--c, var(--texte)); }
   /* Deux lignes au plus : marque, recherche, profil et langue sur la première (dans le flux, sans chevauchement),
      la navigation dessous */
-  .entete { column-gap: 12px; }
+  .entete { column-gap: 12px; --ecart-entete: 12px; }
   .langue-entete, .etat-synchro { position: static; flex: none; }
   .entete .bouton-profil { position: relative; flex: none; }   /* repère du blason */
   .etat-synchro { order: 3; }
@@ -1562,18 +1562,17 @@ label[for] { display: block; margin: 0 0 8px; }
 .salut-textes > * { grid-column: 2; min-width: 0; }
 .salut-textes .date-du-jour { grid-row: 1; align-self: end; }
 .salut-textes .page-titre { grid-row: 2; align-self: start; }
-.salut-textes .salut-phrase { grid-row: 3; }
+.salut-textes .salut-phrase { grid-row: 3; grid-column: 1 / -1; }   /* à la marge, sous l'avatar */
 .salut-textes .date-du-jour { margin-bottom: 12px; }   /* la pastille de série ne touche pas le grand titre */
 .salut-textes .page-titre { margin: 2px 0 0; }
 .salut-textes .salut-phrase { margin-bottom: 0; }
 .lien-avatar { display: block; justify-self: start; border-radius: 50%; }
 .lien-avatar .portrait { display: block; width: 88px; height: 88px; transition: transform var(--duree-courte) var(--courbe); }
 .lien-avatar:hover .portrait { transform: scale(1.04); }
-/* Téléphone : avatar plus petit ; la phrase reprend toute la largeur au lieu de laisser une colonne vide sous l'avatar */
+/* Téléphone : avatar plus petit */
 @media (max-width: 759px) {
   .salut-accueil { column-gap: 12px; }
   .lien-avatar .portrait { width: 56px; height: 56px; }
-  .salut-textes .salut-phrase { grid-column: 1 / -1; }
 }
 .salut-accueil + .page-intro { margin-top: 16px; }
 .avec-personnage .portrait { flex: none; }
@@ -1603,7 +1602,7 @@ label[for] { display: block; margin: 0 0 8px; }
 /* En-tête sur ordinateur large : marque, navigation, recherche et langue sur une seule ligne */
 @media (min-width: 1040px) {
   /* Onglets sans icône et écarts resserrés : la recherche garde 260 px dès 1 040 px de large */
-  .entete { flex-wrap: nowrap; gap: 16px; padding-top: 12px; padding-bottom: 12px; }
+  .entete { flex-wrap: nowrap; gap: 16px; --ecart-entete: 16px; padding-top: 12px; padding-bottom: 12px; }
   .marque { flex: none; white-space: nowrap; }
   .navigation { order: 1; flex-basis: auto; margin-top: 0; gap: 8px; }
   .onglet svg { display: none; }
@@ -1885,12 +1884,17 @@ label[for] { display: block; margin: 0 0 8px; }
 .liste-parcours li .lien-texte { min-height: 44px; display: inline-flex; align-items: center; }
 
 /* Synchronisation (coffre.js) */
-@media (max-width: 759px) { .etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 29px); right: 124px; } }
-.etat-synchro { width: 10px; height: 10px; border-radius: 50%; background: var(--discret); }
+/* La pastille d'état de la synchronisation se pose en badge sur le bord bas-gauche du rond du profil (à 45°, sur le cercle
+   de 44 px) : seule à côté du bouton, elle flottait sans rapport visible avec lui. Liseré de la couleur du bouton.
+   Téléphone : bouton à 12 px du haut et 74 px de la droite, centre (−96, 34) ; centre de la pastille (−111,6 ; 49,6) */
+@media (max-width: 759px) { .etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 45px); right: 107px; z-index: 2; } }
+.etat-synchro { width: 10px; height: 10px; border-radius: 50%; background: var(--discret); box-shadow: 0 0 0 2px var(--carte); }
 .etat-synchro[data-statut="a-jour"] { background: var(--vert); }
 .etat-synchro[data-statut="erreur"] { background: var(--rouge); }
 .etat-synchro[data-statut="en-cours"], .etat-synchro[data-statut="en-attente"] { background: var(--orange); }
-@media (min-width: 760px) { .etat-synchro { margin-right: -12px; } }   /* à 4 px du bouton de profil */
+/* En-tête dans le flux : la pastille ne prend aucune place (marge négative de sa largeur et de l'écart de l'en-tête), le
+   bouton commence donc à son bord gauche ; décalée de (1 px, 16 px), son centre tombe sur le cercle, à 45° en bas à gauche */
+@media (min-width: 760px) { .etat-synchro { margin-right: calc(-10px - var(--ecart-entete, 12px)); position: relative; left: 1px; top: 16px; z-index: 1; } }
 .bloc-synchro { margin-top: 24px; }
 .actions-synchro { flex-wrap: wrap; }
 .code-synchro { margin-top: 16px; padding: 12px 16px; border: 1px dashed var(--trait); border-radius: var(--rayon-carte); }
