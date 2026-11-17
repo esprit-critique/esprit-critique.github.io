@@ -98,7 +98,7 @@ function bilanMelange(zone) {
     // pathLength = 100 : le tracé « part 100 » remplit exactement la part de l'anneau, quel que soit son rayon
     const dessin = svg("svg", { viewBox: "0 0 120 120", role: "img", "aria-label": T("{0} : {1} bonne(s) réponse(s) sur {2}, soit {3} %", T(sec.titre), juste, total, part) });
     dessin.append(svg("circle", { cx: 60, cy: 60, r: 48, class: "anneau-fond", pathLength: 100 }),
-      svg("circle", { cx: 60, cy: 60, r: 48, class: "anneau-valeur", pathLength: 100, "stroke-dasharray": part + " 100", transform: "rotate(-90 60 60)" }),
+      svg("circle", { cx: 60, cy: 60, r: 48, class: "anneau-valeur" + (part ? "" : " anneau-vide"), pathLength: 100, "stroke-dasharray": part + " 100", transform: "rotate(-90 60 60)" }),
       texteSvg(60, 58, juste + " / " + total, { class: "anneau-score", "text-anchor": "middle" }),
       texteSvg(60, 80, part + PC, { class: "anneau-part", "text-anchor": "middle" }));
     figure.append(dessin, el("figcaption", null, sec.titre));

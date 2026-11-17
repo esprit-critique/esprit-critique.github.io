@@ -156,8 +156,10 @@ function graphiqueJauge(titre, valeur, debut, fin, texte) {
 // Anneau (objectif du jour, bouton de profil) : part remplie de 0 à 1
 function anneau(part, taille, classe) {
   const s = svg("svg", { viewBox: "0 0 40 40", class: "anneau-mini " + (classe || ""), width: taille, height: taille, "aria-hidden": "true" });
+  const rempli = Math.round(100 * Math.max(0, Math.min(1, part)));
+  // À 0, le tiret de longueur nulle dessinerait une pastille (bout rond) : un anneau vide resterait marqué
   s.append(svg("circle", { cx: 20, cy: 20, r: 16, pathLength: 100, class: "anneau-fond" }),
-    svg("circle", { cx: 20, cy: 20, r: 16, pathLength: 100, class: "anneau-valeur", "stroke-dasharray": Math.round(100 * Math.max(0, Math.min(1, part))) + " 100", transform: "rotate(-90 20 20)" }));
+    svg("circle", { cx: 20, cy: 20, r: 16, pathLength: 100, class: "anneau-valeur" + (rempli ? "" : " anneau-vide"), "stroke-dasharray": rempli + " 100", transform: "rotate(-90 20 20)" }));
   return s;
 }
 
