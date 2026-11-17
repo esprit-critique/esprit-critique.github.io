@@ -34,6 +34,9 @@ passe. Refonte en cours : brief dans `tests/refonte-brief.md`, plan dans `tests/
 - Typographie française par `typo()` ; conventions anglaises dans `DESIGN.md`.
 - Tout fait chiffré ou attribué porte sa source vérifiée sur la source primaire ; sinon il va dans
   `tests/a-verifier.md` et n'est pas affiché.
+- Élément ajouté à un stock tiré chaque jour (`VRAI_FAUX`, `MONDE`, `CITATIONS`, `PAIRES_CELEBRES`, fiches) : lui donner
+  `depuis:` (numéro du jour de sa première apparition, le lendemain de la publication), sinon il rebat les cartes déjà
+  jouées ; le banc `rotation` le vérifie contre `tests/rotation-manifeste.json`.
 
 ## Sécurité du code
 
