@@ -98,7 +98,7 @@ const JEUX = [
     couleur: "#2a8a5c",
     duree: "3 min",
     titre: "Le monde en chiffres",
-    resume: "Dix questions sur l'état du monde, avec les données les plus récentes. En 2017, des milliers de personnes ont fait moins bien que le hasard.",
+    resume: "Dix questions sur l'état du monde, avec les données les plus récentes. Dans une enquête Gapminder de 2017, des milliers de personnes ont fait, en moyenne, moins bien que le hasard.",
     lancer(zone) {
       deroulerNiveaux(zone, {
         id: "monde", n: 10, relancer: () => JEUX.find(j => j.id === "monde").lancer(zone),
@@ -126,7 +126,7 @@ const JEUX = [
       }, resultats => {
         const bonnes = resultats.filter(Boolean).length;
         afficherScore(zone, "monde", bonnes, resultats.length);
-        zone.appendChild(paragraphe("Un choix au hasard donnerait en moyenne 3,3 sur 10 : c'est ce que Hans Rosling appelait le score des chimpanzés. Dans l'enquête Gapminder de 2017, les participants obtenaient en moyenne 2,2 bonnes réponses sur 12, soit moins que le hasard."));
+        zone.appendChild(paragraphe("Un choix au hasard donnerait en moyenne 3,3 sur 10 : c'est ce que Hans Rosling appelait le score des chimpanzés. Dans l'enquête Gapminder de 2017, les participants obtenaient en moyenne 2,2 bonnes réponses sur 12, quand le hasard en donnerait 4."));
         ajouterExplication(zone, "Pourquoi tant d'erreurs ?", [
           "Faire moins bien que le hasard signifie que l'erreur n'est pas due à l'ignorance seule : les réponses sont systématiquement trop pessimistes.",
           "Rosling y voyait plusieurs causes : les médias rapportent surtout les événements négatifs et spectaculaires, les progrès lents et continus ne font pas l'actualité, et nos connaissances datent souvent de notre scolarité.",
@@ -199,7 +199,7 @@ const JEUX = [
         afficherScore(zone, "mortalite", bonnes, resultats.length);
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Les causes de décès spectaculaires et médiatisées (requins, terrorisme, accidents d'avion) sont souvent surestimées par rapport aux causes banales et silencieuses (chutes, noyades, maladies chroniques).",
-          "Lichtenstein, Slovic et leurs collègues (1978) ont demandé à des participants d'estimer la fréquence de 41 causes de décès : les causes rares et dramatiques étaient surestimées, les causes fréquentes sous-estimées. Combs et Slovic (1979) ont montré que ces erreurs suivaient la couverture des journaux plutôt que les statistiques.",
+          "Lichtenstein, Slovic et leurs collègues (1978) ont demandé à des participants d'estimer la fréquence de 41 causes de décès : les causes rares et dramatiques étaient surestimées, les causes fréquentes sous-estimées. Combs et Slovic (1979) ont observé que ces erreurs suivaient la couverture des journaux plutôt que les statistiques.",
           "Les chiffres proviennent de sources et d'années différentes (2019 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins."
         ], [["#biais/disponibilite", "Heuristique de disponibilité"], ["#biais/negativite", "Biais de négativité"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "mortalite").lancer(zone));
@@ -362,7 +362,7 @@ const JEUX = [
         const bonnes = Number(sommeResultats(resultats).toFixed(1));
         afficherScore(zone, "nord", bonnes, resultats.length, fr(bonnes) + " / " + resultats.length);
         ajouterExplication(zone, "Ce que montre ce jeu", [
-          "Nous ne mémorisons pas une carte précise, mais des relations simplifiées. Barbara Tversky (1981) a montré que nous « alignons » les régions voisines : des étudiants pensaient que Rome était au sud de Philadelphie et Boston à l'ouest de Rio de Janeiro. Ces erreurs persistaient même quand on les prévenait.",
+          "Nous ne mémorisons pas une carte précise, mais des relations simplifiées. Barbara Tversky (1981) a montré que nous « alignons » les régions voisines : des étudiants pensaient que Rome était au sud de Philadelphie.",
           "Nous raisonnons aussi de façon hiérarchique : la Californie est à l'ouest du Nevada, donc toute ville californienne serait à l'ouest de toute ville du Nevada. Stevens et Coupe (1978) ont montré que San Diego était ainsi placée à l'ouest de Reno, alors que c'est l'inverse.",
           "Le climat trompe aussi : l'Europe de l'Ouest, réchauffée par l'océan, est bien plus au nord que ne le laissent croire ses hivers."
         ], [["#chiffres/pays", "Plus ou moins ? (pays)"], ["#biais/disponibilite", "Heuristique de disponibilité"]]);
@@ -630,7 +630,7 @@ const JEUX = [
         zone.appendChild(lignes);
 
         ajouterExplication(zone, "Ce que montre ce jeu", [
-          "Être bien étalonné, c'est avoir raison 9 fois sur 10 quand on se dit sûr à 90 %. Pour les questions de culture générale, la plupart des gens sont trop sûrs d'eux : dans les expériences de Fischhoff, Slovic et Lichtenstein (1977), les réponses données avec 90 % de certitude n'étaient justes qu'environ 75 % du temps.",
+          "Être bien étalonné, c'est avoir raison 9 fois sur 10 quand on se dit sûr à 90 %. Pour les questions de culture générale, la plupart des gens sont trop sûrs d'eux : dans les expériences de Koriat, Lichtenstein et Fischhoff (1980), les réponses données avec 90 % de certitude n'étaient justes qu'environ 75 % du temps.",
           "L'étalonnage s'améliore avec un retour fréquent et précis. Les prévisionnistes météo, qui confrontent chaque jour leurs probabilités aux faits, sont réputés très bien étalonnés (Murphy et Winkler, 1977).",
           T("Vos réponses s'accumulent d'une partie à l'autre : après quelques parties, la courbe devient fiable. Les {0} affirmations sont proposées sans répétition tant que vous ne les avez pas toutes vues.", VRAI_FAUX.length)
         ], [["#biais/surprecision", "Excès de précision"], ["#biais/dunning-kruger", "Effet Dunning-Kruger"]]);
@@ -859,7 +859,7 @@ const JEUX = [
 
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Un nombre que l'on sait arbitraire suffit à tirer les estimations vers lui. Tversky et Kahneman (1974) utilisaient une roue de loterie truquée ; d'autres études ont utilisé les deux derniers chiffres du numéro de sécurité sociale des participants (Ariely, Loewenstein et Prelec, 2003).",
-          "Répondre d'abord à la question « plus ou moins ? » renforce l'effet : on cherche des raisons pour lesquelles la réponse pourrait être proche de l'ancre."
+          "Répondre d'abord à la question « plus ou moins ? » renforce l'effet. Une explication proposée : on cherche alors des raisons pour lesquelles la réponse pourrait être proche de l'ancre."
         ], [["#biais/ancrage", "Effet d'ancrage"]]);
         boutonRejouer(zone, () => JEUX.find(j => j.id === "ancre").lancer(zone));
       }
@@ -1618,7 +1618,7 @@ function partiePoints(zone, avecRepere) {
     ajouterExplication(zone, "Ce que montre ce jeu", [
       "Sans repère, la plupart des adultes sous-estiment les quantités de points qu'ils voient : leurs estimations augmentent avec le nombre réel, mais restent en dessous (Izard et Dehaene, 2008, et les études qu'ils citent).",
       "Dans leur expérience, il suffisait de montrer une seule fois un nuage en annonçant « 30 points » pour corriger les estimations sur toute la gamme des quantités. Notre perception des quantités est relative : elle a besoin d'un étalon.",
-      "C'est l'une des raisons pour lesquelles les grands nombres (foules, budgets, victimes) sont si mal perçus sans point de comparaison."
+      "C'est sans doute l'une des raisons pour lesquelles les grands nombres (foules, budgets, victimes) sont si mal perçus sans point de comparaison."
     ], [["#biais/ancrage", "Effet d'ancrage"]]);
     const actions = el("div", "actions");
     const encore = el("button", "bouton", "Recommencer");

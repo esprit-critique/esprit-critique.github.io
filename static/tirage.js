@@ -271,7 +271,7 @@ function afficherDefiLibre(texte) {
   zone.replaceChildren();
   zone.classList.remove("large");
   zone.append(lienVers("#accueil", "← Accueil", "lien retour"), el("h1", "page-titre", "Défi libre"),
-    el("p", "page-intro", T("Dix questions tirées de la graine n° {0} : la même adresse donne les mêmes questions à tous ceux qui l'ouvrent. Rien n'est enregistré.", graine)));
+    el("p", "page-intro", T("Défi n° {0} : dix questions, les mêmes pour tous ceux qui ouvrent cette adresse. Le score n'est pas enregistré, mais la partie compte pour vos points de lucidité et votre série de jours.", graine)));
   const carte = el("article", "carte defi-jour");
   carte.style.setProperty("--c", "#a8432e");
   zone.appendChild(carte);

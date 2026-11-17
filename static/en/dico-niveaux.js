@@ -16,6 +16,7 @@ EN_AJOUTER([
   ["Partie jouée au niveau {0} ({1}).", "Game played at level {0} ({1})."],
   ["niveau {0} : {1} / {2}", "level {0}: {1} / {2}"],
   ["Réponses justes par niveau — {0}.", "Correct answers by level — {0}."],
+  ["{0} : 60 secondes. Une bonne réponse rapporte 1 point, une erreur en retire 2.", "{0}: 60 seconds. A correct answer earns 1 point; a mistake costs 2."],
   ["{0} : 60 secondes", "{0}: 60 seconds"],
   ["Reste : {0} s", "Time left: {0} s"],
   ["Erreur : c'était « {0} ».", "Wrong: it was “{0}”."],

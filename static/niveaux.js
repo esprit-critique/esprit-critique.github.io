@@ -212,7 +212,7 @@ function partieChrono(zone, options) {
     const b = el("button", "bouton large", "Démarrer");
     b.type = "button";
     b.addEventListener("click", () => partieChrono(zone, { ...options, demarrer: false }));
-    zone.append(el("p", "consigne", T("{0} : 60 secondes", T(options.titre))), b);
+    zone.append(el("p", "consigne", T("{0} : 60 secondes. Une bonne réponse rapporte 1 point, une erreur en retire 2.", T(options.titre))), b);
     return;
   }
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

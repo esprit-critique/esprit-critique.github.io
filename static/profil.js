@@ -970,9 +970,9 @@ function ongletJeux(p, m) {
 }
 
 // Le codex : une roue de 90 points en 14 arcs aux couleurs des catégories ; chaque point est une fiche, dans l'un de
-// cinq états (jamais ouverte, lue, rencontrée au quiz, consolidée en boîte 3, maîtrisée en boîte 5). Version en liste
+// cinq états (jamais lue, lue, rencontrée au quiz, consolidée en boîte 3, maîtrisée en boîte 5). Version en liste
 // pour les lecteurs d'écran.
-const ETATS_CODEX = ["jamais ouverte", "lue", "rencontrée au quiz", "consolidée", "maîtrisée"];
+const ETATS_CODEX = ["jamais lue", "lue", "rencontrée au quiz", "consolidée", "maîtrisée"];
 function etatCodex(cle) {
   const m = memoire[cle];
   if (m && m.b >= 5) return 4;
@@ -1005,7 +1005,7 @@ function codex(taille, mini) {
 }
 
 function ongletNotions(p, m) {
-  p.appendChild(el("p", null, T("Maîtrise des notions : {0}. Chaque point du codex est une fiche ; sa taille dit où vous en êtes : jamais ouverte, lue, rencontrée au quiz, consolidée (boîte 3), maîtrisée (boîte 5).", m.domaines.notions)));
+  p.appendChild(el("p", null, T("Maîtrise des notions : {0}. Chaque point du codex est une fiche ; sa taille dit où vous en êtes : jamais lue, lue, rencontrée au quiz, consolidée (boîte 3 sur les 5 boîtes de révision du quiz), maîtrisée (boîte 5).", m.domaines.notions)));
   const roue = el("div", "codex-cadre");
   roue.appendChild(codex(300));
   p.appendChild(roue);
@@ -1726,7 +1726,7 @@ function carteBienvenue() {
       });
       carte.appendChild(puces);
     } else {
-      carte.append(el("h2", null, "Par où commencer ?"), el("p", "source", "« Premiers pas » fait le tour du site en trois quarts d'heure : une illusion, deux fiches, un test de réflexion, un quiz. Rien n'est verrouillé : tout reste ouvert."));
+      carte.append(el("h2", null, "Par où commencer ?"), el("p", "source", "« Premiers pas » fait le tour du site en une vingtaine de minutes : une illusion, deux fiches, un test de réflexion, deux quiz. Rien n'est verrouillé : tout reste ouvert."));
       const actions = el("div", "actions");
       const parcours = lienVers("#parcours/premiers-pas", T("Commencer : {0}", T("Premiers pas")), "bouton");
       parcours.addEventListener("click", () => { ecrire("parcours", { ...lire("parcours", {}), actif: "premiers-pas" }); terminer(); });
