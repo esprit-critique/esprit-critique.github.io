@@ -429,8 +429,9 @@ const MEANDRE_MOTIF = [[[1, 8.6], [1, 1.6], [8, 1.6], [8, 6.6], [4.4, 6.6], [4.4
 // Fonds : [id, nom, ce qui le débloque (null : d'emblée ; un nombre : ce grade ; un texte : cette distinction), dessin]
 const FONDS_PERSONNAGE = [
   ["", "Argile nue", null, () => []],
-  ["meandre", "Frise grecque", 1, r => [["noir", false, cerclePersonnage(r - 2.5) + cerclePersonnage(r - 11.5) + anneauMotifsPersonnage(r - 2.5, 9, MEANDRE_MOTIF, Math.round(2 * Math.PI * (r - 7) / 9))]]],
-  ["vagues", "Les vagues", 3, r => [["noir", false, cerclePersonnage(r - 2.5) + anneauMotifsPersonnage(r - 3, 9, VAGUE_MOTIF, Math.round(2 * Math.PI * (r - 7) / 10)) + cerclePersonnage(r - 12.5)]]],
+  // Les frises font une bordure : 5e élément, sa largeur. La figure tient dans le disque intérieur, sans passer dessus
+  ["meandre", "Frise grecque", 1, r => [["noir", false, cerclePersonnage(r - 2.5) + cerclePersonnage(r - 11.5) + anneauMotifsPersonnage(r - 2.5, 9, MEANDRE_MOTIF, Math.round(2 * Math.PI * (r - 7) / 9))]], 11.5],
+  ["vagues", "Les vagues", 3, r => [["noir", false, cerclePersonnage(r - 2.5) + anneauMotifsPersonnage(r - 3, 9, VAGUE_MOTIF, Math.round(2 * Math.PI * (r - 7) / 10)) + cerclePersonnage(r - 12.5)]], 12.5],
   // Deux rameaux d'olivier qui remontent le long du bord, feuilles alternées et quelques olives
   ["olivier", "Rameaux d'olivier", "regulier", r => {
     const rr = r - 9, rameau = (de, a) => {
@@ -529,14 +530,15 @@ function dessinPersonnage(etat, pied, rayon) {
   // Cadrage : le carré choisi de la grille de la figure remplit le médaillon ; le buste va jusqu'à la main droite, pour
   // que l'objet du rôle reste visible (le buste un peu plus que le pied)
   const [x0, y0, cote] = cadrages[pied ? "pied" : "buste"];
-  const echelle = 2 * rayon * (pied ? 0.94 : 1) / cote;
-  const cadrage = [60 - echelle * (x0 + cote / 2), 60 - echelle * (y0 + cote / 2) + (pied ? 0 : 4), echelle];
+  const interieur = rayon - (fond[4] || 0);
+  const echelle = 2 * interieur * (pied ? 0.94 : 1) / cote;
+  const cadrage = [60 - echelle * (x0 + cote / 2), 60 - echelle * (y0 + cote / 2) + (pied ? 0 : 4 * interieur / rayon), echelle];
   // Le laurier à la place du diadème : la description ne parle plus du diadème
   const sansDiademe = coiffe && calquesRole.some(c => DIADEME_PERSONNAGE.includes(c));
   const elements = [T(sansDiademe ? ({ "un sceptre et un diadème": "un sceptre", "un flambeau et un diadème": "un flambeau" })[role] || role : role), ...(calquesEquipement.length ? [T(equipement[1]).toLowerCase()] : []), ...(fond[0] ? [T("fond : {0}", T(fond[1]).toLowerCase())] : []), ...(objet ? [T("l'emblème de son meilleur domaine, {0} : {1}", T(DOMAINES.find(([d]) => d === fort)[1]), T(objet[1]))] : [])];
   const description = T("Votre personnage ({0}), grade {1}", T(nomForme).toLowerCase(), T(GRADES[rang][1])) + " : " + elements.join(", ") + ". "
     + T("Maîtrise par domaine : {0}.", DOMAINES.map(([, nom], i) => T(nom) + " " + valeurs[i][1]).join(", "));
-  return { couleur: objet ? objet[0] : null, objet, valeurs, traits, cadrage, description, fond: fond[3](rayon) };
+  return { couleur: objet ? objet[0] : null, objet, valeurs, traits, cadrage, description, fond: fond[3](rayon), interieur: fond[4] ? interieur : null };
 }
 
 // Arc d'un domaine : 54° (6° d'écart), du haut dans le sens des aiguilles, rayon 56 autour du centre (60, 60)
@@ -556,7 +558,9 @@ function personnage(etat, taille, anneauDomaines, pied) {
     const [a0, a1] = anglesArcPersonnage(i);
     const d0 = "M" + (60 + 56 * Math.cos(a0)).toFixed(2) + " " + (60 + 56 * Math.sin(a0)).toFixed(2) + "A56 56 0 0 1 " + (60 + 56 * Math.cos(a1)).toFixed(2) + " " + (60 + 56 * Math.sin(a1)).toFixed(2);
     s.appendChild(svg("path", { d: d0, class: "portrait-piste" }));
-    const arc = svg("path", { d: d0, pathLength: 100, class: "portrait-arc", "stroke-dasharray": Math.round(Math.min(1000, v) / 10) + " 100" });
+    // Écart de 200, plus long que le tracé : avec « 100 », un tiret revenait à la fin de l'arc, et un domaine presque
+    // vide montrait deux pastilles (bouts ronds), une à chaque extrémité
+    const arc = svg("path", { d: d0, pathLength: 100, class: "portrait-arc", "stroke-dasharray": Math.round(Math.min(1000, v) / 10) + " 200" });
     arc.style.setProperty("--c", DOMAINES_PERSONNAGE[d][0]);
     const nom = svg("title");
     nom.textContent = T(DOMAINES[i][1]) + " : " + v;
@@ -569,12 +573,21 @@ function personnage(etat, taille, anneauDomaines, pied) {
   s.append(masque, svg("circle", { cx: 60, cy: 60, r: rayon, class: "medaillon-fond" }));
   const [tx, ty, k] = p.cadrage;
   const cadre = svg("g", { "clip-path": "url(#" + id + ")" });
+  // Fond à bordure : la figure est rognée au disque intérieur (le buste s'arrête sur la frise, pas dessous)
+  let support = cadre;
+  if (p.interieur) {
+    const masqueInterieur = svg("clipPath", { id: id + "-interieur" });
+    masqueInterieur.appendChild(svg("circle", { cx: 60, cy: 60, r: p.interieur }));
+    support = svg("g", { "clip-path": "url(#" + id + "-interieur)" });
+    s.appendChild(masqueInterieur);
+  }
   const figure = svg("g", { transform: "translate(" + tx.toFixed(2) + " " + ty.toFixed(2) + ") scale(" + k.toFixed(4) + ")" });
   p.traits.forEach(([g, d, e, dx, dy]) => figure.appendChild(svg("path", { d, class: "figure-" + g, ...(e ? { "stroke-width": e } : {}),
     ...(dx || dy ? { transform: "translate(" + dx + " " + dy + ")" } : {}) })));
   // Le fond, derrière la figure, dans le repère du médaillon
   p.fond.forEach(([teinte, plein, d]) => cadre.appendChild(svg("path", { d, class: "motif-" + teinte + (plein ? " motif-plein" : "") })));
-  cadre.appendChild(figure);
+  support.appendChild(figure);
+  if (support !== cadre) cadre.appendChild(support);
   // Bord du médaillon et filet intérieur, comme le cadre d'un médaillon de coupe
   s.append(cadre, svg("circle", { cx: 60, cy: 60, r: rayon - 2.6, class: "medaillon-filet" }), svg("circle", { cx: 60, cy: 60, r: rayon, class: "medaillon-bord" }));
   if (p.objet && taille >= 64) {
@@ -609,6 +622,7 @@ function dessinerPersonnageCanvas(ctx, etat, x, y, cote, pied) {
     const couleur = { noir: FIGURE_PERSONNAGE, sombre: MOTIF_PERSONNAGE, clair: MOTIF_CLAIR_PERSONNAGE }[teinte], chemin = new Path2D(d);
     if (plein) { ctx.fillStyle = couleur; ctx.fill(chemin); } else { ctx.strokeStyle = couleur; ctx.lineWidth = 1.2; ctx.stroke(chemin); }
   });
+  if (p.interieur) { ctx.beginPath(); ctx.arc(60, 60, p.interieur, 0, 2 * Math.PI); ctx.clip(); }
   const [tx, ty, k] = p.cadrage;
   ctx.translate(tx, ty); ctx.scale(k, k);
   p.traits.forEach(([g, d, e, dx, dy]) => {
