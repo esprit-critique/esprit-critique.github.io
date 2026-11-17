@@ -423,6 +423,22 @@ f.onload = async () => {
     if (sauveActivite !== null) w.localStorage.setItem("activite", sauveActivite); else w.localStorage.removeItem("activite");
     if (sauveResultats !== null) w.localStorage.setItem("resultatsAteliers", sauveResultats);
 
+    // ---------- Changement de jour sur l'accueil resté ouvert (retour sur la page, minuteur de minuit) ----------
+    // La page du banc peut être en arrière-plan : la vérification ne s'applique qu'à une page visible, on la dit visible
+    Object.defineProperty(w.document, "visibilityState", { get: () => "visible", configurable: true });
+    await aller("accueil");
+    const enfantAvant = vue().firstElementChild;
+    w.eval("jourAccueilAffiche = aujourdHui() - 1");
+    w.eval("accueilDuNouveauJour()");
+    ok("nouveau jour : l'accueil resté ouvert est redessiné, le jour affiché est celui d'aujourd'hui", w.eval("jourAccueilAffiche === aujourdHui()") && !!enfantAvant && !enfantAvant.isConnected && !!vue().querySelector(".vf-jour"));
+    await aller("quiz");
+    w.eval("jourAccueilAffiche = aujourdHui() - 1");
+    w.eval("accueilDuNouveauJour()");
+    ok("nouveau jour : une autre vue (partie en cours) n'est pas redessinée", w.location.hash === "#quiz" && w.eval("jourAccueilAffiche === aujourdHui()"));
+    const delais = ["2026-11-16T23:59:59", "2026-11-16T00:00:00", "2026-03-28T12:00:00"].map(t => w.eval("delaiAvantMinuit(new Date('" + t + "'))"));
+    delete w.document.visibilityState;
+    ok("nouveau jour : le minuteur vise une seconde après le prochain minuit", delais[0] === 2000 && delais[1] === 86401000 && delais[2] > 0 && delais[2] <= 12 * 3600000 + 1000, delais.join(", "));
+
     // ---------- Numéros de catalogue ----------
     const numerosOk = ["biais", "sophismes"].every(t => { const n = w.eval("TYPES")[t].fiches.map(f => f.num).sort((a, b) => a - b); return n.every((v, i) => v === i + 1); });
     ok("numéros : uniques et sans trou, par type", numerosOk);
