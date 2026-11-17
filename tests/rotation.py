@@ -18,7 +18,7 @@ def node(pilote):
     app = lire("app.js")
     code = "\n".join([extraire(app, "function generateur"), extraire(app, "function melanger"), extraire(app, "const ROTATION_DEPUIS"),
                       extraire(app, "const ROTATION_STABLE_DEPUIS"), extraire(app, "const ETATS_ROTATION"), extraire(app, "const cleTirage"), extraire(app, "const depuisTirage"),
-                      extraire(app, "function rangTirage"), extraire(app, "function tirerSansRemise"), 'const LANGUE = "fr";', lire("donnees.js"), lire("jeux-donnees.js"), pilote])
+                      extraire(app, "function rangTirage"), extraire(app, "function tirageAncien"), extraire(app, "function tirerSansRemise"), 'const LANGUE = "fr";', lire("donnees.js"), lire("jeux-donnees.js"), pilote])
     with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
         f.write(code)
     try:
@@ -41,11 +41,12 @@ res.ids = Object.fromEntries(Object.entries(stocks).map(([k, l]) => [k, l.map(x 
 const ancien = (liste, n, jour, sel) => { const o = melanger(liste, generateur(sel)); return Array.from({ length: Math.min(n, liste.length) }, (_, i) => o[(jour * n + i) % liste.length]); };
 res.anciens = [ROTATION_DEPUIS, D - 1].every(j => [[VRAI_FAUX, 1, 29], [MONDE, 3, 11], [CITATIONS, 2, 17]].every(([l, n, s]) =>
   tirerSansRemise(l, n, j, s).map(cleTirage).join() === ancien(l, n, j, s).map(cleTirage).join()));
-// Cycles : sur 2,5 cycles, aucun élément ne revient avant que tout le stock soit sorti, ni d'un jour sur l'autre
+// Cycles : sur 2,5 cycles, aucun élément ne revient avant que tout le stock soit sorti, ni d'un jour sur l'autre ; la
+// séquence part du 16 novembre (ancien tirage) : le passage d'une rotation à l'autre est vérifié avec le reste
 res.cycles = {};
 for (const [nom, l] of Object.entries(stocks)) for (const n of [1, 3]) {
-  const jours = Math.ceil(2.5 * l.length / n), tirages = [];
-  for (let k = 0; k < jours; k++) tirages.push(tirerSansRemise(l, n, D + k, 7).map(cleTirage));
+  const jours = Math.ceil(2.5 * l.length / n) + (D - ROTATION_DEPUIS), tirages = [];
+  for (let k = 0; k < jours; k++) tirages.push(tirerSansRemise(l, n, ROTATION_DEPUIS + k, 7).map(cleTirage));
   const plat = tirages.flat(), L = l.length;
   let doublonCycle = null, veille = null;
   for (let c = 0; c * L < plat.length - L; c++) { const tranche = plat.slice(c * L, (c + 1) * L); if (new Set(tranche).size !== tranche.length) doublonCycle = c; }

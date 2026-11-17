@@ -672,15 +672,21 @@ function rangTirage(cle, cycle, sel) {
   for (const c of cle + "|" + cycle + "|" + sel) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
   return (h >>> 0) / 4294967296;
 }
+// L'ancien tirage, gardé pour les jours déjà joués avant la rotation stable
+function tirageAncien(liste, n, jour, sel) {
+  const ordre = melanger(liste, generateur(sel));
+  return Array.from({ length: Math.min(n, liste.length) }, (_, i) => ordre[(jour * n + i) % liste.length]);
+}
 function tirerSansRemise(liste, n, jour, sel) {
-  if (jour < ROTATION_STABLE_DEPUIS) {
-    const ordre = melanger(liste, generateur(sel));
-    return Array.from({ length: Math.min(n, liste.length) }, (_, i) => ordre[(jour * n + i) % liste.length]);
-  }
+  if (jour < ROTATION_STABLE_DEPUIS) return tirageAncien(liste, n, jour, sel);
   // Rejoué jour par jour depuis le début ; l'état atteint est gardé (même stock, même sel, même n) pour repartir de là
   const cle = sel + "|" + n + "|" + liste.map(x => cleTirage(x) + ":" + depuisTirage(x)).join(",");
   const memo = ETATS_ROTATION.get(cle);
-  let { cycle, sortis, pris, j: depart } = memo && memo.j <= jour + 1 ? { ...memo, sortis: new Set(memo.sortis), pris: memo.pris.slice() } : { cycle: 0, sortis: new Set(), pris: [], j: ROTATION_STABLE_DEPUIS };
+  // Au départ, ce que l'ancien tirage a déjà sorti (16 et 17 novembre) compte comme sorti du premier cycle, et le
+  // 17 comme la veille : pas de carte redonnée dans la même semaine au passage d'une rotation à l'autre
+  const anciens = () => { const jours = []; for (let j = ROTATION_DEPUIS; j < ROTATION_STABLE_DEPUIS; j++) jours.push(tirageAncien(liste, n, j, sel)); return jours; };
+  let { cycle, sortis, pris, j: depart } = memo && memo.j <= jour + 1 ? { ...memo, sortis: new Set(memo.sortis), pris: memo.pris.slice() }
+    : (jours => ({ cycle: 0, sortis: new Set(jours.flat().map(cleTirage)), pris: (jours[jours.length - 1] || []).slice(), j: ROTATION_STABLE_DEPUIS }))(anciens());
   if (memo && memo.j - 1 === jour) return memo.pris.slice();
   // Le stock est trié par rang une fois par cycle (et quand un élément y entre) ; chaque jour parcourt cet ordre
   const cles = new Map(liste.map(x => [x, cleTirage(x)]));
