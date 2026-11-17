@@ -1876,6 +1876,12 @@ function accueilDuNouveauJour() {
 }
 document.addEventListener("visibilitychange", accueilDuNouveauJour);
 window.addEventListener("pageshow", accueilDuNouveauJour);
+// Écran resté allumé sur l'accueil pendant minuit : aucun retour sur la page ne viendrait le redessiner ; un minuteur
+// réveille la vérification une seconde après minuit (heure locale), puis se reprogramme pour le lendemain
+function delaiAvantMinuit(maintenant = new Date()) {
+  return new Date(maintenant.getFullYear(), maintenant.getMonth(), maintenant.getDate() + 1, 0, 0, 1) - maintenant;
+}
+(function programmerMinuit() { setTimeout(() => { accueilDuNouveauJour(); programmerMinuit(); }, delaiAvantMinuit()); })();
 
 $("recherche-globale").addEventListener("input", e => {
   if (!rechercheDansFiches()) return;
