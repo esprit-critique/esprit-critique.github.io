@@ -36,7 +36,7 @@
       "Asked which job is the most dangerous, Paul says police officer, because he sees them every evening in TV series, without thinking of lumberjacks or deep-sea fishermen."],
     parade: "Separate striking examples from data. Ask what the event’s base frequency is, and why some cases are easier to recall than others.",
     source: "Tversky and Kahneman (1973). Participants judged words beginning with certain consonants (K, R) to be more frequent than words with those letters in third position, when the opposite is true: the former are simply easier to search for in memory.",
-    celebre: "After the attacks of 11 September 2001, many Americans swapped flying for driving. Gerd Gigerenzer (2006) estimates that this caused about 1,600 additional road deaths in the following twelve months.",
+    celebre: "After the attacks of 11 September 2001, many Americans swapped flying for driving. Gerd Gigerenzer (2006) estimates that this caused about 1,600 additional road deaths in the following twelve months. The explanation is disputed: Su et al. (2009) find the rise mainly in the Northeast, near the attack sites, and attribute it to stress rather than to people switching from planes to cars.",
     distinction: "Availability concerns the frequency we attribute to an event; the illusory truth effect concerns the credibility we give to a repeated claim."
   },
   "biais:taux-de-base": {
@@ -592,7 +592,7 @@
     mecanisme: "Our own choices seem the most reasonable to us, and we mostly mix with people who are like us. Our circle is nonetheless not representative of the population.",
     exemple: "A devoted reader of a newspaper thinks that most of the population shares that paper’s editorial line.",
     cas: "The day after an election, Valérie is stunned: “I don’t know anyone who voted for him. How could he have won?”",
-    cas2: "A smoker estimates that most adults smoke, when in France only a minority of adults smoke.",
+    cas2: "A smoker estimates that most adults smoke, when in France fewer than one adult in five smokes every day (18% of 18–75-year-olds in 2024, Santé publique France).",
     casSup: ["A great jazz lover, Olivier is surprised that a jazz radio station has only a small audience: “Everybody likes jazz.”",
       "A vegetarian since her teens, Camille is convinced that most people her age eat little meat, and is startled by the menu at the staff canteen."],
     parade: "Replace intuition with measurement: survey, user testing, data. Ask whether your circle is representative.",
@@ -747,7 +747,7 @@
       "Before a long car journey, Gaspard does not check his tyres: “Nothing has ever happened to me.”"],
     parade: "Reason from the statistics of the general population, then justify any departure in your own favour with specific facts.",
     source: "Neil Weinstein (1980). Students rate their own chances of experiencing various negative events as lower than their classmates’, and their chances of positive events as higher.",
-    celebre: "Ola Svenson (1981): 93% of a sample of American students and 69% of a Swedish sample consider themselves more skilful drivers than the median driver. By definition, only half can be.",
+    celebre: "Ola Svenson (1981): 93% of a sample of American students and 69% of a Swedish sample consider themselves more skilful drivers than the median driver. By definition, only half can be. The result was replicated by Koppel et al. (Meta-Psychology, 2023) in a preregistered study of 1,203 participants.",
     distinction: "Optimism bias overestimates the chances of favourable events; overprecision, the accuracy of one’s own estimates."
   },
   "biais:angle-mort": {
