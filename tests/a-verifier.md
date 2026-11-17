@@ -53,18 +53,3 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
 - **« Les requins existaient avant les arbres »** (vrai ou faux) : vrai selon les sources de vulgarisation (requins
   vers 450 millions d'années, premiers arbres vers 385 à 390 millions), mais l'écart dépend de ce qu'on appelle un
   requin et la page du Smithsonian n'a pas pu être lue. À vérifier sur une source de paléontologie.
-
-## Fiches de biais : faits retirés de l'affichage, à vérifier (relecture du rédacteur, 17 novembre 2026)
-
-Ces trois faits ont été retirés des fiches (ou remplacés par une formulation sûre) en attendant la source primaire.
-
-- **`biais:disponibilite`, champ `celebre`** (et sa traduction dans `static/en/fiches.js`) : « une réanalyse (Su et al.,
-  2009) ne le retrouve pas ». Si la référence est Su, Tran, Wirtz, Langteau et Rothman (2009), *Psychological
-  Science*, « Driving under the influence (of stress) », ce travail trouverait plutôt une hausse de la mortalité
-  routière, régionale et attribuée au stress, ce qui n'est pas une absence d'effet. Vérifier la référence exacte et ce
-  qu'elle conclut, puis reformuler.
-- **`biais:optimisme`, champ `celebre`** : « Le résultat a été répliqué en 2021 sur 1 203 participants. » Aucune
-  référence (auteurs, revue). La retrouver et la citer, ou retirer la phrase.
-- **`biais:faux-consensus`, champ `cas2`** : « en France moins d'un adulte sur cinq fume chaque jour ». Ni année ni
-  source. Vérifier sur le dernier Baromètre de Santé publique France (tranche d'âge, année) ; selon l'édition, la
-  part des fumeurs quotidiens se situe autour de 18 à 25 %, donc de part et d'autre d'« un sur cinq ».

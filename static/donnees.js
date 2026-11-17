@@ -65,7 +65,7 @@ const BIAIS = [
       "Interrogé sur le métier le plus dangereux, Paul cite policier, parce qu'il en voit chaque soir dans les séries, sans penser aux bûcherons ni aux marins pêcheurs."],
     parade: "Distinguer les exemples marquants des données. Se demander quelle est la fréquence de base de l'événement, et pourquoi certains cas sont plus faciles à rappeler que d'autres.",
     source: "Tversky et Kahneman (1973). Les participants jugeaient plus fréquents les mots commençant par certaines consonnes (K, R) que ceux où elles sont en troisième position, alors que c'est l'inverse : les premiers sont simplement plus faciles à chercher en mémoire.",
-    celebre: "Après les attentats du 11 septembre 2001, de nombreux Américains ont remplacé l'avion par la voiture. Gerd Gigerenzer (2006) estime à environ 1 600 le nombre de morts supplémentaires sur les routes dans les douze mois suivants.",
+    celebre: "Après les attentats du 11 septembre 2001, de nombreux Américains ont remplacé l'avion par la voiture. Gerd Gigerenzer (2006) estime à environ 1 600 le nombre de morts supplémentaires sur les routes dans les douze mois suivants. L'explication est discutée : Su et al. (2009) observent la hausse surtout dans le Nord-Est, près des lieux des attentats, et l'attribuent au stress plutôt qu'au report de l'avion vers la voiture.",
     distinction: ["biais:verite-illusoire", "La disponibilité porte sur la fréquence que l'on attribue à un événement ; la vérité illusoire, sur la crédibilité que l'on accorde à une affirmation répétée."],
     lies: ["biais:taux-de-base", "biais:negativite", "biais:verite-illusoire", "biais:frequence"]
   },
@@ -781,7 +781,7 @@ const BIAIS = [
     mecanisme: "Nos propres choix nous paraissent les plus raisonnables, et nous fréquentons surtout des personnes qui nous ressemblent. Notre entourage n'est pourtant pas représentatif de la population.",
     exemple: "Un lecteur assidu d'un journal pense que la majorité de la population partage la ligne éditoriale de ce journal.",
     cas: "Au lendemain d'une élection, Valérie est stupéfaite : « Je ne connais personne qui a voté pour lui. Comment a-t-il pu gagner ? »",
-    cas2: "Un fumeur estime que la plupart des adultes fument, alors qu'en France une minorité d'adultes fume.",
+    cas2: "Un fumeur estime que la plupart des adultes fument, alors qu'en France moins d'un adulte sur cinq fume chaque jour (18 % des 18-75 ans en 2024, Santé publique France).",
     casSup: ["Grand amateur de jazz, Olivier est surpris qu'une radio consacrée au jazz n'ait qu'une faible audience : « Tout le monde aime le jazz. »",
       "Végétarienne depuis l'adolescence, Camille est persuadée que la plupart des gens de son âge mangent peu de viande, et s'étonne de la carte du restaurant d'entreprise."],
     parade: "Remplacer l'intuition par une mesure : sondage, test utilisateur, données. Se demander si son entourage est représentatif.",
@@ -978,7 +978,7 @@ const BIAIS = [
       "Avant un long voyage en voiture, Gaspard ne vérifie pas ses pneus : « Il ne m'est jamais rien arrivé. »"],
     parade: "Raisonner à partir des statistiques de la population générale, puis justifier par des faits précis tout écart à son propre avantage.",
     source: "Neil Weinstein (1980). Des étudiants estiment leurs propres chances de vivre divers événements négatifs inférieures à celles de leurs camarades, et leurs chances d'événements positifs supérieures.",
-    celebre: "Ola Svenson (1981) : 93 % d'un échantillon d'étudiants américains et 69 % d'un échantillon suédois s'estiment plus habiles au volant que le conducteur médian. Par définition, la moitié seulement peut l'être.",
+    celebre: "Ola Svenson (1981) : 93 % d'un échantillon d'étudiants américains et 69 % d'un échantillon suédois s'estiment plus habiles au volant que le conducteur médian. Par définition, la moitié seulement peut l'être. Le résultat a été répliqué par Koppel et al. (Meta-Psychology, 2023), dans une étude préenregistrée sur 1 203 participants.",
     distinction: ["biais:surprecision", "Le biais d'optimisme surestime les chances d'événements favorables ; l'excès de précision, la justesse de ses propres estimations."],
     lies: ["biais:planification", "biais:dunning-kruger", "biais:prevision-affective"]
   },
