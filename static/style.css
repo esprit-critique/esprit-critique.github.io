@@ -1716,6 +1716,8 @@ label[for] { display: block; margin: 0 0 8px; }
 @media (max-width: 759px) { .entete .bouton-profil { position: absolute; top: calc(env(safe-area-inset-top) + 12px); right: 74px; } }
 .anneau-mini .anneau-fond { fill: none; stroke: var(--trait); stroke-width: 4; }
 .anneau-mini .anneau-valeur { fill: none; stroke: var(--vert); stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray var(--duree) var(--courbe); }
+/* Part nulle : le tiret de longueur nulle, à bouts ronds, laisserait une pastille (graphiques.js, melange.js) */
+.anneau-valeur.anneau-vide { visibility: hidden; }
 .insigne { flex: none; }
 .insigne-trait { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: opacity var(--duree-longue); }
 .insigne-plein { fill: var(--accent); }
