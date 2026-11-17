@@ -6,12 +6,12 @@
 
 const PARCOURS = [
   { id: "premiers-pas", titre: "Premiers pas",
-    promesse: "Voir qu'on ne peut pas se fier à ses yeux, puis à ses raisonnements : un premier tour du site.",
+    promesse: "Voir que nos yeux, puis nos raisonnements, peuvent nous tromper : un premier tour du site.",
     conclusion: "Vous avez vu l'essentiel : l'œil se trompe même quand on sait, et le raisonnement aussi. La suite se joue dans la vie courante : quand vous repérez une notion autour de vous, notez-la avec « Je l'ai repéré » sur sa fiche.",
     etapes: ["a:illusion", "f:biais:confirmation", "a:crt", "f:sophismes:homme-de-paille", "q", "s"] },
   { id: "chiffres", titre: "Les chiffres qui trompent",
     promesse: "Taux de base, petits échantillons, survivants et graphiques : apprendre à lire un chiffre avant d'y croire.",
-    conclusion: "Un chiffre n'est jamais seul : il a un dénominateur, un échantillon, une sélection et une mise en page. Repérez la prochaine statistique trompeuse que vous croiserez, et notez-la sur sa fiche.",
+    conclusion: "Un chiffre n'est jamais seul : il a un dénominateur, un échantillon, une sélection et une mise en page. Repérez la prochaine statistique trompeuse que vous croiserez, et notez-la sur la fiche du piège qu'elle tend.",
     etapes: ["f:biais:taux-de-base", "a:depistage", "f:biais:taille-echantillon", "a:correlation", "f:biais:regression-moyenne", "a:moniteur", "f:biais:survivant", "a:wald", "f:biais:simpson", "a:graphiques", "f:sophismes:correlation", "f:sophismes:cherry-picking", "a:fabriquer", "q"] },
   { id: "hasard", titre: "Le hasard n'a pas de mémoire",
     promesse: "Séries, coïncidences, portes et anniversaires : ce que le hasard fait vraiment, et ce que nous croyons y voir.",
@@ -23,7 +23,7 @@ const PARCOURS = [
     etapes: ["f:biais:surprecision", "a:vrai-faux", "f:biais:dunning-kruger", "a:intervalles", "f:biais:retrospectif", "a:foule", "f:biais:planification", "a:comprendre", "f:biais:angle-mort", "a:carnet", "q"] },
   { id: "decider", titre: "Décider sans se piéger",
     promesse: "Ancres, cadrages, pertes et coûts déjà engagés : les pièges qui se glissent dans nos choix.",
-    conclusion: "Une bonne décision se juge à ce que l'on savait au moment de la prendre, pas à son résultat. Pour votre prochaine décision importante, faites la décision guidée et revenez à la date du bilan.",
+    conclusion: "Une bonne décision se juge à ce que l'on savait au moment de la prendre, pas à son résultat. Pour votre prochaine décision importante, faites l'atelier « Décision guidée », puis revenez-y à la date du bilan.",
     etapes: ["f:biais:ancrage", "a:ancre", "f:biais:cadrage", "f:biais:aversion-perte", "a:decision", "f:biais:couts-irrecuperables", "f:biais:statu-quo", "a:cecite", "f:biais:resultat", "q"] },
   { id: "debattre", titre: "Débattre sans tricher",
     promesse: "Reconnaître les sophismes des autres, et surtout les siens : repérer, réparer, reformuler.",
@@ -35,7 +35,7 @@ const PARCOURS = [
     etapes: ["f:biais:verite-illusoire", "a:laterale", "f:biais:confirmation", "f:biais:raisonnement-motive", "a:citations", "f:biais:disponibilite", "a:monde", "f:biais:halo", "f:sophismes:hors-contexte", "f:sophismes:generalisation-hative", "a:etudes", "f:sophismes:autorite", "q"] },
   { id: "autres", titre: "Nous et les autres",
     promesse: "Le groupe, l'autorité et l'attribution : comment les autres pèsent sur notre jugement.",
-    conclusion: "Penser par soi-même n'est pas penser seul : c'est savoir quand le groupe nous éclaire et quand il nous entraîne. Repérez la prochaine fois où vous vous êtes rangé à l'avis général sans l'examiner.",
+    conclusion: "Penser par soi-même n'est pas penser seul : c'est savoir quand le groupe nous éclaire et quand il nous entraîne. Repérez la prochaine fois où vous vous rangerez à l'avis général sans l'examiner.",
     etapes: ["f:biais:conformisme", "a:plusieurs", "f:biais:pensee-groupe", "f:biais:attribution", "a:debat-a-deux", "f:biais:endogroupe", "f:biais:faux-consensus", "f:biais:autorite", "q"] },
   { id: "en-ligne", titre: "Ne pas se faire avoir en ligne",
     promesse: "Les leviers des arnaques, les signes qui trahissent un message, et des mots de passe qui résistent.",
@@ -68,7 +68,7 @@ const PARCOURS = [
     etapes: ["f:biais:leurre", "f:biais:dotation", "a:ancre", "f:biais:ikea", "f:biais:exposition", "f:sophismes:nature", "f:sophismes:tradition", "q"] },
   { id: "philosophe", titre: "Penser en philosophe",
     promesse: "Expériences de pensée, charge de la preuve, faux juste milieu : les outils des philosophes pour éprouver une idée.",
-    conclusion: "Une idée se juge sur ses raisons, ni sur son origine ni sur ses conséquences. Quand une discussion bloque, demandez qui doit prouver quoi, et cherchez le cas qui ferait tomber la thèse.",
+    conclusion: "La vérité d'une idée se juge sur ses raisons, non sur son origine ni sur ses conséquences. Quand une discussion bloque, demandez qui doit prouver quoi, et cherchez le cas qui ferait tomber la thèse.",
     etapes: ["a:pensee", "f:sophismes:genetique", "f:sophismes:consequences", "f:sophismes:vrai-ecossais", "f:sophismes:composition", "a:qui-prouve", "f:sophismes:juste-milieu", "f:sophismes:fausse-equivalence", "f:sophismes:nirvana", "f:biais:monde-juste", "q"] }
 ];
 

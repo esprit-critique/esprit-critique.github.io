@@ -1635,7 +1635,7 @@ function afficherQuiz() {
       carte.append(dessinVide(), el("h2", null, "Rien à réviser aujourd'hui"));
       const prochaine = prochaineRevision();
       carte.appendChild(el("p", null, prochaine === null
-        ? "Les notions rencontrées au quiz reviendront ici au bon moment : le lendemain en cas d'erreur, puis après 3, 7, 14 et 30 jours."
+        ? "Les notions rencontrées au quiz reviendront ici au bon moment : après 1, 3, 7, 14 puis 30 jours tant que vous y répondez juste, dès le lendemain en cas d'erreur."
         : (prochaine - aujourdHui() === 1 ? T("Prochaine révision demain.") : T("Prochaine révision dans {0} jours.", prochaine - aujourdHui()))));
       const b = el("button", "bouton", "Une série de découverte");
       b.addEventListener("click", () => lancerQuiz("tout"));
