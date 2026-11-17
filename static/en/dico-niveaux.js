@@ -31,6 +31,7 @@ EN_AJOUTER([
   ["Descendre {0}", "Move {0} down"],
   ["Valider le classement", "Submit the ranking"],
   ["Classement exact.", "Exact ranking."],
+  ["{0} paire sur {1} dans le bon ordre.", "{0} pair out of {1} in the right order."],
   ["{0} paires sur {1} dans le bon ordre.", "{0} pairs out of {1} in the right order."],
   ["Le bon ordre", "The right order"],
   ["Paires inversées, dans le bon ordre : {0}.", "Pairs reversed, in the right order: {0}."],

@@ -165,7 +165,7 @@ const JEUX = [
           const retour = el("div", "retour-quiz");
           const rapport = Math.max(a.valeur, b.valeur) / Math.min(a.valeur, b.valeur);
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"),
-            (juste ? T("Juste : ") : T("Non : ")) + (LANGUE === "en" ? T(gagnant.nom).replace(/^[A-Z](?![A-Z])/, c => c.toLowerCase()) : gagnant.nom.charAt(0).toLowerCase() + gagnant.nom.slice(1)) + T(", environ {0} fois plus.", rapport < 10 ? fr(Number(rapport.toFixed(1))) : fr(Math.round(rapport)))));
+            (juste ? T("Juste : ") : T("Non : ")) + (LANGUE === "en" ? T(gagnant.nom) : gagnant.nom.charAt(0).toLowerCase() + gagnant.nom.slice(1)) + T(", environ {0} fois plus.", rapport < 10 ? fr(Number(rapport.toFixed(1))) : fr(Math.round(rapport)))));
           barresComparees(retour, [a, b].map(c => ({ nom: c.nom, valeur: c.valeur, texte: c.texte, source: c.source, forte: c === gagnant })));
           if (a.facteur || b.facteur) retour.appendChild(paragraphe("Un facteur de risque (tabac, alcool, pollution) n'est pas une maladie : on compte les décès qui lui sont attribuables, toutes maladies confondues.", "source"));
           zone.appendChild(retour);
@@ -484,7 +484,7 @@ const JEUX = [
             else if (e === choix) x.classList.add("faux");
           });
           const retour = el("div", "retour-quiz");
-          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? T("Juste : ") : T("Non : ")) + (LANGUE === "en" ? T(premier.nom).replace(/^[A-Z](?![A-Z])/, c => c.toLowerCase()) : premier.nom.charAt(0).toLowerCase() + premier.nom.slice(1)) + "."));
+          retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), (juste ? T("Juste : ") : T("Non : ")) + (LANGUE === "en" ? T(premier.nom) : premier.nom.charAt(0).toLowerCase() + premier.nom.slice(1)) + "."));
           retour.appendChild(frise(a, b));
           // Il n'y a pas d'an 0 : de 30 av. J.-C. (−30) à 79, il s'écoule 108 ans, et non 109
           const ecart = Math.abs(a.annee - b.annee) - (a.annee * b.annee < 0 ? 1 : 0);

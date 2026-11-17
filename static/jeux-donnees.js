@@ -562,7 +562,7 @@ const VRAI_FAUX = [
     explication: "Deux oreillettes et deux ventricules : le côté droit envoie le sang aux poumons, le côté gauche vers le reste du corps.", source: "Wikipédia, « Cœur »" },
   // --- Ajouts de novembre 2026 : culture générale et esprit critique (sources vérifiées) ---
   { id: "annee-lumiere", niveau: 1, texte: "Une année-lumière est une unité de temps.", vrai: false,
-    explication: "C'est une unité de distance : celle que parcourt la lumière dans le vide en une année, environ 9 460 milliards de kilomètres.", source: "Union astronomique internationale" },
+    explication: "C'est une unité de distance : celle que parcourt la lumière dans le vide en une année.", source: "Union astronomique internationale" },
   { id: "koala", niveau: 1, texte: "Le koala est une espèce d'ours.", vrai: false,
     explication: "C'est un marsupial : la femelle porte son petit dans une poche, comme le kangourou.", source: "Wikipédia, « Koala »" },
   { id: "eau-pure", niveau: 2, texte: "L'eau parfaitement pure conduit très mal l'électricité.", vrai: true,
@@ -573,14 +573,10 @@ const VRAI_FAUX = [
     explication: "L'osmium et l'iridium, environ 22,6 g/cm³, sont plus denses que l'or (19,3 g/cm³) ; les deux se disputent la première place selon la méthode de mesure.", source: "Royal Society of Chemistry, tableau périodique" },
   { id: "vitamine-c", niveau: 2, texte: "Prendre de la vitamine C tous les jours évite d'attraper des rhumes.", vrai: false,
     explication: "Une synthèse de 29 essais (11 306 participants) ne trouve aucun effet sur le nombre de rhumes dans la population générale ; leur durée baisse un peu (8 % chez l'adulte). Seule exception : les personnes soumises à un effort physique extrême, comme les marathoniens.", source: "Hemilä et Chalker, revue Cochrane, 2013" },
-  { id: "cerveau-gauche", niveau: 2, texte: "Certaines personnes sont « cerveau gauche » (logiques), d'autres « cerveau droit » (créatives).", vrai: false,
-    explication: "Certaines fonctions sont latéralisées, comme le langage, surtout à gauche ; mais une étude de plus de 1 000 cerveaux n'a trouvé personne dont un hémisphère entier soit plus connecté que l'autre.", source: "Nielsen et al., PLoS ONE, 2013" },
   { id: "neandertal", niveau: 2, texte: "Néandertal a disparu sans laisser de trace dans l'ADN des humains actuels.", vrai: false,
     explication: "Les humains dont les ancêtres ont vécu hors d'Afrique tiennent environ 1 à 4 % de leur génome de Néandertal : les deux populations se sont croisées.", source: "Green et al., Science, 2010" },
   { id: "placebo-ouvert", niveau: 3, texte: "Un placebo peut soulager même quand le patient sait qu'il prend un placebo.", vrai: true,
     explication: "Dans un essai de 2010, 80 patients atteints du syndrome de l'intestin irritable : ceux qui prenaient des pilules présentées comme sans principe actif allaient mieux que ceux sans traitement. L'essai est petit et court ; le résultat demande à être confirmé.", source: "Kaptchuk et al., PLoS ONE, 2010" },
-  { id: "styles-apprentissage", niveau: 3, texte: "On apprend mieux quand l'enseignement suit son style d'apprentissage (visuel, auditif…).", vrai: false,
-    explication: "Une revue de la littérature n'a trouvé presque aucune étude capable de le tester, et celles qui le pouvaient contredisent l'idée. Chacun a des préférences ; leur effet sur l'apprentissage n'est pas démontré.", source: "Pashler, McDaniel, Rohrer et Bjork, Psychological Science in the Public Interest, 2008" }
 ];
 
 // ===================== Avant ou après ? =====================

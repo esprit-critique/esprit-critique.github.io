@@ -348,7 +348,7 @@ const justeOuPresque = r => r === true || (typeof r === "number" && r >= 0.8);
 function corrigerClassement(retour, ordre, bonOrdre, libelle, detail) {
   const p = pairesConcordantes(ordre, e => bonOrdre.indexOf(e));
   retour.appendChild(el("p", "verdict " + (p.part === 1 ? "juste" : p.part >= 0.8 ? "" : "faux"),
-    p.part === 1 ? T("Classement exact.") : T("{0} paires sur {1} dans le bon ordre.", p.justes, p.total)));
+    p.part === 1 ? T("Classement exact.") : T(p.justes === 1 ? "{0} paire sur {1} dans le bon ordre." : "{0} paires sur {1} dans le bon ordre.", p.justes, p.total)));
   const ol = el("ol", "liste-simple");
   bonOrdre.forEach(e => ol.appendChild(el("li", null, libelle(e) + " : " + detail(e))));
   retour.append(el("p", "consigne", "Le bon ordre"), ol);
