@@ -155,6 +155,10 @@ EN_AJOUTER([
   ["Bière, 25 ans et 16 ans", "Beer, 25 and 16"],
   ["Il faut vérifier l'âge du buveur de bière et la boisson du client de 16 ans. C'est la même structure logique que la tâche abstraite, mais on la réussit beaucoup plus souvent.", "You need to check the beer drinker’s age and the drink of the 16-year-old. It is the same logical structure as the abstract task, but people get it right far more often."],
   ["Chaque machine fabrique un objet en 5 minutes : 100 machines fabriquent 100 objets en 5 minutes.", "Each machine makes one item in 5 minutes: 100 machines make 100 items in 5 minutes."],
+  ["24 jours", "24 days"],
+  ["47 jours", "47 days"],
+  ["36 jours", "36 days"],
+  ["12 jours", "12 days"],
   ["La surface double chaque jour : la veille du jour où le lac est couvert, la moitié l'était.", "The area doubles every day: the day before the lake is fully covered, half of it was."],
   ["Premier", "First"],
   ["Deuxième", "Second"],
@@ -351,5 +355,4 @@ EN_AJOUTER([
   ["cas", "case"],
   ["cas (pluriel)", "cases"],
   ["prévisions", "forecasts"]
-]
-);
+]);

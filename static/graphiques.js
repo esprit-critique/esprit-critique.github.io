@@ -54,11 +54,14 @@ function graphiqueBarres(titre, donnees, max, reperes = [], message) {
   // plafonnée à 240 ; un libellé de plus de 32 caractères larges serait encore coupé, passer alors à deux lignes (tspan)
   const plusLong = Math.max(0, ...donnees.map(([l]) => String(l).length));
   const haut = 26, largeur = 360, gauche = Math.max(150, Math.min(240, Math.ceil(plusLong * 7) + 12)), droite = 50;
-  const s = svg("svg", { viewBox: "0 0 " + largeur + " " + (donnees.length * haut + 18), class: "barres-svg", role: "img", "aria-label": titre });
   const echelle = v => gauche + (largeur - gauche - droite) * Math.max(0, v) / max;
-  reperes.forEach(r => {
-    s.appendChild(svg("line", { x1: echelle(r), y1: 0, x2: echelle(r), y2: donnees.length * haut, class: "repere-graphique" }));
-    s.appendChild(texteSvg(echelle(r), donnees.length * haut + 13, String(r), { class: "graduation-graphique", "text-anchor": "middle" }));
+  // Repères trop proches (colonne des libellés large, zone des barres étroite : « 500750 ») : le suivant passe dessous
+  let decale = false;
+  const lignesReperes = reperes.map((r, k) => k && echelle(r) - echelle(reperes[k - 1]) < 26 ? (decale = true, 1) : 0);
+  const s = svg("svg", { viewBox: "0 0 " + largeur + " " + (donnees.length * haut + 18 + (decale ? 12 : 0)), class: "barres-svg", role: "img", "aria-label": titre });
+  reperes.forEach((r, k) => {
+    s.appendChild(svg("line", { x1: echelle(r), y1: 0, x2: echelle(r), y2: donnees.length * haut + lignesReperes[k] * 12, class: "repere-graphique" }));
+    s.appendChild(texteSvg(echelle(r), donnees.length * haut + 13 + lignesReperes[k] * 12, String(r), { class: "graduation-graphique", "text-anchor": "middle" }));
   });
   donnees.forEach(([libelle, v, couleur], i) => {
     const y = i * haut;

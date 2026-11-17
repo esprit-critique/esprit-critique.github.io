@@ -431,6 +431,14 @@ f.onload = async () => {
     w.eval("jourAccueilAffiche = aujourdHui() - 1");
     w.eval("accueilDuNouveauJour()");
     ok("nouveau jour : l'accueil resté ouvert est redessiné, le jour affiché est celui d'aujourd'hui", w.eval("jourAccueilAffiche === aujourdHui()") && !!enfantAvant && !enfantAvant.isConnected && !!vue().querySelector(".vf-jour"));
+    // Une partie commencée sur l'accueil (défi) n'est pas effacée par le changement de jour
+    const enCours = vue().querySelector(".carte");
+    enCours.classList.add("partie-en-cours");
+    const enfantPartie = vue().firstElementChild;
+    w.eval("jourAccueilAffiche = aujourdHui() - 1");
+    w.eval("accueilDuNouveauJour()");
+    ok("nouveau jour : une partie en cours sur l'accueil n'est pas effacée", enfantPartie.isConnected && w.eval("jourAccueilAffiche === aujourdHui() - 1"));
+    enCours.classList.remove("partie-en-cours");
     await aller("quiz");
     w.eval("jourAccueilAffiche = aujourdHui() - 1");
     w.eval("accueilDuNouveauJour()");

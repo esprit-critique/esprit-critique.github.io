@@ -677,14 +677,18 @@ function tirageAncien(liste, n, jour, sel) {
   const ordre = melanger(liste, generateur(sel));
   return Array.from({ length: Math.min(n, liste.length) }, (_, i) => ordre[(jour * n + i) % liste.length]);
 }
-function tirerSansRemise(liste, n, jour, sel) {
-  if (jour < ROTATION_STABLE_DEPUIS) return tirageAncien(liste, n, jour, sel);
+// nAncien : combien l'ancien tirage prenait par jour, quand l'appel en prend désormais davantage (défi : 3, puis 6)
+function tirerSansRemise(liste, n, jour, sel, nAncien = n) {
+  // L'ancien tirage ne voit que le stock d'origine : un élément daté (« depuis ») le rebattrait, et avec lui toute la
+  // suite, qui part de ce qu'il a sorti
+  const origine = liste.filter(x => !depuisTirage(x));
+  if (jour < ROTATION_STABLE_DEPUIS) return tirageAncien(origine, nAncien, jour, sel);
   // Rejoué jour par jour depuis le début ; l'état atteint est gardé (même stock, même sel, même n) pour repartir de là
-  const cle = sel + "|" + n + "|" + liste.map(x => cleTirage(x) + ":" + depuisTirage(x)).join(",");
+  const cle = sel + "|" + n + "|" + nAncien + "|" + liste.map(x => cleTirage(x) + ":" + depuisTirage(x)).join(",");
   const memo = ETATS_ROTATION.get(cle);
   // Au départ, ce que l'ancien tirage a déjà sorti (16 et 17 novembre) compte comme sorti du premier cycle, et le
   // 17 comme la veille : pas de carte redonnée dans la même semaine au passage d'une rotation à l'autre
-  const anciens = () => { const jours = []; for (let j = ROTATION_DEPUIS; j < ROTATION_STABLE_DEPUIS; j++) jours.push(tirageAncien(liste, n, j, sel)); return jours; };
+  const anciens = () => { const jours = []; for (let j = ROTATION_DEPUIS; j < ROTATION_STABLE_DEPUIS; j++) jours.push(tirageAncien(origine, nAncien, j, sel)); return jours; };
   let { cycle, sortis, pris, j: depart } = memo && memo.j <= jour + 1 ? { ...memo, sortis: new Set(memo.sortis), pris: memo.pris.slice() }
     : (jours => ({ cycle: 0, sortis: new Set(jours.flat().map(cleTirage)), pris: (jours[jours.length - 1] || []).slice(), j: ROTATION_STABLE_DEPUIS }))(anciens());
   if (memo && memo.j - 1 === jour) return memo.pris.slice();
@@ -730,7 +734,14 @@ function questionsDuDefi(jour, graine) {
   // Ordre des options tiré à part : les défis déjà partagés gardent les mêmes questions
   const aleaOrdre = generateur((graine !== undefined ? graine : jour * 7 + 2026) + 1);
   const monde = prendre(difficiles(MONDE), 3, 11).map(m => melangerOptions({ texte: m.question, options: m.options, juste: m.juste, explication: m.explication }, aleaOrdre));
-  const vf = prendre(difficiles(VRAI_FAUX), 3, 13).map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
+  // Rotation stable : six tirées, sans celles qui sont le vrai ou faux du jour à deux jours près, les trois premières gardées
+  // (la même affirmation sortait parfois le même jour au défi et sur l'accueil)
+  // (défis libres partagés par lien et jours d'avant la rotation stable : tirage inchangé)
+  const stable = rotation && jour >= ROTATION_STABLE_DEPUIS;
+  const voisins = stable ? new Set([-2, -1, 0, 1, 2].map(k => vraiFauxDuJour(jour + k).id)) : new Set();
+  const vfTirees = stable ? tirerSansRemise(difficiles(VRAI_FAUX), 6, jour, 13, 3) : prendre(difficiles(VRAI_FAUX), 3, 13);
+  const vfGardees = stable ? [...vfTirees.filter(a => !voisins.has(a.id)), ...vfTirees.filter(a => voisins.has(a.id))].slice(0, 3) : vfTirees;
+  const vf = vfGardees.map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
   const citations = prendre(difficiles(CITATIONS), 2, 17).map(c => ({ texte: T("« {0} » — attribuée à {1}", T(c.texte), c.auteur), options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
   const chrono = prendre(PAIRES_CELEBRES, 2, 19).map(p => {
     const [a, b] = melanger([evenement(p.a), evenement(p.b)], alea);
@@ -799,8 +810,11 @@ function carteDefiDuJour() {
   commencer.addEventListener("click", () => {
     const zone = el("div");
     carte.replaceChildren();
+    // Partie en cours : le changement de jour (minuit, retour sur la page) attend qu'elle soit finie pour redessiner
+    carte.classList.add("partie-en-cours");
     carte.append(el("p", "surtitre", "Défi du jour"), zone);
     derouler(zone, questionsDuDefi(jour), questionDeDefi, resultats => {
+      carte.classList.remove("partie-en-cours");
       const score = resultats.filter(Boolean).length;
       ecrire("defiJour", { jour, score });
       noterActivite();
@@ -1052,9 +1066,13 @@ function programmeDuJour(cartes) {
 }
 
 // Carte « Vrai ou faux du jour » de l'accueil
+// Le vrai ou faux du jour (aussi écarté du défi du même jour et des jours voisins)
+function vraiFauxDuJour(jour) {
+  return jour >= ROTATION_DEPUIS ? tirerSansRemise(VRAI_FAUX, 1, jour, 29)[0] : VRAI_FAUX[Math.floor(generateur(jour * 104729 + 3)() * VRAI_FAUX.length)];
+}
 function carteVraiFauxDuJour() {
   const jour = aujourdHui();
-  const a = jour >= ROTATION_DEPUIS ? tirerSansRemise(VRAI_FAUX, 1, jour, 29)[0] : VRAI_FAUX[Math.floor(generateur(jour * 104729 + 3)() * VRAI_FAUX.length)];
+  const a = vraiFauxDuJour(jour);
   const memo = lire("vfJour", null);
   const carte = el("article", "carte vf-jour");
   carte.style.setProperty("--c", "#5b5bb5");
@@ -1932,6 +1950,8 @@ window.addEventListener("hashchange", () => transitionDeVue(afficherPage));
 let jourAccueilAffiche = aujourdHui();
 function accueilDuNouveauJour() {
   if (document.visibilityState !== "visible" || aujourdHui() === jourAccueilAffiche) return;
+  // Un défi commencé avant minuit n'est pas effacé : l'accueil sera redessiné au prochain retour sur la page
+  if (precedent.vue === "accueil" && document.querySelector(".partie-en-cours")) return;
   jourAccueilAffiche = aujourdHui();
   if (precedent.vue === "accueil") afficherPage();
 }

@@ -81,6 +81,8 @@ EN_AJOUTER([
   ["Règle : si une personne boit de l'alcool, alors elle a au moins 18 ans.", "Rule: if a person drinks alcohol, then they are at least 18 years old."],
   ["Bière", "Beer"],
   ["Soda", "Soda"],
+  ["25 ans", "25 years old"],
+  ["16 ans", "16 years old"],
   ["Il faut vérifier l'âge du buveur de bière et la boisson du client de 16 ans. C'est exactement la même structure logique que la version abstraite (P, et non-Q), mais la plupart des gens la trouvent évidente (Griggs et Cox, 1982, avec une règle sur l'âge légal de la bière).", "You must check the age of the beer drinker and the drink of the 16-year-old customer. It is exactly the same logical structure as the abstract version (P, and not-Q), but most people find it obvious (Griggs and Cox, 1982, with a rule about the legal age for beer)."],
   ["Vous triez le courrier. Chaque carte représente une enveloppe : fermée ou ouverte d'un côté, son timbre de l'autre.", "You are sorting the mail. Each card represents an envelope: sealed or open on one side, its stamp on the other."],
   ["Règle : si une enveloppe est fermée, alors elle doit porter un timbre à tarif plein.", "Rule: if an envelope is sealed, then it must carry a full-rate stamp."],

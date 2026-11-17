@@ -59,7 +59,14 @@ for (const [nom, l] of Object.entries(stocks)) for (const n of [1, 3]) {
 const avec = [...VRAI_FAUX, { id: "essai-ajout", texte: "", depuis: D + 10 }];
 const avant = k => tirerSansRemise(VRAI_FAUX, 1, D + k, 29).map(cleTirage).join();
 const apres = k => tirerSansRemise(avec, 1, D + k, 29).map(cleTirage).join();
-res.ajoutPasse = Array.from({ length: 10 }, (_, k) => k).every(k => avant(k) === apres(k));
+// Tous les jours d'avant son entrée, y compris les deux de l'ancien tirage, et dans chaque stock, au début comme à la fin
+res.ajoutPasse = Array.from({ length: 10 + D - ROTATION_DEPUIS }, (_, k) => k - (D - ROTATION_DEPUIS)).every(k => avant(k) === apres(k))
+  && Object.entries(stocks).every(([nom, l]) => [1, 3].every(n => ["debut", "fin"].every(ou => {
+    const essai = nom === "FICHES" ? { type: "biais", fiche: { id: "essai-ajout", depuis: D + 30 } } : { id: "essai-ajout", a: "x", b: "y", depuis: D + 30 };
+    const plus = ou === "debut" ? [essai, ...l] : [...l, essai];
+    for (let k = -(D - ROTATION_DEPUIS); k < 30; k++) if (tirerSansRemise(l, n, D + k, 7).map(cleTirage).join() !== tirerSansRemise(plus, n, D + k, 7).map(cleTirage).join()) return false;
+    return true;
+  })));
 const sortie = [];
 for (let k = 0; k < VRAI_FAUX.length + 5; k++) sortie.push(apres(k));
 const jourAjout = sortie.indexOf("essai-ajout"), premierRetour = sortie.findIndex((x, i) => sortie.indexOf(x) < i);
@@ -89,7 +96,7 @@ def main():
         ok(cle + " : le premier cycle sort tout le stock, une fois chacun", c["premierComplet"])
         ok(cle + " : aucun élément ne revient avant la fin du cycle", c["doublonCycle"] is None, c)
         ok(cle + " : rien de la veille le lendemain, rien en double le même jour", c["veille"] is None and c["jourDouble"] == -1, c)
-    ok("ajout : les jours d'avant son « depuis » ne changent pas", r["ajoutPasse"])
+    ok("ajout : aucun jour d'avant son « depuis » ne change (ancien tirage compris), dans chaque stock, au début comme à la fin", r["ajoutPasse"])
     a = r["ajout"]
     ok("ajout : il sort dans le cycle en cours, avant tout retour", a["jourAjout"] >= 10 and (a["premierRetour"] == -1 or a["jourAjout"] < a["premierRetour"]), a)
     ok("cache : même tirage calculé d'un coup, pas à pas ou en revenant en arrière", r["cache"])

@@ -31,8 +31,11 @@ function majMaitrise(annoncerChangements = true) {
   ecrire("maitrise", etat);
   d.domaines = m.domaines;
   const dist = lire("distinctions", {});
-  const obtenues = distinctionsObtenues(d);
-  const nouvelles = obtenues.filter(id => !(dist.obtenues || []).includes(id));
+  const acquises = distinctionsObtenues(d);
+  const nouvelles = acquises.filter(id => !(dist.obtenues || []).includes(id));
+  // Une distinction se garde, comme un grade : une série rompue ou un score qui baisse ne la reprend pas (sinon elle
+  // disparaissait à l'arrivée d'une autre, avec l'équipement qu'elle débloque, puis était annoncée une seconde fois)
+  const obtenues = DISTINCTIONS.map(x => x[0]).filter(id => acquises.includes(id) || (dist.obtenues || []).includes(id));
   if (nouvelles.length || !dist.obtenues) ecrire("distinctions", { ...dist, obtenues });
   if (annoncerChangements && !modeSobre()) {
     if (avant && gradeApres.rang > gradeAvant.rang) bandeauGrade(gradeApres);
@@ -1304,7 +1307,8 @@ const pointsPiece = (n, r, depart, taille) => Array.from({ length: n }, (_, k) =
 }).join("");
 const MOTIF_MEDAILLE = "M-3.6 2.5Q-5.5-2 -1.8-4.6M3.6 2.5Q5.5-2 1.8-4.6M-4.4-0.5l-1.6-.6M-4.2 1.6l-1.7.2M4.4-0.5l1.6-.6M4.2 1.6l1.7.2";
 const GLYPHES_DISTINCTIONS = {
-  "premier-doute": "M-2.8-2.4Q-2.8-5.6 0-5.6Q2.8-5.6 2.8-2.9Q2.8-1 .6-.2Q0 .2 0 1.8" + cerclePiece(0, 4.6, 0.5),
+  // Une pousse : le premier doute qui germe (un « ? » se confondait avec les distinctions secrètes)
+  "premier-doute": "M0 6V-1M-6 6H6M0 1Q-4.6 1-5.4-3.8Q-1-3.6 0 1M0-1Q3.6-1.4 4.8-6Q.6-5.8 0-1",
   "regulier": pointsPiece(7, 5, -90, 0.9),
   "assidu": "M-4.5-4.5V4.5M-1.5-4.5V4.5M1.5-4.5V4.5M4.5-4.5V4.5M-6.5 3L6.5-3",
   "a-l-heure": cerclePiece(0, 0, 5.8) + "M0 0V-3.8M0 0L2.8 1.8",
@@ -1539,7 +1543,7 @@ function partagerGrade(avecPseudo) {
     // À gauche, les six domaines : emblème, nom, valeur, barre
     ctx.textAlign = "left";
     DOMAINES.forEach(([d, nom], i) => {
-      const y = 822 + i * 44, v = f.m.domaines[d];
+      const y = 812 + i * 44, v = f.m.domaines[d];   // dernière barre finie à 1 040 : de l'air avant les distinctions
       peindreEmblemeDomaine(ctx, d, 114, y + 16, 17);
       ctx.font = policeTexte(24); ctx.fillStyle = "#1c1b19"; ctx.fillText(T(nom), 142, y + 12);
       ctx.textAlign = "right"; ctx.fillText(String(v), 520, y + 12); ctx.textAlign = "left";
@@ -1553,10 +1557,11 @@ function partagerGrade(avecPseudo) {
     ctx.font = policeTexte(22); ctx.fillStyle = "#6b6862"; ctx.fillText(T("en pointillé : l'objectif du jour ({0} points)", f.objectif), 772, 1042);
     // Les médailles des distinctions
     ctx.fillStyle = "#1c1b19"; ctx.font = "700 " + policeTexte(30);
-    ctx.fillText(T("{0} sur {1}", pluriel(f.nombre, "distinction"), DISTINCTIONS.length), 540, 1100);
-    peindreMedailles(ctx, f.medailles, 96, 1114, 46.7);
+    ctx.fillText(T("{0} sur {1}", pluriel(f.nombre, "distinction"), DISTINCTIONS.length), 540, 1088);
+    // Deux rangées de 19 au pas de 44, centrées (1 080 − 19 × 44) / 2 = 122 ; finies à 1 190
+    peindreMedailles(ctx, f.medailles, 122, 1102, 44);
     ctx.textAlign = "left"; ctx.font = "italic 26px Newsreader, Georgia, serif"; ctx.fillStyle = "#6b6862";
-    ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1236);
+    ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1224);   // l'adresse est à 1 270
     frise(1290);
   });
 }

@@ -1889,6 +1889,8 @@ label[for] { display: block; margin: 0 0 8px; }
    Téléphone : bouton à 12 px du haut et 74 px de la droite, centre (−96, 34) ; centre de la pastille (−111,6 ; 49,6) */
 @media (max-width: 759px) { .etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 45px); right: 107px; z-index: 2; } }
 .etat-synchro { width: 10px; height: 10px; border-radius: 50%; background: var(--discret); box-shadow: 0 0 0 2px var(--carte); }
+/* Posée sur le bouton de profil : un toucher la traverse et ouvre le profil (l'état reste lu par son texte invisible) */
+.etat-synchro { pointer-events: none; }
 .etat-synchro[data-statut="a-jour"] { background: var(--vert); }
 .etat-synchro[data-statut="erreur"] { background: var(--rouge); }
 .etat-synchro[data-statut="en-cours"], .etat-synchro[data-statut="en-attente"] { background: var(--orange); }

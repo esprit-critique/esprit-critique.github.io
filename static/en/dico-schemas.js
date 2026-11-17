@@ -164,7 +164,7 @@ EN_AJOUTER([
   ["Caricature", "Caricature"],
   ["« Interdire", "“Ban"],
   ["les voitures »", "cars”"],
-  ["l'attaque vise la caricature", "the attack targets the caricature"],
+  ["l'attaque vise la caricature", "attack on the caricature"],
   ["la position réelle", "the real position"],
   ["Exemple fictif. L'homme de paille réfute une version déformée, plus extrême ou plus faible, de la thèse adverse : la thèse réelle n'est jamais discutée.", "Fictional example. The straw man refutes a distorted version, more extreme or weaker, of the opposing thesis: the real thesis is never discussed."],
   ["Trois états : prouvé vrai, non prouvé, prouvé faux. Le sophisme passe directement de « non prouvé » à « faux » ou à « vrai ».", "Three states: proven true, not proven, proven false. The fallacy jumps straight from “not proven” to “false” or to “true”."],
@@ -186,5 +186,6 @@ EN_AJOUTER([
   ["aucune réponse", "no answer"],
   ["sur le fond", "on the substance"],
   ["Schéma : critiquer la personne (son caractère, ses intérêts, son passé) ne dit rien de la validité de son argument, qui doit être examiné pour lui-même.", "Diagram: criticising the person (their character, interests or past) says nothing about the validity of their argument, which must be examined in its own right."],
+  ["reste intacte", "remains intact"],
   ["Décès annuels dans le monde (OMS, ONUDC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File ; années 2021 à 2025). En orange, les causes les plus médiatisées : à part les homicides, leurs barres sont presque invisibles.", "Annual deaths worldwide (WHO, UNODC, Global Terrorism Index, Aviation Safety Network, International Shark Attack File; years 2021 to 2025). In orange, the most heavily covered causes: apart from homicides, their bars are almost invisible."]
 ]);
