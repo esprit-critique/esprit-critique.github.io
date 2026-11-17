@@ -38,7 +38,7 @@ const QUESTIONS_CRT = [
   { id: "virus", niveau: 2, texte: "Un virus informatique double chaque heure le nombre de fichiers infectés. Il lui faut 10 heures pour infecter tout le disque. Combien d'heures lui faut-il pour en infecter la moitié ?", unite: "heures", juste: 9, intuitive: 5,
     explication: "Le nombre de fichiers infectés double chaque heure : une heure avant que tout soit infecté, la moitié l'était." },
   { id: "mois", niveau: 2, texte: "Combien de mois de l'année comptent 28 jours ?", unite: "mois", juste: 12, intuitive: 1, mots: { 12: ["douze", "tous"], 1: ["un", "fevrier"] },
-    explication: "Tous les mois comptent au moins 28 jours : douze. La question fait penser à février, le seul mois qui n'en compte parfois que 28." },
+    explication: "Tous les mois comptent au moins 28 jours : douze. La question fait penser à février, le seul mois qui, trois années sur quatre, n'en compte que 28." },
   { id: "pommes", niveau: 2, texte: "Il y a trois pommes sur une table. Vous en prenez deux. Combien de pommes avez-vous ?", unite: "pommes", juste: 2, intuitive: 1, mots: { 2: ["deux"], 1: ["une", "un"] },
     explication: "Vous en avez deux : celles que vous avez prises. La soustraction 3 − 2 répond à une autre question, combien il en reste sur la table." },
   { id: "nenuphars-quart", niveau: 3, texte: "Dans un lac, une étendue de nénuphars double de surface chaque jour. Il lui faut 48 jours pour couvrir tout le lac. Combien de jours lui faut-il pour en couvrir le quart ?", unite: "jours", juste: 46, intuitive: 12,
@@ -88,7 +88,7 @@ const WASON_ABSTRAITES = [
     regle: "Règle : si une carte est rouge d'un côté, alors elle porte un cercle de l'autre côté.",
     cartes: ["Rouge", "Bleu", "Cercle", "Carré"],
     petites: true,
-    explication: "Il faut retourner la carte rouge (vérifier qu'elle porte un cercle) et la carte « carré » (si elle est rouge, la règle est violée). Retourner « cercle » ne peut rien prouver : la règle n'interdit pas aux cartes bleues de porter un cercle."
+    explication: "Il faut retourner la carte rouge (vérifier qu'elle porte un cercle) et la carte « carré » (si elle est rouge, la règle est violée). Retourner « cercle » ne peut pas mettre la règle en défaut : la règle n'interdit pas aux cartes bleues de porter un cercle."
   })
 ];
 
@@ -135,7 +135,7 @@ const WASON_CONCRETES = [
     regle: "Règle : si un homme mange du manioc, alors il doit avoir un tatouage au visage.",
     cartes: ["Mange du manioc", "Mange des noix", "Tatoué", "Pas de tatouage"],
     petites: true,
-    explication: "Il faut vérifier ce que mange le mangeur de manioc… et ce que mange l'homme sans tatouage. Leda Cosmides (1989) a montré que des règles totalement inconnues sont bien résolues dès qu'elles prennent la forme d'un contrat social (un privilège réservé à ceux qui remplissent une condition) : nous serions particulièrement doués pour repérer les tricheurs."
+    explication: "Il faut vérifier si le mangeur de manioc est tatoué… et ce que mange l'homme sans tatouage. Leda Cosmides (1989) a observé que des règles totalement inconnues sont bien résolues dès qu'elles prennent la forme d'un contrat social (un privilège réservé à ceux qui remplissent une condition) : nous serions particulièrement doués pour repérer les tricheurs."
   }
 ];
 
@@ -190,7 +190,7 @@ const PROBLEMES = [
     enonce: "Une ville compte deux maternités. Dans la grande naissent environ 45 bébés par jour, dans la petite environ 15. Environ 50 % des bébés sont des garçons, mais la proportion varie d'un jour à l'autre. Pendant un an, chaque maternité a compté les jours où plus de 60 % des bébés nés étaient des garçons. Laquelle en a compté le plus ?",
     options: ["La grande maternité", "La petite maternité", "À peu près autant (à 5 % près)"], juste: 1,
     resultat: "Tversky et Kahneman (1974) : 56 % des participants répondent « à peu près autant », 22 % « la grande » et 22 % « la petite ».",
-    explication: "Plus un échantillon est petit, plus ses proportions s'écartent de la moyenne. Pour une pièce équilibrée, plus de 60 % de garçons se produit environ 55 jours par an avec 15 naissances, contre environ 25 jours avec 45 naissances (calcul exact par la loi binomiale).",
+    explication: "Plus un échantillon est petit, plus ses proportions s'écartent de la moyenne. Si chaque naissance donne un garçon une fois sur deux, plus de 60 % de garçons se produit environ 55 jours par an avec 15 naissances, contre environ 25 jours avec 45 naissances (calcul exact par la loi binomiale).",
     simulation: "maternites",
     liens: [["#biais/taille-echantillon", "Insensibilité à la taille de l'échantillon"]] },
   { id: "taxi", niveau: 3, titre: "Le taxi", type: "nombre",
@@ -262,7 +262,7 @@ const PROBLEMES = [
   { id: "instructeurs", niveau: 1, titre: "Les instructeurs de vol", type: "choix",
     enonce: "Des instructeurs de l'armée de l'air israélienne constatent qu'après avoir félicité un élève pour une manœuvre particulièrement réussie, sa manœuvre suivante est souvent moins bonne ; et qu'après avoir réprimandé un élève pour une manœuvre ratée, la suivante est souvent meilleure. Ils en concluent que les réprimandes sont plus efficaces que les félicitations. Ont-ils raison ?",
     options: ["Oui : les faits le montrent, la manœuvre qui suit une réprimande est meilleure", "Non : on observerait la même chose sans félicitations ni réprimandes", "Non : les élèves réprimandés se découragent, et ceux qu'on félicite se relâchent"], juste: 1,
-    resultat: "Daniel Kahneman raconte cet épisode, vécu lors d'une formation d'instructeurs de vol, dans « Système 1 / Système 2 » (2011).",
+    resultat: "Daniel Kahneman raconte cet épisode, vécu lors d'une formation d'instructeurs de vol, dans « Système 1 / Système 2 » (2011 ; traduction française, 2012).",
     explication: "Une performance exceptionnelle doit en partie à la chance : la suivante sera en moyenne plus proche de la normale, quoi qu'on fasse. C'est la régression vers la moyenne ; elle fait croire à l'efficacité des punitions et à l'inefficacité des récompenses.",
     liens: [["#biais/regression-moyenne", "Régression vers la moyenne"]] },
   { id: "berkeley", niveau: 3, titre: "Les admissions de Berkeley", type: "choix",
@@ -404,7 +404,7 @@ const PROBLEMES = [
     enonce: "Pris pendant cinq ans, un traitement fait passer le risque d'infarctus de 2 % à 1,5 %. Combien de personnes faut-il traiter pendant cinq ans pour éviter un infarctus ?",
     unite: "personnes", reponse: 200, tolerance: 0,
     resultat: "Calcul : la baisse du risque est de 0,5 point, soit 1 sur 200 : il faut traiter 200 personnes pour éviter un infarctus.",
-    explication: "On peut annoncer le même résultat comme « un quart d'infarctus en moins » (de 2 à 1,5, c'est −25 %) : c'est exact, mais impressionnant. Le nombre de personnes à traiter traduit la baisse absolue du risque, celle qui permet de mettre en balance le bénéfice, les effets indésirables et le coût.",
+    explication: "On peut annoncer le même résultat comme « un quart d'infarctus en moins » (de 2 à 1,5, c'est −25 %) : c'est exact, mais bien plus impressionnant. Le nombre de personnes à traiter traduit la baisse absolue du risque, celle qui permet de mettre en balance le bénéfice, les effets indésirables et le coût.",
     liens: [["#biais/cadrage", "Effet de cadrage"]] }
 ];
 
@@ -590,9 +590,9 @@ const EXPERIENCES = [
         valider.remove();
         noterPartieEntiere("crt", niveau, questions.map((q, i) => !!justes[i]));
         afficherScore(zone, "crt", bonnes, 3);
-        if (intuitives) zone.appendChild(paragraphe(T("Dont {0} : exactement l'erreur que la question tend.", pluriel(intuitives, "réponse intuitive", "réponses intuitives"))));
+        if (intuitives) zone.appendChild(paragraphe(T("Dont {0} : exactement le piège que tend la question.", pluriel(intuitives, "réponse intuitive", "réponses intuitives"))));
         ajouterExplication(zone, "Ce que montre ce test", [
-          "Chaque question suggère immédiatement une réponse fausse. Répondre juste suppose de remarquer cette réponse, de s'en méfier et de vérifier : c'est le passage du système 1 au système 2.",
+          "Chaque question suggère immédiatement une réponse fausse. Répondre juste suppose de remarquer cette réponse, de s'en méfier et de vérifier : c'est le passage du système 1 (rapide, automatique) au système 2 (lent, délibéré).",
           "Shane Frederick (2005) a soumis les trois questions originales à environ 3 400 personnes : 17 % seulement ont répondu juste aux trois. Ces questions sont devenues célèbres : beaucoup de participants les connaissent déjà, d'où les nouvelles versions de Thomson et Oppenheimer (2016), moins dépendantes du calcul."
         ], [["#guide/systemes", "Deux modes de pensée (guide)"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "crt").lancer(zone), "Trois autres questions");
@@ -665,7 +665,7 @@ const EXPERIENCES = [
             ajouterExplication(zone, "Ce que montre cette expérience", [
               (resultats[0] ? T("Vous avez réussi la version abstraite, ce qui est rare.") + " " : "") + T("Dans sa version abstraite, la tâche de Wason (1968) est réussie par moins de 10 % des participants. La plupart choisissent la voyelle et le nombre pair, ou la voyelle seule."),
               "Dans un contexte familier, en particulier quand il s'agit de repérer une infraction, une nette majorité réussit (Griggs et Cox, 1982). Notre logique dépend fortement du contenu.",
-              "La bonne stratégie est celle du modus tollens : pour tester « si P, alors Q », examiner les cas P et les cas non-Q. Chercher à confirmer (retourner Q) ne prouve rien."
+              "La bonne stratégie : pour tester « si P, alors Q », examiner les cas P (modus ponens) et les cas non-Q (modus tollens). Retourner Q, c'est chercher une confirmation : cette carte ne peut pas mettre la règle en défaut."
             ], [["#biais/confirmation", "Biais de confirmation"], ["#sophismes/affirmation-consequent", "Affirmation du conséquent"]]);
             zone.appendChild(problemeThog());
             boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "wason").lancer(zone), "Deux nouvelles versions");
@@ -894,7 +894,7 @@ const EXPERIENCES = [
         const total = k => stats[3][k][1] + stats[10][k][1], gagnes = k => stats[3][k][0] + stats[10][k][0];
         bloc.appendChild(calculEnDetail([
           "Vous choisissez la porte 1 ; le présentateur ouvre la porte 3, qui cache une chèvre. Notons V1, V2, V3 « la voiture est derrière la porte 1, 2, 3 », chacune de probabilité 1/3 au départ.",
-          "S'il est derrière la porte 1, le présentateur ouvre la 2 ou la 3 au hasard ; si la voiture est derrière la 2, il est obligé d'ouvrir la 3 ; si elle est derrière la 3, il ne l'ouvre jamais :",
+          "Si la voiture est derrière la porte 1, le présentateur ouvre la 2 ou la 3 au hasard ; si elle est derrière la 2, il est obligé d'ouvrir la 3 ; si elle est derrière la 3, il ne l'ouvre jamais :",
           "= P(ouvre 3 | V1) = 1/2 ; P(ouvre 3 | V2) = 1 ; P(ouvre 3 | V3) = 0",
           "= P(V2 | ouvre 3) = (1 × 1/3) / (1/2 × 1/3 + 1 × 1/3 + 0 × 1/3) = (1/3) / (1/2) = 2/3",
           "Garder gagne donc 1 fois sur 3, changer 2 fois sur 3. Avec dix portes, le présentateur ouvre huit portes en évitant la voiture : garder gagne 1 fois sur 10, changer 9 fois sur 10.",
@@ -905,7 +905,7 @@ const EXPERIENCES = [
         // Pour aller plus loin : le présentateur ouvre une porte au hasard, et révèle une chèvre par chance
         const loin = el("div", "section");
         loin.append(el("h3", null, "Pour aller plus loin : le présentateur distrait"),
-          paragraphe("Supposons que le présentateur ne sache pas où est la voiture : il ouvre au hasard l'une des deux autres portes, et il se trouve qu'elle cache une chèvre. Faut-il encore changer ? Non : dans ce cas, changer ne gagne plus qu'une fois sur deux. Ce qui compte n'est pas la porte ouverte, mais la façon dont elle a été choisie."),
+          paragraphe("Supposons que le présentateur ne sache pas où est la voiture : il ouvre au hasard l'une des deux autres portes, et il se trouve qu'elle cache une chèvre. Faut-il encore changer ? Ce n'est plus utile : changer et garder gagnent chacun une fois sur deux. Ce qui compte n'est pas la porte ouverte, mais la façon dont elle a été choisie."),
           paragraphe("Jeffrey Rosenthal a analysé cette variante et d'autres dans « Monty Hall, Monty Fall, Monty Crawl » (Math Horizons, 2008).", "source"));
         const resultatDistrait = paragraphe("");
         const simulerDistrait = el("button", "bouton secondaire", "Simuler 10 000 parties avec un présentateur distrait");
@@ -1095,7 +1095,7 @@ const EXPERIENCES = [
           retour.appendChild(el("p", "verdict " + (juste ? "juste" : "faux"), T(juste ? "Juste : environ {0} %." : "Réponse : environ {0} %.", fr(vrai < 10 ? Number(vrai.toFixed(1)) : Math.round(vrai)))));
           retour.appendChild(messageGraphique(c.fauxPositifs > c.vraisPositifs
             ? T("Les faux positifs ({0}) sont plus nombreux que les vrais ({1}) : le groupe non concerné est si grand que son petit taux d'erreur l'emporte.", fr(c.fauxPositifs), fr(c.vraisPositifs))
-            : T("Les vrais positifs ({0}) sont plus nombreux que les faux ({1}) : le cas est assez fréquent pour que le test soit fiable.", fr(c.vraisPositifs), fr(c.fauxPositifs))));
+            : T("Les vrais positifs ({0}) sont plus nombreux que les faux ({1}) : le cas est assez fréquent pour qu'un résultat positif soit le plus souvent juste.", fr(c.vraisPositifs), fr(c.fauxPositifs))));
           retour.appendChild(arbreFrequences(s, c));
           retour.appendChild(paragraphe(T(c.vraisPositifs > 1 ? "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspondent à un vrai cas." : "Sur {0} personnes : {1} {2}, dont {3} avec un résultat positif ; {4} {5}, dont {6} avec un résultat positif quand même. Sur {7} résultats positifs, {3} seulement correspond à un vrai cas.", fr(s.population), fr(c.malades), accord(c.malades, s.noms[0]), fr(c.vraisPositifs), fr(c.sains), accord(c.sains, s.noms[1]), fr(c.fauxPositifs), fr(c.vraisPositifs + c.fauxPositifs))));
           if (s.resultat) retour.appendChild(paragraphe(s.resultat, "source"));
@@ -1112,7 +1112,7 @@ const EXPERIENCES = [
               T("Second test : la probabilité obtenue après le premier, {0}, devient la nouvelle prévalence.", pc(apres1)),
               T(second.positif ? "= P(cas | deux positifs) = {0} × {1} / ({0} × {1} + {2} × {3}) = {4}" : "= P(cas | positif puis négatif) = {0} × {1} / ({0} × {1} + {2} × {3}) = {4}", pc(siCas), pc(apres1), pc(siAutre), pc(1 - apres1), pc(apres2)),
               second.positif ? "Un second test positif rend le diagnostic bien plus probable : c'est pourquoi on confirme un dépistage positif par un autre examen, si possible indépendant du premier."
-                : "Un second examen négatif fait retomber la probabilité : il manque rarement un vrai cas, donc son « non » pèse lourd. Un résultat isolé ne se lit jamais seul, mais avec tout ce qu'on sait déjà."
+                : "Un second examen négatif fait retomber la probabilité : il manque rarement un vrai cas, donc son « non » pèse lourd. Un résultat ne se lit jamais seul, mais avec tout ce qu'on sait déjà."
             ] : [])
           ]));
           zone.appendChild(retour);

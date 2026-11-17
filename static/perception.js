@@ -233,7 +233,7 @@ JEUX.push(
         ]));
         ajouterExplication(zone, "Ce que montre ce jeu", [
           "Le vrai hasard produit des grappes, des vides et de longues séries. Nous attendons au contraire un hasard « bien réparti », et nous voyons des motifs là où il n'y en a pas : c'est l'illusion des séries.",
-          "Pendant la Seconde Guerre mondiale, des Londoniens voyaient des cibles privilégiées dans les impacts des bombes volantes allemandes. Une analyse statistique de R. D. Clarke (1946) a montré qu'ils suivaient très bien une répartition aléatoire.",
+          "Pendant la Seconde Guerre mondiale, des Londoniens voyaient des cibles privilégiées dans les impacts des bombes volantes allemandes. Une analyse statistique de R. D. Clarke (1946) a montré que ces impacts suivaient très bien une répartition aléatoire.",
           "En 2014, Spotify a modifié sa lecture aléatoire : des utilisateurs se plaignaient qu'elle ne paraissait pas aléatoire, notamment quand deux titres du même artiste se suivaient. Le nouvel algorithme les répartit volontairement. Apple avait déjà ajouté en 2005 un réglage de ce type à l'iPod.",
           "La « main chaude » du basket (Gilovich, Vallone et Tversky, 1985) a longtemps servi d'exemple d'illusion des séries ; une correction statistique de Miller et Sanjurjo (2018) a montré qu'un léger effet de main chaude pourrait exister. Le débat continue."
         ], [["#biais/apophenie", "Apophénie"], ["#biais/erreur-du-joueur", "Erreur du joueur"], ["#chiffres/ecrire-hasard", "Atelier : écrire le hasard"]]);
@@ -985,7 +985,7 @@ const PIEGES_GRAPHIQUES = [
         piege: "Une courbe de cumul monte toujours, même quand chaque année est moins bonne que la précédente.",
         procedes: [3],
         verite: "Année par année, les ventes baissent.",
-        explication: "La pente de la courbe, de plus en plus faible, trahit la baisse : les ventes annuelles ont reculé d'environ 10 % par an (barres ci-dessus, années 2018 à 2025). Les présentations en cumul sont fréquentes quand les chiffres annuels sont mauvais."
+        explication: "La pente de la courbe, de plus en plus faible, trahit la baisse : les ventes annuelles ont reculé d'environ 10 % par an (barres ci-dessus, années 2018 à 2025). Une présentation en cumul peut ainsi masquer de mauvais chiffres annuels."
       };
     }
   },
@@ -1035,7 +1035,7 @@ const PIEGES_GRAPHIQUES = [
         piege: "Il faut distinguer points de pourcentage et pourcentage.",
         procedes: [6],
         affirmation: T("Titre d'un article : « Le chômage bondit de {0} % ! »", relatif),
-        explication: T("L'écart entre deux taux se mesure en points ({0}), la variation relative en pourcentage (+{1} %). Selon l'effet recherché, on choisira l'un ou l'autre : « +{0} point » paraît anodin, « +{1} % » alarmant.", t2 - t1, relatif)
+        explication: T("L'écart entre deux taux se mesure en points ({0}), la variation relative en pourcentage (+{1} %). Selon l'effet recherché, on choisira l'un ou l'autre : l'écart en points paraît anodin, « +{1} % » alarmant.", t2 - t1, relatif)
       };
     }
   },
