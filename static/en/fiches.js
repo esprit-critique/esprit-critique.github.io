@@ -36,7 +36,7 @@
       "Asked which job is the most dangerous, Paul says police officer, because he sees them every evening in TV series, without thinking of lumberjacks or deep-sea fishermen."],
     parade: "Separate striking examples from data. Ask what the event’s base frequency is, and why some cases are easier to recall than others.",
     source: "Tversky and Kahneman (1973). Participants judged words beginning with certain consonants (K, R) to be more frequent than words with those letters in third position, when the opposite is true: the former are simply easier to search for in memory.",
-    celebre: "After the attacks of 11 September 2001, many Americans swapped flying for driving. Gerd Gigerenzer (2006) estimates that this caused about 1,600 additional road deaths in the following twelve months. The size of the effect is disputed: a reanalysis (Su et al., 2009) does not find it.",
+    celebre: "After the attacks of 11 September 2001, many Americans swapped flying for driving. Gerd Gigerenzer (2006) estimates that this caused about 1,600 additional road deaths in the following twelve months.",
     distinction: "Availability concerns the frequency we attribute to an event; the illusory truth effect concerns the credibility we give to a repeated claim."
   },
   "biais:taux-de-base": {
@@ -44,7 +44,7 @@
     autresNoms: "Base rate fallacy, Négligence du taux de base",
     definition: "Ignoring how common a phenomenon is to begin with (its prior probability) in favour of a more striking piece of specific information.",
     mecanisme: "Specific information (a testimony, a test result, a description) feels more relevant than an abstract statistic. Yet the correct probability combines the two, according to Bayes’ formula.",
-    exemple: "A disease affects 1 person in 1,000. A test always detects it but gives 5% false positives. Yet a positive result means only about a 2% chance of being ill: out of 1,000 people tested, about 1 true positive for 50 false positives.",
+    exemple: "A disease affects 1 person in 1,000. A test always detects it, but also comes back positive for 5% of healthy people. Yet a positive result means only about a 2% chance of being ill: out of 1,000 people tested, about 1 true positive for 50 false positives.",
     cas: "An anti-fraud program flags a suspicious transaction. It catches 99% of frauds and wrongly flags 1% of honest transactions. The manager concludes that the transaction is almost certainly fraudulent, without knowing that only one transaction in 10,000 is actually a fraud.",
     cas2: "A witness claims to have seen a blue taxi involved in a night-time collision reported to an insurance company. Tested in the same conditions, the witness identifies the colour correctly eight times out of ten. The insurer concludes that there is an 80% chance the taxi was blue, without taking into account that 85% of the city’s taxis are green.",
     casSup: ["A screening test detects almost every sick person and rarely errs on healthy ones. Having tested positive, Victor is sure he is ill, without stopping to consider that the disease affects only one person in a thousand.",
@@ -148,7 +148,7 @@
     nom: "Insensitivity to sample size",
     autresNoms: "Law of small numbers, Négligence de la taille de l'échantillon",
     definition: "Giving as much credit to a result from a small sample as to one from a large sample, although small samples vary far more.",
-    mecanisme: "We judge a result by how much it resembles what we expect, not by the amount of data behind it. Yet the variability of an average falls with the square root of the sample size: extreme values are far more common in small groups.",
+    mecanisme: "We judge a result by how much it resembles what we expect, not by the amount of data behind it. Yet an average based on few cases fluctuates far more: halving its fluctuations takes four times as many cases. Extreme values are therefore far more common in small groups.",
     exemple: "In the United States, the counties with the lowest rates of kidney cancer are mostly rural and sparsely populated. So are those with the highest: with few inhabitants, rates vary widely from one county to another.",
     cas: "A small maternity ward records about 15 births a day, a large one about 45. Which will have more days in a year when more than 60% of the babies are boys? Most people answer: “about the same”.",
     cas2: "In a ranking of hospitals, the ten best recovery rates and the ten worst almost all belong to small institutions. A newspaper concludes that small hospitals are either excellent or dangerous.",
@@ -298,7 +298,7 @@
     autresNoms: "Biais d'omission",
     definition: "Judging a harmful action as worse than an equally harmful inaction, and preferring to do nothing when acting carries a risk.",
     mecanisme: "We feel more responsible for the consequences of our actions than for those of our inaction. Anticipated regret is stronger when harm results from an active decision.",
-    exemple: "Many people judge it worse to give advice that causes someone to lose €1,000 than to withhold advice that would have gained them as much.",
+    exemple: "Many people judge it worse to give advice that causes someone to lose €1,000 than to withhold the advice that would have prevented the same loss.",
     cas: "A disease kills 10 children in 10,000. A vaccine would prevent it, but can itself be fatal in rare cases. Some of the parents surveyed refuse to vaccinate their child as soon as that risk reaches 5 in 10,000.",
     cas2: "A doctor hesitates to prescribe an effective treatment that carries a small risk of serious side effects, and prefers to wait, although going untreated carries a markedly higher risk.",
     casSup: ["When selling his car, Luc does not mention a braking fault he knows about: “I didn’t lie, I just said nothing.” Yet he would find it dishonest to claim that the brakes are in good condition.",
@@ -312,7 +312,7 @@
     autresNoms: "Affective forecasting error, Biais d'impact",
     definition: "Overestimating the intensity and duration of the emotions a future event will cause, whether happy or unhappy.",
     mecanisme: "When imagining the event, we focus on it alone and forget everything else in life, which will carry on. We also neglect our capacity to adapt and put things in perspective, what Daniel Gilbert calls the “psychological immune system”.",
-    exemple: "We imagine that a promotion will make us happy for years; a few months later, satisfaction has returned to about its previous level.",
+    exemple: "We imagine that a promotion will make us happy for years; a few months later, satisfaction has often returned to about its previous level.",
     cas: "Before the final, supporters predict that a defeat would ruin their mood for weeks. Asked a few days after the defeat, most say they are about as happy as before.",
     cas2: "Convinced that a new car will make him lastingly happier, Yann takes on heavy debt. Six months later, he hardly thinks about it any more, but is still paying it off.",
     casSup: ["Convinced that a transfer to a distant city would make her unhappy for years, Agnès turns it down; her colleagues who were transferred say they got used to it within a few months.",
@@ -368,8 +368,8 @@
     nom: "Negativity bias",
     autresNoms: "Biais de négativité",
     definition: "Giving more attention and weight to negative information, experiences and events than to positive ones of equal intensity.",
-    mecanisme: "From an evolutionary standpoint, ignoring a threat costs more than missing an opportunity. Negative information is therefore processed faster, more deeply, and remembered better.",
-    exemple: "A single disparaging comment in an evaluation eclipses ten glowing ones.",
+    mecanisme: "According to a common evolutionary explanation, ignoring a threat used to cost more than missing an opportunity. In any case, negative information is processed faster, more deeply, and remembered better.",
+    exemple: "A single disparaging comment in an evaluation can eclipse ten glowing ones.",
     cas: "A news site notices that its headlines announcing a threat or a failure are read far more than those announcing progress, and publishes more and more of them.",
     cas2: "After an annual review containing eight compliments and one criticism, Samir thinks for days of nothing but the criticism.",
     casSup: ["A restaurant has received fifty glowing reviews and a single scathing one. Hesitant, Julie gives up on booking because of that one review.",
@@ -384,7 +384,7 @@
     autresNoms: "Duration neglect, Règle du pic et de la fin",
     definition: "Judging a past experience mainly by its most intense moment and its end, with very little regard for its duration.",
     mecanisme: "Memory does not keep an average of the experience, but a few representative moments: the peak and the end. The total duration is almost ignored in the retrospective evaluation.",
-    exemple: "A pleasant holiday whose last day is ruined by a cancelled flight leaves a generally bad memory.",
+    exemple: "A pleasant holiday whose last day is ruined by a cancelled flight can leave a generally bad memory.",
     cas: "Participants immerse one hand for 60 seconds in very cold water, then the other hand for 60 seconds in the same water, followed by 30 seconds in slightly less cold water. Invited to repeat one of the two trials, the majority choose the longer one.",
     cas2: "A two-hour concert, excellent from start to finish, ends with a ten-minute sound failure. A large part of the audience keeps a mediocre memory of it.",
     casSup: ["A six-hour hike, gruelling at first but ending with an easy descent at sunset, leaves walkers with a better memory than a four-hour hike that was pleasant but finished in a thunderstorm.",
@@ -413,7 +413,7 @@
     autresNoms: "Inadvertent plagiarism, Source amnesia, Cryptomnésie",
     definition: "Retrieving a memory without recognising it as one, and taking it for a new, personal idea.",
     mecanisme: "Memory often keeps the content of a piece of information better than its source. An idea already encountered can thus resurface without the “already seen” label, and seem original.",
-    exemple: "In a meeting, a colleague enthusiastically proposes an idea that another colleague had presented a week earlier, without realising it.",
+    exemple: "In a meeting, an employee enthusiastically puts forward, as his own, an idea that a colleague had presented a week earlier: he has forgotten where he got it.",
     cas: "A writer publishes a poem several lines of which almost word for word repeat a text read in his childhood. He is sincerely convinced he invented them.",
     cas2: "After a brainstorming session, several participants in good faith credit themselves with ideas that had actually been put forward by other members of the group.",
     casSup: ["A composer presents a melody as his own creation; it is pointed out that it closely resembles a popular song from his teenage years, which he does not remember having listened to.",
@@ -501,7 +501,7 @@
     nom: "Apophenia",
     autresNoms: "Pareidolia (for images and sounds), Apophénie",
     definition: "Perceiving meaningful patterns or connections in random or unrelated data.",
-    mecanisme: "The brain constantly detects regularities. Missing a real pattern, such as a predator in the grass, used to cost more than seeing one that does not exist: the system is tuned to produce false positives.",
+    mecanisme: "The brain constantly detects regularities. According to a common evolutionary explanation, missing a real pattern, such as a predator in the grass, used to cost more than seeing one that does not exist: the system is therefore thought to be tuned to produce false positives.",
     exemple: "Seeing faces in clouds, electrical sockets or the fronts of cars.",
     cas: "An internet user plays a record backwards and claims to hear hidden messages distinctly. Once he has read out the transcript, his friends hear them too.",
     cas2: "Taking a slice of toast out of the toaster, a woman sees the face of a saint in it and decides to keep it as a relic.",
@@ -592,7 +592,7 @@
     mecanisme: "Our own choices seem the most reasonable to us, and we mostly mix with people who are like us. Our circle is nonetheless not representative of the population.",
     exemple: "A devoted reader of a newspaper thinks that most of the population shares that paper’s editorial line.",
     cas: "The day after an election, Valérie is stunned: “I don’t know anyone who voted for him. How could he have won?”",
-    cas2: "A smoker estimates that most adults smoke, when in France fewer than one adult in five smokes every day.",
+    cas2: "A smoker estimates that most adults smoke, when in France only a minority of adults smoke.",
     casSup: ["A great jazz lover, Olivier is surprised that a jazz radio station has only a small audience: “Everybody likes jazz.”",
       "A vegetarian since her teens, Camille is convinced that most people her age eat little meat, and is startled by the menu at the staff canteen."],
     parade: "Replace intuition with measurement: survey, user testing, data. Ask whether your circle is representative.",
@@ -619,14 +619,14 @@
     nom: "Groupthink",
     autresNoms: "Pensée de groupe",
     definition: "In a close-knit group, the search for consensus takes precedence over critical examination of the options, leading to poor decisions.",
-    mecanisme: "Strong cohesion, a directive leader and time pressure lead to self-censorship of doubts, an illusion of unanimity and the sidelining of unwelcome information.",
+    mecanisme: "According to Janis, strong cohesion, a directive leader and time pressure encourage self-censorship of doubts, an illusion of unanimity and the sidelining of unwelcome information.",
     exemple: "A management committee unanimously approves a risky project, although several members had reservations they did not voice.",
     cas: "Before a product launch, engineers point out a safety flaw. Management, confident in the project and pressed by the schedule, dismisses the warning. The engineers do not insist so as not to seem disloyal.",
     cas2: "The board of a bank unanimously approves a risky acquisition. Later, several members admit to having had doubts, but each thought they were the only one.",
     casSup: ["In an association, the tightly knit committee prepares a big gala without ever considering that it might not draw an audience. The only member who asks the question is accused of “spoiling the mood”.",
       "A very united management team approves a takeover plan in an hour; nobody asks for outside advice, and a member who has doubts keeps them to himself."],
     parade: "Appoint a “devil’s advocate”, collect opinions anonymously, have the person in charge speak last, consult outside experts.",
-    source: "Irving Janis (1972), “Victims of Groupthink”. Analyses in particular the Bay of Pigs invasion (1961), decided by the Kennedy administration despite doubts that nobody had voiced.",
+    source: "Irving Janis (1972), “Victims of Groupthink”. Analyses in particular the Bay of Pigs invasion (1961), decided by the Kennedy administration despite doubts that several participants kept to themselves in meetings.",
     celebre: "Challenger (1986). The day before the launch, engineers at Morton Thiokol, including Roger Boisjoly, recommend not launching in the cold, because of the O-rings. Under pressure from NASA, the company’s management reverses that advice. The shuttle breaks apart 73 seconds after liftoff.",
     distinction: "Groupthink is a collective failure of deliberation; conformity, one person’s alignment with the majority view."
   },
@@ -679,7 +679,7 @@
     nom: "Ingroup bias",
     autresNoms: "Ingroup favouritism, Favoritisme envers son groupe",
     definition: "Favouring the members of one’s own group, in judgements as well as in actions, even when that group was formed on an arbitrary criterion.",
-    mecanisme: "Belonging to a group feeds self-esteem: valuing “our own” amounts to valuing ourselves. Mere categorisation, even a meaningless one, is enough to produce the effect.",
+    mecanisme: "According to social identity theory (Tajfel and Turner), belonging to a group feeds self-esteem: valuing “our own” amounts to valuing ourselves. Mere categorisation, even a meaningless one, is enough to produce the effect.",
     exemple: "In a recruitment process, a panel judges candidates from the same school as its members more favourably.",
     cas: "Pupils randomly split between a “blue” team and a “green” team for a day then award more points to members of their own colour, without even knowing them.",
     cas2: "After the merger of two companies, the employees of each former firm judge their former colleagues more competent than those of the other firm, for equal work.",
@@ -694,7 +694,7 @@
     nom: "Dunning-Kruger effect",
     autresNoms: "Effet Dunning-Kruger",
     definition: "People who are least competent in a field tend to greatly overestimate their level.",
-    mecanisme: "The skills needed to succeed at a task are often those needed to judge whether one has succeeded. Without them, one does not perceive one’s own mistakes.",
+    mecanisme: "According to Kruger and Dunning, the skills needed to succeed at a task are often those needed to judge whether one has succeeded. Without them, one does not perceive one’s own mistakes.",
     exemple: "A beginner in programming thinks their code is correct because they are unaware of the edge cases an experienced developer would check.",
     cas: "After reading a few articles, Antoine claims to understand epidemic management better than epidemiologists. He finds their models “needlessly complicated”.",
     cas2: "In a logic test, the lowest-scoring participants estimate on average that they did better than most others.",
@@ -718,7 +718,7 @@
     parade: "Start from the actual durations of comparable projects (“reference class forecasting”), then adjust. Add an explicit margin.",
     source: "Kahneman and Tversky (1979). Buehler, Griffin and Ross (1994): students estimate on average that they will finish their dissertation in 34 days; it takes them 56 on average.",
     celebre: "Flyvbjerg, Holm and Buhl (2002) study 258 major transport infrastructure projects: costs are underestimated in nearly 9 cases out of 10, with an average overrun of 28%. Berlin Brandenburg Airport, planned for 2011, opened in 2020.",
-    distinction: "The planning fallacy is a form of optimism applied to the timescales and costs of one’s own projects."
+    distinction: "The planning fallacy is a form of optimism applied to the time and cost of our own projects; it persists even when we know that previous projects ran late. Optimism bias concerns, more broadly, the odds of any event, good or bad."
   },
   "biais:autocomplaisance": {
     nom: "Self-serving bias",
@@ -747,7 +747,7 @@
       "Before a long car journey, Gaspard does not check his tyres: “Nothing has ever happened to me.”"],
     parade: "Reason from the statistics of the general population, then justify any departure in your own favour with specific facts.",
     source: "Neil Weinstein (1980). Students rate their own chances of experiencing various negative events as lower than their classmates’, and their chances of positive events as higher.",
-    celebre: "Ola Svenson (1981): 93% of a sample of American students and 69% of a Swedish sample consider themselves more skilful drivers than the median driver. By definition, only half can be. The result was replicated in 2021 with 1,203 participants.",
+    celebre: "Ola Svenson (1981): 93% of a sample of American students and 69% of a Swedish sample consider themselves more skilful drivers than the median driver. By definition, only half can be.",
     distinction: "Optimism bias overestimates the chances of favourable events; overprecision, the accuracy of one’s own estimates."
   },
   "biais:angle-mort": {
@@ -761,7 +761,7 @@
     casSup: ["After reading an article on the halo effect, Nicolas explains that his friends let themselves be influenced by appearance, but that he judges people by their actions.",
       "A judge acknowledges that magistrates in general can be influenced by fatigue, but claims that she herself hands down identical decisions in the morning and in the evening."],
     parade: "Rely on procedures rather than on your own impression of objectivity: criteria fixed in advance, blind evaluation, review by a third party.",
-    source: "Pronin, Lin and Ross (2002). Participants systematically rate themselves as less prone to biases than the average American and than their peers.",
+    source: "Pronin, Lin and Ross (2002). Participants rate themselves, on average, as less prone to biases than the average American and than their peers.",
     distinction: "The bias blind spot concerns awareness of one’s own biases; the Dunning-Kruger effect, the assessment of one’s competence in a field."
   },
   "biais:surprecision": {
@@ -829,7 +829,7 @@
     autresNoms: "Argumentum ad verecundiam, Argument d'autorité",
     definition: "Holding a claim to be true because a person presented as an authority supports it, outside their field of competence or with no other justification.",
     forme: ["X says P.", "X is an authority.", "So P is true."],
-    mecanisme: "Relying on experts is often reasonable, since it is a source of probability, not of certainty. The reasoning becomes fallacious when the authority is not competent in the field, when it opposes the consensus of its peers, or when it is presented as proof that cannot be discussed.",
+    mecanisme: "Relying on experts is often reasonable, provided we treat them as a source of probability, not of certainty. The reasoning becomes fallacious when the authority is not competent in the field, when it opposes the consensus of its peers, or when it is presented as proof that cannot be discussed.",
     exemple: "“A Nobel Prize winner in physics says this vaccine is dangerous, so it is.”",
     cas: "An advertisement for a dietary supplement shows a former Olympic champion declaring: “This product strengthens the immune system, I recommend it.”",
     cas2: "In a debate on a cancer treatment, a speaker presents the opinion of a famous actor, cured of the disease, as decisive proof of its effectiveness.",
@@ -883,7 +883,7 @@
     casSup: ["“These mushrooms are wild and natural, so they can’t be dangerous.”",
       "“Giving birth in pain is natural; an epidural therefore goes against nature and should be avoided.”"],
     parade: "Ask for evidence of the effect claimed, regardless of the origin of the product.",
-    source: "Linked to David Hume’s distinction between is and ought (1739). Not to be confused strictly with the “naturalistic fallacy” of G. E. Moore (1903), which concerns the definition of the good.",
+    source: "Linked to David Hume’s distinction between is and ought (1739). Distinct from the “naturalistic fallacy” of G. E. Moore (1903), which concerns the definition of the good.",
     distinction: "The appeal to nature invokes the natural character of something; the appeal to tradition, the age of a practice."
   },
   "sophismes:emotion": {
@@ -976,7 +976,7 @@
       "Accused of going over budget, a festival organiser answers at length about the success of the previous year’s concerts."],
     parade: "Return explicitly to the question: “That’s a different subject. On the question asked, what is your answer?”",
     source: "The English expression is said to come from an anecdote by the journalist William Cobbett (1807): a smoked herring dragged across the ground to throw hounds off a scent.",
-    celebre: "The “Chewbacca defense” from the series South Park (1998), a parody of Johnnie Cochran’s closing argument at the O. J. Simpson trial: the lawyer shows that Chewbacca lives on Endor, which “does not make sense”, and concludes that the jury must acquit.",
+    celebre: "The “Chewbacca defense” from the series South Park (1998), a parody of Johnnie Cochran’s closing argument at the O. J. Simpson trial: the lawyer points out that Chewbacca lives on Endor, which “does not make sense”, and concludes that the jury must acquit.",
     distinction: "The red herring changes the subject; the straw man stays on the subject, but distorts the opposing position."
   },
   "sophismes:question-piege": {
@@ -1130,7 +1130,7 @@
       "“The neighbourhoods with the most firefighters are those with the most fires: firefighters cause fires.”"],
     parade: "Look for a common factor, consider reverse causation, and ask whether there is a controlled study (a randomised trial).",
     source: "Tyler Vigen, “Spurious Correlations” (2015): for example, the number of films starring Nicolas Cage and the number of swimming-pool drownings in the United States.",
-    celebre: "Hormone therapy for the menopause: observational studies showed that treated women had less heart disease. In 2002, the Women’s Health Initiative randomised trial found instead a slight increase in risk. The treated women were, on average, better off and in better health.",
+    celebre: "Hormone therapy for the menopause: observational studies showed that treated women had less heart disease. In 2002, the Women’s Health Initiative randomised trial found instead a slight increase in risk. In the observational studies, the women taking the treatment were, on average, better off and in better health.",
     distinction: "Mistaking correlation for causation relies on joint variation; post hoc, on mere succession in time."
   },
   "sophismes:pente-glissante": {
@@ -1221,7 +1221,7 @@
     casSup: ["“Every part of this car is very light, so the car is very light.”",
       "“This country is rich: so each of its inhabitants must be rich.”"],
     parade: "Ask whether the property depends on how the whole is organised, or only on each element taken separately.",
-    source: "Described by Aristotle in the Sophistical Refutations. In economics, the “paradox of thrift” (Keynes) is a classic example.",
+    source: "Described by Aristotle in the Sophistical Refutations. In economics, the “paradox of thrift”, popularised by Keynes, is a classic example.",
     distinction: "Composition transfers a property from the parts to the whole; equivocation plays on two senses of the same word."
   },
   "sophismes:cherry-picking": {
@@ -1237,7 +1237,7 @@
       "To show that the winter was mild, a columnist cites only the three hottest days of the season."],
     parade: "Ask for the full data set, the full period, and how the selection was made. Prefer meta-analyses to isolated studies.",
     source: "Publication bias, whereby positive results are published more often than null results, is an institutional form of it.",
-    celebre: "Opponents of climate change have long claimed that the climate has not warmed “since 1998”. That year was exceptionally hot because of a strong El Niño episode: taking it as a starting point hid the long-term trend.",
+    celebre: "Those who deny global warming have long claimed that the climate has not warmed “since 1998”. That year was exceptionally hot because of a strong El Niño episode: taking it as a starting point hid the long-term trend.",
     distinction: "Cherry-picking discards the unfavourable data; hasty generalisation concludes from too little data."
   },
   "sophismes:affirmation-consequent": {
@@ -1288,7 +1288,7 @@
   "sophismes:ignorance": {
     nom: "Appeal to ignorance",
     autresNoms: "Argumentum ad ignorantiam, Burden-of-proof reversal, Appel à l'ignorance",
-    definition: "Concluding that a claim is true because it has not been proven false, or the reverse.",
+    definition: "Concluding that a claim is true because it has not been proven false, or false because it has not been proven true.",
     forme: ["It has not been proven that P is false.", "So P is true."],
     mecanisme: "The absence of evidence against a claim is not evidence in its favour. The burden of proof lies with whoever makes the claim: otherwise, any unverifiable claim would have to be accepted.",
     exemple: "“Nobody has ever proved that ghosts don’t exist, so they do.”",
