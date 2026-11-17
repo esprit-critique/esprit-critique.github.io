@@ -53,3 +53,26 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
 - **« Les requins existaient avant les arbres »** (vrai ou faux) : vrai selon les sources de vulgarisation (requins
   vers 450 millions d'années, premiers arbres vers 385 à 390 millions), mais l'écart dépend de ce qu'on appelle un
   requin et la page du Smithsonian n'a pas pu être lue. À vérifier sur une source de paléontologie.
+
+## Questions des jeux (relecture du rédacteur, lot 2, 17 novembre 2026)
+
+- **`especes` (MONDE)** : l'explication disait que les populations sauvages de tigres avaient augmenté depuis les années
+  1990. Wikipedia (en), « Tiger », d'après l'évaluation de l'UICN de 2022, dit l'inverse : de 5 000 à 8 262 tigres à
+  la fin des années 1990 à 3 726 à 5 578 en 2022. Phrase retirée ; l'explication ne dit plus que les statuts. À
+  vérifier sur la fiche UICN (iucnredlist.org refuse les requêtes automatiques) : statuts du tigre, du panda et du
+  rhinocéros noir en 1996 et aujourd'hui (le rhinocéros noir semble « en danger critique » dès 1996, d'où la question
+  reformulée « parmi les espèces menacées »), et hausse des populations de rhinocéros noirs depuis les années 1990
+  (affirmation conservée, source WWF non précisée).
+- **`scolarite` (MONDE)** : « environ 9 ans » de scolarité pour les femmes de 30 ans n'a pas d'année. Retrouver
+  l'année des données IHME reprises par Gapminder et l'ajouter.
+- **`densite-monde` (MONDE)** : « déserts et glaces compris » ramené à « déserts compris ». 62 habitants par km² pour
+  8,1 milliards d'habitants suppose environ 130 millions de km² de terres, ce qui exclut probablement l'Antarctique
+  (149 millions de km² de terres émergées en tout, d'après `pacifique-terres`). Vérifier la définition de
+  l'indicateur EN.POP.DNST / AG.LND.TOTL.K2 de la Banque mondiale avant de préciser.
+- **`napoleon` (VRAI_FAUX)** : « 5 pieds 2 pouces » français font 167,8 cm (5 × 32,48 + 2 × 2,707), 168,6 cm avec les
+  4 lignes souvent citées ; le site arrondit à « environ 1,70 m ». Vérifier la mesure sur le rapport d'autopsie
+  (Antommarchi) avant d'afficher un chiffre plus précis.
+- **Sources absentes** (chiffres affichés sans source nommée) : GRANDEURS `oiseaux` (« plus de 11 000 espèces »),
+  `insectes`, `atmosphere`, `andromede`, `monaco-surface`, `pop-1800` (« estimations historiques ») ; ETALONNAGE
+  `mont-blanc-1786`, `eiffel`, `elephant`, `hyperion` (116,22 m en 2026 d'après Wikipedia (en), « Hyperion (tree) »,
+  vérifié le 17 novembre 2026), `mont-blanc`, `or`. Ajouter la source vérifiée de chacun.
