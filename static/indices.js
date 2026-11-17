@@ -99,7 +99,7 @@ const INDICES = {
   "biais:autocomplaisance#1": "Après un examen raté, il explique que le sujet était mal conçu",
   "biais:autocomplaisance#2": "Quand elle perd, il incrimine l'arbitrage",
   "biais:optimisme#1": "« ça arrive aux autres »",
-  "biais:optimisme#2": "estiment presque tous à zéro leur propre risque de divorcer",
+  "biais:optimisme#2": "estiment à zéro leur propre risque de divorcer",
   "biais:angle-mort#1": "contrairement aux autres jurés",
   "biais:angle-mort#2": "mais que lui-même évalue les candidats objectivement",
   "biais:surprecision#1": "seules quatre se sont révélées justes",
