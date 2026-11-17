@@ -262,6 +262,7 @@ EN_AJOUTER([
   ["C'est l'une des raisons pour lesquelles les grands nombres (foules, budgets, victimes) sont si mal perçus sans point de comparaison.", "That is one reason why large numbers (crowds, budgets, victims) are so poorly perceived without a point of comparison."],
   ["Recommencer", "Start over"],
   ["Avec un repère", "With a reference"],
+  ["vers ", "c. "],
   ["Les chiffres proviennent de sources et d'années différentes (2021 à 2025) : ils donnent des ordres de grandeur. Les duels ne comparent que des causes séparées par un facteur 1,6 au moins.", "The figures come from different sources and years (2021 to 2025): they give orders of magnitude. The duels only compare causes separated by a factor of at least 1.6."],
   ["Classez ces quatre pays, en commençant par la réponse", "Rank these four countries, starting with the answer"],
   ["Réponse : ", "Answer: "]

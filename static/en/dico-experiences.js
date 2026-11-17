@@ -655,6 +655,7 @@ EN_AJOUTER([
   ["Authentique : bien de cet auteur", "Authentic: genuinely by this author"],
   ["Déformée : l'original est différent", "Distorted: the original is different"],
   ["Inventée ou mal attribuée", "Invented or misattributed"],
+  ["Authentique.", "Genuine."],
   ["Déformée.", "Distorted."],
   ["Inventée ou mal attribuée.", "Made up or misattributed."],
   ["Citation", "Quotation"],
@@ -723,5 +724,4 @@ EN_AJOUTER([
   ["Gagné : la voiture était derrière la porte ", "Won: the car was behind door"],
   ["Perdu : la voiture était derrière la porte ", "Lost: the car was behind door"],
   ["Réponse : ", "Answer: "]
-]
-);
+]);
