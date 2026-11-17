@@ -654,9 +654,64 @@ function rendreQuestionLibre(carte, q, reponseDejaDonnee, surReponse, actions) {
 // en prend les éléments suivants ; un élément ne revient qu'après le passage de tout le stock. Le tirage indépendant de chaque jour répétait vite (défi : 3 questions sur 10 déjà vues dès le
 // 3e jour). Effective à partir du 16 novembre 2026 : les cartes déjà jouées avant gardent leur contenu et leur correction.
 const ROTATION_DEPUIS = 20773;
+// Rotation stable, à partir du 18 novembre 2026 : l'ancienne mélangeait tout le stock d'un coup, si bien qu'ajouter un
+// élément rebattait tout l'ordre (une carte revenait trop tôt, la carte du jour changeait le jour d'une publication).
+// Désormais chaque élément a son propre rang, tiré de son identifiant (indépendant des autres) ; chaque jour prend, parmi
+// les éléments pas encore sortis du cycle, ceux de plus petit rang ; un élément ajouté plus tard porte « depuis » (le
+// numéro du jour où il entre dans le tirage) : les jours d'avant ne bougent pas, et il rejoint le cycle en cours.
+// Le 16 et le 17 novembre, déjà joués, gardent l'ancien tirage (tests/rotation.py vérifie ces trois propriétés).
+const ROTATION_STABLE_DEPUIS = 20775;
+const ETATS_ROTATION = new Map();
+// Identifiant d'un élément tiré : question (id), situation du jour (type/fiche), paire célèbre (a/b), phrase (son texte)
+const cleTirage = x => typeof x === "string" ? x : x.id || (x.fiche ? x.type + "/" + x.fiche.id : x.a + "/" + x.b);
+// Jour d'entrée dans le tirage : sur l'élément, ou sur la fiche d'une situation du jour (0 : présent dès le début)
+const depuisTirage = x => (typeof x === "object" && (x.depuis || (x.fiche && x.fiche.depuis))) || 0;
+// Rang dans [0, 1) : hachage FNV-1a de l'identifiant, du cycle et du sel (le même rang sur tous les appareils)
+function rangTirage(cle, cycle, sel) {
+  let h = 2166136261;
+  for (const c of cle + "|" + cycle + "|" + sel) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return (h >>> 0) / 4294967296;
+}
 function tirerSansRemise(liste, n, jour, sel) {
-  const ordre = melanger(liste, generateur(sel));
-  return Array.from({ length: Math.min(n, liste.length) }, (_, i) => ordre[(jour * n + i) % liste.length]);
+  if (jour < ROTATION_STABLE_DEPUIS) {
+    const ordre = melanger(liste, generateur(sel));
+    return Array.from({ length: Math.min(n, liste.length) }, (_, i) => ordre[(jour * n + i) % liste.length]);
+  }
+  // Rejoué jour par jour depuis le début ; l'état atteint est gardé (même stock, même sel, même n) pour repartir de là
+  const cle = sel + "|" + n + "|" + liste.map(x => cleTirage(x) + ":" + depuisTirage(x)).join(",");
+  const memo = ETATS_ROTATION.get(cle);
+  let { cycle, sortis, pris, j: depart } = memo && memo.j <= jour + 1 ? { ...memo, sortis: new Set(memo.sortis), pris: memo.pris.slice() } : { cycle: 0, sortis: new Set(), pris: [], j: ROTATION_STABLE_DEPUIS };
+  if (memo && memo.j - 1 === jour) return memo.pris.slice();
+  // Le stock est trié par rang une fois par cycle (et quand un élément y entre) ; chaque jour parcourt cet ordre
+  const cles = new Map(liste.map(x => [x, cleTirage(x)]));
+  let ordre = [], ordreCycle = -1, ordreTaille = -1, debut = 0;
+  const datees = liste.some(x => depuisTirage(x));
+  for (let j = depart; j <= jour; j++) {
+    const dispo = datees ? liste.filter(x => depuisTirage(x) <= j) : liste, hier = new Set(pris.map(x => cles.get(x)));
+    pris = [];
+    while (pris.length < Math.min(n, dispo.length)) {
+      if (ordreCycle !== cycle || ordreTaille !== dispo.length) {
+        ordre = dispo.map(x => [rangTirage(cles.get(x), cycle, sel), x]).sort((a, b) => a[0] - b[0]).map(e => e[1]);
+        [ordreCycle, ordreTaille, debut] = [cycle, dispo.length, 0];
+      }
+      // Le début de l'ordre est déjà sorti : on repart du premier élément encore libre
+      while (debut < ordre.length && sortis.has(cles.get(ordre[debut]))) debut++;
+      const libre = x => !sortis.has(cles.get(x)) && !pris.includes(x);
+      // Jamais la carte de la veille le lendemain, quand on peut l'éviter (au passage d'un cycle à l'autre)
+      const suite = ordre.slice(debut);
+      let choisi = suite.find(x => libre(x) && !hier.has(cles.get(x))) || suite.find(libre);
+      if (!choisi) {
+        // Cycle épuisé : un nouveau commence (vide : ce qui est sorti aujourd'hui appartient encore à l'ancien)
+        cycle++;
+        sortis = new Set();
+        continue;
+      }
+      pris.push(choisi);
+      sortis.add(cles.get(choisi));
+    }
+  }
+  ETATS_ROTATION.set(cle, { cycle, sortis, pris: pris.slice(), j: jour + 1 });
+  return pris;
 }
 
 function questionsDuDefi(jour, graine) {
