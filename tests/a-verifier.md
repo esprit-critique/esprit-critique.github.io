@@ -53,19 +53,3 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
 - **« Les requins existaient avant les arbres »** (vrai ou faux) : vrai selon les sources de vulgarisation (requins
   vers 450 millions d'années, premiers arbres vers 385 à 390 millions), mais l'écart dépend de ce qu'on appelle un
   requin et la page du Smithsonian n'a pas pu être lue. À vérifier sur une source de paléontologie.
-
-## Ateliers, relecture du rédacteur (lot 3, 17 novembre 2026)
-
-- **Tversky (1981), « Distortions in memory for maps », Cognitive Psychology 13** (`static/chiffres.js`, encadré du jeu
-  « Le nord est où ? ») : le site affirmait que des étudiants pensaient « Boston à l'ouest de Rio de Janeiro ». C'est
-  vrai (Boston vers 71° O, Rio vers 43° O) : ce ne peut donc pas être l'erreur décrite. L'alignement des Amériques
-  prédit l'inverse (Rio cru à l'ouest de Boston, ou à sa verticale). Exemple retiré (français et anglais) ; à rétablir
-  seulement d'après le texte de l'article (non accessible : Crossref donne la référence, pas le texte). À vérifier
-  aussi dans l'article : « Ces erreurs persistaient même quand on les prévenait », toujours affiché.
-- **Fischhoff, Slovic et Lichtenstein (1977)** (`static/chiffres.js`, « Vrai ou faux ? ») : « les réponses données avec
-  90 % de certitude n'étaient justes qu'environ 75 % du temps ». Chiffre non vérifié dans cette relecture ; à confirmer
-  sur l'article (Journal of Experimental Psychology: Human Perception and Performance, 1977).
-- **Alpert et Raiffa (1969, publié en 1982)** (`static/chiffres.js`, « Êtes-vous sûr à 90 % ? ») : « la vraie valeur
-  en sortait dans 42 % des cas ». Chiffre non vérifié dans cette relecture, et l'arrondi est à contrôler (un taux
-  de 42,6 %, parfois cité, s'arrondirait à 43 %) ; à vérifier sur le chapitre (Kahneman, Slovic et Tversky,
-  *Judgment under uncertainty*, 1982).

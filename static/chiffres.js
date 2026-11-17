@@ -362,7 +362,7 @@ const JEUX = [
         const bonnes = Number(sommeResultats(resultats).toFixed(1));
         afficherScore(zone, "nord", bonnes, resultats.length, fr(bonnes) + " / " + resultats.length);
         ajouterExplication(zone, "Ce que montre ce jeu", [
-          "Nous ne mémorisons pas une carte précise, mais des relations simplifiées. Barbara Tversky (1981) a montré que nous « alignons » les régions voisines : des étudiants pensaient que Rome était au sud de Philadelphie. Ces erreurs persistaient même quand on les prévenait.",
+          "Nous ne mémorisons pas une carte précise, mais des relations simplifiées. Barbara Tversky (1981) a montré que nous « alignons » les régions voisines : des étudiants pensaient que Rome était au sud de Philadelphie.",
           "Nous raisonnons aussi de façon hiérarchique : la Californie est à l'ouest du Nevada, donc toute ville californienne serait à l'ouest de toute ville du Nevada. Stevens et Coupe (1978) ont montré que San Diego était ainsi placée à l'ouest de Reno, alors que c'est l'inverse.",
           "Le climat trompe aussi : l'Europe de l'Ouest, réchauffée par l'océan, est bien plus au nord que ne le laissent croire ses hivers."
         ], [["#chiffres/pays", "Plus ou moins ? (pays)"], ["#biais/disponibilite", "Heuristique de disponibilité"]]);
@@ -630,7 +630,7 @@ const JEUX = [
         zone.appendChild(lignes);
 
         ajouterExplication(zone, "Ce que montre ce jeu", [
-          "Être bien étalonné, c'est avoir raison 9 fois sur 10 quand on se dit sûr à 90 %. Pour les questions de culture générale, la plupart des gens sont trop sûrs d'eux : dans les expériences de Fischhoff, Slovic et Lichtenstein (1977), les réponses données avec 90 % de certitude n'étaient justes qu'environ 75 % du temps.",
+          "Être bien étalonné, c'est avoir raison 9 fois sur 10 quand on se dit sûr à 90 %. Pour les questions de culture générale, la plupart des gens sont trop sûrs d'eux : dans les expériences de Koriat, Lichtenstein et Fischhoff (1980), les réponses données avec 90 % de certitude n'étaient justes qu'environ 75 % du temps.",
           "L'étalonnage s'améliore avec un retour fréquent et précis. Les prévisionnistes météo, qui confrontent chaque jour leurs probabilités aux faits, sont réputés très bien étalonnés (Murphy et Winkler, 1977).",
           T("Vos réponses s'accumulent d'une partie à l'autre : après quelques parties, la courbe devient fiable. Les {0} affirmations sont proposées sans répétition tant que vous ne les avez pas toutes vues.", VRAI_FAUX.length)
         ], [["#biais/surprecision", "Excès de précision"], ["#biais/dunning-kruger", "Effet Dunning-Kruger"]]);
