@@ -206,7 +206,7 @@ EXPERIENCES.push(
       const choix = { mesure: "sommeil", groupe: "tous", extremes: false };
       let ajouts = 0, analyses = 0;
       const essais = new Set();
-      zone.appendChild(paragraphe("Vous êtes chercheur. Vingt participants ont bu une tisane, vingt autres de l'eau chaude. Les données sont simulées : la tisane n'a aucun effet, sur rien. Votre but, pourtant : un résultat « significatif », c'est-à-dire p < 0,05."));
+      zone.appendChild(paragraphe("Vous êtes chercheur. Vingt participants ont bu une tisane, vingt autres de l'eau chaude. Les données sont simulées : la tisane n'a aucun effet, sur rien. Votre but, pourtant : un résultat « significatif », c'est-à-dire p < 0,05. La valeur p est la probabilité d'obtenir, par le seul hasard, une différence au moins aussi grande si la tisane n'avait aucun effet."));
       const controles = el("div", "controles-tisane");
       const resultat = el("div", "resultat-tisane");
       resultat.setAttribute("aria-live", "polite");
@@ -328,7 +328,7 @@ EXPERIENCES.push(
         zone.appendChild(liste);
         ajouterExplication(zone, "La foule intérieure", [
           "La moyenne de plusieurs estimations indépendantes est souvent plus juste que chacune, parce que leurs erreurs se compensent en partie. Une seule personne peut imiter cet effet : Herzog et Hertwig (2009) ont montré qu'une seconde estimation faite après avoir cherché pourquoi la première serait fausse, moyennée avec elle, est plus juste qu'une simple seconde estimation.",
-          "Le gain existe, mais il reste modeste : sur 1,2 million de participants, van Dolder et van den Assem trouvent qu'il est bien inférieur à celui que procure l'avis d'une autre personne. Demander à quelqu'un d'autre reste le meilleur moyen."
+          "Le gain existe, mais il reste modeste : sur 1,2 million d'estimations, van Dolder et van den Assem (2018) trouvent qu'il est bien inférieur à celui que procure l'avis d'une autre personne. Demander à quelqu'un d'autre reste le meilleur moyen."
         ], [["#biais/surprecision", "Excès de précision"], ["#biais/ancrage", "Effet d'ancrage"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(x => x.id === "foule").lancer(zone));
       }, "Estimation");

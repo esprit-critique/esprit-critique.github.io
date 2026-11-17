@@ -166,7 +166,7 @@ function echelleSept(gauche, droite, surChoix) {
 const PROBLEMES_GROUPE = [
   { id: "wason", enonce: "Quatre cartes ont une lettre d'un côté et un chiffre de l'autre. On voit : E, K, 4 et 7. Règle : « si une carte porte une voyelle, alors elle porte un chiffre pair de l'autre côté ». Quelles cartes faut-il retourner, au minimum, pour vérifier la règle ?",
     options: ["E seulement", "E et 4", "E et 7", "E, 4 et 7"], juste: 2,
-    explication: "Seules E (une voyelle doit cacher un chiffre pair) et 7 (un chiffre impair ne doit pas cacher de voyelle) peuvent contredire la règle. Retourner le 4 ne prouve rien : la règle ne dit rien des consonnes." },
+    explication: "Seules E (une voyelle doit cacher un chiffre pair) et 7 (un chiffre impair ne doit pas cacher de voyelle) peuvent contredire la règle. Retourner le 4 ne peut pas mettre la règle en défaut : elle ne dit rien des consonnes." },
   { id: "bar", enonce: "Vous contrôlez un bar. Chaque carte représente un client : sa boisson d'un côté, son âge de l'autre. On voit : « bière », « eau », « 25 ans », « 16 ans ». Règle : « si une personne boit de l'alcool, elle a au moins 18 ans ». Quelles cartes retourner ?",
     options: ["Bière seulement", "Bière et 25 ans", "Bière et 16 ans", "Bière, 25 ans et 16 ans"], juste: 2,
     explication: "Il faut vérifier l'âge du buveur de bière et la boisson du client de 16 ans. C'est la même structure logique que la tâche abstraite, mais on la réussit beaucoup plus souvent." },
@@ -432,7 +432,7 @@ EXPERIENCES.push(
         const extremes = suites.filter(s => s.note >= 82 || s.note <= 58);
         if (extremes.length) zone.appendChild(grapheMoniteur(extremes));
         ajouterExplication(zone, "La régression vers la moyenne", [
-          "Quand un résultat dépend en partie du hasard, un résultat extrême est en général suivi d'un résultat plus proche de la moyenne, quoi qu'on fasse entre les deux. Attribuer ce retour à la moyenne à son propre retour, c'est conclure à une cause d'après une simple succession.",
+          "Quand un résultat dépend en partie du hasard, un résultat extrême est en général suivi d'un résultat plus proche de la moyenne, quoi qu'on fasse entre les deux. Attribuer ce retour vers la moyenne à ce que l'on a dit, c'est conclure à une cause d'après une simple succession.",
           "C'est l'histoire des instructeurs de vol racontée par Daniel Kahneman, qu'on retrouve dans l'atelier « Problèmes classiques »."
         ], [["#biais/regression-moyenne", "Régression vers la moyenne"], ["#sophismes/post-hoc", "Post hoc ergo propter hoc"], ["#biais/illusion-controle", "Illusion de contrôle"], ["#tests/classiques", "Problèmes classiques"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "moniteur").lancer(zone), "Rejouer avec d'autres élèves");
@@ -734,7 +734,7 @@ JEUX.push({
   couleur: "#5b5bb5",
   duree: "2 min",
   titre: "Mon carnet de prévisions",
-  resume: "Notez vos prévisions avec une probabilité et une échéance. À l'échéance, souvenez-vous de ce que vous aviez annoncé, puis comparez : score de Brier, étalonnage, mémoire.",
+  resume: "Notez vos prévisions avec une probabilité et une échéance. À l'échéance, souvenez-vous de ce que vous aviez annoncé, puis comparez : score de Brier (l'écart entre vos probabilités et ce qui s'est produit), étalonnage, mémoire.",
   lancer(zone) {
     const previsions = () => lire("previsions", []);
     const enregistrer = l => ecrire("previsions", l);
@@ -843,7 +843,7 @@ JEUX.push({
       const glissement = glissements.length ? glissements.reduce((a, b) => a + b, 0) / glissements.length : 0;
       const liste = el("ul", "liste-simple");
       liste.append(
-        el("li", null, T("Score de Brier moyen : {0} sur {1} (0 : parfait ; 0,25 : toujours répondre 50 %).", fr(Number(brier.toFixed(3))), pluriel(resolues.length, "prévision"))),
+        el("li", null, T("Score de Brier moyen sur {1} : {0} (0 : parfait ; 0,25 : toujours répondre 50 %).", fr(Number(brier.toFixed(3))), pluriel(resolues.length, "prévision"))),
         el("li", null, T("Mémoire : en moyenne, vous vous êtes souvenu d'une probabilité {0}.", Math.abs(glissement) < 2.5 ? T("à peu près exacte") : T(glissement > 0 ? "{0} points plus proche de ce qui s'est produit" : "{0} points plus éloignée de ce qui s'est produit", fr(Math.round(Math.abs(glissement))))))
       );
       zone.appendChild(liste);
@@ -873,7 +873,7 @@ JEUX.push({
     ajouterExplication(zone, "Pourquoi tenir un carnet", [
       "Le score de Brier est l'écart moyen, au carré, entre la probabilité annoncée et ce qui s'est produit (1 ou 0). Il récompense à la fois la justesse et l'honnêteté sur son incertitude.",
       "Les prévisions s'améliorent avec l'entraînement : moins d'une heure de formation aux probabilités a amélioré de 6 à 11 % le score de Brier de prévisionnistes, sur quatre ans de concours (Chang et al., 2016). Formation, travail en équipe et sélection des meilleurs y contribuent (Mellers et al., 2014).",
-      "Noter avant, c'est se protéger de sa mémoire : après les voyages de Nixon en Chine et en URSS, environ deux tiers des participants de Fischhoff et Beyth (1974) se souvenaient de prévisions plus proches de ce qui était arrivé qu'elles ne l'étaient. C'est le biais rétrospectif."
+      "Noter avant, c'est se protéger de sa mémoire : après les voyages de Nixon en Chine et en URSS, environ deux tiers des participants de Fischhoff et Beyth (1975) se souvenaient de prévisions plus proches de ce qui était arrivé qu'elles ne l'étaient. C'est le biais rétrospectif."
     ], [["#biais/retrospectif", "Biais rétrospectif"], ["#biais/surprecision", "Excès de précision"], ["#chiffres/vrai-faux", "Vrai ou faux ?"]]);
   }
 });

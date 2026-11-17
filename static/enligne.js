@@ -57,13 +57,13 @@ const MESSAGES_ENLIGNE = [
     explication: "De l'argent versé sur le compte déjà connu, sans rien à confirmer : rien ne ressemble à une escroquerie." },
   { id: "banque-lien", niveau: 3, canal: "Courriel", de: "Banque Duroc <noreply@banque-duroc.example>", fraude: true, levier: "biais:autorite", indice: 2,
     texte: ["Votre relevé de novembre est disponible.", "Consultez-le dans votre espace client :", "https://banque-duroc.example.releve-securise.example/connexion"],
-    explication: "Le nom de l'expéditeur s'affiche comme celui de la banque, ce qui se falsifie facilement. Mais le lien mène au domaine releve-securise.example : dans une adresse, c'est la fin du nom du site qui compte (juste avant le « / » qui suit « https:// » et le nom), pas son début." },
+    explication: "Le nom de l'expéditeur s'affiche comme celui de la banque, ce qui se falsifie facilement. Mais le lien mène au domaine releve-securise.example : dans une adresse, c'est la fin du nom du site qui compte (la partie qui précède le premier « / » après « https:// »), pas son début." },
   { id: "banque-appareil", niveau: 3, canal: "Courriel", de: "Banque Duroc <noreply@banque-duroc.example>", fraude: false, levier: null, indice: 2,
     texte: ["Une connexion à votre espace a eu lieu depuis un nouvel appareil le 9 novembre à 21 h 12.", "Si c'est vous, il n'y a rien à faire.", "Sinon, appelez votre conseiller au numéro inscrit au dos de votre carte."],
     explication: "Inquiétant, mais légitime : rien n'est demandé, aucun lien, et il renvoie au numéro que vous possédez déjà. Crier à l'arnaque ici, c'est une fausse alerte." },
   { id: "collegue-cartes", niveau: 3, canal: "Message", de: "Julien (compta)", fraude: true, levier: "biais:autorite", indice: 2,
     texte: ["Salut, c'est Julien de la compta.", "Le directeur a besoin de 4 cartes cadeaux de 100 € pour un client, tu peux les acheter et m'envoyer les codes ?", "Il est en réunion, ne l'appelle pas."],
-    explication: "Des cartes cadeaux dont on envoie les codes ne laissent aucune trace : c'est le moyen de paiement favori des escrocs. Interdire de vérifier auprès du directeur est le signe décisif." },
+    explication: "Des cartes cadeaux dont on envoie les codes ne laissent presque aucune trace : c'est un moyen de paiement très prisé des escrocs. Interdire de vérifier auprès du directeur est le signe décisif." },
   { id: "parents-eleves", niveau: 3, canal: "Courriel", de: "Association des parents d'élèves <bureau@ape-jules-ferry.example>", fraude: false, levier: null, indice: 1,
     texte: ["Comme décidé à l'assemblée générale,", "la cotisation de 12 € se règle à la rentrée, en espèces ou par chèque, auprès de la trésorière.", "Merci à tous !"],
     explication: "Une somme modeste, décidée en réunion, réglée en main propre : rien qui ressemble à une escroquerie." },
@@ -164,7 +164,7 @@ function lancerHameconnage(zone) {
     const detections = resultats.filter(r => r.fraude && r.alerte).length, fausses = resultats.filter(r => !r.fraude && r.alerte).length;
     const { d } = dPrime(detections, fraudes, fausses, legitimes);
     afficherScore(zone, "hameconnage", resultats.filter(r => r.juste).length, resultats.length);
-    zone.appendChild(paragraphe(T("Tentatives repérées : {0} sur {1}. Fausses alertes : {2} sur {3} vrais messages. Sensibilité d′ : {4} (0 : au hasard ; 2 et plus : très bonne).", detections, fraudes, fausses, legitimes, fr(Number(d.toFixed(2))))));
+    zone.appendChild(paragraphe(T("Tentatives repérées : {0} sur {1}. Fausses alertes : {2} sur {3} vrais messages. Sensibilité d′ (capacité à distinguer les arnaques des vrais messages) : {4} (0 : au hasard ; 2 et plus : très bonne).", detections, fraudes, fausses, legitimes, fr(Number(d.toFixed(2))))));
     ajouterExplication(zone, "Se méfier sans tout soupçonner", [
       "Les signes qui reviennent : une urgence, une menace ou une récompense ; un lien dont le domaine n'est pas celui de l'expéditeur (dans une adresse, c'est la fin du nom du site qui compte, juste avant le « / » qui le suit) ; une demande inhabituelle : identifiants, code, paiement, cartes cadeaux.",
       "Le bon réflexe ne passe jamais par le message lui-même : on rappelle la personne au numéro que l'on connaît, on tape soi-même l'adresse du site, on ouvre l'application déjà installée. Et un message inquiétant peut être légitime : crier à l'arnaque partout est aussi une erreur."
@@ -279,7 +279,7 @@ function lancerMotsDePasse(zone) {
     afficherScore(zone, "mots-de-passe", resultats.filter(Boolean).length, resultats.length);
     ajouterExplication(zone, "La longueur avant la complexité", [
       "Chaque bit d'entropie double le nombre d'essais nécessaires. Un caractère tiré au hasard parmi 95 vaut 6,6 bits, un mot tiré au hasard dans une liste de 7 776 en vaut 12,9 : une phrase de quelques mots vraiment tirés au hasard bat souvent un mot de passe court et compliqué. Ce qui ruine un mot de passe, c'est d'être choisi par une personne : les attaquants essaient d'abord les mots courants, les substitutions classiques et les années.",
-      "Hypothèse de calcul : dix milliards d'essais par seconde, l'ordre de grandeur d'une attaque hors ligne sur un fichier de mots de passe mal protégé. Un site qui limite le nombre d'essais rend l'attaque bien plus lente. Sans autre mesure, la CNIL recommande au moins 80 bits : par exemple 12 caractères mêlant majuscules, minuscules, chiffres et caractères spéciaux, 14 caractères sans caractère spécial obligatoire, ou une phrase de passe d'au moins 7 mots (délibération n° 2022-100 du 21 juillet 2022). Le code de synchronisation de ce site compte 80 bits, tirés au hasard.",
+      "Hypothèse de calcul : dix milliards d'essais par seconde, l'ordre de grandeur d'une attaque hors ligne sur un fichier de mots de passe mal protégé. Un site qui limite le nombre d'essais rend l'attaque bien plus lente. Sans autre mesure, la CNIL recommande au moins 80 bits : par exemple 12 caractères mêlant majuscules, minuscules, chiffres et caractères spéciaux, 14 caractères mêlant majuscules, minuscules et chiffres, sans caractère spécial obligatoire, ou une phrase de passe d'au moins 7 mots (délibération n° 2022-100 du 21 juillet 2022). Le code de synchronisation de ce site compte 80 bits, tirés au hasard.",
       "Pour les retenir tous : un gestionnaire de mots de passe, et un mot de passe différent pour chaque site."
     ], [["#guide/securite", "La sécurité de ce site"]]);
     boutonRejouer(zone, () => lancerMotsDePasse(zone));

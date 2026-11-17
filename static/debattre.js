@@ -189,7 +189,7 @@ const DEBATS = [
       { qui: "Mehdi", texte: "Aimer le football ne fait pas de lui un spécialiste de la formation. Regardons plutôt ce qui se passe dans notre club.", sophisme: null,
         pourquoi: "Il conteste à juste titre la compétence de l'autorité invoquée, puis revient aux faits." },
       { qui: "Gilles", texte: "Les équipes qui jouent le plus de matchs sont celles qui gagnent le plus de trophées : faisons jouer les meilleurs plus souvent, et on gagnera.", sophisme: "correlation",
-        pourquoi: "Les équipes qui gagnent jouent plus de matchs parce qu'elles avancent dans les compétitions : jouer davantage n'est pas la cause de leurs victoires." },
+        pourquoi: "Les équipes qui gagnent jouent plus de matchs parce qu'elles avancent dans les compétitions : rien ne montre que jouer davantage soit la cause de leurs victoires." },
       { qui: "Gilles", texte: "L'idée que la sélection précoce n'aide pas à repérer les talents ne peut pas être vraie : sinon, tout notre système de recrutement n'aurait servi à rien.", sophisme: "consequences",
         pourquoi: "Il rejette une affirmation parce que ses conséquences lui déplaisent, sans examiner les preuves." },
       { qui: "Mehdi", texte: "Je propose des groupes par niveau à l'entraînement, mais des temps de jeu égaux en match.", sophisme: null,
@@ -1426,7 +1426,7 @@ EXPERIENCES.push(
             zone.appendChild(paragraphe(T("Quand {0} se reconnaît dans la reformulation de {1}, {0} touche :", auteur, qui), "source"));
             zone.appendChild(oui);
           }
-          zone.appendChild(paragraphe("Pour comprendre ce que l'autre pense, demandez-le-lui plutôt que de le deviner : dans 25 expériences, se mettre à la place d'autrui n'a pas rendu plus juste le jugement porté sur ses pensées, alors que le lui demander, si (Eyal, Steffel et Epley, 2018).", "source"));
+          zone.appendChild(paragraphe("Pour comprendre ce que l'autre pense, demandez-le-lui plutôt que de le deviner : dans 25 expériences, se mettre à la place d'autrui n'a pas rendu plus juste le jugement porté sur ses pensées, alors que le lui demander l'a rendu plus juste (Eyal, Steffel et Epley, 2018).", "source"));
         };
         const bilan = () => {
           noterPartie("debat-a-deux");
