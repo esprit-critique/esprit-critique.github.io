@@ -193,7 +193,26 @@ const MONDE = [
     explication: "27,7 pour 1 000 naissances en 2024, avec de très grands écarts : moins de 5 dans les pays riches, plus de 50 dans plusieurs pays d'Afrique subsaharienne. (Banque mondiale)", public: null },
   { id: "densite-monde", niveau: 3, question: "Combien d'habitants compte en moyenne un kilomètre carré de terres émergées ?",
     options: ["environ 6", "environ 60", "environ 600"], juste: 1,
-    explication: "62 habitants par km² en 2023, en moyenne mondiale, déserts et glaces compris. (Banque mondiale)", public: null }
+    explication: "62 habitants par km² en 2023, en moyenne mondiale, déserts et glaces compris. (Banque mondiale)", public: null },
+  // Ajouts de novembre 2026 : valeurs mondiales (WLD) des World Development Indicators, relevées le 17 novembre 2026
+  { id: "mobiles", niveau: 1, question: "Combien y a-t-il d'abonnements de téléphone mobile dans le monde, pour 100 habitants ?",
+    options: ["environ 30", "environ 70", "plus de 100"], juste: 2,
+    explication: "111 pour 100 habitants en 2025 : plus d'abonnements que d'habitants, car beaucoup de gens en ont plusieurs. Cela ne veut pas dire que chacun a un téléphone (Union internationale des télécommunications, via la Banque mondiale).", public: null },
+  { id: "assainissement", niveau: 2, question: "Quelle part de la population mondiale dispose de toilettes au moins « de base » (non partagées avec d'autres foyers) ?",
+    options: ["40 %", "60 %", "82 %"], juste: 2,
+    explication: "82 % en 2024, contre 80 % en 2022 : près d'une personne sur cinq n'en a toujours pas (OMS et Unicef, via la Banque mondiale).", public: null },
+  { id: "femmes-actives", niveau: 2, question: "Dans le monde, quelle part des femmes de 15 ans ou plus travaille ou cherche un emploi ?",
+    options: ["25 %", "49 %", "75 %"], juste: 1,
+    explication: "49 % en 2025, contre 73 % des hommes (estimations de l'Organisation internationale du travail, via la Banque mondiale). Le travail domestique non payé n'entre pas dans ce chiffre.", public: null },
+  { id: "terres-agricoles", niveau: 2, question: "Quelle part des terres émergées sert à l'agriculture, cultures et pâturages compris ?",
+    options: ["environ un dixième", "plus d'un tiers", "plus des deux tiers"], juste: 1,
+    explication: "36,9 % en 2023, davantage que les forêts (31 %) (FAO, via la Banque mondiale).", public: null },
+  { id: "renouvelables", niveau: 3, question: "Quelle part de l'énergie consommée dans le monde (électricité, chaleur et carburants) vient de sources renouvelables ?",
+    options: ["5 %", "20 %", "50 %"], juste: 1,
+    explication: "19,7 % en 2020, dernière année publiée. La part est plus forte dans la seule électricité, mais l'électricité n'est qu'une partie de l'énergie consommée (Banque mondiale).", public: null },
+  { id: "homicides", niveau: 3, question: "Dans le monde, combien de personnes sur 100 000 sont tuées par un homicide chaque année ?",
+    options: ["environ 5", "environ 50", "environ 500"], juste: 0,
+    explication: "5,2 pour 100 000 en 2023, soit un peu plus de 400 000 victimes par an (Office des Nations unies contre la drogue et le crime, via la Banque mondiale).", public: null }
 ];
 
 // ===================== Qu'est-ce qui tue le plus ? =====================
