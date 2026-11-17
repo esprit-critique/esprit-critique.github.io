@@ -173,6 +173,9 @@ def ressemble_a_du_texte(s):
         return False
     if re.fullmatch(r"[MmLlHhVvCcSsQqTtAaZz0-9 ,.\-]+", t):      # tracé SVG
         return False
+    if re.search(r"\d", t) and re.search(r"\b(environ|ans?|mois|jours?|millions?|milliards?|tonnes?|fois)\b", t):
+        # un nombre et son unité ou son approximation (« environ 30 », « 10 ans environ ») : du texte, même sans majuscule
+        return True
     if re.fullmatch(r"[a-z0-9\-]+( [a-z0-9\-]+)*", t) and not ACCENTS.search(t):
         # plusieurs mots en minuscules sans accent : classes CSS (« verdict juste ») ou français (« le calcul »)
         return len(MOT.findall(t)) >= 2 and any(len(m) > 3 for m in MOT.findall(t)) and bool(

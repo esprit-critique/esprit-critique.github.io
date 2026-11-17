@@ -325,7 +325,9 @@ EXPERIENCES.push(
         const justes = items.filter(s => reponses[s.id] === s.valide).length;
         const propre = jugements.find(j => j.x.propre);
         const rang = jugements.indexOf(propre) + 1;
-        const historique = lire("logique", []);
+        // Donnée enregistrée par une ancienne version (autre forme qu'un tableau) : on repart d'un historique vide plutôt
+        // que de planter avant d'afficher le bilan
+        const lu = lire("logique", []), historique = Array.isArray(lu) ? lu : [];
         historique.push({ j: aujourdHui(), l: logique, c: croyance, rejet: !propre.accepte, fautif: !propre.x.correcte });
         ecrire("logique", historique.slice(-30));
         afficherScore(zone, "logique", justes, items.length);
