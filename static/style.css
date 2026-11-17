@@ -1707,7 +1707,8 @@ label[for] { display: block; margin: 0 0 8px; }
 /* ===================== Lot 4 : maîtrise, grades, points, graphiques (profil.js, graphiques.js) ===================== */
 .bouton-profil { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 8px; border: 1px solid var(--trait);
   border-radius: 999px; background: var(--carte); color: var(--texte); text-decoration: none; position: relative; }
-.bouton-profil .blason { position: absolute; left: 12px; top: 9px; }
+/* Portrait de 26 px centré dans l'anneau de 34 : (44 − 2 de bordure − 26) / 2 = 8 (à 9, il tombait d'un pixel) */
+.bouton-profil .blason { position: absolute; left: 12px; top: 8px; }
 .bouton-profil .anneau-profil { margin-right: 2px; }
 /* Ni le bouton ni ses dessins ne rétrécissent dans l'en-tête serré : Safari ramène sinon un SVG à presque rien
    (bouton quasi invisible et impossible à viser), là où Chrome garde sa largeur */
@@ -1856,6 +1857,8 @@ label[for] { display: block; margin: 0 0 8px; }
 @media (max-width: 1039px) {
   .bouton-profil { padding: 0; width: 44px; justify-content: center; }
   .bouton-profil .blason, .bouton-profil-maitrise { display: none; }
+  /* L'anneau est seul : sans sa marge droite, il reste au centre du bouton (décalé d'un pixel sinon) */
+  .bouton-profil .anneau-profil { margin-right: 0; }
   .bouton-profil .insigne { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
 }
 .bouton-profil.sobre { flex: none; width: 44px; padding: 0; justify-content: center; }
