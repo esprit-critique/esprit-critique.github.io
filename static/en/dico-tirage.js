@@ -23,7 +23,7 @@ EN_AJOUTER([
   ["Un atelier au hasard", "A random workshop"],
   ["Un autre atelier au hasard", "Another random workshop"],
   ["← Accueil", "← Home"],
-  ["Dix questions tirées de la graine n° {0} : la même adresse donne les mêmes questions à tous ceux qui l'ouvrent. Rien n'est enregistré.", "Ten questions drawn from seed no. {0}: the same address gives the same questions to everyone who opens it. Nothing is saved."],
+  ["Défi n° {0} : dix questions, les mêmes pour tous ceux qui ouvrent cette adresse. Le score n'est pas enregistré, mais la partie compte pour vos points de lucidité et votre série de jours.", "Challenge no. {0}: ten questions, the same for everyone who opens this address. The score is not saved, but the game counts towards your clarity points and your streak."],
   ["Copié : {0}", "Copied: {0}"],
   ["Un autre défi", "Another challenge"],
   ["Partager ce défi", "Share this challenge"],
