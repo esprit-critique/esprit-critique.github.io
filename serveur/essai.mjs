@@ -33,6 +33,22 @@ ok("conflit de version : 409, la copie n'est pas écrasée", r.status === 409 &&
 ok("le serveur ne garde que l'empreinte du jeton", env.BASE.lignes.get(ID).empreinte_jeton !== JETON && /^[0-9a-f]{64}$/.test(env.BASE.lignes.get(ID).empreinte_jeton));
 for (const k of [1, 2]) await req("PUT", { id: String(k).repeat(32), corps: { contenu: "c" }, version: 0 });
 ok("plafond du nombre de coffres : 507", (await req("PUT", { id: "f".repeat(32), corps: { contenu: "c" }, version: 0 })).status === 507);
+// Base pleine : une écriture qui la ferait grossir est refusée, une écriture qui la réduit passe
+env.MAX_OCTETS = String([...env.BASE.lignes.values()].reduce((s, l) => s + l.contenu.length, 0) + 5);
+const avantPlein = env.BASE.lignes.get(ID).contenu;
+r = await req("PUT", { corps: { contenu: avantPlein + "123456" }, version: 2 });
+ok("base pleine : un contenu plus long est refusé (507), la copie reste intacte", r.status === 507 && env.BASE.lignes.get(ID).contenu === avantPlein);
+r = await req("PUT", { corps: { contenu: "c" }, version: 2 });
+ok("base pleine : un contenu plus court passe", r.status === 200 && env.BASE.lignes.get(ID).contenu === "c");
+delete env.MAX_OCTETS;
+// Écritures d'un même coffre limitées (la limite de Cloudflare est simulée : deux par fenêtre)
+const compteurs = {};
+env.LIMITE_ECRITURES = { limit: async ({ key }) => ({ success: (compteurs[key] = (compteurs[key] || 0) + 1) <= 2 }) };
+const statuts = [];
+for (let v = 3; v <= 5; v++) statuts.push((await req("PUT", { corps: { contenu: "v" + v }, version: v })).status);
+ok("écritures d'un même coffre limitées : 200, 200, puis 429", statuts.join() === "200,200,429", statuts.join());
+ok("limite par coffre : un autre coffre peut toujours écrire", (await req("PUT", { id: "2".repeat(32), corps: { contenu: "x" }, version: 0 })).status !== 429);
+delete env.LIMITE_ECRITURES;
 ok("suppression : 204, puis 404", (await req("DELETE")).status === 204 && (await req("GET")).status === 404);
 env.BASE.lignes.get("1".repeat(32)).ecrit_le = Date.now() - 25 * 30.44 * 86400000;
 await worker.scheduled({}, env);
