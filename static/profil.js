@@ -723,6 +723,15 @@ const PHRASES_DU_JOUR = [
   "Le plus difficile à repérer, c'est le biais qu'on partage avec tout son entourage.",
   "Se tromper est humain. S'en rendre compte, c'est de l'entraînement."
 ];
+// Premier passage : quelques accroches, une par jour, pour donner le ton dès l'arrivée
+const PHRASES_NOUVEAU = [
+  "Ici, on apprend à se tromper moins, en commençant par se tromper un peu.",
+  "Votre cerveau vous trompe tous les jours. Ici, on apprend à le prendre sur le fait.",
+  "Personne n'est à l'abri des biais. La bonne nouvelle : on peut apprendre à les repérer.",
+  "Bienvenue. Ici, avoir l'air sûr ne suffit pas : on regarde les preuves.",
+  "Un site qui ne vous demande pas de le croire sur parole. Vérifiez tout, y compris lui.",
+  "Vous pensez être difficile à berner ? C'est justement ce que pense tout le monde."
+];
 // Situations : plusieurs tournures, une par jour (rotation sans remise)
 const PHRASES_RETOUR = ["Tiens, un revenant. {0} jours sans nous voir : vos révisions ont gardé votre place au chaud.",
   "{0} jours d'absence : l'oubli a fait son travail, à vous de défaire le sien.",
@@ -778,7 +787,7 @@ function salutation(nouveau) {
   const etape = typeof prochaineEtape === "function" ? prochaineEtape() : null;
   let phrase;
   if (mois === 4 && date === 1) phrase = T("Premier avril : aujourd'hui plus que jamais, vérifiez avant de croire. (Celle-là, elle est vraie.)");
-  else if (nouveau) phrase = T("Ici, on apprend à se tromper moins, en commençant par se tromper un peu.");
+  else if (nouveau) phrase = T(varier(PHRASES_NOUVEAU, 67));
   else if (absence >= 7) phrase = T(varier(aReviser ? PHRASES_RETOUR : PHRASES_RETOUR_SANS_REVISION, 41), absence);
   else if (!modeSobre() && (luc[jour] || 0) >= lire("objectif", 60)) phrase = T(varier(PHRASES_OBJECTIF, 43));
   else if (aReviser >= 3) phrase = T(varier(PHRASES_REVISIONS, 47), aReviser);
@@ -1735,9 +1744,10 @@ function ouvrirFichePersonnage(declencheur) {
 
 // ===================== Accueil du nouveau visiteur (lot 8) =====================
 // Trois écrans, en tête de l'accueil, qu'on peut passer : l'illusion, l'objectif du jour, le premier pas. Jamais
-// bloquant (une carte dans la page, pas une fenêtre) ; une fois fini ou passé, il ne revient plus (profil.accueilFait).
-function carteBienvenue() {
-  if ((lire("profil", {}) || {}).accueilFait) return null;
+// bloquant (une carte dans la page, pas une fenêtre) ; une fois fini ou passé, il ne revient plus (profil.accueilFait),
+// sauf demandé : bouton « Présenter le site » des premiers jours, lien du guide (#accueil/presentation)
+function carteBienvenue(demandee) {
+  if (!demandee && (lire("profil", {}) || {}).accueilFait) return null;
   const carte = el("article", "carte carte-bienvenue");
   carte.setAttribute("aria-label", T("Bienvenue"));
   const terminer = () => { ecrire("profil", { ...(lire("profil", {}) || {}), accueilFait: true }); carte.remove(); };

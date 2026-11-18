@@ -66,6 +66,7 @@ EN_AJOUTER([
   ["1 jour d'affilée", "1 day in a row"],
   ["Modifier votre personnage", "Edit your character"],
   ["{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", "{0} biases and {1} fallacies, a quiz that comes back to your mistakes, and {2} workshops: real data, perception, classic experiments and philosophy."],
+  ["Présenter le site", "Introduce the site"],
   ["Commencer : {0}", "Start: {0}"],
   ["Premiers pas", "First steps"],
   ["Votre parcours, « {0} » : {1}", "Your path, “{0}”: {1}"],
