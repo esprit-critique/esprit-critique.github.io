@@ -86,7 +86,8 @@ vérifiés retirés des explications ; puis `face-cachee` (NASA, Top Moon Questi
 Universe : affirmation reformulée sur le morceau de sucre, environ un milliard de tonnes, au lieu d'une cuillère à café
 et de « plus de 5 milliards de tonnes », non vérifiés) ; puis `nintendo` (historique officiel de Nintendo) et `annee`
 (United States Naval Observatory) ; puis `eiffel-hauteur` (Ville de Paris), `verre` (Zanotto, Am. J. Phys. 1998, résumé)
-et `metre` (Arago, Astronomie populaire, XXIII, 14). `big-ben` : le site du Parlement britannique refuse la lecture
-automatique ; à vérifier à la main sur parliament.uk (« Clock Tower to be renamed Elizabeth Tower », juin 2012).
+et `metre` (Arago, Astronomie populaire, XXIII, 14). `big-ben` : vérifié à la main par le propriétaire le 19 novembre 2026 sur parliament.uk (« Facts and figures » :
+« Big Ben weighs 13.7 tonnes » ; « Clock Tower to be renamed Elizabeth Tower », 2012), le site refusant la lecture
+automatique.
 
-Restent sourcées sur Wikipédia (46), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `diamants`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `alaska`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `abeilles`, `robot`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `atlantique`, `chimborazo`, `galilee`, `pise`, `bresil`, `afrique`, `nil`, `big-ben`, `pole-sud`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
+Restent sourcées sur Wikipédia (45), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `diamants`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `alaska`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `abeilles`, `robot`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `atlantique`, `chimborazo`, `galilee`, `pise`, `bresil`, `afrique`, `nil`, `pole-sud`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
