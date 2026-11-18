@@ -1756,17 +1756,30 @@ function carteBienvenue(demandee) {
   let ecran = 0;
   const dessiner = () => {
     carte.replaceChildren();
-    carte.appendChild(el("p", "surtitre", T("Bienvenue · {0} sur 3", ecran + 1)));
+    carte.appendChild(el("p", "surtitre", T("Bienvenue · {0} sur 4", ecran + 1)));
+    // Ce qu'est le site, où trouver quoi, comment s'en servir, par où commencer
     if (ecran === 0) {
-      carte.append(el("h2", null, "Un site qui commence par vous tromper"), ouverture());
+      carte.append(el("h2", null, "Ce qu'est Esprit critique"),
+        el("p", "source", "Un site gratuit pour apprendre à repérer les biais cognitifs, ces erreurs de jugement que nous faisons tous, et les sophismes, ces arguments qui paraissent valides sans l'être. Sans compte ni publicité : votre progression reste sur votre appareil."),
+        ouverture());
     } else if (ecran === 1) {
-      carte.append(el("h2", null, "Combien de temps par jour ?"), el("p", "source", "L'objectif du jour se compte en points de lucidité : une série de quiz bien répondue en rapporte plusieurs dizaines. Vous pourrez le changer dans votre profil."));
+      const liste = el("ul", "liste-simple");
+      [[T("Fiches : les {0} notions, chacune avec une définition, un exemple, une parade et sa source.", BIAIS.length + SOPHISMES.length)],
+       ["Quiz : des situations concrètes à reconnaître ; il revient sur vos erreurs au bon moment."],
+       [T("Ateliers : {0} jeux et expériences (chiffres du monde, perception, raisonnement, débat).", tousLesAteliers().length)],
+       ["Guide : une méthode pour examiner une affirmation, et les notions de base."],
+       ["Profil (votre personnage, en haut) : votre progression, vos réglages et la sauvegarde."]].forEach(([texte]) => liste.appendChild(el("li", null, texte)));
+      carte.append(el("h2", null, "Où trouver quoi"), liste);
+    } else if (ecran === 2) {
+      carte.append(el("h2", null, "Comment s'en servir"),
+        el("p", "source", "Chaque jour, l'accueil propose trois rendez-vous courts : une situation, un défi et un vrai ou faux. Le reste du temps, lisez une fiche, puis vérifiez au quiz que vous la reconnaissez dans une situation."),
+        el("p", "source", "Combien de temps par jour ? L'objectif se compte en points de lucidité ; une série de quiz bien répondue en rapporte plusieurs dizaines. Vous pourrez le changer dans votre profil."));
       const puces = el("div", "puces");
       [[30, "Tranquille : 30 points"], [60, "Régulier : 60 points"], [100, "Intensif : 100 points"]].forEach(([v, texte]) => {
         const b = el("button", "puce" + (lire("objectif", 60) === v ? " active" : ""), texte);
         b.type = "button";
         b.setAttribute("aria-pressed", String(lire("objectif", 60) === v));
-        b.addEventListener("click", () => { ecrire("objectif", v); ecran = 2; dessiner(); });
+        b.addEventListener("click", () => { ecrire("objectif", v); ecran = 3; dessiner(); });
         puces.appendChild(b);
       });
       carte.appendChild(puces);
@@ -1781,7 +1794,7 @@ function carteBienvenue(demandee) {
       carte.appendChild(actions);
     }
     const nav = el("div", "actions bienvenue-nav");
-    if (ecran < 2) {
+    if (ecran < 3) {
       const suite = el("button", "bouton secondaire", "Suivant");
       suite.type = "button";
       suite.addEventListener("click", () => { ecran++; dessiner(); carte.querySelector("h2").focus(); });
