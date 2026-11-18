@@ -30,6 +30,17 @@ self.addEventListener("install", e => {
     .then(() => self.skipWaiting()));
 });
 
+// « Tout garder pour le hors-ligne » (réglages du profil) : les fichiers des deux langues, puis la réponse à la page :
+// le nombre de fichiers encore absents (0 : tout est là). Seules les pages du site peuvent écrire à leur service worker
+self.addEventListener("message", e => {
+  if (!e.data || e.data.type !== "tout-garder" || !e.source) return;
+  e.waitUntil(Promise.all([completer(true), completer(false)])
+    .then(() => caches.open(CACHE))
+    .then(async c => { let manquants = 0; for (const f of FICHIERS) if (!(await c.match(f))) manquants++; return manquants; })
+    .catch(() => FICHIERS.length)
+    .then(manquants => e.source.postMessage({ type: "tout-garder", manquants })));
+});
+
 self.addEventListener("activate", e => {
   // Supprime les caches des versions précédentes
   e.waitUntil(caches.keys().then(cles => Promise.all(cles.filter(c => c !== CACHE).map(c => caches.delete(c)))).then(() => self.clients.claim()));

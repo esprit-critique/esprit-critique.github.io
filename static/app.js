@@ -888,10 +888,14 @@ function afficherAccueil() {
   ligneSalut.append(avatar, textesSalut);
   tete.appendChild(ligneSalut);
   tete.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
-  // Nouveau visiteur (aucune activité, aucun atelier) : l'accueil en trois écrans (profil.js), sinon l'emblème en grand
-  const bienvenue = nouveau ? carteBienvenue() : null;
+  // Nouveau visiteur (aucune activité, aucun atelier) : l'accueil en trois écrans (profil.js), sinon l'emblème en grand.
+  // #accueil/presentation (bouton ci-dessous, lien du guide) le rouvre à la demande
+  const presentation = location.hash === "#accueil/presentation";
+  const bienvenue = nouveau || presentation ? carteBienvenue(presentation) : null;
   if (bienvenue) tete.appendChild(bienvenue);
   else if (nouveau) tete.appendChild(ouverture());
+  // Les cinq premiers jours d'activité, un bouton pour revoir la présentation ; ensuite, elle reste dans le guide
+  else if (lire("activite", []).length < 5) tete.appendChild(lienVers("#accueil/presentation", "Présenter le site", "bouton secondaire presenter-site"));
   const nbAReviser = clesAReviser().length;
   const appel = el("div", "appel-action");
   const etape = prochaineEtape();
@@ -2380,6 +2384,41 @@ function boutonInstallation() {
     b.remove();
   });
   return b;
+}
+
+// Hors ligne complet : le service worker n'enregistre d'office que la langue visitée ; ce bouton lui fait enregistrer
+// les deux. Résultat écrit sous le bouton et annoncé ; deux minutes au plus (service worker absent ou réseau coupé)
+function boutonHorsLigne() {
+  if (!("serviceWorker" in navigator)) return null;
+  const bloc = el("div", "hors-ligne");
+  const b = el("button", "bouton secondaire", "Tout garder pour le hors-ligne");
+  b.type = "button";
+  const etat = el("p", "source");
+  const dire = texte => { etat.textContent = typo(texte); annoncer(texte); };
+  b.addEventListener("click", async () => {
+    b.disabled = true;
+    dire(T("Enregistrement en cours…"));
+    let ecoute = null, minuterie = null;
+    try {
+      const reponse = await Promise.race([
+        navigator.serviceWorker.ready.then(r => new Promise(ok => {
+          ecoute = e => { if (e.data && e.data.type === "tout-garder") ok(e.data); };
+          navigator.serviceWorker.addEventListener("message", ecoute);
+          r.active.postMessage({ type: "tout-garder" });
+        })),
+        new Promise((ok, ko) => { minuterie = setTimeout(() => ko(new Error("délai")), 120000); })
+      ]);
+      dire(reponse.manquants ? T("{0} fichiers n'ont pas pu être enregistrés : vérifiez votre connexion, puis réessayez.", reponse.manquants)
+        : T("Tout est enregistré : le site fonctionne hors ligne, en français et en anglais."));
+    } catch (erreur) {
+      dire(T("L'enregistrement hors ligne n'a pas abouti : vérifiez votre connexion, puis réessayez."));
+    }
+    clearTimeout(minuterie);
+    if (ecoute) navigator.serviceWorker.removeEventListener("message", ecoute);
+    b.disabled = false;
+  });
+  bloc.append(b, etat);
+  return bloc;
 }
 
 // Applique la typographie française au texte fixe de la page (guide, titres)
