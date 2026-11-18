@@ -38,7 +38,8 @@ const stocks = { VRAI_FAUX, MONDE, CITATIONS, PAIRES_CELEBRES, FICHES };
 const D = ROTATION_STABLE_DEPUIS, res = {};
 res.ids = Object.fromEntries(Object.entries(stocks).map(([k, l]) => [k, l.map(x => ({ cle: cleTirage(x), depuis: depuisTirage(x) || null }))]));
 // Ancien tirage, recopié : les deux jours déjà joués doivent le garder
-const ancien = (liste, n, jour, sel) => { const o = melanger(liste, generateur(sel)); return Array.from({ length: Math.min(n, liste.length) }, (_, i) => o[(jour * n + i) % liste.length]); };
+// (comme tirerSansRemise : sur le stock d'origine, sans les éléments datés par « depuis »)
+const ancien = (tout, n, jour, sel) => { const liste = tout.filter(x => !depuisTirage(x)), o = melanger(liste, generateur(sel)); return Array.from({ length: Math.min(n, liste.length) }, (_, i) => o[(jour * n + i) % liste.length]); };
 res.anciens = [ROTATION_DEPUIS, D - 1].every(j => [[VRAI_FAUX, 1, 29], [MONDE, 3, 11], [CITATIONS, 2, 17]].every(([l, n, s]) =>
   tirerSansRemise(l, n, j, s).map(cleTirage).join() === ancien(l, n, j, s).map(cleTirage).join()));
 // Cycles : sur 2,5 cycles, aucun élément ne revient avant que tout le stock soit sorti, ni d'un jour sur l'autre ; la

@@ -7,11 +7,8 @@ Aucun fait non vérifié n'est affiché sur le site à ce jour.
   vérifiée par la simulation affichée.
 - Wason et Brooks, « THOG: The anatomy of a problem », Psychological Research, 1979 : référence vérifiée (Crossref).
   Le site n'en cite aucun chiffre ; la solution du problème se vérifie par le raisonnement donné.
-- Population de Paris (« Ordres de grandeur ») : le site affichait 2 047 602 habitants « au 1er janvier 2023 », chiffre
-  qui ne correspond à aucune série de l'Insee (population légale de référence 2020 : 2 145 906 ; référence 2023 :
-  2 103 778 d'après l'Insee Flash Île-de-France de décembre 2025, cité par une recherche, insee.fr inaccessible depuis
-  la session du 13 novembre 2026). Affiché désormais : « environ 2,1 millions », vrai pour les deux séries. Le chiffre
-  exact reste à confirmer sur insee.fr avant d'être affiché.
+- Population de Paris (« Ordres de grandeur ») : 2 103 778 habitants en 2023, vérifié le 18 novembre 2026 sur le
+  dossier complet de l'Insee pour la commune de Paris (COM-75056, tableau POP T1, recensement de 2023) ; affiché.
 - Écartés faute de source vérifiable (non affichés) : « Impossible n'est pas français » (Napoléon), une phrase de
   Spinoza, les taux de réussite de Lecoutre (1992) et de Tversky et Kahneman (1971, 1972) pour les problèmes ajoutés.
 - Mentions légales, téléphone de l'hébergeur : +1 415 857 5430. Aucune page officielle de GitHub ne donne de numéro ;
@@ -50,9 +47,10 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
 - **« Impossible n'est pas français », Napoléon** (citation, statut « déformée » envisagé) : on la rattache souvent à une
   lettre au général Lemarois de 1813 (« cela n'est pas français ») ; lettre non retrouvée dans la Correspondance
   générale (napoleon.org). À vérifier sur le texte de la lettre avant de l'ajouter à `CITATIONS`.
-- **« Les requins existaient avant les arbres »** (vrai ou faux) : vrai selon les sources de vulgarisation (requins
-  vers 450 millions d'années, premiers arbres vers 385 à 390 millions), mais l'écart dépend de ce qu'on appelle un
-  requin et la page du Smithsonian n'a pas pu être lue. À vérifier sur une source de paléontologie.
+- **« Les requins existaient avant les arbres »** : vérifié le 18 novembre 2026 sur les résumés (PubMed) de Miller,
+  Cloutier et Turner, Nature, 2003 (requin articulé *Doliodus problematicus*, presque 409 millions d'années, Dévonien
+  inférieur) et de Stein et al., Nature, 2007 (arbres de Gilboa, fin du Dévonien moyen) ; ajouté à `VRAI_FAUX` avec
+  `depuis`. Aucun âge n'est donné pour les arbres : le résumé de Stein n'en cite pas.
 
 ## Sources des sophismes restées générales (audit du 18 novembre 2026)
 
