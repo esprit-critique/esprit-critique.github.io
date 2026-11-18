@@ -7,7 +7,7 @@ import os, re, html, base64, hashlib
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ICI, "..", "..", "static")
-MAJ = "12 novembre 2026"
+MAJ = "18 novembre 2026"
 
 # Même CSP et même script de thème que la page principale de la langue (le script est autorisé par son empreinte) :
 # la page française redirige vers en/ si l'anglais a été choisi, la page anglaise non, d'où un gabarit par langue
@@ -201,6 +201,9 @@ page("confidentialite.html", "Politique de confidentialité", "Esprit critique :
         <p>Le bouton « Partager » ouvre le menu de partage de votre appareil, ou copie le lien : le site n'envoie rien lui-même.
         Les images « Partager cette carte » et « Partager mon grade » sont dessinées sur votre appareil, puis confiées au menu
         de partage ou enregistrées dans vos fichiers : elles ne passent par aucun serveur.</p>
+        <p>Les liens de défi (« Défier un ami », défi sur mesure) ne contiennent que des nombres : le numéro du défi, les
+        fiches choisies et, si vous le partagez, votre score. Ni votre nom ni votre progression n'y figurent, et le site ne
+        les enregistre nulle part.</p>
         <p>Installer le site comme une application (écran d'accueil) ne transmet rien non plus : votre appareil garde la page
         et ses fichiers.</p>
         <h2>Contact et réclamation</h2>
@@ -253,7 +256,7 @@ page("404.html", "Page introuvable", "Cette adresse n'existe pas sur Esprit crit
           <li><a href="/#guide">Le guide</a></li>
         </ul>''', racine="/", indexer=False)
 # ---------------------------------------------------------------- pages anglaises (static/en/)
-MAJ_EN = "12 November 2026"
+MAJ_EN = "18 November 2026"
 PIED_EN = ("legal-notice.html", "privacy.html", "terms.html")
 
 page("legal-notice.html", "Legal notice", "Publisher, host and licences of the Esprit critique website.", f'''        <h1>Legal notice</h1>
@@ -366,6 +369,9 @@ page("privacy.html", "Privacy policy", "Esprit critique: progress kept in your b
         <p>The “Share” button opens your device’s sharing menu, or copies the link: the site itself sends nothing.
         The “Share this card” and “Share my rank” images are drawn on your device, then handed to the sharing menu or saved
         to your files: they go through no server.</p>
+        <p>Challenge links (“Challenge a friend”, custom challenge) contain only numbers: the challenge number, the chosen
+        entries and, if you share it, your score. Neither your name nor your progress is in them, and the site does not
+        store them anywhere.</p>
         <p>Installing the site as an app (home screen) sends nothing either: your device keeps the page and its files.</p>
         <h2>Contact and complaints</h2>
         <p>For any question: <a href="{DEPOT}/issues">the repository’s issues</a> (a GitHub account is required; your rights,

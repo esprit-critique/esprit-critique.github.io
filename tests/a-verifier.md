@@ -9,8 +9,9 @@ Aucun fait non vérifié n'est affiché sur le site à ce jour.
   Le site n'en cite aucun chiffre ; la solution du problème se vérifie par le raisonnement donné.
 - Population de Paris (« Ordres de grandeur ») : 2 103 778 habitants en 2023, vérifié le 18 novembre 2026 sur le
   dossier complet de l'Insee pour la commune de Paris (COM-75056, tableau POP T1, recensement de 2023) ; affiché.
-- Écartés faute de source vérifiable (non affichés) : « Impossible n'est pas français » (Napoléon), une phrase de
-  Spinoza, les taux de réussite de Lecoutre (1992) et de Tversky et Kahneman (1971, 1972) pour les problèmes ajoutés.
+- Écartés faute de source vérifiable (non affichés) : une phrase de Spinoza (son texte n'a pas été noté : impossible à
+  retrouver), les taux de réussite de Lecoutre (1992) et de Tversky et Kahneman (1971, 1972) pour les problèmes ajoutés.
+  « Impossible n'est pas français » : vérifiée et ajoutée le 18 novembre 2026 (voir plus bas).
 - Mentions légales, téléphone de l'hébergeur : +1 415 857 5430. Aucune page officielle de GitHub ne donne de numéro ;
   celui-ci vient du registre ARIN (contact « GitHub », type bureau), où GitHub déclare lui-même ses coordonnées. Un
   répertoire tiers (datarequests.org) donne +1 877 448 4820, non retenu. L'adresse (88 Colin P. Kelly Jr. Street,
@@ -20,8 +21,10 @@ Aucun fait non vérifié n'est affiché sur le site à ce jour.
 
 Non retenue pour l'illusion du jour : l'article de Mario Ponzo de 1911 souvent cité porte sur une illusion tactile
 (illusion d'Aristote), et l'origine de l'illusion visuelle qui porte son nom reste incertaine (Ponzo l'aurait employée
-en 1912 pour expliquer l'illusion de la Lune). Piste : Bertamini et Wade (2023), traduction commentée, *Perception*.
-À ajouter seulement avec une source primaire vérifiée.
+en 1912 pour expliquer l'illusion de la Lune : « Rapports entre quelques illusions visuelles de contraste angulaire et
+l'appréciation de grandeur des astres à l'horizon », Archives italiennes de biologie, 58, 1912, non trouvé en ligne le
+18 novembre 2026). La piste Bertamini et Wade (2023, *Perception*) ne convient pas : elle traduit un autre article de
+Ponzo (1928, sur la numérosité). À ajouter seulement avec l'article de 1912 lu.
 
 ## Synchronisation : textes à relire avant d'activer SYNCHRO_URL (refonte, lot 6, 11 novembre 2026)
 
@@ -44,9 +47,10 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
 
 ## Contenus écartés faute de source primaire (ajout de culture générale, 16 novembre 2026)
 
-- **« Impossible n'est pas français », Napoléon** (citation, statut « déformée » envisagé) : on la rattache souvent à une
-  lettre au général Lemarois de 1813 (« cela n'est pas français ») ; lettre non retrouvée dans la Correspondance
-  générale (napoleon.org). À vérifier sur le texte de la lettre avant de l'ajouter à `CITATIONS`.
+- **« Impossible n'est pas français », Napoléon** : vérifiée le 18 novembre 2026 dans la Correspondance de Napoléon Ier,
+  tome XXV (archive.org, `correspondancede0000vari_t3m5`), lettre n° 20256 au général comte Lemarois, Dresde, 9 juillet
+  1813 : « “Ce n'est pas possible”, m'écrivez-vous : cela n'est pas français. » Ajoutée à `CITATIONS` (statut
+  « déformée », `depuis`).
 - **« Les requins existaient avant les arbres »** : vérifié le 18 novembre 2026 sur les résumés (PubMed) de Miller,
   Cloutier et Turner, Nature, 2003 (requin articulé *Doliodus problematicus*, presque 409 millions d'années, Dévonien
   inférieur) et de Stein et al., Nature, 2007 (arbres de Gilboa, fin du Dévonien moyen) ; ajouté à `VRAI_FAUX` avec
@@ -60,8 +64,12 @@ Diogène Laërce II, 108 ; Boykoff et Boykoff 2004 ; Rosenthal 1979 ; Walton 199
 attribuait la notion aux Réfutations sophistiques : Aristote n'y décrit pas la généralisation à partir de quelques cas
 (le plus proche est le « secundum quid », emploi absolu ou relatif d'un terme) ; source remplacée par Mill.
 
-Restent générales, sans erreur relevée, à préciser quand une référence primaire est trouvée : `tu-quoque`,
-`popularite`, `ad-baculum`, `poteaux`, `faux-dilemme`, `juste-milieu`, `post-hoc`, `cause-unique`,
-`negation-antecedent`, `sophisme-sophisme`, `hors-contexte` (origine de « quote mining » non vérifiée) et
-`tireur-elite` (emploi du terme pour les agrégats de cancers non vérifié : l'article de Gawande, « The Cancer-Cluster
-Myth », New Yorker, 1999, n'a pas pu être lu en entier).
+Précisées le 18 novembre 2026 (deuxième passe) : `tu-quoque` (Walton, Ad Hominem Arguments, 1998), `popularite`
+(Walton, Appeal to Popular Opinion, 1999), `ad-baculum` (Walton, Scare Tactics, 2000), `post-hoc` (Aristote,
+Rhétorique II, 24, lu sur Perseus), `hors-contexte` (Quote Mine Project de TalkOrigins, lu ; l'origine du terme y est
+dite obscure, d'où son retrait), `tireur-elite` (note « Cancer Clusters » du Connecticut Department of Public Health,
+lue : elle décrit le mécanisme sans employer le terme ; l'article de Gawande, New Yorker, 1999, reste illisible).
+
+Restent générales, sans erreur relevée : `poteaux` (expression idiomatique), `faux-dilemme`, `juste-milieu`,
+`cause-unique`, `negation-antecedent` et `sophisme-sophisme` (le recueil de Madsen Pirie, 1985, n'a pas pu être
+consulté).

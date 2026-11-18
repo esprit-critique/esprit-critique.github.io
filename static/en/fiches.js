@@ -806,7 +806,7 @@
     casSup: ["A doctor advises a patient to stop smoking; he retorts: “You smoke yourself!” and ignores the advice.",
       "Accused of repeated lateness, an employee tells his boss: “You were late on Monday,” and considers the discussion closed."],
     parade: "Acknowledge the inconsistency if need be, then separate it from the question: “Perhaps, but that says nothing about whether it is true.”",
-    source: "A variant of the personal attack, described in the classic treatises on logic.",
+    source: "Douglas Walton, “Ad Hominem Arguments” (1998): tu quoque (“you too”) is one of the types of personal attack, which blames opponents for acting against what they argue.",
     distinction: "The personal attack targets a person’s flaws in general; “you too”, the contradiction between their words and their actions."
   },
   "sophismes:association": {
@@ -852,7 +852,7 @@
     casSup: ["“This video about a miracle cure has been viewed ten million times: it can’t be talking nonsense.”",
       "“This app is the most downloaded right now: it must protect your data well.”"],
     parade: "Ask what evidence supports the claim, regardless of how many people go along with it.",
-    source: "Described in the classical logic tradition.",
+    source: "Douglas Walton, “Appeal to Popular Opinion” (1999): the appeal to popular opinion, classified as a fallacy in most logic textbooks, is not always fallacious, depending on how it is used.",
     distinction: "Conformity is a behaviour: we align with the group. The appeal to popularity is an argument: the agreement of the greatest number is presented as proof."
   },
   "sophismes:tradition": {
@@ -945,7 +945,7 @@
     casSup: ["“If you keep defending that idea in class, your participation mark will suffer.”",
       "A landlord reminds a tenant who is disputing a charge: “The lease is up for renewal next year, think carefully.”"],
     parade: "Separate the question of truth from that of personal consequences: “The threat changes nothing about the substance. What are the reasons?”",
-    source: "Described in the logical tradition; the Latin “baculum” means “stick”.",
+    source: "Douglas Walton, “Scare Tactics: Arguments that Appeal to Fear and Threats” (2000), which distinguishes threats (ad baculum) from appeals to fear. The Latin “baculum” means “stick”.",
     distinction: "The appeal to emotion stirs a feeling to win agreement; the appeal to force threatens consequences for whoever does not agree."
   },
   "sophismes:homme-de-paille": {
@@ -1113,7 +1113,7 @@
     casSup: ["“I changed toothpaste in January, and I didn’t catch a single cold all winter: this toothpaste boosts your defences.”",
       "“The new mayor took office in March, and unemployment fell in April: it’s thanks to him.”"],
     parade: "Ask what would have happened without A. Only a comparison with a control group allows you to conclude there is an effect.",
-    source: "A Latin formula from scholastic logic.",
+    source: "Aristotle, Rhetoric (Book II, chapter 24): “taking what is not the cause for the cause”, because one thing happened at the same time as, or after, another. His example: Demades blamed all the evils on Demosthenes’ policy, because the war followed it.",
     celebre: "In 1998, Andrew Wakefield published in The Lancet a study of 12 children suggesting a link between the MMR vaccine and autism, relying notably on symptoms appearing after vaccination. But the first signs of autism often appear at the age when this vaccine is given. The paper was retracted in 2010, and large studies have found no link.",
     distinction: "Post hoc relies on succession in time (A then B); mistaking correlation for causation, on joint variation (A and B together)."
   },
@@ -1161,7 +1161,7 @@
     casSup: ["A fortune-teller publishes at year end the list of predictions that came true, without mentioning the dozens of others that failed.",
       "An investor picks out after the fact, from years of share prices, the few patterns that preceded a rise, and sees an infallible method."],
     parade: "State the hypothesis before examining the data. Ask how many comparisons were made to find this result.",
-    source: "A term used in epidemiology about cancer clusters, which often appear by chance in certain areas.",
+    source: "Public health services know the difficulty with cancer clusters: cases are noticed first, then the cluster’s boundary is drawn around them (Connecticut Department of Public Health, technical brief “Cancer Clusters”).",
     distinction: "The Texas sharpshooter fallacy turns a pattern spotted after the fact into an argument; apophenia is the spontaneous tendency to perceive patterns."
   },
   "sophismes:cause-unique": {
@@ -1343,7 +1343,7 @@
     casSup: ["A film poster quotes a newspaper review: “A spectacle… unforgettable”. The full sentence was: “A spectacle of unforgettable boredom.”",
       "An activist circulates a doctor’s sentence “This vaccine has side effects”, without the rest: “… rare and mild, like all vaccines.”"],
     parade: "Go back to the full source and read what comes before and after. Ask whether the author would endorse the proposed interpretation.",
-    source: "The expression “quote mining” spread in debates over evolution, where quotations from biologists were taken out of context.",
+    source: "The Talk.Origins Archive’s “Quote Mine Project” documents biologists’ words twisted in debates about evolution: short passages stripped of their context, to the point of making them say the opposite of what their authors meant.",
     celebre: "In On the Origin of Species (1859), Darwin writes that supposing the eye could have formed by natural selection “seems, I freely confess, absurd in the highest possible degree”. The sentence is often quoted alone, whereas Darwin immediately explains why this difficulty is only apparent, describing the intermediate stages observed in nature.",
     distinction: "Cherry-picking selects data from among others; quoting out of context cuts up a statement to change its meaning."
   },
