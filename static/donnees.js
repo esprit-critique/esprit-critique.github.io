@@ -1057,7 +1057,7 @@ const SOPHISMES = [
     casSup: ["Une médecin conseille à un patient d'arrêter de fumer ; il rétorque : « Vous fumez bien, vous ! » et ignore le conseil.",
       "Accusé de retards répétés, un employé répond à son chef : « Vous êtes arrivé en retard lundi », et considère la discussion close."],
     parade: "Reconnaître éventuellement l'incohérence, puis la séparer de la question : « Peut-être, mais cela ne dit rien sur la question de savoir si c'est vrai. »",
-    source: "Variante de l'attaque personnelle, décrite dans les traités de logique classiques.",
+    source: "Douglas Walton, « Ad Hominem Arguments » (1998) : le tu quoque (« toi aussi ») y est l'un des types d'attaque personnelle, qui reproche à l'adversaire d'agir à l'encontre de ce qu'il soutient.",
     distinction: ["sophismes:ad-hominem", "L'attaque personnelle vise les défauts de la personne en général ; le « toi aussi », la contradiction entre ses paroles et ses actes."],
     lies: ["sophismes:ad-hominem", "sophismes:fausse-equivalence"]
   },
@@ -1117,7 +1117,7 @@ const SOPHISMES = [
     casSup: ["« Cette vidéo sur un remède miracle a été vue dix millions de fois : elle ne peut pas raconter n'importe quoi. »",
       "« Cette application est la plus téléchargée du moment : elle protège forcément bien vos données. »"],
     parade: "Demander quelles preuves soutiennent l'affirmation, indépendamment du nombre de personnes qui y adhèrent.",
-    source: "Décrit dans la tradition logique classique.",
+    source: "Douglas Walton, « Appeal to Popular Opinion » (1999) : l'appel à l'opinion populaire, classé comme sophisme dans la plupart des manuels de logique, n'est pas toujours fallacieux selon l'usage qu'on en fait.",
     distinction: ["biais:conformisme", "Le conformisme est un comportement : on s'aligne sur le groupe. L'appel à la popularité est un argument : on présente l'adhésion du plus grand nombre comme une preuve."],
     lies: ["biais:conformisme", "biais:verite-illusoire"]
   },
@@ -1234,7 +1234,7 @@ const SOPHISMES = [
     casSup: ["« Si tu continues à défendre cette idée en classe, ta note de participation va s'en ressentir. »",
       "Un propriétaire rappelle à son locataire qui conteste une charge : « Le bail se renouvelle l'an prochain, réfléchissez bien. »"],
     parade: "Séparer la question de la vérité de celle des conséquences personnelles : « La menace ne change rien au fond. Quelles sont les raisons ? »",
-    source: "Décrit dans la tradition logique ; le latin « baculum » signifie « bâton ».",
+    source: "Douglas Walton, « Scare Tactics: Arguments that Appeal to Fear and Threats » (2000), qui distingue la menace (ad baculum) de l'appel à la peur. Le latin « baculum » signifie « bâton ».",
     distinction: ["sophismes:emotion", "L'appel à l'émotion suscite un sentiment pour emporter l'adhésion ; l'appel à la force menace de conséquences celui qui n'adhère pas."],
     lies: ["sophismes:emotion", "sophismes:consequences"]
   },
@@ -1452,7 +1452,7 @@ const SOPHISMES = [
     casSup: ["« J'ai changé de dentifrice en janvier, et je n'ai pas eu un seul rhume de l'hiver : ce dentifrice renforce les défenses. »",
       "« Le nouveau maire est arrivé en mars, et le chômage a baissé en avril : c'est grâce à lui. »"],
     parade: "Se demander ce qui se serait passé sans A. Seule une comparaison avec un groupe témoin permet de conclure à un effet.",
-    source: "Formule latine de la logique scolastique.",
+    source: "Aristote, Rhétorique (livre II, chapitre 24) : « prendre pour cause ce qui n'est pas la cause », parce qu'une chose s'est produite en même temps ou après une autre. Son exemple : Démade accusait la politique de Démosthène de tous les maux, parce que la guerre l'avait suivie.",
     celebre: "En 1998, Andrew Wakefield publie dans The Lancet une étude sur 12 enfants qui suggère un lien entre le vaccin ROR et l'autisme, en s'appuyant notamment sur l'apparition des symptômes après la vaccination. Or les premiers signes de l'autisme apparaissent souvent à l'âge où ce vaccin est administré. L'article est retiré en 2010, et de vastes études n'ont trouvé aucun lien.",
     distinction: ["sophismes:correlation", "Le post hoc s'appuie sur une succession dans le temps (A puis B) ; la corrélation prise pour causalité, sur une variation conjointe (A et B ensemble)."],
     lies: ["sophismes:correlation", "biais:regression-moyenne", "sophismes:cause-unique"]
@@ -1512,7 +1512,7 @@ const SOPHISMES = [
     casSup: ["Un voyant publie en fin d'année la liste des prédictions qui se sont réalisées, sans mentionner les dizaines d'autres qui ont échoué.",
       "Un investisseur sélectionne après coup, dans des années de cours de bourse, les quelques motifs qui ont précédé une hausse, et y voit une méthode infaillible."],
     parade: "Formuler l'hypothèse avant d'examiner les données. Se demander combien de comparaisons ont été faites pour trouver ce résultat.",
-    source: "Terme utilisé en épidémiologie à propos des agrégats de cancers, qui apparaissent souvent par hasard dans certaines zones.",
+    source: "La difficulté est connue des services de santé publique face aux agrégats de cancers : on remarque d'abord les cas, puis on trace autour d'eux la limite de l'agrégat (Connecticut Department of Public Health, note technique « Cancer Clusters »).",
     distinction: ["biais:apophenie", "Le sophisme du tireur d'élite fait d'un motif repéré après coup un argument ; l'apophénie désigne la tendance spontanée à percevoir des motifs."],
     lies: ["biais:apophenie", "sophismes:cherry-picking"]
   },
@@ -1748,7 +1748,7 @@ const SOPHISMES = [
     casSup: ["Une affiche de film cite la critique d'un journal : « Un spectacle… inoubliable ». La phrase complète était : « Un spectacle d'un ennui inoubliable. »",
       "Un militant diffuse la phrase d'un médecin « Ce vaccin a des effets secondaires », sans la suite : « … rares et bénins, comme tous les vaccins. »"],
     parade: "Remonter à la source complète et lire ce qui précède et ce qui suit. Se demander si l'auteur souscrirait à l'interprétation proposée.",
-    source: "L'expression anglaise « quote mining » s'est diffusée dans les débats sur l'évolution, où des citations de biologistes étaient détournées.",
+    source: "Le « Quote Mine Project » de l'archive TalkOrigins recense des citations de biologistes détournées dans les débats sur l'évolution : de courts passages dont le contexte est omis, au point de leur faire dire l'inverse de ce que voulaient leurs auteurs.",
     celebre: "Dans « L'Origine des espèces » (1859), Darwin écrit que supposer que l'œil ait pu se former par sélection naturelle « semble, je l'avoue franchement, absurde au plus haut degré ». La phrase est souvent citée seule, alors que Darwin explique aussitôt pourquoi cette difficulté n'est qu'apparente, en décrivant les étapes intermédiaires observées dans la nature.",
     distinction: ["sophismes:cherry-picking", "La cueillette de cerises sélectionne des données parmi d'autres ; la citation hors contexte découpe un propos pour en changer le sens."],
     lies: ["sophismes:cherry-picking", "sophismes:homme-de-paille"]
