@@ -82,6 +82,8 @@ vérifiées sur la publication primaire (résumés PubMed, texte intégral sur P
 `penombre` (Vreeman et Carroll, BMJ 2007), `cerveau-energie` (Raichle et Gusnard 2002), `oiseaux` (Brusatte et al. 2015) ;
 puis `sang-bleu` (Kienle et al., Applied Optics 1996, résumé) et `chimpanze` (Chimpanzee Sequencing and Analysis
 Consortium, Nature 2005, résumé) ; puis `saisons` et `perihelie` (NASA Space Place) et `son-eau` (NOAA), chiffres non
-vérifiés retirés des explications.
+vérifiés retirés des explications ; puis `face-cachee` (NASA, Top Moon Questions) et `neutrons` (NASA, Imagine the
+Universe : affirmation reformulée sur le morceau de sucre, environ un milliard de tonnes, au lieu d'une cuillère à café
+et de « plus de 5 milliards de tonnes », non vérifiés).
 
-Restent sourcées sur Wikipédia (53), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `face-cachee`, `diamants`, `verre`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `alaska`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `abeilles`, `robot`, `metre`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `atlantique`, `chimborazo`, `galilee`, `nintendo`, `pise`, `bresil`, `afrique`, `neutrons`, `nil`, `big-ben`, `pole-sud`, `annee`, `eiffel-hauteur`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
+Restent sourcées sur Wikipédia (51), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `diamants`, `verre`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `alaska`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `abeilles`, `robot`, `metre`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `atlantique`, `chimborazo`, `galilee`, `nintendo`, `pise`, `bresil`, `afrique`, `nil`, `big-ben`, `pole-sud`, `annee`, `eiffel-hauteur`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
