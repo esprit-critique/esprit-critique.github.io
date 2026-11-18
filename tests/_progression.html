@@ -106,6 +106,10 @@ f.onload = async () => {
     [e, p] = gain(e, "galton", 15, 4); const g1 = p;
     [e, p] = gain(e, "galton", 15, 4);
     ok("plafond : Planche de Galton, 20 points par jour (20 puis 0)", g1 === 20 && p === 0, g1 + " / " + p);
+    const quiz = [];
+    for (const total of [45, 50, 30]) { [e, p] = gain(e, "quiz", total, 6, "serie"); quiz.push(p); }
+    [e, p] = gain(e, "quiz", 40, 7, "serie"); quiz.push(p);
+    ok("quiz : le total de la série est crédité, au plus 100 par jour (45, 50, 5), de nouveau le lendemain (40)", quiz.join() === "45,50,5,40", quiz.join());
     [e, p] = gain(e, "fiche-lue", 0, 5, "biais:ancrage"); const l1 = p;
     [e, p] = gain(e, "fiche-lue", 0, 9, "biais:ancrage");
     ok("plafond : une fiche lue rapporte une seule fois", l1 === 2 && p === 0);

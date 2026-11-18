@@ -17,6 +17,15 @@ namespace_id = "1001"
   limit = 10
   period = 60
 
+# Écritures d'un même coffre (clé : son identifiant) : l'application en fait au plus une par minute et par appareil
+[[ratelimits]]
+name = "LIMITE_ECRITURES"
+namespace_id = "1002"
+
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
 # Purge des coffres inactifs depuis 24 mois, chaque jour à 3 h 17 (UTC)
 [triggers]
 crons = ["17 3 * * *"]
@@ -24,3 +33,6 @@ crons = ["17 3 * * *"]
 [vars]
 ORIGINES = "https://esprit-critique.github.io"
 MAX_COFFRES = "100000"
+# Taille de base au-delà de laquelle une écriture qui la ferait grossir est refusée (507) : sous les 500 Mo de l'offre
+# gratuite de D1 ; à relever avec l'offre payante (10 Go)
+MAX_OCTETS = "450000000"
