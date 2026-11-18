@@ -497,8 +497,10 @@ const JEUX = [
       deroulerNiveaux(zone, {
         id: "chronologie", n: 10, libelle: "Paire", relancer: () => JEUX.find(j => j.id === "chronologie").lancer(zone),
         estJuste: justeOuPresque,
-        // Niveaux 3 à 5 : placer quatre, cinq puis six événements dans l'ordre
-        tirer: (niveau, i) => (niveau >= 3 && tirerClassementChronologie(TAILLE_CLASSEMENT[niveau])) || tirerPaireChronologieNiveau(niveau, i, exclus)
+        // Niveaux 3 à 5 : placer quatre, cinq puis six événements dans l'ordre, rapprochés dans le temps ; une question sur
+        // trois reste une paire au repère plus net, pour que la partie ne se joue pas seulement sur des dates voisines
+        tirer: (niveau, i) => (niveau >= 3 && i % 3 === 1 && tirerPaireOrdinaireChronologie(exclus))
+          || (niveau >= 3 && tirerClassementChronologie(TAILLE_CLASSEMENT[niveau])) || tirerPaireChronologieNiveau(niveau, i, exclus)
       }, (paire, zone, fini) => {
         if (paire.classement) {
           zone.appendChild(el("p", "cas", "Classez ces événements du plus ancien au plus récent."));
@@ -1195,6 +1197,23 @@ function tirerPairesChronologie(n, options = {}) {
   return melanger(paires);
 }
 
+// Paire « ordinaire » (niveaux 3 à 5) : un écart d'une à trois fois l'écart maximal des paires ci-dessus (12 ans, ou le
+// quart de l'ancienneté) ; assez net pour qu'une bonne culture générale tranche, sans être évident
+function tirerPaireOrdinaireChronologie(exclus) {
+  for (let essai = 0; essai < 5000; essai++) {
+    const a = EVENEMENTS[Math.floor(Math.random() * EVENEMENTS.length)];
+    const b = EVENEMENTS[Math.floor(Math.random() * EVENEMENTS.length)];
+    if (a === b || (a.vers && b.vers) || (a.sujet && a.sujet === b.sujet)) continue;
+    const cle = [a.id, b.id].sort().join("|");
+    if (exclus.has(cle)) continue;
+    const limite = Math.max(12, 0.25 * (2026 - Math.min(a.annee, b.annee)));
+    const ecart = Math.abs(momentEvenement(a) - momentEvenement(b));
+    if (ecart <= limite || ecart > 3 * limite) continue;
+    exclus.add(cle);
+    return { evenements: melanger([a, b]) };
+  }
+  return null;
+}
 
 // Paires de villes : d'abord des paires célèbres, puis des paires au hasard assez proches pour être difficiles
 // options : { niveau, sansCelebres, exclus (clés des paires déjà tirées dans la partie) }
