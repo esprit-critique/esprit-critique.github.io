@@ -1136,7 +1136,7 @@ const SOPHISMES = [
     casSup: ["« Dans ma famille, on a toujours fait comme ça : pas besoin de changer de méthode pour élever les enfants. »",
       "« Le bizutage existe dans cette école depuis sa fondation : c'est une coutume, il n'y a pas lieu de l'interdire. »"],
     parade: "Demander quelles sont les raisons, en dehors de l'ancienneté, qui justifient la pratique.",
-    source: "Décrit dans la tradition logique classique.",
+    source: "Jeremy Bentham, « The Book of Fallacies » (1824), première partie, chapitre 2 : « La sagesse de nos ancêtres, ou l'argument chinois ».",
     celebre: "La saignée est pratiquée en médecine pendant plus de deux millénaires. En décembre 1799, George Washington, atteint d'une grave infection de la gorge, est saigné à quatre reprises en une douzaine d'heures. Les estimations du volume prélevé vont de 2,4 à 3,7 litres, soit 40 % ou plus de son sang. Il meurt le soir même.",
     distinction: ["sophismes:nature", "L'appel à la tradition invoque l'ancienneté d'une pratique ; l'appel à la nature, son caractère naturel."],
     lies: ["biais:statu-quo", "sophismes:nature"]
@@ -1175,7 +1175,7 @@ const SOPHISMES = [
     casSup: ["Une association présente un appareil de purification d'eau en montrant des enfants malades, sans donner aucune donnée sur l'efficacité de l'appareil.",
       "« Pensez à toutes ces familles qui vont souffrir ! » s'exclame un député, sans répondre à l'objection précise qu'on lui oppose sur le coût de sa proposition."],
     parade: "Reconnaître l'émotion, puis revenir à la question : « Je comprends, mais quelles sont les raisons de penser que c'est vrai ? »",
-    source: "Aristote distingue dans la Rhétorique le pathos (émotion), l'ethos (crédibilité de l'orateur) et le logos (raisonnement).",
+    source: "Aristote distingue dans la Rhétorique (livre I, chapitre 2) le pathos (émotion), l'ethos (crédibilité de l'orateur) et le logos (raisonnement).",
     celebre: "« Daisy » (1964), spot de campagne de Lyndon Johnson : une fillette effeuille une marguerite, puis un compte à rebours s'achève sur une explosion nucléaire. Le spot ne contient aucun argument sur le programme de son adversaire ; il suggère seulement le danger.",
     distinction: ["sophismes:consequences", "L'appel à l'émotion suscite un sentiment à la place des raisons ; l'appel aux conséquences juge une affirmation vraie ou fausse selon que ses effets seraient souhaitables."],
     lies: ["sophismes:consequences", "sophismes:ad-baculum"]
@@ -1195,7 +1195,7 @@ const SOPHISMES = [
     casSup: ["« Si l'univers n'avait pas de but, la vie n'aurait aucun sens ; l'univers a donc forcément un but. »",
       "« Ce traitement doit fonctionner : sinon, des milliers de patients auraient souffert pour rien. »"],
     parade: "Séparer deux questions : « Est-ce vrai ? » et « Que devons-nous faire si c'est vrai ? ». Répondre à la seconde ne règle pas la première.",
-    source: "Décrit dans la tradition logique classique.",
+    source: "David Hume, Traité de la nature humaine (1739, livre II, partie 3, section 2) : réfuter une hypothèse en invoquant ses conséquences dangereuses pour la religion et la morale est, selon lui, la méthode de raisonnement la plus commune et la plus blâmable.",
     distinction: ["sophismes:pente-glissante", "La pente glissante prédit une chaîne de conséquences pour rejeter une mesure ; l'appel aux conséquences rejette une affirmation parce que ses conséquences seraient désagréables, sans en discuter les preuves."],
     lies: ["sophismes:emotion", "sophismes:pente-glissante", "sophismes:ad-baculum"]
   },
@@ -1294,7 +1294,7 @@ const SOPHISMES = [
     casSup: ["Un journaliste demande à un maire : « Pourquoi avez-vous laissé les loyers exploser dans votre ville ? », alors qu'aucun chiffre ne montre de hausse inhabituelle.",
       "Un sondage demande : « Quelle mesure devrait-on prendre en priorité contre l'explosion de la délinquance dans votre ville ? », alors que la délinquance y est stable."],
     parade: "Rejeter la présupposition avant de répondre : « Votre question suppose que…, ce qui n'est pas établi. »",
-    source: "Décrit par Aristote dans les Réfutations sophistiques.",
+    source: "Décrit par Aristote dans les Réfutations sophistiques (chapitres 4 et 5) : faire de plusieurs questions une seule, à laquelle on attend une seule réponse.",
     distinction: ["sophismes:petition-principe", "La question piège glisse une présupposition dans une question ; la pétition de principe glisse la conclusion dans les prémisses d'un argument."],
     lies: ["sophismes:petition-principe"]
   },
@@ -1411,7 +1411,7 @@ const SOPHISMES = [
     casSup: ["« Oublier de rendre un livre à la bibliothèque ou voler dans une librairie, c'est la même chose : dans les deux cas, on garde un livre qui n'est pas à soi. »",
       "« Ce journal a déjà fait une erreur de date, cet autre a inventé une interview entière : aucun des deux n'est fiable, ils se valent. »"],
     parade: "Comparer l'ampleur et les preuves, pas seulement la catégorie : « Les deux sont-ils comparables en gravité, en fréquence, en solidité ? »",
-    source: "Étudié dans le traitement médiatique des sciences sous le nom de « false balance ».",
+    source: "Étudié dans le traitement médiatique des sciences sous le nom de « false balance ». Maxwell et Jules Boykoff, « Balance as bias » (Global Environmental Change, 2004) : dans la grande presse américaine de 1988 à 2002, la recherche de l'équilibre a éloigné le discours public du consensus scientifique sur le réchauffement.",
     celebre: "En 2011, un rapport commandé par le BBC Trust au généticien Steve Jones reproche à la BBC d'avoir accordé une attention excessive à des opinions marginales dans sa couverture scientifique, notamment sur le climat, au nom d'une application trop rigide de l'impartialité.",
     distinction: ["sophismes:juste-milieu", "Le juste milieu conclut que la vérité se trouve entre deux positions ; la fausse équivalence affirme que deux positions ou deux faits se valent."],
     lies: ["sophismes:juste-milieu", "sophismes:fausse-analogie", "sophismes:tu-quoque"]
@@ -1492,7 +1492,7 @@ const SOPHISMES = [
     casSup: ["« Si on laisse les enfants jouer aux jeux vidéo une heure par jour, ils finiront par arrêter l'école et ne plus sortir de leur chambre. »",
       "« Si on autorise les terrasses à rester ouvertes jusqu'à minuit, ce sera bientôt le bruit toute la nuit, puis les bagarres, et le quartier deviendra invivable. »"],
     parade: "Demander de justifier chaque lien de la chaîne : « Pourquoi B découlerait-il nécessairement de A ? »",
-    source: "Décrit dans la tradition logique classique. Tous les arguments de ce type ne sont pas fallacieux : ils sont légitimes quand chaque étape est étayée.",
+    source: "Douglas Walton, « Slippery Slope Arguments » (1992) : tous les arguments de ce type ne sont pas fallacieux ; ils sont légitimes quand chaque étape est étayée.",
     celebre: "La « théorie des dominos », énoncée par le président Eisenhower le 7 avril 1954 : si l'Indochine passait sous contrôle communiste, toute l'Asie du Sud-Est suivrait. Elle a servi à justifier l'engagement américain au Vietnam.",
     distinction: ["sophismes:consequences", "La pente glissante annonce une chaîne d'étapes non démontrées ; l'appel aux conséquences rejette une affirmation à cause de ses conséquences, sans chaîne intermédiaire."],
     lies: ["biais:conjonction", "sophismes:consequences", "sophismes:continuum"]
@@ -1552,7 +1552,7 @@ const SOPHISMES = [
     casSup: ["Après avoir été mal servi deux fois dans des restaurants italiens, Fabrice déclare que « la cuisine italienne est surfaite ».",
       "Ayant croisé trois touristes impolis venant du même pays, Nadia conclut que « tous les gens de ce pays sont mal élevés »."],
     parade: "Demander combien de cas ont été observés, comment ils ont été choisis, et ce que disent des données plus larges.",
-    source: "Décrit par Aristote dans les Réfutations sophistiques.",
+    source: "John Stuart Mill, Système de logique (1843), livre V, chapitre 5, « Sophismes de généralisation » : à la suite de Bacon, il y critique l'induction par simple énumération, qui s'appuie sur moins de cas qu'il n'en faudrait.",
     distinction: ["sophismes:cherry-picking", "La généralisation hâtive conclut à partir de trop peu de cas ; la cueillette de cerises, à partir de cas choisis parmi d'autres qui contredisent la conclusion."],
     lies: ["biais:survivant", "sophismes:cherry-picking", "biais:taille-echantillon"]
   },
@@ -1590,7 +1590,7 @@ const SOPHISMES = [
     casSup: ["« Chaque pièce de cette voiture est très légère, donc la voiture est très légère. »",
       "« Ce pays est riche : chacun de ses habitants doit donc être riche. »"],
     parade: "Se demander si la propriété dépend de l'organisation de l'ensemble, ou seulement de chaque élément pris séparément.",
-    source: "Décrit par Aristote dans les Réfutations sophistiques. En économie, le « paradoxe de l'épargne », popularisé par Keynes, en est un exemple classique.",
+    source: "Décrit par Aristote dans les Réfutations sophistiques (chapitre 4, parmi les sophismes liés au langage). En économie, le « paradoxe de l'épargne », popularisé par Keynes, en est un exemple classique.",
     distinction: ["sophismes:equivoque", "La composition transfère une propriété des parties au tout ; l'équivoque joue sur deux sens d'un même mot."],
     lies: ["sophismes:equivoque", "sophismes:fausse-analogie"]
   },
@@ -1609,7 +1609,7 @@ const SOPHISMES = [
     casSup: ["Un site présente la seule étude favorable à son produit, en omettant les neuf autres qui ne montrent aucun effet.",
       "Pour démontrer que l'hiver a été doux, un chroniqueur ne cite que les trois journées les plus chaudes de la saison."],
     parade: "Demander l'ensemble des données, la période complète, et la façon dont la sélection a été faite. Préférer les méta-analyses aux études isolées.",
-    source: "Le biais de publication, par lequel les résultats positifs sont plus souvent publiés que les résultats nuls, en est une forme institutionnelle.",
+    source: "Le biais de publication, par lequel les résultats positifs sont plus souvent publiés que les résultats nuls, en est une forme institutionnelle : Robert Rosenthal l'a nommé « problème du tiroir » (« The file drawer problem », Psychological Bulletin, 1979).",
     celebre: "Des opposants à la thèse du réchauffement climatique ont longtemps affirmé que le climat ne se réchauffait plus « depuis 1998 ». Cette année avait été exceptionnellement chaude à cause d'un fort épisode El Niño : la prendre comme point de départ masquait la tendance de long terme.",
     distinction: ["sophismes:generalisation-hative", "La cueillette de cerises écarte les données défavorables ; la généralisation hâtive conclut à partir de trop peu de données."],
     lies: ["sophismes:generalisation-hative", "biais:survivant", "biais:confirmation", "sophismes:hors-contexte"]
@@ -1631,7 +1631,7 @@ const SOPHISMES = [
     casSup: ["« S'il a gagné au loto, il s'achète une belle voiture. Il s'est acheté une belle voiture. Donc il a gagné au loto. »",
       "« Si le chat a renversé le vase, il y a de l'eau par terre. Il y a de l'eau par terre. Donc c'est le chat. »"],
     parade: "Chercher d'autres causes possibles de Q. Vérifier que l'on n'utilise pas la réciproque de l'implication.",
-    source: "Sophisme formel connu depuis la logique antique ; Aristote l'évoque dans les Réfutations sophistiques.",
+    source: "Sophisme formel connu depuis la logique antique. Aristote l'évoque dans les Réfutations sophistiques (chapitre 5) : comme le sol est mouillé après la pluie, on suppose qu'il a plu quand le sol est mouillé.",
     distinction: ["sophismes:negation-antecedent", "Les deux inversent une implication « si P alors Q » : l'affirmation du conséquent conclut de Q à P, la négation de l'antécédent conclut de non P à non Q."],
     lies: ["sophismes:negation-antecedent", "biais:croyance-logique"]
   },
@@ -1669,7 +1669,7 @@ const SOPHISMES = [
     casSup: ["« Je suis quelqu'un d'honnête, et vous pouvez me croire, puisque je ne mens jamais. »",
       "« Ce traitement fonctionne, car ceux qui le suivent vont mieux ; et ceux qui vont mieux le doivent forcément à ce traitement. »"],
     parade: "Demander une justification indépendante de la conclusion : « Comment le sait-on sans supposer d'abord que c'est vrai ? »",
-    source: "Décrit par Aristote dans les Premiers Analytiques. En français, « pétition de principe » signifie « demander d'accorder le principe ».",
+    source: "Décrit par Aristote dans les Premiers Analytiques (livre II, chapitre 16). En français, « pétition de principe » signifie « demander d'accorder le principe ».",
     distinction: ["sophismes:question-piege", "La pétition de principe suppose la conclusion dans les prémisses d'un argument ; la question piège glisse une présupposition dans une question."],
     lies: ["sophismes:question-piege"]
   },
@@ -1729,7 +1729,7 @@ const SOPHISMES = [
     casSup: ["« Rien n'est meilleur que le bonheur. Un sandwich vaut mieux que rien. Donc un sandwich vaut mieux que le bonheur. »",
       "« Il faut respecter la loi. La loi du plus fort est une loi. Donc il faut respecter la loi du plus fort. »"],
     parade: "Demander la définition précise du terme et vérifier qu'elle reste la même dans tout le raisonnement.",
-    source: "Décrit par Aristote dans les Réfutations sophistiques (sophismes « liés au langage »).",
+    source: "Décrit par Aristote dans les Réfutations sophistiques (chapitre 4, sophismes « liés au langage »).",
     distinction: ["sophismes:definition-persuasive", "L'équivoque fait glisser un mot d'un sens à l'autre au cours d'un raisonnement ; la définition persuasive impose d'emblée un nouveau sens à un mot chargé de valeur."],
     lies: ["sophismes:composition", "sophismes:definition-persuasive", "sophismes:continuum"]
   },
@@ -1768,7 +1768,7 @@ const SOPHISMES = [
     casSup: ["« Un cheveu de moins ne rend pas chauve. Donc on peut perdre ses cheveux un par un sans jamais devenir chauve. »",
       "« Une minute de retard ne compte pas, deux non plus, ni trois : on ne peut donc reprocher à personne d'arriver une heure en retard. »"],
     parade: "Admettre qu'une distinction floue à la frontière reste nette aux extrémités. Distinguer « où placer exactement le seuil ? » de « faut-il un seuil ? ».",
-    source: "Le paradoxe du tas, ou sorite, est attribué à Eubulide de Milet, philosophe grec du IVe siècle avant notre ère.",
+    source: "Le paradoxe du tas, ou sorite, figure parmi les arguments que Diogène Laërce attribue à Eubulide de Milet, de l'école de Mégare (Vies et doctrines des philosophes illustres, livre II, 108).",
     distinction: ["sophismes:pente-glissante", "La pente glissante prédit des conséquences en chaîne ; le sophisme du continuum nie une différence parce qu'on y arrive par petites étapes."],
     lies: ["sophismes:pente-glissante", "sophismes:equivoque"]
   },

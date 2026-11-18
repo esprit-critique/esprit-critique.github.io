@@ -53,3 +53,17 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
 - **« Les requins existaient avant les arbres »** (vrai ou faux) : vrai selon les sources de vulgarisation (requins
   vers 450 millions d'années, premiers arbres vers 385 à 390 millions), mais l'écart dépend de ce qu'on appelle un
   requin et la page du Smithsonian n'a pas pu être lue. À vérifier sur une source de paléontologie.
+
+## Sources des sophismes restées générales (audit du 18 novembre 2026)
+
+Treize sources ont été précisées et vérifiées sur le texte (Aristote, Rhétorique I, 2, Réfutations sophistiques 4 et 5,
+Premiers Analytiques II, 16 ; Hume, Traité II, 3, 2 ; Bentham, Book of Fallacies I, 2 ; Mill, Système de logique V, 5 ;
+Diogène Laërce II, 108 ; Boykoff et Boykoff 2004 ; Rosenthal 1979 ; Walton 1992). La fiche « Généralisation hâtive »
+attribuait la notion aux Réfutations sophistiques : Aristote n'y décrit pas la généralisation à partir de quelques cas
+(le plus proche est le « secundum quid », emploi absolu ou relatif d'un terme) ; source remplacée par Mill.
+
+Restent générales, sans erreur relevée, à préciser quand une référence primaire est trouvée : `tu-quoque`,
+`popularite`, `ad-baculum`, `poteaux`, `faux-dilemme`, `juste-milieu`, `post-hoc`, `cause-unique`,
+`negation-antecedent`, `sophisme-sophisme`, `hors-contexte` (origine de « quote mining » non vérifiée) et
+`tireur-elite` (emploi du terme pour les agrégats de cancers non vérifié : l'article de Gawande, « The Cancer-Cluster
+Myth », New Yorker, 1999, n'a pas pu être lu en entier).
