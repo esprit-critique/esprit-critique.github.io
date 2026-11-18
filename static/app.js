@@ -800,7 +800,9 @@ function carteDefiDuJour() {
         annoncer(texte);
       }
     });
-    carte.appendChild(partager);
+    // Défier quelqu'un : un défi libre (questions fixées par son numéro), à jouer puis à envoyer avec son score
+    const defier = lienVers("#defi/" + grainePourDefi(), "Défier un ami", "bouton secondaire");
+    carte.append(partager, defier);
   };
 
   if (memo && memo.jour === jour) { resultat(memo.score); return carte; }
@@ -1840,7 +1842,7 @@ function afficherPage() {
   } else if (!versCarte) partieMiseDeCote = null;
 
   if (vue === "accueil" && defiLibre !== null) {
-    afficherDefiLibre(defiLibre);
+    afficherDefiLibre(defiLibre, adresse.split("/")[2]);
     titre = T("Défi libre");
   } else if (vue === "accueil") {
     afficherAccueil();

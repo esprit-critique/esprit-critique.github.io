@@ -303,6 +303,13 @@ f.onload = async () => {
     ok("défi libre : #defi/123 ouvre la page du défi libre n° 123", vue().querySelector(".page-titre").textContent === "Défi libre" && /123/.test(vue().textContent));
     await aller("defi/pas-un-nombre");
     ok("défi libre : une graine invalide est remplacée par une graine valide", /^#defi\/\d+$/.test(w.location.hash), w.location.hash);
+    // Défier un ami : le score à battre (entier de 0 à 10) est lu dans l'adresse ; tout autre texte en est retiré
+    await aller("defi/123/7");
+    ok("défier un ami : #defi/123/7 annonce le score à battre", w.location.hash === "#defi/123/7" && /score à battre est de 7 \/ 10/.test(vue().textContent));
+    const retenues = [];
+    for (const piege of ["defi/123/11", "defi/123/07", "defi/123/abc", "defi/123/%3Cb%3E", "defi/12x/5"]) { await aller(piege); retenues.push(w.location.hash); }
+    ok("défier un ami : score hors de 0 à 10, texte ou graine invalide retirés de l'adresse",
+      retenues.slice(0, 4).every(h => h === "#defi/123") && /^#defi\/\d+$/.test(retenues[4]) && !/score à battre/.test(vue().textContent), retenues.join(" "));
     // Passer : les identifiants inscrits dans « vus » par la question passée en sont retirés (la suivante y inscrit les
     // siens). Chaque passage rétablit « vus » tel qu'avant la première question : la référence reste vus0. Certains jeux
     // n'inscrivent rien (données tirées au hasard) : on passe jusqu'à dix questions, et l'une au moins doit avoir inscrit.

@@ -24,11 +24,17 @@ EN_AJOUTER([
   ["Un autre atelier au hasard", "Another random workshop"],
   ["← Accueil", "← Home"],
   ["Défi n° {0} : dix questions, les mêmes pour tous ceux qui ouvrent cette adresse. Le score n'est pas enregistré, mais la partie compte pour vos points de lucidité et votre série de jours.", "Challenge no. {0}: ten questions, the same for everyone who opens this address. The score is not saved, but the game counts towards your clarity points and your streak."],
+  ["On vous défie : le score à battre est de {0} / 10.", "You’ve been challenged: the score to beat is {0} / 10."],
   ["Copié : {0}", "Copied: {0}"],
   ["Un autre défi", "Another challenge"],
   ["Partager ce défi", "Share this challenge"],
+  ["Défier un ami", "Challenge a friend"],
   ["Un défi Esprit critique, dix questions : {0}", "An Esprit critique challenge, ten questions: {0}"],
-  ["Défi Esprit critique n° {0} : {1} / 10. À vous : {2}", "Esprit critique challenge no. {0}: {1} / 10. Your turn: {2}"],
+  ["Défi Esprit critique n° {0} : {1} / 10. Ferez-vous mieux ? {2}", "Esprit critique challenge no. {0}: {1} / 10. Can you do better? {2}"],
   ["Défi libre n° {0}", "Free challenge no. {0}"],
-  ["Monde en chiffres, vrai ou faux, citations et chronologie, aux niveaux 2 et 3.", "World in numbers, true or false, quotations and chronology, at levels 2 and 3."]
+  ["Défi relevé : vous faites mieux que le score à battre ({0} / 10).", "Challenge met: you did better than the score to beat ({0} / 10)."],
+  ["Égalité avec le score à battre ({0} / 10).", "A tie with the score to beat ({0} / 10)."],
+  ["Le score à battre tient bon : {0} / 10.", "The score to beat holds: {0} / 10."],
+  ["Monde en chiffres, vrai ou faux, citations et chronologie, aux niveaux 2 et 3.", "World in numbers, true or false, quotations and chronology, at levels 2 and 3."],
+  ["Défi Esprit critique n° {0} : {1} / 10. À vous : {2}", "Esprit critique challenge no. {0}: {1} / 10. Your turn: {2}"]
 ]);
