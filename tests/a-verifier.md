@@ -53,13 +53,3 @@ page, en-tête de `sw.js`, introduction du portrait, textes du Grand test, `test
 - **« Les requins existaient avant les arbres »** (vrai ou faux) : vrai selon les sources de vulgarisation (requins
   vers 450 millions d'années, premiers arbres vers 385 à 390 millions), mais l'écart dépend de ce qu'on appelle un
   requin et la page du Smithsonian n'a pas pu être lue. À vérifier sur une source de paléontologie.
-
-## Questions des jeux : sources encore à nommer (relecture du rédacteur, lot 2 ; mis à jour le 18 novembre 2026)
-
-Vérifiés et sourcés le 18 novembre : `especes` (rhinocéros noir, UICN), `scolarite` (IHME par Gapminder), `napoleon`
-(1,69 m, Fondation Napoléon), `densite-monde` (texte exact en l'état), tour Eiffel (330 m depuis le 15 mars 2022),
-mont Blanc (mesures de 2021 et 2023), or (19,3 g/cm³).
-
-Reste à nommer la source vérifiée (chiffres classiques, non revérifiés ici) : GRANDEURS `oiseaux` (« plus de 11 000
-espèces »), `insectes`, `atmosphere`, `andromede`, `monaco-surface`, `pop-1800` ; ETALONNAGE `mont-blanc-1786`,
-`elephant`, `hyperion` (116,22 m en 2026 d'après Wikipedia (en), « Hyperion (tree) »).
