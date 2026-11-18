@@ -65,6 +65,18 @@ function barresComparees(conteneur, elements, reference) {
   if (reference) conteneur.appendChild(el("p", "barre-source", T("Trait vertical : {0}", T(reference.texte))));
 }
 
+// Largeur d'un texte SVG dans sa police réelle (unités du viewBox des schémas), mesurée sur un SVG temporaire retiré
+// aussitôt, avant tout affichage
+function largeurTexteSvg(contenu, classe) {
+  const s = svg("svg", { viewBox: "0 0 320 40", class: "carres-surfaces", "aria-hidden": "true" });
+  const t = texteSvg(0, 20, contenu, { class: classe });
+  s.appendChild(t);
+  document.body.appendChild(s);
+  const largeur = t.getComputedTextLength();
+  s.remove();
+  return largeur;
+}
+
 // Surfaces comparées par des carrés d'aire proportionnelle (côté ∝ √surface), posés côte à côte sur une même ligne :
 // une surface se compare mieux par une aire que par une longueur. Deux pays : nom et valeur sous chaque carré ; un
 // classement : un numéro, celui de la barre correspondante juste au-dessus (six noms ne tiendraient pas côte à côte).
@@ -73,15 +85,22 @@ function carresSurfaces(conteneur, elements, numeros) {
   // Le plus grand carré fait au plus 110 de côté, et l'ensemble tient dans 300 de large (écarts de 16)
   const k = Math.min(110 / Math.max(...cotes), (300 - 16 * (elements.length - 1)) / cotes.reduce((a, b) => a + b, 0));
   const haut = 110 * Math.min(1, k * Math.max(...cotes) / 110), bas = 10 + haut;
-  const s = svg("svg", { viewBox: "0 0 320 " + (bas + (numeros ? 20 : 34)), class: "carres-surfaces", role: "img",
-    "aria-label": T("Surfaces comparées par des carrés d'aire proportionnelle : {0}", elements.map(e => T(e.nom) + " " + T(e.texte)).join(", ")) });
   let x = 10 + (300 - (cotes.reduce((a, b) => a + b, 0) * k + 16 * (elements.length - 1))) / 2;
+  const carres = elements.map((e, i) => { const c = Math.max(1.5, cotes[i] * k), r = { x, c }; x += c + 16; return r; });
+  // Étiquettes sous les carrés, gardées dans le cadre. Deux noms peuvent ne pas tenir côte à côte (« République
+  // démocratique du Congo » mesure 211 sur 320) : la seconde descend alors d'une ligne
+  const etiquettes = carres.map(({ x, c }, i) => {
+    const largeur = numeros ? 0 : Math.max(largeurTexteSvg(T(elements[i].nom), "sch-texte sch-gras"), largeurTexteSvg(T(elements[i].texte), "sch-petit")) + 8;
+    return { cx: Math.min(Math.max(x + c / 2, largeur / 2), 320 - largeur / 2), largeur, dy: 0 };
+  });
+  if (!numeros && etiquettes.length === 2 && etiquettes[0].cx + etiquettes[0].largeur / 2 > etiquettes[1].cx - etiquettes[1].largeur / 2) etiquettes[1].dy = 30;
+  const s = svg("svg", { viewBox: "0 0 320 " + (bas + (numeros ? 20 : 34) + Math.max(...etiquettes.map(e => e.dy))), class: "carres-surfaces", role: "img",
+    "aria-label": T("Surfaces comparées par des carrés d'aire proportionnelle : {0}", elements.map(e => T(e.nom) + " " + T(e.texte)).join(", ")) });
   elements.forEach((e, i) => {
-    const c = Math.max(1.5, cotes[i] * k);
+    const { x, c } = carres[i], { cx, dy } = etiquettes[i];
     s.appendChild(svg("rect", { x: x, y: bas - c, width: c, height: c, class: "carre-surface" + (e.forte ? " fort" : "") }));
-    s.appendChild(texteSvg(x + c / 2, bas + 14, numeros ? String(i + 1) : T(e.nom), { class: "sch-texte sch-gras", "text-anchor": "middle" }));
-    if (!numeros) s.appendChild(texteSvg(x + c / 2, bas + 28, T(e.texte), { class: "sch-petit", "text-anchor": "middle" }));
-    x += c + 16;
+    s.appendChild(texteSvg(cx, bas + 14 + dy, numeros ? String(i + 1) : T(e.nom), { class: "sch-texte sch-gras", "text-anchor": "middle" }));
+    if (!numeros) s.appendChild(texteSvg(cx, bas + 28 + dy, T(e.texte), { class: "sch-petit", "text-anchor": "middle" }));
   });
   conteneur.appendChild(s);
   conteneur.appendChild(el("p", "barre-source", numeros ? T("Aire des carrés proportionnelle à la surface ; numéros dans l'ordre des barres.") : T("Aire des carrés proportionnelle à la surface.")));
