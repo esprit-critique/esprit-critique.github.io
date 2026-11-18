@@ -15,8 +15,10 @@ passe. Refonte en cours : brief dans `tests/refonte-brief.md`, plan dans `tests/
   chargé avant lui ne les appelle que dans des fonctions, jamais au chargement. `svg()` est dans `ateliers.js`.
 - Nouveau script : l'ajouter à `static/index.html`, `static/en/index.html` (chemin `../`), à `FICHIERS` dans
   `static/sw.js` en changeant le numéro de `CACHE`, et à `verifierChargement()` au début de `app.js`.
-- Pages fixes (`mentions-legales`, `confidentialite`, `cgu`, `404` et leurs versions anglaises) : générées par
-  `tests/pages/generer_pages.py`. Modifier le générateur, jamais les pages.
+- Pages fixes (`mentions-legales`, `confidentialite`, `cgu`, `404` et leurs versions anglaises), pages statiques des
+  fiches (`biais/`, `sophismes/`, `en/…`, pour les moteurs de recherche), `fiches.css` et `sitemap.xml` : générés par
+  `tests/pages/generer_pages.py`. Modifier le générateur, jamais les pages ; le relancer après toute modification de
+  `donnees.js` ou de `en/fiches.js` (l'intégration continue échoue sinon).
 
 ## Données de l'utilisateur
 
