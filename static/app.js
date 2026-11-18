@@ -802,7 +802,7 @@ function carteDefiDuJour() {
     });
     // Défier quelqu'un : un défi libre (questions fixées par son numéro), à jouer puis à envoyer avec son score
     const defier = lienVers("#defi/" + grainePourDefi(), "Défier un ami", "bouton secondaire");
-    carte.append(partager, defier);
+    carte.append(partager, defier, lienVers("#defi/perso", "Créer un défi sur mesure", "lien-texte"));
   };
 
   if (memo && memo.jour === jour) { resultat(memo.score); return carte; }
@@ -1846,8 +1846,9 @@ function afficherPage() {
   } else if (!versCarte) partieMiseDeCote = null;
 
   if (vue === "accueil" && defiLibre !== null) {
-    afficherDefiLibre(defiLibre, adresse.split("/")[2]);
-    titre = T("Défi libre");
+    // #defi/perso : défi sur mesure (tirage.js) ; sinon défi libre (#defi/<graine>)
+    if (defiLibre === "perso") { afficherDefiPerso(adresse.split("/")[2], adresse.split("/")[3]); titre = T("Défi sur mesure"); }
+    else { afficherDefiLibre(defiLibre, adresse.split("/")[2]); titre = T("Défi libre"); }
   } else if (vue === "accueil") {
     afficherAccueil();
     if (versDefi) setTimeout(() => { const c = document.querySelector(".defi-jour"); if (c) c.scrollIntoView({ block: "start" }); }, 0);
