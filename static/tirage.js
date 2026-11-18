@@ -305,7 +305,7 @@ function afficherDefiLibre(texte, scoreAmi) {
     partage.addEventListener("click", () => partager(score === undefined
       ? T("Un défi Esprit critique, dix questions : {0}", adresse)
       : T("Défi Esprit critique n° {0} : {1} / 10. Ferez-vous mieux ? {2}", graine, score, adresse + "/" + score)));
-    actions.append(autre, partage);
+    actions.append(autre, partage, lienVers("#defi/perso", "Créer un défi sur mesure", "bouton secondaire"));
     return actions;
   };
   const commencer = el("button", "bouton", "Commencer");
@@ -328,4 +328,177 @@ function afficherDefiLibre(texte, scoreAmi) {
   });
   carte.append(el("p", "surtitre", T("Défi libre n° {0}", graine)), el("h2", null, "Dix questions difficiles"),
     el("p", "source", "Monde en chiffres, vrai ou faux, citations et chronologie, aux niveaux 2 et 3."), commencer, actionsDefi());
+}
+
+// ===================== Défi sur mesure (#defi/perso, #defi/perso/<code>[/<score>]) =====================
+// On choisit des fiches (de 1 à toutes), le site fabrique un lien ; chacun répond aux mêmes situations, dans le même
+// ordre, avec les mêmes propositions. Code : <biais>.<sophismes>-<graine>, où chaque partie est la liste des fiches
+// cochées, un bit par numéro de fiche (B 1 = premier bit), en base64 « URL ». Les numéros ne sont jamais réattribués :
+// un lien reste valable si des fiches sont ajoutées. Le code ne contient ni nom ni réponse, sans être secret pour autant.
+const DEFI_PERSO_FORME = /^([A-Za-z0-9_-]{0,24})\.([A-Za-z0-9_-]{0,24})-(\d{1,9})$/;
+
+function bitsDefiPerso(nums) {
+  const octets = new Uint8Array(Math.ceil((Math.max(0, ...nums)) / 8));
+  nums.forEach(n => { octets[(n - 1) >> 3] |= 1 << ((n - 1) & 7); });
+  return btoa(String.fromCharCode(...octets)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function numsDefiPerso(texte) {
+  const octets = atob(texte.replace(/-/g, "+").replace(/_/g, "/"));
+  const nums = [];
+  for (let i = 0; i < octets.length; i++) for (let k = 0; k < 8; k++) if (octets.charCodeAt(i) & (1 << k)) nums.push(i * 8 + k + 1);
+  return nums;
+}
+function codeDefiPerso(cles, graine) {
+  const nums = type => cles.filter(c => c.startsWith(type + ":")).map(c => INDEX.get(c).fiche.num);
+  return bitsDefiPerso(nums("biais")) + "." + bitsDefiPerso(nums("sophismes")) + "-" + graine;
+}
+// Adresse venue de n'importe qui : forme stricte, puis seules les fiches qui existent ; sinon null
+function decoderDefiPerso(code) {
+  const m = DEFI_PERSO_FORME.exec(code || "");
+  if (!m) return null;
+  try {
+    const cles = [];
+    [["biais", m[1]], ["sophismes", m[2]]].forEach(([type, bits]) => numsDefiPerso(bits).forEach(n => {
+      const fiche = TYPES[type].fiches.find(f => f.num === n);
+      if (fiche) cles.push(cleFiche(type, fiche));
+    }));
+    return cles.length ? { cles, graine: Number(m[3]) } : null;
+  } catch (erreur) { return null; }
+}
+
+// Une question du défi sur mesure : la situation, quatre fiches proposées, la correction et le lien vers la fiche
+function questionDefiPerso(q, zone, fini) {
+  zone.append(el("p", "consigne", TYPES[q.type].consigneQuiz), el("p", "cas", q.cas));
+  const juste = q.options.indexOf(q.fiche);
+  const boutons = q.options.map((f, k) => {
+    const b = boutonChoix(f.nom, k);
+    b.addEventListener("click", () => {
+      boutons.forEach(x => { x.disabled = true; });
+      boutons[juste].classList.add("juste");
+      if (k !== juste) b.classList.add("faux");
+      const retour = el("div", "retour-quiz");
+      retour.append(el("p", "verdict " + (k === juste ? "juste" : "faux"), k === juste ? T("Juste.") : T("Réponse : {0}.", q.fiche.nom)),
+        paragraphe(q.fiche.definition), lienVers("#" + q.type + "/" + q.fiche.id, T("Lire la fiche : {0}", q.fiche.nom), "lien-texte"));
+      zone.appendChild(retour);
+      fini(k === juste, retour);
+    });
+    zone.appendChild(b);
+    return b;
+  });
+}
+
+function afficherDefiPerso(code, scoreAmi) {
+  const zone = $("vue-accueil");
+  zone.replaceChildren();
+  zone.classList.remove("large");
+  zone.append(lienVers("#accueil", "← Accueil", "lien retour"), el("h1", "page-titre", "Défi sur mesure"));
+  if (code === undefined || code === "") return choisirFichesDefiPerso(zone);
+  const defi = decoderDefiPerso(code);
+  const n = defi ? defi.cles.length : 0;
+  const ami = defi && /^\d{1,2}$/.test(scoreAmi || "") && Number(scoreAmi) <= n ? Number(scoreAmi) : null;
+  // Adresse incorrecte : retour au choix des fiches ; score impossible : le défi seul
+  if (!defi) { location.replace("#defi/perso"); return; }
+  if (scoreAmi !== undefined && ami === null) { location.replace("#defi/perso/" + code); return; }
+  const adresse = location.origin + location.pathname + "#defi/perso/" + code;
+  zone.appendChild(el("p", "page-intro", T("{0} sur des fiches choisies : les mêmes situations, dans le même ordre, pour tous ceux qui ouvrent cette adresse. Le score n'est pas enregistré.", pluriel(n, "question"))));
+  if (ami !== null) zone.appendChild(el("p", "page-intro", T("On vous défie : le score à battre est de {0} / {1}.", ami, n)));
+  const carte = el("article", "carte defi-jour");
+  carte.style.setProperty("--c", "#a8432e");
+  zone.appendChild(carte);
+  const partager = async texte => {
+    try {
+      if (navigator.share) { await navigator.share({ text: texte }); return; }
+      await navigator.clipboard.writeText(texte);
+      annoncer(T("Copié : {0}", texte));
+    } catch (erreur) {
+      if (erreur && erreur.name === "AbortError") return;
+      annoncer(texte);
+    }
+  };
+  const boutonPartage = score => {
+    const b = el("button", "bouton secondaire", score === undefined ? "Partager ce défi" : "Défier un ami");
+    b.type = "button";
+    b.addEventListener("click", () => partager(score === undefined
+      ? T("Un défi sur mesure Esprit critique, {0} : {1}", pluriel(n, "question"), adresse)
+      : T("Défi sur mesure Esprit critique : {0} / {1}. Ferez-vous mieux ? {2}", score, n, adresse + "/" + score)));
+    return b;
+  };
+  const commencer = el("button", "bouton", "Commencer");
+  commencer.type = "button";
+  commencer.addEventListener("click", () => {
+    const jeu = el("div");
+    carte.replaceChildren(el("p", "surtitre", "Défi sur mesure"), jeu);
+    const alea = generateur(defi.graine);
+    const questions = melanger(defi.cles, alea).map(cle => { const r = INDEX.get(cle); return creerQuestion(r.type, r.fiche, alea); });
+    derouler(jeu, questions, questionDefiPerso, resultats => {
+      const score = resultats.filter(Boolean).length;
+      noterActivite();
+      carte.replaceChildren(el("p", "surtitre", "Défi sur mesure"), el("p", "grand-score", score + " / " + n));
+      if (ami !== null) carte.appendChild(el("p", "source", score > ami ? T("Défi relevé : vous faites mieux que le score à battre ({0} / {1}).", ami, n)
+        : score === ami ? T("Égalité avec le score à battre ({0} / {1}).", ami, n) : T("Le score à battre tient bon : {0} / {1}.", ami, n)));
+      const actions = el("div", "actions");
+      actions.append(boutonPartage(score), lienVers("#defi/perso", "Créer un autre défi", "bouton secondaire"));
+      carte.appendChild(actions);
+      carte.scrollIntoView({ block: "start" });
+    }, "Question");
+  });
+  const actions = el("div", "actions");
+  actions.append(commencer, boutonPartage());
+  carte.append(el("p", "surtitre", "Défi sur mesure"), el("h2", null, pluriel(n, "question")), actions);
+}
+
+// Choix des fiches : de une à toutes, par type et par catégorie ; raccourcis pour tout cocher ou tirer au hasard
+function choisirFichesDefiPerso(zone) {
+  zone.appendChild(el("p", "page-intro", "Choisissez les notions : le site fabrique un lien, et chacun répond aux mêmes situations. Une question par fiche cochée, de une à toutes."));
+  const carte = el("article", "carte");
+  const cases = new Map();
+  const compte = el("p", "source");
+  compte.setAttribute("aria-live", "polite");
+  const creer = el("button", "bouton", "Créer le défi");
+  creer.type = "button";
+  const maj = () => {
+    const n = [...cases.values()].filter(c => c.checked).length;
+    compte.textContent = typo(n ? pluriel(n, "question") : T("Aucune fiche choisie"));
+    creer.disabled = !n;
+  };
+  const raccourcis = el("div", "raccourcis-fiches");
+  const raccourci = (texte, action) => {
+    const b = el("button", "puce", texte);
+    b.type = "button";
+    b.addEventListener("click", () => { action(); maj(); });
+    raccourcis.appendChild(b);
+  };
+  raccourci("Tous les biais", () => cases.forEach((c, cle) => { if (cle.startsWith("biais:")) c.checked = true; }));
+  raccourci("Tous les sophismes", () => cases.forEach((c, cle) => { if (cle.startsWith("sophismes:")) c.checked = true; }));
+  raccourci("Dix au hasard", () => { const choix = new Set(melanger([...cases.keys()]).slice(0, 10)); cases.forEach((c, cle) => { c.checked = choix.has(cle); }); });
+  raccourci("Tout effacer", () => cases.forEach(c => { c.checked = false; }));
+  carte.appendChild(raccourcis);
+  Object.entries(TYPES).forEach(([type, conf]) => {
+    const groupe = el("fieldset", "choix-fiches");
+    groupe.appendChild(el("legend", "consigne", conf.pluriel));
+    conf.categories.forEach(cat => {
+      groupe.appendChild(el("p", "source", cat.nom));
+      const ligne = el("div", "cases-fiches");
+      conf.fiches.filter(f => f.categorie === cat.nom).forEach(f => {
+        const label = el("label", "case-tirage");
+        const c = el("input");
+        c.type = "checkbox";
+        c.addEventListener("change", maj);
+        cases.set(cleFiche(type, f), c);
+        label.append(c, el("span", null, f.nom));
+        ligne.appendChild(label);
+      });
+      groupe.appendChild(ligne);
+    });
+    carte.appendChild(groupe);
+  });
+  creer.addEventListener("click", () => {
+    const cles = [...cases].filter(([, c]) => c.checked).map(([cle]) => cle);
+    if (cles.length) location.hash = "defi/perso/" + codeDefiPerso(cles, grainePourDefi());
+  });
+  const bas = el("div", "actions");
+  bas.append(creer, compte);
+  carte.appendChild(bas);
+  zone.appendChild(carte);
+  maj();
 }
