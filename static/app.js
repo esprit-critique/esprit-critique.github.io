@@ -12,7 +12,7 @@
     const p = document.createElement("p");
     p.className = "sans-script";
     const a = document.createElement("a");
-    a.href = location.href; a.target = "_blank"; a.rel = "noopener";
+    a.href = location.href; a.target = "_blank"; a.rel = "noopener noreferrer";
     a.textContent = "Ouvrir Esprit critique dans un nouvel onglet";
     p.append("Ce site ne s'affiche pas dans la page d'un autre site. ", a);
     document.body.appendChild(p);
