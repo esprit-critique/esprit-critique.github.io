@@ -130,6 +130,11 @@ function boutonChoix(texte, k) {
   return b;
 }
 
+// Choix encore modifiable (rien n'a été révélé) : un seul bouton marqué, annoncé par aria-pressed, les autres restent actifs
+function marquerChoix(boutons, b) {
+  boutons.forEach(x => { x.classList.toggle("choisi", x === b); x.setAttribute("aria-pressed", String(x === b)); });
+}
+
 // Bouton « Question suivante » : la touche Entrée ou → l'actionne aussi (voir app.js)
 function boutonSuivant(texte, action) {
   const b = el("button", "bouton", texte);

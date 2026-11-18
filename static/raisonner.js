@@ -144,13 +144,15 @@ const SUJETS_ETUDES = [
 function echelleSept(gauche, droite, surChoix) {
   const bloc = el("div", "echelle-sept");
   const rangee = el("div", "echelle-sept-boutons");
+  let premier = true;
   const boutons = [1, 2, 3, 4, 5, 6, 7].map(n => {
     const b = el("button", "choix", String(n));
     b.setAttribute("aria-label", n + " sur 7");
+    // Un avis n'a pas de correction : il reste modifiable jusqu'à « Suivant »
     b.addEventListener("click", () => {
-      boutons.forEach(x => { x.disabled = true; });
-      b.classList.add("choisi");
-      surChoix(n);
+      marquerChoix(boutons, b);
+      surChoix(n, premier);
+      premier = false;
     });
     rangee.appendChild(b);
     return b;
@@ -253,19 +255,24 @@ EXPERIENCES.push(
         const choix = [boutonChoix("Oui, c'est valide", 0), boutonChoix("Non, ce n'est pas valide", 1)];
         choix.forEach((b, k) => {
           b.addEventListener("click", () => {
-            choix.forEach(x => { x.disabled = true; });
-            b.classList.add("choisi");
+            const premier = !(s.id in reponses);
+            marquerChoix(choix, b);
             reponses[s.id] = k === 0;
-            // Pas de correction à ce stade : elle viendrait influencer les réponses suivantes
+            if (!premier) return;
+            // Pas de correction à ce stade : elle viendrait influencer les réponses suivantes.
+            // « Valide ? » se fige quand des explications suivent : elles en disent trop pour revenir dessus
             if (s.justifications) {
+              choix.forEach(x => { x.disabled = true; });
               zone.appendChild(el("p", "consigne", "Laquelle de ces explications est la vôtre ?"));
               const options = melanger(s.justifications);
+              let laMienne = null;   // explication choisie : modifiable jusqu'à « Suivant », la correction vient à la fin
               const boutons = options.map(([texte, correcte], i) => {
                 const j = boutonChoix(texte, i);
                 j.addEventListener("click", () => {
-                  boutons.forEach(x => { x.disabled = true; });
-                  j.classList.add("choisi");
-                  choisies.push({ s, texte, correcte });
+                  marquerChoix(boutons, j);
+                  if (laMienne) { Object.assign(laMienne, { texte, correcte }); return; }
+                  laMienne = { s, texte, correcte };
+                  choisies.push(laMienne);
                   const retour = el("div", "retour-quiz");
                   retour.appendChild(paragraphe("Réponse enregistrée. La correction viendra à la fin.", "source"));
                   zone.appendChild(retour);
@@ -469,7 +476,7 @@ EXPERIENCES.push(
         if (e.type === "avis") {
           zone.appendChild(el("p", "consigne", "Votre avis"));
           zone.appendChild(el("p", "cas", "« " + e.s.affirmation + " »"));
-          zone.appendChild(echelleSept("Pas du tout d'accord", "Tout à fait d'accord", n => { avis[e.s.id] = n; terminer(); }));
+          zone.appendChild(echelleSept("Pas du tout d'accord", "Tout à fait d'accord", (n, premier) => { avis[e.s.id] = n; if (premier) terminer(); }));
         } else if (e.type === "consigne") {
           zone.appendChild(el("p", "consigne", "Envisagez l'inverse"));
           zone.appendChild(el("p", "cas", "Vous allez revoir les six études. Pour chacune, demandez-vous : « aurais-je jugé sa méthode de la même façon si elle avait trouvé le résultat inverse ? »"));
@@ -478,7 +485,7 @@ EXPERIENCES.push(
           zone.appendChild(el("p", "consigne", e.tour === "avant" ? "Une étude (fictive)" : "Une étude (fictive), à revoir"));
           zone.appendChild(el("p", "cas", T(e.s.methode) + " " + T(e.s[e.sens])));
           zone.appendChild(el("p", "consigne", "Qualité de cette étude, de 1 à 7 ?"));
-          zone.appendChild(echelleSept("Très faible", "Excellente", n => { notes[e.tour][e.s.id + ":" + e.sens] = n; terminer(); }));
+          zone.appendChild(echelleSept("Très faible", "Excellente", (n, premier) => { notes[e.tour][e.s.id + ":" + e.sens] = n; if (premier) terminer(); }));
         }
       }, () => {
         // Asymétrie : note moyenne des études favorables à son avis − note des défavorables
