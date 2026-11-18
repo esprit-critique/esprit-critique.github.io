@@ -1173,6 +1173,8 @@ function ongletReglages(p) {
   blocSynchro().then(b => { if (b) place.appendChild(b); }).catch(() => {});
   const installer = boutonInstallation();
   if (installer) p.appendChild(installer);
+  const horsLigne = boutonHorsLigne();
+  if (horsLigne) p.appendChild(horsLigne);
   p.appendChild(lienVers("#guide/maitrise", "Comment votre maîtrise est calculée", "lien-discret"));
   p.appendChild(lienVers("#guide/motivation", "Comment ce site essaie de vous motiver", "lien-discret"));
 }
