@@ -1,0 +1,16 @@
+/* fiches.css : généré par tests/pages/generer_pages.py (ne pas modifier à la main). Couleur de chaque catégorie
+   pour les pages statiques des fiches ; les couleurs viennent de donnees.js. */
+.cat-appel-illegitime { --c: #b8741a; }
+.cat-attaque-personnelle { --c: #c2412d; }
+.cat-causalite { --c: #2b7bb9; }
+.cat-croyances { --c: #a77a12; }
+.cat-decision { --c: #c0601b; }
+.cat-esquive { --c: #5b5bb5; }
+.cat-fausse-comparaison { --c: #0e7c86; }
+.cat-generalisation { --c: #2a8a5c; }
+.cat-image-de-soi { --c: #c23b5a; }
+.cat-langage { --c: #9a4f9e; }
+.cat-logique-et-preuve { --c: #44546a; }
+.cat-memoire-et-attention { --c: #8a3f8f; }
+.cat-probabilites { --c: #2f6db5; }
+.cat-social { --c: #1f8a70; }
