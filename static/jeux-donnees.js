@@ -560,7 +560,7 @@ const VRAI_FAUX = [
   { id: "tournesol", niveau: 3, texte: "Les tournesols suivent le Soleil d'est en ouest tout au long de leur vie.", vrai: false,
     explication: "Seules les jeunes plantes suivent le Soleil au cours de la journée. Une fois la fleur épanouie, elle reste tournée vers l'est.", source: "botanique (Atamian et al., Science, 2016)" },
   { id: "big-ben", niveau: 3, texte: "Big Ben est le nom de la tour de l'horloge du palais de Westminster, à Londres.", vrai: false,
-    explication: "Au sens strict, Big Ben est le surnom de la grande cloche de 13,7 tonnes. La tour s'appelle Elizabeth Tower depuis 2012 ; on lui donne couramment le nom de sa cloche.", source: "Wikipédia (Big Ben)" },
+    explication: "Au sens strict, Big Ben est le surnom de la grande cloche de 13,7 tonnes. La tour s'appelle Elizabeth Tower depuis 2012 ; on lui donne couramment le nom de sa cloche.", source: "Parlement britannique, « Facts and figures: Big Ben and Elizabeth Tower » (Big Ben, la cloche, pèse 13,7 tonnes) et « Clock Tower to be renamed Elizabeth Tower » (2012)" },
   { id: "einstein-nobel", niveau: 3, texte: "Albert Einstein a reçu le prix Nobel de physique pour sa théorie de la relativité.", vrai: false,
     explication: "Le prix Nobel de physique de 1921 lui a été décerné « pour ses services rendus à la physique théorique, et en particulier pour sa découverte de la loi de l'effet photoélectrique ». La relativité n'est pas citée.", source: "Fondation Nobel" },
   { id: "pole-sud", niveau: 3, texte: "Le pôle Sud est plus froid que le pôle Nord parce qu'il est plus éloigné du Soleil.", vrai: false,
