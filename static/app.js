@@ -12,7 +12,7 @@
     const p = document.createElement("p");
     p.className = "sans-script";
     const a = document.createElement("a");
-    a.href = location.href; a.target = "_blank"; a.rel = "noopener";
+    a.href = location.href; a.target = "_blank"; a.rel = "noopener noreferrer";
     a.textContent = "Ouvrir Esprit critique dans un nouvel onglet";
     p.append("Ce site ne s'affiche pas dans la page d'un autre site. ", a);
     document.body.appendChild(p);
@@ -1370,9 +1370,11 @@ function afficherFiche(type, fiche) {
   // Les exercices ont leurs propres consignes : pas d'intertitre en plus
   ajouterGroupe(carte, "S'entraîner", [creerSection(null, entrainementFiche(type, fiche)), eprouver]);
   let voirAussi = null;
-  if (fiche.lies && fiche.lies.length) {
+  // Les liens dans les deux sens, comme PROCHES pour le quiz : une fiche citée par une autre la cite aussi
+  const voisines = [...new Set([...(fiche.lies || []), ...[...INDEX].filter(([, r]) => (r.fiche.lies || []).includes(cle)).map(([k]) => k)])];
+  if (voisines.length) {
     const voir = el("div", "voir-aussi");
-    fiche.lies.forEach(l => {
+    voisines.forEach(l => {
       const r = INDEX.get(l);
       if (r) voir.appendChild(lienVers("#" + r.type + "/" + r.fiche.id, r.fiche.nom + (r.type !== type ? " (" + TYPES[r.type].singulier + ")" : "")));
     });
