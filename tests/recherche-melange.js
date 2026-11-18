@@ -110,7 +110,8 @@ const ok = (libelle, condition, detail = '') => {
     // reste bloquée (le banc échouait au hasard, selon les jeux tirés)
     const champVide = p.locator('.melange-partie input.champ:not([type=checkbox]):not([type=radio])').first();
     if (await champVide.count() && !(await champVide.inputValue())) await champVide.fill('50');
-    const actions = ['.melange-partie button.choix:not([disabled])', '.melange-partie .certitude-boutons button:not([disabled])', '.melange-partie button.bouton:not([disabled]):not([data-suivant])'];
+    // Un choix marqué peut rester actif (modifiable tant que rien n'est révélé) : jouer le geste suivant
+    const actions = ['.melange-partie button.choix:not([disabled]):not(.choisi)', '.melange-partie .certitude-boutons button:not([disabled])', '.melange-partie button.bouton:not([disabled]):not([data-suivant])'];
     let clique = false;
     for (const sel of actions) {
       const b = p.locator(sel).first();
