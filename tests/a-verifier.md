@@ -85,6 +85,8 @@ Consortium, Nature 2005, résumé) ; puis `saisons` et `perihelie` (NASA Space P
 vérifiés retirés des explications ; puis `face-cachee` (NASA, Top Moon Questions) et `neutrons` (NASA, Imagine the
 Universe : affirmation reformulée sur le morceau de sucre, environ un milliard de tonnes, au lieu d'une cuillère à café
 et de « plus de 5 milliards de tonnes », non vérifiés) ; puis `nintendo` (historique officiel de Nintendo) et `annee`
-(United States Naval Observatory).
+(United States Naval Observatory) ; puis `eiffel-hauteur` (Ville de Paris), `verre` (Zanotto, Am. J. Phys. 1998, résumé)
+et `metre` (Arago, Astronomie populaire, XXIII, 14). `big-ben` : le site du Parlement britannique refuse la lecture
+automatique ; à vérifier à la main sur parliament.uk (« Clock Tower to be renamed Elizabeth Tower », juin 2012).
 
-Restent sourcées sur Wikipédia (49), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `diamants`, `verre`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `alaska`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `abeilles`, `robot`, `metre`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `atlantique`, `chimborazo`, `galilee`, `pise`, `bresil`, `afrique`, `nil`, `big-ben`, `pole-sud`, `eiffel-hauteur`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
+Restent sourcées sur Wikipédia (46), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `diamants`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `alaska`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `abeilles`, `robot`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `atlantique`, `chimborazo`, `galilee`, `pise`, `bresil`, `afrique`, `nil`, `big-ben`, `pole-sud`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
