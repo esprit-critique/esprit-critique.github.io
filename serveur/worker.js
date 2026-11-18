@@ -60,6 +60,19 @@ export async function traiter(requete, env) {
     let corps;
     try { corps = JSON.parse(texte); } catch (e) { return reponse(400, { erreur: "JSON invalide" }, origine); }
     if (!corps || typeof corps.contenu !== "string" || corps.contenu.length > TAILLE_MAX) return reponse(400, { erreur: "contenu absent" }, origine);
+    // Écritures d'un même coffre : l'application en fait au plus une par minute et par appareil ; au-delà, c'est un abus
+    // (réécrire sans fin un coffre épuiserait le quota d'écritures de la base pour tout le monde)
+    if (env.LIMITE_ECRITURES) {
+      const { success } = await env.LIMITE_ECRITURES.limit({ key: id });
+      if (!success) return reponse(429, { erreur: "trop d'écritures, réessayer plus tard" }, origine);
+    }
+    // Une écriture qui fait grossir la base (création, contenu plus long) : seulement s'il reste de la place. La base a une
+    // taille maximale (500 Mo sur l'offre gratuite de D1) ; pleine, elle refuserait toute écriture, y compris celles des
+    // coffres existants. size_after : taille de la base, donnée par D1 avec chaque résultat
+    if (corps.contenu.length > (coffre ? coffre.contenu.length : 0)) {
+      const { meta } = await env.BASE.prepare("SELECT 1").run();
+      if (meta && meta.size_after + corps.contenu.length > Number(env.MAX_OCTETS || 450000000)) return reponse(507, { erreur: "capacité atteinte" }, origine);
+    }
     const attendue = Number(requete.headers.get("If-Match") || 0);
     const maintenant = Date.now();
     if (!coffre) {

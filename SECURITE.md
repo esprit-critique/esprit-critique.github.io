@@ -124,4 +124,6 @@ mot de passe faible à ralentir, et l'offre gratuite limite le calcul à 10 ms p
   rien perdre d'une donnée légitime ; le code qui les lit doit rester prudent (le banc à données aléatoires le vérifie).
 - **Pas de rapport de violation de la CSP** : `report-uri` est ignoré en balise `meta`, et le site n'a pas de serveur.
 - **Synchronisation** : le code est gardé en clair dans IndexedDB (voir plus haut) ; la limitation des créations de
-  coffres est approximative (locale à chaque centre de données) ; un serveur compromis peut supprimer une copie.
+  coffres et des écritures de chaque coffre est approximative (locale à chaque centre de données) ; un abus peut donc
+  remplir la base jusqu'à `MAX_OCTETS` et rendre la synchronisation indisponible (créations et croissance refusées),
+  sans fuite ni perte de données ; un serveur compromis peut supprimer une copie.

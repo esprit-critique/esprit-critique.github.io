@@ -211,7 +211,9 @@ function pointsReponse(bareme, certitude, juste) {
 // Sources de points, avec leur limite : [points, plafond par jour (ou "une fois" par clé), portée du plafond]
 // Le plafond se compte en événements (nombre) ou en points (« points: true »).
 const SOURCES_LUCIDITE = {
-  "quiz": { plafond: null },
+  // Le total d'une série (barème de l'étalonnage) ; au plus 100 par jour, deux séries parfaites : refaire le quiz en
+  // boucle sur des notions déjà sues ne doit pas rapporter sans fin (sans fonction « points », il ne rapportait rien)
+  "quiz": { points: total => total, plafondPoints: 100 },
   "reponse-libre": { points: () => 12 },
   "boite": { points: b => 2 * b },
   "boite-5": { points: () => 10, unique: true },
