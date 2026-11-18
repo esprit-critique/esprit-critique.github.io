@@ -699,30 +699,63 @@ const PHRASES_DU_JOUR = [
   "Les illusions d'optique ne trichent qu'avec vos yeux. Les biais, avec tout le reste.",
   "On ne devient pas critique en un jour. Mais un jour de plus, ça compte.",
   "Une bonne question vaut mieux que dix réponses rapides.",
-  "Le monde est plein d'arguments boiteux. Bonne nouvelle : vous savez maintenant marcher droit."
+  "Le monde est plein d'arguments boiteux. Bonne nouvelle : vous savez maintenant marcher droit.",
+  "Votre mémoire n'enregistre pas : elle reconstruit. Avec beaucoup d'aplomb.",
+  "Si tout le monde le dit, c'est peut-être vrai. C'est peut-être aussi que tout le monde l'a lu au même endroit.",
+  "Corrélation n'est pas causalité. Mais elle adore se faire passer pour elle.",
+  "Avoir raison trop vite est une manière élégante d'avoir tort.",
+  "Votre intuition parle beaucoup. Aujourd'hui, on lui demande ses sources.",
+  "Plus une idée vous plaît, plus elle mérite d'être vérifiée.",
+  "Un titre qui vous met en colère a souvent déjà fait la moitié de son travail.",
+  "« Je l'ai toujours su » : la phrase préférée du biais rétrospectif.",
+  "La certitude est confortable. C'est justement pour ça qu'on s'y installe trop vite.",
+  "Un expert peut se tromper. Quelqu'un qui n'y connaît rien, encore plus souvent.",
+  "Être ouvert d'esprit, oui. Au point de tout laisser entrer, non.",
+  "Douter de tout est aussi une façon de ne rien examiner.",
+  "Le hasard fabrique de très belles coïncidences. Elles n'en ont pas plus de sens pour autant.",
+  "Votre fil d'actualité ne vous montre pas le monde : il vous montre ce qui vous retient.",
+  "Un argument de votre camp vous convainc ? Relisez-le comme s'il venait d'en face.",
+  "On remarque ce qu'on cherche. Aujourd'hui, cherchez ce qui vous contredit.",
+  "Les chiffres ne mentent pas. Ceux qui les choisissent, parfois.",
+  "Un bon argument n'a pas besoin de crier.",
+  "Trois exemples qui vous donnent raison ne pèsent rien face à un contre-exemple solide.",
+  "Une anecdote est un exemple. Mille anecdotes ne font toujours pas une étude.",
+  "Le plus difficile à repérer, c'est le biais qu'on partage avec tout son entourage.",
+  "Se tromper est humain. S'en rendre compte, c'est de l'entraînement."
 ];
 // Situations : plusieurs tournures, une par jour (rotation sans remise)
 const PHRASES_RETOUR = ["Tiens, un revenant. {0} jours sans nous voir : vos révisions ont gardé votre place au chaud.",
   "{0} jours d'absence : l'oubli a fait son travail, à vous de défaire le sien.",
-  "Vous revoilà, après {0} jours. Vos notions vous attendaient, sagement rangées."];
+  "Vous revoilà, après {0} jours. Vos notions vous attendaient, sagement rangées.",
+  "{0} jours d'absence : vos notions ont commencé à s'effacer. C'est normal, et c'est réparable.",
+  "De retour après {0} jours. L'oubli a pris de l'avance ; quelques révisions, et il recule."];
 const PHRASES_RETOUR_SANS_REVISION = ["Vous revoilà, après {0} jours. Heureux hasard, ou décision éclairée ?",
   "{0} jours sans nous voir. Les biais, eux, n'ont pas pris de vacances.",
-  "Quel plaisir de vous revoir après {0} jours. On reprend où vous en étiez ?"];
+  "Quel plaisir de vous revoir après {0} jours. On reprend où vous en étiez ?",
+  "{0} jours sans nous voir, et aucune culpabilité à avoir : juste une bonne question qui vous attend.",
+  "Revoilà un esprit critique, après {0} jours. Les sophismes, eux, ont continué à circuler."];
 const PHRASES_OBJECTIF = ["Objectif du jour dans la poche. Tout ce qui suit, c'est pour le plaisir.",
   "Objectif atteint. Votre cortex mérite une ovation (modérée : on reste critiques).",
-  "Objectif du jour rempli. La suite, c'est du bonus, et du bonus bien mérité."];
+  "Objectif du jour rempli. La suite, c'est du bonus, et du bonus bien mérité.",
+  "Objectif atteint. Méfiez-vous quand même de l'impression de tout savoir : elle arrive vite.",
+  "Objectif du jour atteint. Vous pouvez vous arrêter là : la régularité bat l'acharnement."];
 const PHRASES_REVISIONS = ["{0} notions frappent à la porte de votre mémoire. On leur ouvre ?",
   "{0} notions arrivent à échéance : c'est leur moment pour s'ancrer.",
-  "Votre mémoire a {0} rendez-vous aujourd'hui. Ils ne prennent que quelques minutes."];
+  "Votre mémoire a {0} rendez-vous aujourd'hui. Ils ne prennent que quelques minutes.",
+  "{0} notions attendent une révision. Les revoir aujourd'hui coûte moins que les réapprendre plus tard."];
 const PHRASES_SERIE = ["{0} jours d'affilée. La régularité, c'est le super-pouvoir le plus sous-estimé.",
   "{0} jours de suite : votre esprit critique fait de la musculation.",
-  "{0} jours d'affilée. À ce rythme, les sophismes vont finir par vous éviter."];
+  "{0} jours d'affilée. À ce rythme, les sophismes vont finir par vous éviter.",
+  "{0} jours d'affilée. Une série, c'est une habitude, pas une dette : aucune pression."];
 const PHRASES_PARCOURS = ["Votre parcours « {0} » vous attend juste en dessous. Une étape, et on avance.",
   "Prochaine étape de « {0} » : elle est juste en dessous, prête quand vous l'êtes.",
-  "« {0} » continue. Encore une étape, et vous en saurez un peu plus que tout à l'heure."];
+  "« {0} » continue. Encore une étape, et vous en saurez un peu plus que tout à l'heure.",
+  "« {0} » : une étape de plus, et c'est un réflexe de plus."];
 const PHRASES_NUIT = ["Il est tard : les questions seront encore là demain, promis.",
   "Une partie de nuit ? Méfiez-vous : à cette heure-ci, tout semble convaincant.",
-  "Les biais ne dorment jamais. Vous, en revanche, vous devriez peut-être."];
+  "Les biais ne dorment jamais. Vous, en revanche, vous devriez peut-être.",
+  "Il est tard. Votre esprit critique aussi a besoin de sommeil.",
+  "À cette heure-ci, une théorie bizarre paraît plus convaincante. C'est le moment idéal pour ne pas la croire."];
 
 // Titre et phrase de l'accueil, selon l'heure, la date et la situation du joueur (la première qui s'applique)
 function salutation(nouveau) {
