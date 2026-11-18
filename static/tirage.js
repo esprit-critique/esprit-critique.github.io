@@ -264,14 +264,20 @@ function grainePourDefi(texte) {
   return /^\d{1,9}$/.test(texte || "") ? Number(texte) : 1 + Math.floor(Math.random() * 999999998);
 }
 
-function afficherDefiLibre(texte) {
+// scoreAmi : score de la personne qui a envoyé le défi (#defi/<graine>/<score>). L'adresse peut venir de n'importe qui :
+// seul un entier de 0 à 10 est accepté, et jamais de texte libre (pas de prénom), qui ferait afficher au site un message
+// choisi par un inconnu
+function afficherDefiLibre(texte, scoreAmi) {
   const graine = grainePourDefi(texte);
-  if (String(graine) !== texte) { location.replace("#defi/" + graine); return; }
+  const ami = /^(10|\d)$/.test(scoreAmi || "") ? Number(scoreAmi) : null;
+  // Adresse incorrecte : le défi seul, sans score (un score ne vaut que pour les questions du défi qu'il accompagne)
+  if (String(graine) !== texte || (scoreAmi !== undefined && ami === null)) { location.replace("#defi/" + graine); return; }
   const zone = $("vue-accueil");
   zone.replaceChildren();
   zone.classList.remove("large");
   zone.append(lienVers("#accueil", "← Accueil", "lien retour"), el("h1", "page-titre", "Défi libre"),
     el("p", "page-intro", T("Défi n° {0} : dix questions, les mêmes pour tous ceux qui ouvrent cette adresse. Le score n'est pas enregistré, mais la partie compte pour vos points de lucidité et votre série de jours.", graine)));
+  if (ami !== null) zone.appendChild(el("p", "page-intro", T("On vous défie : le score à battre est de {0} / 10.", ami)));
   const carte = el("article", "carte defi-jour");
   carte.style.setProperty("--c", "#a8432e");
   zone.appendChild(carte);
@@ -293,11 +299,12 @@ function afficherDefiLibre(texte) {
     autre.type = "button";
     autre.dataset.tirer = "1";
     autre.addEventListener("click", relancer);
-    const partage = el("button", "bouton secondaire", "Partager ce défi");
+    // Après la partie, le lien porte le score : la personne défiée verra le score à battre
+    const partage = el("button", "bouton secondaire", score === undefined ? "Partager ce défi" : "Défier un ami");
     partage.type = "button";
     partage.addEventListener("click", () => partager(score === undefined
       ? T("Un défi Esprit critique, dix questions : {0}", adresse)
-      : T("Défi Esprit critique n° {0} : {1} / 10. À vous : {2}", graine, score, adresse)));
+      : T("Défi Esprit critique n° {0} : {1} / 10. Ferez-vous mieux ? {2}", graine, score, adresse + "/" + score)));
     actions.append(autre, partage);
     return actions;
   };
@@ -312,7 +319,10 @@ function afficherDefiLibre(texte) {
       noterActivite();
       gagner("defi-libre", score);
       carte.replaceChildren();
-      carte.append(el("p", "surtitre", T("Défi libre n° {0}", graine)), el("p", "grand-score", score + " / 10"), actionsDefi(score));
+      carte.append(el("p", "surtitre", T("Défi libre n° {0}", graine)), el("p", "grand-score", score + " / 10"));
+      if (ami !== null) carte.appendChild(el("p", "source", score > ami ? T("Défi relevé : vous faites mieux que le score à battre ({0} / 10).", ami)
+        : score === ami ? T("Égalité avec le score à battre ({0} / 10).", ami) : T("Le score à battre tient bon : {0} / 10.", ami)));
+      carte.appendChild(actionsDefi(score));
       carte.scrollIntoView({ block: "start" });
     });
   });

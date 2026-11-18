@@ -54,6 +54,7 @@ EN_AJOUTER([
   ["Un nouveau défi demain, le même pour tout le monde.", "A new challenge tomorrow, the same for everyone."],
   ["Partager mon résultat", "Share my result"],
   ["Résultat copié : {0}", "Result copied: {0}"],
+  ["Défier un ami", "Challenge a friend"],
   ["Dix questions difficiles", "Ten hard questions"],
   ["Monde en chiffres, vrai ou faux, citations et chronologie, aux niveaux 2 et 3. Une seule tentative par jour, et les mêmes questions pour tout le monde.", "World in numbers, true or false, quotations and chronology, at levels 2 and 3. One attempt per day, and the same questions for everyone."],
   ["Relever le défi", "Take the challenge"],
