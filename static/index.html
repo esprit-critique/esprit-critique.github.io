@@ -319,23 +319,42 @@
 
         <article class="carte" id="g-lexique">
           <h2>Lexique</h2>
+          <p>Les mots du site, en trois groupes ; chaque terme renvoie, quand elle existe, à la fiche ou à l'atelier qui le met en pratique.</p>
+          <h3>Raisonner</h3>
           <dl class="lexique">
+            <dt>Biais cognitif</dt><dd>Erreur de jugement systématique : elle se produit chez presque tout le monde, dans le même sens, et le savoir ne suffit pas à l'éviter. <a href="#biais">Les fiches de biais</a>.</dd>
+            <dt>Sophisme</dt><dd>Raisonnement qui paraît valide sans l'être, par sa forme ou par son contenu. <a href="#sophismes">Les fiches de sophismes</a>.</dd>
             <dt>Heuristique</dt><dd>Règle de jugement simple et rapide, souvent efficace, mais source d'erreurs systématiques dans certaines situations.</dd>
             <dt>Prémisse, conclusion</dt><dd>Les prémisses sont les affirmations dont part un argument ; la conclusion est ce qu'il prétend établir.</dd>
-            <dt>Taux de base</dt><dd>Fréquence d'un phénomène dans la population, avant toute information particulière sur le cas étudié.</dd>
-            <dt>Probabilité conditionnelle</dt><dd>P(A | B) : probabilité de A sachant B. Elle est en général différente de P(B | A).</dd>
-            <dt>Corrélation</dt><dd>Lien statistique entre deux variables qui varient ensemble. Elle ne suffit pas à établir une relation de cause à effet.</dd>
+            <dt>Argument valide</dt><dd>Argument dont la conclusion découle nécessairement des prémisses : si elles sont vraies, elle l'est aussi. La validité porte sur la forme, pas sur la vérité des prémisses.</dd>
+            <dt>Argument solide</dt><dd>Argument valide dont les prémisses sont vraies : sa conclusion est alors établie. <a href="#guide/logique">Valide, vrai, solide</a>.</dd>
+            <dt>Charge de la preuve</dt><dd>Obligation, pour celui qui avance une affirmation, de la justifier. <a href="#sophismes/ignorance">Appel à l'ignorance</a>.</dd>
+            <dt>Réfutabilité</dt><dd>Critère proposé par Karl Popper (1934), dit aussi falsifiabilité : une affirmation scientifique doit pouvoir être contredite par une observation.</dd>
+            <dt>Rasoir d'Ockham</dt><dd>Principe attribué à Guillaume d'Ockham (XIVe siècle) : entre deux explications qui rendent également compte des faits, préférer celle qui fait le moins d'hypothèses.</dd>
+          </dl>
+          <h3>Probabilités et statistiques</h3>
+          <dl class="lexique">
+            <dt>Taux de base</dt><dd>Fréquence d'un phénomène dans la population, avant toute information particulière sur le cas étudié. <a href="#biais/taux-de-base">Négligence du taux de base</a>.</dd>
+            <dt>Probabilité conditionnelle</dt><dd>P(A | B) : probabilité de A sachant B. Elle est en général différente de P(B | A) : confondre les deux est le <a href="#biais/procureur">sophisme du procureur</a>.</dd>
+            <dt>Faux positif, faux négatif</dt><dd>Un faux positif est un test positif chez quelqu'un qui n'a pas ce qu'on cherche ; un faux négatif, un test négatif chez quelqu'un qui l'a.</dd>
+            <dt>Sensibilité, spécificité</dt><dd>La sensibilité est la part des cas réels qu'un test détecte ; la spécificité, la part des cas sains qu'il reconnaît comme tels.</dd>
+            <dt>Valeur prédictive positive</dt><dd>Probabilité d'avoir réellement ce qu'on cherche quand le test est positif. Elle dépend du taux de base : pour une maladie rare, même un bon test donne beaucoup de faux positifs. <a href="#tests/depistage">Atelier « Tests positifs »</a>.</dd>
+            <dt>Corrélation</dt><dd>Lien statistique entre deux variables qui varient ensemble. Elle ne suffit pas à établir une relation de cause à effet. <a href="#sophismes/correlation">Corrélation prise pour causalité</a>.</dd>
             <dt>Facteur de confusion</dt><dd>Variable qui influence à la fois la cause supposée et l'effet observé, créant un lien apparent entre eux.</dd>
+            <dt>Régression vers la moyenne</dt><dd>Après une mesure extrême, la suivante est en général plus proche de la moyenne, sans qu'aucune cause n'intervienne. <a href="#biais/regression-moyenne">La fiche</a>.</dd>
+            <dt>Étalonnage</dt><dd>Accord entre la certitude affichée et la réussite réelle : quelqu'un de bien étalonné a raison environ 7 fois sur 10 quand il se dit sûr à 70 %. <a href="#ateliers">Ateliers « Mesurer sa confiance »</a>.</dd>
+            <dt>Score de Brier</dt><dd>Moyenne des carrés des écarts entre les probabilités annoncées et ce qui s'est produit (1 ou 0) : plus il est bas, meilleures sont les prévisions.</dd>
+          </dl>
+          <h3>Études et preuves</h3>
+          <dl class="lexique">
+            <dt>Échantillon représentatif</dt><dd>Sous-ensemble dont la composition reflète celle de la population étudiée.</dd>
+            <dt>Biais de sélection</dt><dd>Distorsion qui vient de la façon dont les cas observés ont été choisis : ils ne représentent pas l'ensemble. <a href="#biais/survivant">Biais du survivant</a>.</dd>
             <dt>Groupe témoin</dt><dd>Groupe comparable à celui qui reçoit une intervention, mais qui ne la reçoit pas, pour mesurer ce qui se serait passé sans elle.</dd>
             <dt>Essai randomisé</dt><dd>Étude où l'intervention est attribuée par tirage au sort : les facteurs de confusion, connus ou non, se répartissent au hasard entre les groupes et s'y équilibrent en moyenne.</dd>
-            <dt>Échantillon représentatif</dt><dd>Sous-ensemble dont la composition reflète celle de la population étudiée.</dd>
             <dt>Significativité statistique</dt><dd>Un résultat est dit significatif lorsqu'il serait peu probable d'observer un écart au moins aussi grand si l'effet n'existait pas. Cela ne dit rien de l'ampleur ni de l'importance de l'effet.</dd>
-            <dt>Réplication</dt><dd>Reproduction d'une étude par d'autres chercheurs, pour vérifier que le résultat tient.</dd>
+            <dt>Réplication</dt><dd>Reproduction d'une étude par d'autres chercheurs, pour vérifier que le résultat tient. <a href="#guide/recherche">L'état de la recherche</a>.</dd>
             <dt>Méta-analyse</dt><dd>Synthèse statistique de plusieurs études sur une même question.</dd>
-            <dt>Biais de publication</dt><dd>Tendance à publier plus volontiers les résultats positifs que les résultats nuls, ce qui fausse l'image d'ensemble.</dd>
-            <dt>Réfutabilité</dt><dd>Critère proposé par Karl Popper (1934), dit aussi falsifiabilité : une affirmation scientifique doit pouvoir être contredite par une observation.</dd>
-            <dt>Charge de la preuve</dt><dd>Obligation, pour celui qui avance une affirmation, de la justifier.</dd>
-            <dt>Rasoir d'Ockham</dt><dd>Principe attribué à Guillaume d'Ockham (XIVe siècle) : entre deux explications qui rendent également compte des faits, préférer celle qui fait le moins d'hypothèses.</dd>
+            <dt>Biais de publication</dt><dd>Tendance à publier plus volontiers les résultats positifs que les résultats nuls, ce qui fausse l'image d'ensemble. <a href="#sophismes/cherry-picking">Cueillette de cerises</a>.</dd>
           </dl>
         </article>
 
