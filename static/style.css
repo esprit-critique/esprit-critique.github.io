@@ -390,8 +390,9 @@ h3.titre-bloc {
   text-align: center;
 }
 /* Lien stylé en bouton : un <a> ne centre pas son texte en hauteur comme un <button> ; sans flex, le texte restait en
-   haut des 44 px (visible sous Safari). .bouton.large, plus précis, garde son display: flex */
-a.bouton { display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+   haut des 44 px (visible sous Safari). .bouton.large, plus précis, garde son display: flex. label[for].bouton : plus précis
+   que la règle générale label[for] (display: block), qui l'emportait */
+a.bouton, label.bouton, label[for].bouton { display: inline-flex; align-items: center; justify-content: center; text-align: center; }
 .bouton { min-height: 44px; transition: background-color 0.15s, border-color 0.15s, opacity 0.15s, transform 0.1s; }
 .bouton:active { opacity: 0.85; transform: scale(0.985); }
 .bouton-danger { color: var(--rouge); border-color: var(--rouge); margin-top: 12px; }
@@ -1905,7 +1906,7 @@ label[for] { display: block; margin: 0 0 8px; }
 /* En-tête dans le flux : la pastille ne prend aucune place (marge négative de sa largeur et de l'écart de l'en-tête), le
    bouton commence donc à son bord gauche ; décalée de (1 px, 16 px), son centre tombe sur le cercle, à 45° en bas à gauche */
 @media (min-width: 760px) { .etat-synchro { margin-right: calc(-10px - var(--ecart-entete, 12px)); position: relative; left: 1px; top: 16px; z-index: 1; } }
-.bloc-synchro { margin-top: 24px; }
+.bloc-synchro, .hors-ligne { margin-top: 24px; }
 .actions-synchro { flex-wrap: wrap; }
 .code-synchro { margin-top: 16px; padding: 12px 16px; border: 1px dashed var(--trait); border-radius: var(--rayon-carte); }
 .code-synchro-valeur { font-family: var(--mono); font-size: 21px; letter-spacing: 0.08em; margin: 4px 0 8px; }

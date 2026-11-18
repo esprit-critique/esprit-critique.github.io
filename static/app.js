@@ -2392,7 +2392,10 @@ function boutonInstallation() {
 // les deux. Résultat écrit sous le bouton et annoncé ; deux minutes au plus (service worker absent ou réseau coupé)
 function boutonHorsLigne() {
   if (!("serviceWorker" in navigator)) return null;
-  const bloc = el("div", "hors-ligne");
+  // Une section à part, comme « Synchroniser mes appareils » : sans intitulé ni marge, le bouton semblait en faire partie
+  const bloc = el("section", "hors-ligne");
+  bloc.append(el("h3", "titre-bloc", "Hors ligne"),
+    el("p", "source", "Le site fonctionne sans connexion une fois chargé, dans la langue visitée. Ce bouton enregistre aussi l'autre langue."));
   const b = el("button", "bouton secondaire", "Tout garder pour le hors-ligne");
   b.type = "button";
   const etat = el("p", "source");
