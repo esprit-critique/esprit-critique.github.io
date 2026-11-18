@@ -247,6 +247,9 @@ const PIECE_REGLES = {
       t.annuelles = t.valeurs.slice();
       t.valeurs = t.valeurs.map(x => (s += x));
       t.cumule = true;
+      // L'axe suit les valeurs cumulées : sans cela, les barres sortaient du cadre par le haut (pièce du 18 novembre 2026)
+      const axe = pieceZoneDe(piece, "figure-axe") || (piece.decor || []).find(x => x.role === "figure-axe");
+      if (axe && axe.d.axe) Object.assign(axe.d.axe, { max: Math.max(axe.d.axe.max, ...t.valeurs), vmax: Math.max(...t.valeurs), vmin: Math.min(...t.valeurs) });
       pieceZoneDe(piece, "figure-legende").d.cumule = true;
       const titre = pieceZoneDe(piece, "titre");
       if (titre) Object.assign(titre.d, { sens: 1, pct: piecePct(t.valeurs[0], t.valeurs[t.valeurs.length - 1]), depuis: t.annees[0] });
