@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://esprit-critique-synchro.esprit-critique-synchro.workers.dev; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Prosecutor’s fallacy (cognitive bias) · Esprit critique</title>
+  <meta name="description" content="Confusing the probability of observing a piece of evidence if the accused is innocent with the probability that the accused is innocent given that evidence.">
+  <link rel="canonical" href="https://esprit-critique.github.io/en/biais/procureur.html">
+  <link rel="alternate" hreflang="fr" href="https://esprit-critique.github.io/biais/procureur.html">
+  <link rel="alternate" hreflang="en" href="https://esprit-critique.github.io/en/biais/procureur.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Esprit critique">
+  <meta property="og:title" content="Prosecutor’s fallacy (cognitive bias)">
+  <meta property="og:description" content="Confusing the probability of observing a piece of evidence if the accused is innocent with the probability that the accused is innocent given that evidence.">
+  <meta property="og:url" content="https://esprit-critique.github.io/en/biais/procureur.html">
+  <meta property="og:image" content="https://esprit-critique.github.io/apercu-en.png">
+  <link rel="icon" href="../../favicon.svg?v=3" type="image/svg+xml">
+  <link rel="icon" href="../../icone-32.png?v=3" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icone.png?v=3">
+  <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+  <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <link rel="preload" href="../../polices/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../../fiches.css">
+</head>
+<body>
+  <div class="conteneur page-fixe">
+    <header class="entete">
+      <a class="marque" href="../../en/" title="Back to the Esprit critique home page">
+        <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
+          <path class="embleme-guide" d="M10 2v24M30 2v24"/>
+          <path class="embleme-trait" d="M10 8h20M10 20h20"/>
+          <path class="embleme-ailette" d="M10 8 5 3M10 8l-5 5M30 8l5-5M30 8l5 5M10 20l5-5M10 20l5 5M30 20l-5-5M30 20l-5 5"/>
+        </svg>
+        <span>Esprit critique</span>
+      </a>
+    </header>
+    <main>
+      <a class="lien retour" href="./">← All biases</a>
+      <article class="carte carte-fiche a-indice cat-probabilites">
+        <span class="numero-fiche indice-coin"><span aria-hidden="true">B 7</span><span class="invisible">Bias number 7, </span></span>
+        <div class="entete-fiche">
+          <div class="entete-carte"><span class="etiquette-numero"><span class="etiquette">bias · Probabilities</span></span></div>
+          <h1 class="fiche-titre">Prosecutor’s fallacy</h1>
+          <p class="autres-noms">Inversion of conditional probabilities, Sophisme du procureur</p>
+          <p class="fiche-definition">Confusing the probability of observing a piece of evidence if the accused is innocent with the probability that the accused is innocent given that evidence.</p>
+        </div>
+        <div class="tete-fiche">
+          <div class="section"><h2 class="invisible">The essentials</h2><h3>Mechanism</h3><p>P(evidence | innocent) and P(innocent | evidence) are two different quantities: the second also depends on how many people could have produced that evidence, that is, on the base rate. The two formulations look alike and are easily confused.</p></div>
+        </div>
+        <section class="groupe-fiche">
+          <h2>In practice</h2>
+          <div class="section"><h3>Example</h3><p class="encadre">“This genetic profile appears only once in a million. So there is only a one-in-a-million chance that the accused is innocent.” In a country of 60 million people, about 60 people have that profile.</p></div>
+          <div class="section"><h3>Famous case</h3><p class="celebre">The Sally Clark case (United Kingdom, 1999). She was convicted of the deaths of her two babies, notably on the word of an expert who put the probability of two cot deaths in the same family at 1 in 73 million. That figure wrongly assumes that the two deaths are independent, and it was presented as if it were the probability of her innocence. The Royal Statistical Society protested publicly; she was freed on appeal in 2003.</p></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>Defending yourself</h2>
+          <div class="section"><h3>How to protect yourself</h3><p>Separate two questions: “What is the probability of this evidence if the person is innocent?” and “What is the probability that they are innocent, given this evidence?” To get from one to the other, you need the base rate (Bayes’ formula).</p></div>
+          <div class="section"><h3>Don’t confuse</h3><div class="distinction"><p class="contre"><span aria-hidden="true">≠ </span><span class="invisible">Not to be confused with: </span><a href="taux-de-base.html">Base rate neglect</a></p><p>Base rate neglect is the general error; the prosecutor’s fallacy is its courtroom form, which consists of inverting a conditional probability.</p></div></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>Going further</h2>
+          <div class="section"><h3>Source</h3><p class="source">Thompson and Schumann (1987) gave this fallacy its name.</p></div>
+          <div class="section"><h3>See also</h3><div class="voir-aussi"><a href="taux-de-base.html">Base rate neglect</a><a href="conjonction.html">Conjunction fallacy</a></div></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>Practise</h2>
+          <div class="section"><p>In the app, each entry offers ways to practise recognising the concept. No sign-up: your progress stays on your device.</p><p><a class="bouton" href="../#biais/procureur">Open the interactive entry</a></p></div>
+        </section>
+      </article>
+    </main>
+    <footer class="pied">
+      <p><a href="../../en/legal-notice.html">Legal notice</a> · <a href="../../en/privacy.html">Privacy</a> · <a href="../../en/terms.html">Terms of use</a></p>
+    </footer>
+  </div>
+</body>
+</html>

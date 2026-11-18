@@ -97,11 +97,14 @@ fichiers_sw = {f.split("?")[0] for f in json.loads(re.search(r"const FICHIERS = 
 # les aperçus de partage, le service worker lui-même
 HORS_CACHE = {"sw.js", "robots.txt", "sitemap.xml", "google94b657f6d0442a2f.html", "apercu.png", "apercu-en.png",
               ".well-known/security.txt"}
+# Pages statiques des fiches (tests/pages/generer_pages.py) et leur feuille de couleurs : faites pour les moteurs de
+# recherche et les liens partagés ; hors ligne, l'application a déjà tout leur contenu (184 pages à précharger sinon)
+FICHES_STATIQUES = re.compile(r"(en/)?(biais|sophismes)/[a-z0-9-]+\.html|fiches\.css")
 for chemin in publies("*"):
     if os.path.isdir(chemin) or os.path.basename(chemin) == ".DS_Store":
         continue
     nom = rel(chemin)
-    if nom not in fichiers_sw and nom not in HORS_CACHE:
+    if nom not in fichiers_sw and nom not in HORS_CACHE and not FICHES_STATIQUES.fullmatch(nom):
         problemes.append(f"{nom} : absent de la liste FICHIERS de sw.js (et de la liste HORS_CACHE de ce contrôle)")
 for nom in fichiers_sw - {"./"}:
     if not os.path.exists(os.path.join(STATIC, nom)):

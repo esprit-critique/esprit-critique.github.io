@@ -24,6 +24,10 @@ jobs:
         run: python3 tests/noms_globaux.py
       - name: Version anglaise complète
         run: python3 tests/en/controle.py
+      # Pages fixes, pages des fiches, fiches.css et sitemap.xml : générés depuis les données ; une fiche modifiée sans
+      # relancer le générateur laisserait en ligne une page périmée
+      - name: Pages générées à jour
+        run: python3 tests/pages/generer_pages.py && git add -N static && git diff --exit-code --stat static
       - name: Contrôle statique de sécurité
         run: python3 tests/securite.py
       - name: Verdict des rapports
