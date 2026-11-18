@@ -73,3 +73,12 @@ lue : elle décrit le mécanisme sans employer le terme ; l'article de Gawande, 
 Restent générales, sans erreur relevée : `poteaux` (expression idiomatique), `faux-dilemme`, `juste-milieu`,
 `cause-unique`, `negation-antecedent` et `sophisme-sophisme` (le recueil de Madsen Pirie, 1985, n'a pas pu être
 consulté).
+
+## Vrai ou faux : sources secondaires à remplacer (audit du 18 novembre 2026)
+
+Sur 106 affirmations, 66 n'avaient que Wikipédia pour source (le plus souvent les listes d'idées reçues). Huit ont été
+vérifiées sur la publication primaire (résumés PubMed, texte intégral sur PMC) et leur explication alignée sur elle :
+`chiens` (Neitz et al. 1989), `taureau` (Jacobs et al. 1998), `craquer` (deWeber et al. 2011), `ongles`, `rasage` et
+`penombre` (Vreeman et Carroll, BMJ 2007), `cerveau-energie` (Raichle et Gusnard 2002), `oiseaux` (Brusatte et al. 2015).
+
+Restent sourcées sur Wikipédia (58), à reprendre une à une sur la source primaire : `chauves-souris`, `sang-bleu`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `chimpanze`, `colomb`, `sahara-vert`, `groenland`, `saisons`, `face-cachee`, `diamants`, `verre`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `alaska`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `son-eau`, `abeilles`, `robot`, `metre`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `atlantique`, `chimborazo`, `galilee`, `nintendo`, `pise`, `bresil`, `afrique`, `neutrons`, `nil`, `perihelie`, `big-ben`, `pole-sud`, `annee`, `eiffel-hauteur`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
