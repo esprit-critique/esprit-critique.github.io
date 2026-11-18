@@ -39,6 +39,8 @@ n'emploie aucun hachage lent, inutile avec un secret de 80 bits).
 
 Identifiant conforme à `^[0-9a-f]{32}$` ; jeton comparé en temps constant à son empreinte ; contenu limité à 256 Ko ;
 CORS limité aux origines de `ORIGINES` (`wrangler.toml`) ; créations limitées par la limitation de débit des Workers
-(approximative et locale à chaque centre de données) ; plafond du nombre total de coffres (`MAX_COFFRES`) ; purge
+(approximative et locale à chaque centre de données), et les écritures de chaque coffre (`LIMITE_ECRITURES`, 10 par
+minute) ; plafond du nombre total de coffres (`MAX_COFFRES`) et de la taille de la base (`MAX_OCTETS`, lue dans
+`meta.size_after` de D1 : une écriture qui la ferait grossir au-delà est refusée par un 507, sans rien écraser) ; purge
 quotidienne des coffres inactifs depuis 24 mois ; réponses en `Cache-Control: no-store` et
 `X-Content-Type-Options: nosniff` ; aucune donnée de requête journalisée.
