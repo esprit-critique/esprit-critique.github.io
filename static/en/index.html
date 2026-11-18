@@ -317,23 +317,42 @@
 
         <article class="carte" id="g-lexique">
           <h2>Glossary</h2>
+          <p>The site’s key words, in three groups; each term links, where there is one, to the entry or workshop that puts it into practice.</p>
+          <h3>Reasoning</h3>
           <dl class="lexique">
+            <dt>Cognitive bias</dt><dd>A systematic error of judgement: it happens to almost everyone, in the same direction, and knowing about it is not enough to avoid it. <a href="#biais">The bias entries</a>.</dd>
+            <dt>Fallacy</dt><dd>Reasoning that looks valid but isn’t, because of its form or its content. <a href="#sophismes">The fallacy entries</a>.</dd>
             <dt>Heuristic</dt><dd>A simple, fast rule of judgement, often effective, but a source of systematic errors in certain situations.</dd>
             <dt>Premise, conclusion</dt><dd>The premises are the statements an argument starts from; the conclusion is what it claims to establish.</dd>
-            <dt>Base rate</dt><dd>How frequent a phenomenon is in the population, before any particular information about the case at hand.</dd>
-            <dt>Conditional probability</dt><dd>P(A | B): the probability of A given B. It is generally different from P(B | A).</dd>
-            <dt>Correlation</dt><dd>A statistical link between two variables that vary together. It is not enough to establish a cause-and-effect relationship.</dd>
+            <dt>Valid argument</dt><dd>An argument whose conclusion necessarily follows from its premises: if they are true, so is the conclusion. Validity is about form, not about whether the premises are true.</dd>
+            <dt>Sound argument</dt><dd>A valid argument whose premises are true: its conclusion is then established. <a href="#guide/logique">Valid, true, sound</a>.</dd>
+            <dt>Burden of proof</dt><dd>The obligation, for whoever puts forward a claim, to justify it. <a href="#sophismes/ignorance">Appeal to ignorance</a>.</dd>
+            <dt>Falsifiability</dt><dd>A criterion proposed by Karl Popper (1934), also called refutability: a scientific claim must be open to contradiction by an observation.</dd>
+            <dt>Ockham’s razor</dt><dd>A principle attributed to William of Ockham (14th century): between two explanations that account equally well for the facts, prefer the one that makes fewer assumptions.</dd>
+          </dl>
+          <h3>Probability and statistics</h3>
+          <dl class="lexique">
+            <dt>Base rate</dt><dd>How frequent a phenomenon is in the population, before any particular information about the case at hand. <a href="#biais/taux-de-base">Base rate neglect</a>.</dd>
+            <dt>Conditional probability</dt><dd>P(A | B): the probability of A given B. It is generally different from P(B | A): confusing the two is the <a href="#biais/procureur">prosecutor’s fallacy</a>.</dd>
+            <dt>False positive, false negative</dt><dd>A false positive is a positive test in someone who doesn’t have what is being looked for; a false negative, a negative test in someone who does.</dd>
+            <dt>Sensitivity, specificity</dt><dd>Sensitivity is the share of real cases a test detects; specificity, the share of healthy cases it recognises as such.</dd>
+            <dt>Positive predictive value</dt><dd>The probability of really having what is being looked for when the test is positive. It depends on the base rate: for a rare disease, even a good test gives many false positives. <a href="#tests/depistage">“Positive tests” workshop</a>.</dd>
+            <dt>Correlation</dt><dd>A statistical link between two variables that vary together. It is not enough to establish a cause-and-effect relationship. <a href="#sophismes/correlation">Correlation mistaken for causation</a>.</dd>
             <dt>Confounder</dt><dd>A variable that influences both the supposed cause and the observed effect, creating an apparent link between them.</dd>
+            <dt>Regression to the mean</dt><dd>After an extreme measurement, the next one is usually closer to the average, with no cause at work. <a href="#biais/regression-moyenne">The entry</a>.</dd>
+            <dt>Calibration</dt><dd>Agreement between stated certainty and actual success: someone well calibrated is right about 7 times out of 10 when they say they are 70% sure. <a href="#ateliers">“Measuring your confidence” workshops</a>.</dd>
+            <dt>Brier score</dt><dd>The average of the squared differences between the stated probabilities and what happened (1 or 0): the lower it is, the better the forecasts.</dd>
+          </dl>
+          <h3>Studies and evidence</h3>
+          <dl class="lexique">
+            <dt>Representative sample</dt><dd>A subset whose make-up reflects that of the population being studied.</dd>
+            <dt>Selection bias</dt><dd>A distortion that comes from how the observed cases were chosen: they do not represent the whole. <a href="#biais/survivant">Survivorship bias</a>.</dd>
             <dt>Control group</dt><dd>A group comparable to the one receiving an intervention, but which does not receive it, to measure what would have happened without it.</dd>
             <dt>Randomised trial</dt><dd>A study in which the intervention is assigned by lot: confounders, known or unknown, are spread at random between the groups and balance out on average.</dd>
-            <dt>Representative sample</dt><dd>A subset whose make-up reflects that of the population being studied.</dd>
-            <dt>Statistical significance</dt><dd>A result is called significant when a difference at least that large would be unlikely to be observed if the effect did not exist. It says nothing about the size or importance of the effect.</dd>
-            <dt>Replication</dt><dd>Reproduction of a study by other researchers, to check that the result holds.</dd>
+            <dt>Statistical significance</dt><dd>A result is called significant when a difference at least that large would be unlikely to be observed if the effect did not exist. It says nothing about the size or the importance of the effect.</dd>
+            <dt>Replication</dt><dd>Reproduction of a study by other researchers, to check that the result holds. <a href="#guide/recherche">The state of the research</a>.</dd>
             <dt>Meta-analysis</dt><dd>A statistical synthesis of several studies on the same question.</dd>
-            <dt>Publication bias</dt><dd>The tendency to publish positive results more readily than null ones, which distorts the overall picture.</dd>
-            <dt>Falsifiability</dt><dd>A criterion proposed by Karl Popper (1934), also called refutability: a scientific claim must be open to contradiction by an observation.</dd>
-            <dt>Burden of proof</dt><dd>The obligation, for whoever puts forward a claim, to justify it.</dd>
-            <dt>Ockham’s razor</dt><dd>A principle attributed to William of Ockham (14th century): between two explanations that account equally well for the facts, prefer the one that makes the fewest assumptions.</dd>
+            <dt>Publication bias</dt><dd>The tendency to publish positive results more readily than null ones, which distorts the overall picture. <a href="#sophismes/cherry-picking">Cherry-picking</a>.</dd>
           </dl>
         </article>
 
