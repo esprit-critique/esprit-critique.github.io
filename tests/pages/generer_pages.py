@@ -404,4 +404,239 @@ page("terms.html", "Terms of use", "Terms of use of the Esprit critique website:
         browser (data being cleared, changing device).</p>
         <h2>Changes and applicable law</h2>
         <p>These terms may change; the date of the last update appears at the top of the page. They are governed by French law.</p>''', langue="en", pied=PIED_EN)
-print("pages générées")
+# ===================== Pages des fiches (biais/, sophismes/ et leurs versions anglaises) =====================
+# Dans l'application, une fiche est une adresse en « # » (#biais/ancrage), que les moteurs de recherche ne traitent pas
+# comme une page : chaque fiche a donc aussi une page statique, sans script autre que celui du thème, qui renvoie à la
+# fiche interactive. Textes lus par fiches_donnees.js dans les fichiers du site, comme le site les affiche (aucune copie
+# à tenir à jour) ; les questions du quiz (cas, cas2, casSup) n'y figurent pas, pour ne rien dévoiler.
+import json, subprocess
+
+SITE = "https://esprit-critique.github.io/"
+DONNEES = json.loads(subprocess.run(["node", os.path.join(ICI, "fiches_donnees.js")], check=True, capture_output=True, text=True).stdout)
+TYPES_FICHES = ("biais", "sophismes")
+
+TEXTES_FICHES = {
+    "fr": {"nature": {"biais": "biais cognitif", "sophismes": "sophisme"},
+           "titre_liste": {"biais": "Les {} biais cognitifs", "sophismes": "Les {} sophismes"},
+           "desc_liste": {"biais": "Les {} biais cognitifs d'Esprit critique, classés par thème : définition, mécanisme, exemple, parade et source de chacun.",
+                          "sophismes": "Les {} sophismes d'Esprit critique, classés par thème : définition, schéma de l'argument, exemple, réponse et source de chacun."},
+           "intro_liste": {"biais": "Un biais cognitif est une erreur de jugement systématique : il se produit chez presque tout le monde, dans le même sens. Chaque fiche dit d'où il vient et comment s'en prémunir.",
+                           "sophismes": "Un sophisme est un raisonnement qui paraît valide sans l'être. Chaque fiche montre la forme de l'argument, pourquoi il ne tient pas et comment y répondre."},
+           "autre_liste": {"biais": ("sophismes", "Voir aussi les sophismes"), "sophismes": ("biais", "Voir aussi les biais cognitifs")},
+           "retour_liste": {"biais": "← Tous les biais", "sophismes": "← Tous les sophismes"},
+           "entrainer": "S'entraîner", "entrainer_texte": "Dans l'application, chaque fiche propose de quoi s'entraîner à reconnaître la notion. Sans inscription : votre progression reste sur votre appareil.",
+           "entrainer_bouton": "Ouvrir la fiche interactive", "ouvrir_liste": "S'entraîner dans l'application", "numero": {"biais": "Biais numéro {}, ", "sophismes": "Sophisme numéro {}, "},
+           "titre_mecanisme": {"biais": "Mécanisme", "sophismes": "Pourquoi l'argument est invalide"},
+           "titre_parade": {"biais": "Comment s'en prémunir", "sophismes": "Comment répondre"}},
+    "en": {"nature": {"biais": "cognitive bias", "sophismes": "fallacy"},
+           "titre_liste": {"biais": "The {} cognitive biases", "sophismes": "The {} fallacies"},
+           "desc_liste": {"biais": "The {} cognitive biases of Esprit critique, grouped by theme: definition, mechanism, example, defence and source for each.",
+                          "sophismes": "The {} fallacies of Esprit critique, grouped by theme: definition, argument diagram, example, response and source for each."},
+           "intro_liste": {"biais": "A cognitive bias is a systematic error of judgement: it happens to almost everyone, in the same direction. Each entry explains where it comes from and how to protect yourself.",
+                           "sophismes": "A fallacy is reasoning that looks valid but isn’t. Each entry shows the form of the argument, why it fails and how to respond."},
+           "autre_liste": {"biais": ("sophismes", "See also the fallacies"), "sophismes": ("biais", "See also the cognitive biases")},
+           "retour_liste": {"biais": "← All biases", "sophismes": "← All fallacies"},
+           "entrainer": "Practise", "entrainer_texte": "In the app, each entry offers ways to practise recognising the concept. No sign-up: your progress stays on your device.",
+           "entrainer_bouton": "Open the interactive entry", "ouvrir_liste": "Practise in the app", "numero": {"biais": "Bias number {}, ", "sophismes": "Fallacy number {}, "},
+           "titre_mecanisme": {"biais": "Mechanism", "sophismes": "Why the argument is invalid"},
+           "titre_parade": {"biais": "How to protect yourself", "sophismes": "How to respond"}},
+}
+
+def typo_fiche(texte, langue):
+    """Même typographie que typo() dans app.js (le texte des fiches passe par elle dans l'application)."""
+    if langue == "en":
+        return texte
+    texte = re.sub(r" ([;:!?%»])", "\u202f\\1", texte).replace("« ", "«\u202f")
+    return re.sub(r"(\d) (?=\d{3}\b)", "\\1\u202f", texte)
+
+def txt(texte, langue):
+    """Texte des données : typographie, puis échappement de < > & et du guillemet droit (aucune balise ne peut venir
+    des données, et le texte peut aller dans un attribut entre guillemets droits). L'apostrophe reste telle quelle."""
+    return html.escape(typo_fiche(texte, langue), quote=False).replace('"', "&quot;")
+
+def forme_html(lignes, langue):
+    """Schéma de l'argument, comme schemaArgument() : la conclusion sous un trait, les variables (A, P, P'…) en <var>."""
+    sortie, conclusion = [], False
+    debut = r"^(So|Then|Therefore)\b" if langue == "en" else r"^(Donc|Alors)\b"
+    for ligne in lignes:
+        classe = ""
+        if not conclusion and re.match(debut, ligne):
+            classe, conclusion = ' class="conclusion"', True
+        morceaux, pos, texte = [], 0, typo_fiche(ligne, langue)
+        for m in re.finditer(r"(^|[^\w'’])([A-Z](?:['’′](?![^\W\d_]))?)(?![^\W\d_]|['’])", texte):
+            d = m.start(2)
+            morceaux.append(html.escape(texte[pos:d], quote=False) + "<var>" + html.escape(m.group(2), quote=False) + "</var>")
+            pos = d + len(m.group(2))
+        morceaux.append(html.escape(texte[pos:], quote=False))
+        sortie.append(f"<p{classe}>{''.join(morceaux)}</p>")
+    return '<div class="forme">' + "".join(sortie) + "</div>"
+
+def section(titre, contenu_html, invisible_h2=None):
+    if not contenu_html:
+        return ""
+    h2 = f'<h2 class="invisible">{invisible_h2}</h2>' if invisible_h2 else ""
+    h3 = f"<h3>{titre}</h3>" if titre else ""
+    return f'          <div class="section">{h2}{h3}{contenu_html}</div>\n'
+
+def groupe(titre, sections):
+    contenu = "".join(s for s in sections if s)
+    return f'        <section class="groupe-fiche">\n          <h2>{titre}</h2>\n{contenu}        </section>\n' if contenu else ""
+
+def classe_cat(categorie):
+    """Classe de couleur d'une catégorie (fiches.css), d'après son glyphe, identique dans les deux langues."""
+    assert re.fullmatch(r"[a-z-]+", categorie["glyphe"]) and re.fullmatch(r"#[0-9a-f]{6}", categorie["couleur"]), categorie
+    return "cat-" + categorie["glyphe"]
+
+def page_statique(langue, chemin, titre, description, alternes, corps, og_type="article"):
+    """Écrit static/<chemin> (chemin relatif, en/… pour l'anglais) avec l'en-tête, la CSP et le pied des pages fixes."""
+    CSP, THEME, EMBLEME = GABARITS[langue]
+    t = TEXTES[langue]
+    profondeur = chemin.count("/")
+    racine = "../" * profondeur                         # vers static/
+    accueil = racine + ("en/" if langue == "en" else "")  # accueil de la langue
+    pied = ("legal-notice.html", "privacy.html", "terms.html") if langue == "en" else ("mentions-legales.html", "confidentialite.html", "cgu.html")
+    url = SITE + chemin.removesuffix("index.html")
+    liens_langues = "".join(f'  <link rel="alternate" hreflang="{l}" href="{SITE + c.removesuffix("index.html")}">\n' for l, c in alternes)
+    contenu = f'''<!DOCTYPE html>
+<html lang="{langue}">
+<head>
+  <meta charset="UTF-8">
+{CSP}  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{titre} · Esprit critique</title>
+  <meta name="description" content="{description}">
+  <link rel="canonical" href="{url}">
+{liens_langues}  <meta property="og:type" content="{og_type}">
+  <meta property="og:site_name" content="Esprit critique">
+  <meta property="og:title" content="{titre}">
+  <meta property="og:description" content="{description}">
+  <meta property="og:url" content="{url}">
+  <meta property="og:image" content="{SITE}{'apercu-en.png' if langue == 'en' else 'apercu.png'}">
+  <link rel="icon" href="{racine}favicon.svg?v=3" type="image/svg+xml">
+  <link rel="icon" href="{racine}icone-32.png?v=3" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="{racine}icone.png?v=3">
+  <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+{THEME}  <link rel="preload" href="{racine}polices/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{racine}style.css">
+  <link rel="stylesheet" href="{racine}fiches.css">
+</head>
+<body>
+  <div class="conteneur page-fixe">
+    <header class="entete">
+      <a class="marque" href="{accueil}" title="{t['accueil']}">
+{EMBLEME}        <span>Esprit critique</span>
+      </a>
+    </header>
+    <main>
+{corps}    </main>
+    <footer class="pied">
+      <p><a href="{accueil}{pied[0]}">{t['pied'][0]}</a> · <a href="{accueil}{pied[1]}">{t['pied'][1]}</a> · <a href="{accueil}{pied[2]}">{t['pied'][2]}</a></p>
+    </footer>
+  </div>
+</body>
+</html>
+'''
+    os.makedirs(os.path.dirname(os.path.join(STATIC, chemin)), exist_ok=True)
+    open(os.path.join(STATIC, chemin), "w", encoding="utf-8").write(contenu)
+    return chemin
+
+def generer_fiches():
+    ecrites = []
+    for langue in ("fr", "en"):
+        d, tf = DONNEES[langue], TEXTES_FICHES[langue]
+        dossier = "en/" if langue == "en" else ""
+        lib = lambda l: txt(d["libelles"][l], langue)
+        index = {(type_, f["id"]): f for type_ in TYPES_FICHES for f in d["fiches"][type_]}
+        cats = {type_: {c["nom"]: c for c in d["categories"][type_]} for type_ in TYPES_FICHES}
+        for type_ in TYPES_FICHES:
+            singulier = lib("biais" if type_ == "biais" else "sophisme")
+            for f in d["fiches"][type_]:
+                cat = cats[type_][f["categorie"]]
+                # Voir aussi : dans les deux sens, comme dans l'application
+                lies = list(dict.fromkeys(f.get("lies", []) + [f"{t}:{g['id']}" for t in TYPES_FICHES for g in d["fiches"][t] if f"{type_}:{f['id']}" in g.get("lies", [])]))
+                def lien(cle):
+                    t2, id2 = cle.split(":")
+                    g = index[(t2, id2)]
+                    href = f"{id2}.html" if t2 == type_ else f"../{t2}/{id2}.html"
+                    autre = f" ({lib('biais' if t2 == 'biais' else 'sophisme')})" if t2 != type_ else ""
+                    return f'<a href="{href}">{txt(g["nom"], langue)}{autre}</a>'
+                distinction = ""
+                if f.get("distinction"):
+                    cible, texte = f["distinction"]
+                    distinction = (f'<div class="distinction"><p class="contre"><span aria-hidden="true">≠ </span>'
+                                   f'<span class="invisible">{lib("À ne pas confondre avec : ")}</span>{lien(cible)}</p>'
+                                   f'<p>{txt(texte[:1].upper() + texte[1:], langue)}</p></div>')
+                numero = ("B" if type_ == "biais" else "S") + "\u00a0" + str(f["num"])
+                corps = (f'      <a class="lien retour" href="./">{txt(tf["retour_liste"][type_], langue)}</a>\n'
+                         f'      <article class="carte carte-fiche a-indice {classe_cat(cat)}">\n'
+                         f'        <span class="numero-fiche indice-coin"><span aria-hidden="true">{numero}</span><span class="invisible">{txt(tf["numero"][type_].format(f["num"]), langue)}</span></span>\n'
+                         f'        <div class="entete-fiche">\n'
+                         f'          <div class="entete-carte"><span class="etiquette-numero"><span class="etiquette">{singulier} · {txt(f["categorie"], langue)}</span></span></div>\n'
+                         f'          <h1 class="fiche-titre">{txt(f["nom"], langue)}</h1>\n'
+                         + (f'          <p class="autres-noms">{txt(f["autresNoms"], langue)}</p>\n' if f.get("autresNoms") else "")
+                         + f'          <p class="fiche-definition">{txt(f["definition"], langue)}</p>\n'
+                         f'        </div>\n'
+                         f'        <div class="tete-fiche">\n'
+                         + section(lib("Schéma de l'argument"), forme_html(f["forme"], langue) if f.get("forme") else "", lib("L'essentiel"))
+                         + section(txt(tf["titre_mecanisme"][type_], langue), f'<p>{txt(f["mecanisme"], langue)}</p>', None if f.get("forme") else lib("L'essentiel"))
+                         + '        </div>\n'
+                         + groupe(lib("En pratique"), [section(lib("Exemple"), f'<p class="encadre">{txt(f["exemple"], langue)}</p>'),
+                                                       section(lib("Cas célèbre"), f'<p class="celebre">{txt(f["celebre"], langue)}</p>' if f.get("celebre") else "")])
+                         + groupe(lib("Se défendre"), [section(txt(tf["titre_parade"][type_], langue), f'<p>{txt(f["parade"], langue)}</p>'),
+                                                       section(lib("Ne pas confondre"), distinction)])
+                         + groupe(lib("Aller plus loin"), [section(lib("Source"), f'<p class="source">{txt(f["source"], langue)}</p>'),
+                                                           section(lib("Voir aussi"), '<div class="voir-aussi">' + "".join(lien(c) for c in lies) + "</div>" if lies else "")])
+                         + groupe(txt(tf["entrainer"], langue), [section(None, f'<p>{txt(tf["entrainer_texte"], langue)}</p>'
+                                                                         f'<p><a class="bouton" href="../#{type_}/{f["id"]}">{txt(tf["entrainer_bouton"], langue)}</a></p>')])
+                         + '      </article>\n')
+                titre = f'{txt(f["nom"], langue)} ({txt(tf["nature"][type_], langue)})'
+                ecrites.append(page_statique(langue, f"{dossier}{type_}/{f['id']}.html", titre, txt(f["definition"], langue),
+                                             [("fr", f"{type_}/{f['id']}.html"), ("en", f"en/{type_}/{f['id']}.html")], corps))
+            # Liste des fiches du type, par catégorie
+            n = len(d["fiches"][type_])
+            blocs = ""
+            for c in d["categories"][type_]:
+                elements = "".join(f'            <li><a href="{f["id"]}.html">{txt(f["nom"], langue)}</a>{txt(" : ", langue)}{txt(f["definition"], langue)}</li>\n'
+                                   for f in d["fiches"][type_] if f["categorie"] == c["nom"])
+                blocs += (f'        <section class="{classe_cat(c)}" id="{c["glyphe"]}">\n          <h2>{txt(c["nom"], langue)}</h2>\n'
+                          f'          <p class="source">{txt(c["description"], langue)}</p>\n          <ul>\n{elements}          </ul>\n        </section>\n')
+            autre_type, autre_texte = tf["autre_liste"][type_]
+            titre = txt(tf["titre_liste"][type_].format(n), langue)
+            corps = (f'      <article class="carte texte-fixe">\n        <h1>{titre}</h1>\n        <p>{txt(tf["intro_liste"][type_], langue)}</p>\n{blocs}'
+                     f'        <p><a href="../{autre_type}/">{txt(autre_texte, langue)}</a></p>\n'
+                     f'        <p>{txt(tf["entrainer_texte"], langue)}</p>\n'
+                     f'        <p><a class="bouton" href="../#{type_}">{txt(tf["ouvrir_liste"], langue)}</a></p>\n      </article>\n')
+            ecrites.append(page_statique(langue, f"{dossier}{type_}/index.html", titre, txt(tf["desc_liste"][type_].format(n), langue),
+                                         [("fr", f"{type_}/index.html"), ("en", f"en/{type_}/index.html")], corps, og_type="website"))
+    # Couleur de chaque catégorie : classes posées sur les cartes (la CSP interdit le style en ligne)
+    regles = sorted({f".{classe_cat(c)} {{ --c: {c['couleur']}; }}" for type_ in TYPES_FICHES for c in DONNEES["fr"]["categories"][type_]})
+    open(os.path.join(STATIC, "fiches.css"), "w", encoding="utf-8").write(
+        "/* fiches.css : généré par tests/pages/generer_pages.py (ne pas modifier à la main). Couleur de chaque catégorie\n"
+        "   pour les pages statiques des fiches ; les couleurs viennent de donnees.js. */\n" + "\n".join(regles) + "\n")
+    return ecrites
+
+PAGES_FICHES = generer_fiches()
+
+# Plan du site : les pages d'accueil et fixes, puis les listes et les pages des fiches
+FIXES = ["", "mentions-legales.html", "confidentialite.html", "cgu.html", "en/", "en/legal-notice.html", "en/privacy.html", "en/terms.html"]
+adresses = FIXES + [p.removesuffix("index.html") for p in PAGES_FICHES]
+open(os.path.join(STATIC, "sitemap.xml"), "w", encoding="utf-8").write(
+    '<?xml version="1.0" encoding="UTF-8"?>\n<!-- Plan du site, généré par tests/pages/generer_pages.py (ne pas modifier à la main). Les fiches ont\n'
+    '     une page statique chacune (biais/, sophismes/, en/…) ; les ateliers restent des adresses en « # » de la page d\'accueil. -->\n'
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + "".join(f"  <url><loc>{SITE}{a}</loc></url>\n" for a in adresses) + "</urlset>\n")
+
+# Contrôle : chaque lien et chaque ressource relatifs des pages des fiches mènent à un fichier existant de static/,
+# et chaque page a exactement un h1
+for chemin in PAGES_FICHES:
+    texte = open(os.path.join(STATIC, chemin), encoding="utf-8").read()
+    assert texte.count("<h1") == 1, chemin
+    for cible in re.findall(r'(?:href|src)="([^"]+)"', texte):
+        if cible.startswith(("https://", "#")):
+            continue
+        fichier = os.path.normpath(os.path.join(STATIC, os.path.dirname(chemin), cible.split("#")[0].split("?")[0]))
+        if fichier.endswith(os.sep) or os.path.isdir(fichier):
+            fichier = os.path.join(fichier, "index.html")
+        assert fichier.startswith(os.path.abspath(STATIC)) and os.path.isfile(fichier), f"{chemin} : lien mort {cible}"
+print(f"pages générées, dont {len(PAGES_FICHES)} pages de fiches")

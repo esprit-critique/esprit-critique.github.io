@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://esprit-critique-synchro.esprit-critique-synchro.workers.dev; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Biais du survivant (biais cognitif) · Esprit critique</title>
+  <meta name="description" content="Tirer des conclusions d'un échantillon qui ne contient que les cas ayant passé une sélection, en oubliant ceux qui ont été éliminés.">
+  <link rel="canonical" href="https://esprit-critique.github.io/biais/survivant.html">
+  <link rel="alternate" hreflang="fr" href="https://esprit-critique.github.io/biais/survivant.html">
+  <link rel="alternate" hreflang="en" href="https://esprit-critique.github.io/en/biais/survivant.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Esprit critique">
+  <meta property="og:title" content="Biais du survivant (biais cognitif)">
+  <meta property="og:description" content="Tirer des conclusions d'un échantillon qui ne contient que les cas ayant passé une sélection, en oubliant ceux qui ont été éliminés.">
+  <meta property="og:url" content="https://esprit-critique.github.io/biais/survivant.html">
+  <meta property="og:image" content="https://esprit-critique.github.io/apercu.png">
+  <link rel="icon" href="../favicon.svg?v=3" type="image/svg+xml">
+  <link rel="icon" href="../icone-32.png?v=3" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../icone.png?v=3">
+  <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+  <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <link rel="preload" href="../polices/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../fiches.css">
+</head>
+<body>
+  <div class="conteneur page-fixe">
+    <header class="entete">
+      <a class="marque" href="../" title="Retour à l'accueil d'Esprit critique">
+        <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
+          <path class="embleme-guide" d="M10 2v24M30 2v24"/>
+          <path class="embleme-trait" d="M10 8h20M10 20h20"/>
+          <path class="embleme-ailette" d="M10 8 5 3M10 8l-5 5M30 8l5-5M30 8l5 5M10 20l5-5M10 20l5 5M30 20l-5-5M30 20l-5 5"/>
+        </svg>
+        <span>Esprit critique</span>
+      </a>
+    </header>
+    <main>
+      <a class="lien retour" href="./">← Tous les biais</a>
+      <article class="carte carte-fiche a-indice cat-probabilites">
+        <span class="numero-fiche indice-coin"><span aria-hidden="true">B 6</span><span class="invisible">Biais numéro 6, </span></span>
+        <div class="entete-fiche">
+          <div class="entete-carte"><span class="etiquette-numero"><span class="etiquette">biais · Probabilités</span></span></div>
+          <h1 class="fiche-titre">Biais du survivant</h1>
+          <p class="autres-noms">Survivorship bias</p>
+          <p class="fiche-definition">Tirer des conclusions d'un échantillon qui ne contient que les cas ayant passé une sélection, en oubliant ceux qui ont été éliminés.</p>
+        </div>
+        <div class="tete-fiche">
+          <div class="section"><h2 class="invisible">L'essentiel</h2><h3>Mécanisme</h3><p>Les cas éliminés sont par nature invisibles : ils ne témoignent pas, ne sont pas publiés, n'apparaissent pas dans les classements. L'échantillon observé n'est donc pas représentatif.</p></div>
+        </div>
+        <section class="groupe-fiche">
+          <h2>En pratique</h2>
+          <div class="section"><h3>Exemple</h3><p class="encadre">On cite des entrepreneurs ayant quitté leurs études pour réussir, sans compter les nombreuses personnes qui ont fait le même choix et échoué.</p></div>
+          <div class="section"><h3>Cas célèbre</h3><p class="celebre">Pendant la Seconde Guerre mondiale, plutôt que de blinder les zones criblées d'impacts sur les avions revenus de mission, Abraham Wald recommande de blinder celles qui n'en portent pas : les avions touchés à ces endroits ne sont pas revenus. Le même biais touche les bases de données de fonds d'investissement, d'où disparaissent les fonds fermés pour mauvaises performances (Elton, Gruber et Blake, 1996).</p></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>Se défendre</h2>
+          <div class="section"><h3>Comment s'en prémunir</h3><p>Se demander : qu'est-il arrivé aux cas que je ne vois pas ? Quel filtre a produit l'échantillon que j'observe ?</p></div>
+          <div class="section"><h3>Ne pas confondre</h3><div class="distinction"><p class="contre"><span aria-hidden="true">≠ </span><span class="invisible">À ne pas confondre avec : </span><a href="../sophismes/cherry-picking.html">Cueillette de cerises (sophisme)</a></p><p>Dans le biais du survivant, c'est la réalité qui a filtré les données : seuls les survivants restent visibles. Dans la cueillette de cerises, c'est la personne qui argumente qui les choisit.</p></div></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>Aller plus loin</h2>
+          <div class="section"><h3>Source</h3><p class="source">Abraham Wald, Statistical Research Group de l'université Columbia (1943).</p></div>
+          <div class="section"><h3>Voir aussi</h3><div class="voir-aussi"><a href="../sophismes/cherry-picking.html">Cueillette de cerises (sophisme)</a><a href="../sophismes/generalisation-hative.html">Généralisation hâtive (sophisme)</a></div></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>S'entraîner</h2>
+          <div class="section"><p>Dans l'application, chaque fiche propose de quoi s'entraîner à reconnaître la notion. Sans inscription : votre progression reste sur votre appareil.</p><p><a class="bouton" href="../#biais/survivant">Ouvrir la fiche interactive</a></p></div>
+        </section>
+      </article>
+    </main>
+    <footer class="pied">
+      <p><a href="../mentions-legales.html">Mentions légales</a> · <a href="../confidentialite.html">Confidentialité</a> · <a href="../cgu.html">Conditions d'utilisation</a></p>
+    </footer>
+  </div>
+</body>
+</html>

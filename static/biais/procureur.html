@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iUXKF+MpESrrSCFeRQ4KzD/hgvYZBYb65MiMrcmYCXQ='; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://esprit-critique-synchro.esprit-critique-synchro.workers.dev; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types esprit-critique">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sophisme du procureur (biais cognitif) · Esprit critique</title>
+  <meta name="description" content="Confondre la probabilité d'observer un indice si l'accusé est innocent avec la probabilité que l'accusé soit innocent compte tenu de cet indice.">
+  <link rel="canonical" href="https://esprit-critique.github.io/biais/procureur.html">
+  <link rel="alternate" hreflang="fr" href="https://esprit-critique.github.io/biais/procureur.html">
+  <link rel="alternate" hreflang="en" href="https://esprit-critique.github.io/en/biais/procureur.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Esprit critique">
+  <meta property="og:title" content="Sophisme du procureur (biais cognitif)">
+  <meta property="og:description" content="Confondre la probabilité d'observer un indice si l'accusé est innocent avec la probabilité que l'accusé soit innocent compte tenu de cet indice.">
+  <meta property="og:url" content="https://esprit-critique.github.io/biais/procureur.html">
+  <meta property="og:image" content="https://esprit-critique.github.io/apercu.png">
+  <link rel="icon" href="../favicon.svg?v=3" type="image/svg+xml">
+  <link rel="icon" href="../icone-32.png?v=3" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../icone.png?v=3">
+  <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+  <script>try { const t = JSON.parse(localStorage.getItem("theme")); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <link rel="preload" href="../polices/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../fiches.css">
+</head>
+<body>
+  <div class="conteneur page-fixe">
+    <header class="entete">
+      <a class="marque" href="../" title="Retour à l'accueil d'Esprit critique">
+        <svg class="embleme" viewBox="0 0 40 28" aria-hidden="true">
+          <path class="embleme-guide" d="M10 2v24M30 2v24"/>
+          <path class="embleme-trait" d="M10 8h20M10 20h20"/>
+          <path class="embleme-ailette" d="M10 8 5 3M10 8l-5 5M30 8l5-5M30 8l5 5M10 20l5-5M10 20l5 5M30 20l-5-5M30 20l-5 5"/>
+        </svg>
+        <span>Esprit critique</span>
+      </a>
+    </header>
+    <main>
+      <a class="lien retour" href="./">← Tous les biais</a>
+      <article class="carte carte-fiche a-indice cat-probabilites">
+        <span class="numero-fiche indice-coin"><span aria-hidden="true">B 7</span><span class="invisible">Biais numéro 7, </span></span>
+        <div class="entete-fiche">
+          <div class="entete-carte"><span class="etiquette-numero"><span class="etiquette">biais · Probabilités</span></span></div>
+          <h1 class="fiche-titre">Sophisme du procureur</h1>
+          <p class="autres-noms">Prosecutor's fallacy, inversion des probabilités conditionnelles</p>
+          <p class="fiche-definition">Confondre la probabilité d'observer un indice si l'accusé est innocent avec la probabilité que l'accusé soit innocent compte tenu de cet indice.</p>
+        </div>
+        <div class="tete-fiche">
+          <div class="section"><h2 class="invisible">L'essentiel</h2><h3>Mécanisme</h3><p>P(indice | innocent) et P(innocent | indice) sont deux quantités différentes : la seconde dépend aussi du nombre de personnes qui auraient pu produire cet indice, c'est-à-dire du taux de base. Les deux formulations se ressemblent et sont facilement confondues.</p></div>
+        </div>
+        <section class="groupe-fiche">
+          <h2>En pratique</h2>
+          <div class="section"><h3>Exemple</h3><p class="encadre">« Ce profil génétique n'apparaît qu'une fois sur un million. Il n'y a donc qu'une chance sur un million que l'accusé soit innocent. » Dans un pays de 60 millions d'habitants, environ 60 personnes ont pourtant ce profil.</p></div>
+          <div class="section"><h3>Cas célèbre</h3><p class="celebre">Affaire Sally Clark (Royaume-Uni, 1999). Elle est condamnée pour la mort de ses deux bébés, notamment sur la foi d'un expert qui évalue à 1 sur 73 millions la probabilité de deux morts subites du nourrisson dans une même famille. Ce chiffre suppose à tort deux décès indépendants, et il est présenté comme s'il s'agissait de la probabilité de son innocence. La Royal Statistical Society proteste publiquement ; elle est libérée en appel en 2003.</p></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>Se défendre</h2>
+          <div class="section"><h3>Comment s'en prémunir</h3><p>Distinguer deux questions : « Quelle est la probabilité de cet indice si la personne est innocente ? » et « Quelle est la probabilité qu'elle soit innocente, étant donné cet indice ? ». Pour passer de l'une à l'autre, il faut connaître le taux de base (formule de Bayes).</p></div>
+          <div class="section"><h3>Ne pas confondre</h3><div class="distinction"><p class="contre"><span aria-hidden="true">≠ </span><span class="invisible">À ne pas confondre avec : </span><a href="taux-de-base.html">Négligence du taux de base</a></p><p>La négligence du taux de base est l'erreur générale ; le sophisme du procureur en est la forme judiciaire, qui consiste à inverser une probabilité conditionnelle.</p></div></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>Aller plus loin</h2>
+          <div class="section"><h3>Source</h3><p class="source">Thompson et Schumann (1987) nomment ce sophisme.</p></div>
+          <div class="section"><h3>Voir aussi</h3><div class="voir-aussi"><a href="taux-de-base.html">Négligence du taux de base</a><a href="conjonction.html">Erreur de conjonction</a></div></div>
+        </section>
+        <section class="groupe-fiche">
+          <h2>S'entraîner</h2>
+          <div class="section"><p>Dans l'application, chaque fiche propose de quoi s'entraîner à reconnaître la notion. Sans inscription : votre progression reste sur votre appareil.</p><p><a class="bouton" href="../#biais/procureur">Ouvrir la fiche interactive</a></p></div>
+        </section>
+      </article>
+    </main>
+    <footer class="pied">
+      <p><a href="../mentions-legales.html">Mentions légales</a> · <a href="../confidentialite.html">Confidentialité</a> · <a href="../cgu.html">Conditions d'utilisation</a></p>
+    </footer>
+  </div>
+</body>
+</html>
