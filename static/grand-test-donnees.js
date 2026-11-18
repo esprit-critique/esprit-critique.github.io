@@ -1485,9 +1485,9 @@ const GRANDEURS_PAYS_GT = [
   ["ESP", "pop"], ["ITA", "pop"], ["CAN", "pop"], ["MEX", "pop"], ["EGY", "pop"], ["KEN", "pop"], ["VNM", "pop"], ["PER", "pop"], ["POL", "pop"], ["SWE", "pop"],
   ["ARG", "pop"], ["MAR", "pop"], ["SEN", "pop"], ["NOR", "pop"], ["PRT", "pop"], ["GRC", "pop"], ["THA", "pop"], ["KOR", "pop"], ["COL", "pop"], ["DZA", "pop"],
   ["TUN", "pop"], ["BEL", "pop"], ["CHE", "pop"], ["NZL", "pop"], ["IRL", "pop"], ["CHL", "pop"], ["PHL", "pop"], ["IRN", "pop"], ["UKR", "pop"], ["JPN", "pop"],
-  ["BRA", "surf"], ["ARG", "surf"], ["KAZ", "surf"], ["MNG", "surf"], ["EGY", "surf"], ["MAR", "surf"], ["NOR", "surf"], ["SWE", "surf"], ["FIN", "surf"], ["POL", "surf"],
+  ["BRA", "surf"], ["ARG", "surf"], ["KAZ", "surf"], ["MNG", "surf"], ["EGY", "surf"], ["MAR", "surf"], ["ESP", "surf"], ["ITA", "surf"], ["FIN", "surf"], ["POL", "surf"],
   ["GRC", "surf"], ["PRT", "surf"], ["BEL", "surf"], ["CHE", "surf"], ["NLD", "surf"], ["IRL", "surf"], ["NZL", "surf"], ["CHL", "surf"], ["PER", "surf"], ["COL", "surf"],
-  ["MEX", "surf"], ["IND", "surf"], ["IDN", "surf"], ["JPN", "surf"], ["KEN", "surf"], ["NGA", "surf"], ["ZAF", "surf"], ["AUS", "surf"], ["CAN", "surf"], ["TUR", "surf"],
+  ["MEX", "surf"], ["IND", "surf"], ["IDN", "surf"], ["JPN", "surf"], ["KEN", "surf"], ["NGA", "surf"], ["ZAF", "surf"], ["AUS", "surf"], ["DZA", "surf"], ["TUR", "surf"],
   ["FRA", "ev"], ["NGA", "ev"], ["IND", "ev"], ["BRA", "ev"], ["MEX", "ev"], ["ZAF", "ev"], ["DEU", "ev"], ["ESP", "ev"], ["ITA", "ev"], ["CHN", "ev"],
   ["RUS", "ev"], ["EGY", "ev"], ["KEN", "ev"], ["BGD", "ev"], ["PAK", "ev"], ["TUR", "ev"], ["ARG", "ev"], ["VNM", "ev"], ["KOR", "ev"], ["POL", "ev"]
 ];

@@ -83,6 +83,16 @@ for cle, code, _, _ in INDICATEURS:
         vals = [r for r in w if r["value"] is not None and int(r["date"]) == annee]
         if vals: monde[cle] = round(vals[0]["value"], ARRONDI[cle] if ARRONDI[cle] else 1)
 
+# Surface (AG.SRF.TOTL.K2) aberrante pour quelques pays : la série de la Banque mondiale y compte une partie des eaux
+# maritimes (Canada : 15,6 millions de km² ; République dominicaine : 146 839). Contrôle par les terres émergées
+# (AG.LND.TOTL.K2) : au-delà de 27 % de plus, le pays n'est pas proposé pour les surfaces plutôt que d'afficher un
+# chiffre faux. Les grands lacs expliquent jusqu'à 26 % (Malawi, lac Malawi) ; la Suède (30 %) compte de la mer
+terres = {r["countryiso3code"]: r["value"] for r in json.load(open(os.path.join(ICI, "AG.LND.TOTL.K2.json")))[1] if r["value"]}
+for iso, p in pays.items():
+    if "surf" in p and iso in terres and p["surf"] > 1.27 * terres[iso]:
+        print(f"surface écartée : {p['nom']} ({p['surf']} km² de surface pour {round(terres[iso])} km² de terres)")
+        del p["surf"]
+
 # Réfugiés (HCR, fin 2024) : réfugiés relevant du HCR et autres personnes ayant besoin d'une protection
 # internationale, par pays d'accueil et par pays d'origine ; et par rapport à la population de 2024.
 nb = lambda v: float(v) if v not in (None, "-", "") else 0.0

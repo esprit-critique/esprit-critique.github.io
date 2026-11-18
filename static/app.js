@@ -26,7 +26,7 @@
   // typeof dans une fonction protégée : une constante dont la déclaration a planté (fichier suivant d'un fichier
   // manquant) lève une erreur au lieu de rendre « undefined »
   const manquants = [
-    [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof MONDE, "jeux-donnees.js"],
+    [() => typeof BIAIS, "donnees.js"], [() => typeof NS_SVG, "schemas.js"], [() => typeof PAYS, "pays.js"], [() => typeof FORMES_PAYS, "pays-formes.js"], [() => typeof MONDE, "jeux-donnees.js"],
     [() => typeof PICTOS, "ateliers.js"], [() => typeof NOMS_NIVEAUX, "niveaux.js"], [() => typeof EXPERIENCES, "experiences.js"], [() => typeof JEUX, "chiffres.js"], [() => typeof gauss, "perception.js"], [() => typeof DEBATS, "debattre.js"], [() => typeof SYLLOGISMES, "raisonner.js"], [() => typeof testT, "pratiques.js"], [() => typeof INDICES, "indices.js"], [() => typeof SCHEMAS_SAUVEGARDE, "sauvegarde.js"], [() => typeof ILLUSIONS_DU_JOUR, "illusions.js"], [() => typeof TIRAGE, "tirage.js"], [() => typeof GRADES, "progression.js"], [() => typeof graphiqueBarres, "graphiques.js"], [() => typeof PIECE_MONDES, "piece-donnees.js"], [() => typeof pieceDuJour, "piece.js"], [() => typeof afficherPiece, "piece-interface.js"], [() => typeof gagner, "profil.js"], [() => typeof PARCOURS, "parcours.js"], [() => typeof SYNCHRO, "coffre.js"], [() => typeof MESSAGES_ENLIGNE, "enligne.js"]
   ].filter(([type]) => { try { return type() === "undefined"; } catch (e) { return true; } }).map(([, fichier]) => fichier);
   if (!manquants.length) return;

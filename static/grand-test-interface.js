@@ -474,6 +474,8 @@ function correctionCourte(l) {
 function ecranItem(zone, t, ecran) {
   const inst = t.instances.find(x => x.itemId === ecran.itemId);
   const item = resoudreItem(inst, t.graine);
+  // Question devenue sans donnée dans une passation commencée avant (grandeur retirée) : passée sans réponse, non notée
+  if (!item) { if (repondre(inst.itemId, null, null)) rafraichir(); return; }
   const rendus = { qcm: itemChoix, binaire: itemChoix, vf: itemChoix, calcul: itemCalcul, fourchette: itemFourchette, rappel: itemRappel,
     "angle-mort": itemAngleMort, "exposition-lecture": itemExpositionLecture, "exposition-note": itemExpositionNote, societe: itemSociete,
     drm: itemDrmReconnaissance, recit: itemRecitReconnaissance, source: itemSourceTest };

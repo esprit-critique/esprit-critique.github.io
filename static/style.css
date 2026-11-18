@@ -2238,3 +2238,6 @@ label[for] { display: block; margin: 0 0 8px; }
 .choix-fiches legend { padding: 0; }
 .cases-fiches { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 0 16px; }
 .cases-fiches .case-tirage input { accent-color: var(--accent); width: 18px; height: 18px; flex: none; }
+
+/* Formes des pays (chiffres.js, formesSurfaces) : le trait garde son épaisseur malgré la mise à l'échelle */
+.forme-pays { vector-effect: non-scaling-stroke; stroke-linejoin: round; }

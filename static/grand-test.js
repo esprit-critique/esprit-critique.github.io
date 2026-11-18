@@ -1257,7 +1257,8 @@ function resoudreItem(inst, graine) {
     const x = EXPOSITIONS_GT.find(y => y[0] === id);
     return Object.assign(base, { type: v.role === "lecture" ? "exposition-lecture" : "exposition-note", texte: x[3], domaine: x[1], vrai: x[2], role: v.role });
   }
-  if (v.banque === "grandeur") return Object.assign(base, { type: v.role === "rappel" ? "rappel" : "fourchette", axe: "E", q: grandeurGT(id), correction: v.correction });
+  // Grandeur sans donnée (surface retirée de pays.js : valeur aberrante de la source) : item écarté, comme un item inconnu
+  if (v.banque === "grandeur") { const q = grandeurGT(id); return q ? Object.assign(base, { type: v.role === "rappel" ? "rappel" : "fourchette", axe: "E", q, correction: v.correction }) : null; }
   if (v.banque === "angleMort") {
     const x = ANGLE_MORT_GT.find(y => y[0] === id);
     return Object.assign(base, { type: "angle-mort", description: x[2], fiche: x[1] });

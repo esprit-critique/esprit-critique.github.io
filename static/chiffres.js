@@ -106,6 +106,48 @@ function carresSurfaces(conteneur, elements, numeros) {
   conteneur.appendChild(el("p", "barre-source", numeros ? T("Aire des carrés proportionnelle à la surface ; numéros dans l'ordre des barres.") : T("Aire des carrés proportionnelle à la surface.")));
 }
 
+// Cadre d'une forme de pays.js (pays-formes.js), en km : chemin « M x y l dx dy … z », coordonnées entières
+function cadreForme([e, d]) {
+  let x = 0, y = 0, xmin = Infinity, ymin = Infinity, xmax = -Infinity, ymax = -Infinity;
+  for (const [, commande, nombres] of d.matchAll(/([Ml])([^Mlz]*)/g)) {
+    const v = nombres.trim().split(" ").map(Number);
+    for (let i = 0; i + 1 < v.length; i += 2) {
+      if (commande === "M") { x = v[i]; y = v[i + 1]; } else { x += v[i]; y += v[i + 1]; }
+      xmin = Math.min(xmin, x); xmax = Math.max(xmax, x); ymin = Math.min(ymin, y); ymax = Math.max(ymax, y);
+    }
+  }
+  return { x: xmin * e, y: ymin * e, l: (xmax - xmin) * e, h: (ymax - ymin) * e };
+}
+
+// Deux pays dessinés à la même échelle, côte à côte sur une même ligne, nom et surface dessous (projection
+// équivalente : les aires se comparent à vue). Étiquettes gardées dans le cadre ; la seconde descend si elles se
+// chevauchent, comme pour les carrés
+function formesSurfaces(conteneur, pays, gagnant, format) {
+  const formes = pays.map(p => FORMES_PAYS[p.id]), cadres = formes.map(cadreForme), ecart = 24;
+  const s = Math.min((300 - ecart) / (cadres[0].l + cadres[1].l), 150 / Math.max(cadres[0].h, cadres[1].h));   // px par km
+  const bas = 10 + Math.max(...cadres.map(c => c.h)) * s;
+  let x = 10 + (300 - ecart - (cadres[0].l + cadres[1].l) * s) / 2;
+  const places = cadres.map(c => { const r = { x, l: c.l * s }; x += c.l * s + ecart; return r; });
+  const etiquettes = places.map((r, i) => {
+    const largeur = Math.max(largeurTexteSvg(T(pays[i].nom), "sch-texte sch-gras"), largeurTexteSvg(format(pays[i].surf), "sch-petit")) + 8;
+    return { cx: Math.min(Math.max(r.x + r.l / 2, largeur / 2), 320 - largeur / 2), largeur, dy: 0 };
+  });
+  if (etiquettes[0].cx + etiquettes[0].largeur / 2 > etiquettes[1].cx - etiquettes[1].largeur / 2) etiquettes[1].dy = 30;
+  const dessin = svg("svg", { viewBox: "0 0 320 " + (bas + 34 + etiquettes[1].dy), class: "carres-surfaces", role: "img",
+    "aria-label": T("Formes des deux pays à la même échelle : {0}", pays.map(p => T(p.nom) + " " + format(p.surf)).join(", ")) });
+  pays.forEach((p, i) => {
+    const [e, d] = formes[i], c = cadres[i];
+    dessin.appendChild(svg("path", { d, class: "carre-surface forme-pays" + (p === gagnant ? " fort" : ""),
+      transform: "translate(" + (places[i].x - c.x * s).toFixed(2) + " " + (bas - (c.y + c.h) * s).toFixed(2) + ") scale(" + (e * s).toFixed(5) + ")" }));
+    dessin.appendChild(texteSvg(etiquettes[i].cx, bas + 14 + etiquettes[i].dy, T(p.nom), { class: "sch-texte sch-gras", "text-anchor": "middle" }));
+    dessin.appendChild(texteSvg(etiquettes[i].cx, bas + 28 + etiquettes[i].dy, format(p.surf), { class: "sch-petit", "text-anchor": "middle" }));
+  });
+  conteneur.appendChild(dessin);
+  const loin = pays.some((p, i) => formes[i][2]);
+  conteneur.appendChild(el("p", "barre-source", T("Formes à la même échelle, en projection équivalente : les surfaces se comparent à vue. Contours : Natural Earth.")
+    + (loin ? " " + T("Territoires éloignés non dessinés.") : "")));
+}
+
 // ===================== Les jeux =====================
 
 const JEUX = [
@@ -286,7 +328,8 @@ const JEUX = [
           const annee = p => (p.annees && p.annees[duel.cle]) || ANNEES_PAYS[duel.cle];
           const source = p => (ind.source ? (ind.source.includes(String(annee(p))) ? T(ind.source) : T("{0}, {1}", T(ind.source), annee(p))) : T("Banque mondiale, {0}", annee(p)));
           const mondial = MONDE_PAYS[duel.cle] !== undefined && duel.cle !== "pop" ? T("moyenne mondiale, {0}", ind.format(MONDE_PAYS[duel.cle])) : null;
-          if (ind.barres === false) {
+          const formes = duel.cle === "surf" && typeof FORMES_PAYS !== "undefined" && FORMES_PAYS[duel.a.id] && FORMES_PAYS[duel.b.id];
+          if (ind.barres === false || formes) {
             const liste = el("ul", "liste-simple");
             [duel.a, duel.b].forEach(p => liste.appendChild(el("li", p === gagnant ? "valeur-forte" : null, p.nom + " : " + ind.format(p[duel.cle]) + " (" + source(p) + ")")));
             retour.appendChild(liste);
@@ -296,7 +339,8 @@ const JEUX = [
               nom: p.nom, valeur: p[duel.cle], texte: ind.format(p[duel.cle]), forte: p === gagnant, source: source(p)
             })), mondial ? { valeur: MONDE_PAYS[duel.cle], texte: mondial } : null);
           }
-          if (duel.cle === "surf") carresSurfaces(retour, [duel.a, duel.b].map(p => ({ nom: p.nom, valeur: p.surf, texte: ind.format(p.surf), forte: p === gagnant })));
+          if (formes) formesSurfaces(retour, [duel.a, duel.b], gagnant, ind.format);
+          else if (duel.cle === "surf") carresSurfaces(retour, [duel.a, duel.b].map(p => ({ nom: p.nom, valeur: p.surf, texte: ind.format(p.surf), forte: p === gagnant })));
           if (ind.note) retour.appendChild(paragraphe(ind.note, "source"));
           if (duel.cle === "surf" && [duel.a, duel.b].some(p => Math.abs(p.lat) >= 45) && [duel.a, duel.b].some(p => Math.abs(p.lat) < 30)) {
             retour.appendChild(paragraphe("Sur la plupart des cartes du monde (projection de Mercator), les pays éloignés de l'équateur paraissent bien plus grands qu'ils ne le sont : à 60° de latitude, les surfaces apparaissent quatre fois trop grandes.", "source"));
