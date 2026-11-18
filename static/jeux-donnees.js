@@ -473,6 +473,9 @@ const VRAI_FAUX = [
   // --- Faits surprenants (vrais) ---
   { id: "venus", niveau: 3, texte: "Vénus met plus de temps à faire un tour sur elle-même qu'à faire le tour du Soleil.", vrai: true,
     explication: "Sa rotation dure 243 jours terrestres, sa révolution 225 jours.", source: "NASA" },
+  // Ajouté le 18 novembre 2026 : « depuis » (premier jour d'apparition) pour ne pas rebattre les cartes déjà jouées
+  { id: "requins-arbres", niveau: 2, depuis: 20776, texte: "Les requins existaient avant les arbres.", vrai: true,
+    explication: "Le plus ancien requin dont on ait retrouvé le squelette articulé, Doliodus problematicus, a presque 409 millions d'années (Dévonien inférieur). Les plus anciens arbres connus, ceux de la forêt fossile de Gilboa (État de New York), datent de la fin du Dévonien moyen, l'époque suivante.", source: "Miller, Cloutier et Turner, Nature, 2003 ; Stein et al., Nature, 2007" },
   { id: "cleopatre", niveau: 2, texte: "Cléopâtre a vécu plus près de notre époque que de la construction de la grande pyramide de Khéops.", vrai: true,
     explication: "La pyramide date d'environ 2560 avant notre ère, la mort de Cléopâtre de 30 avant notre ère : plus de 2 500 ans les séparent, contre environ 2 050 ans entre Cléopâtre et nous.", source: "Wikipedia (en), « Cleopatra » et « Great Pyramid of Giza »" },
   { id: "arbres-etoiles", niveau: 3, texte: "Il y a plus d'arbres sur Terre que d'étoiles dans la Voie lactée.", vrai: true,
@@ -761,7 +764,7 @@ const GRANDEURS = [
   // Ajouts pour la progression
   { id: "secondes-an", niveau: 1, q: "Nombre de secondes dans une année de 365 jours", v: 31536000, source: "calcul : 365 × 24 × 60 × 60" },
   { id: "piscine", niveau: 1, q: "Volume d'eau d'un bassin olympique de 50 m sur 25 m et 2 m de profondeur, en litres", v: 2500000, source: "calcul : 2 500 m³, soit 2,5 millions de litres" },
-  { id: "paris", niveau: 1, q: "Nombre d'habitants de la ville de Paris", v: 2.1e6, source: "Insee : environ 2,1 millions d'habitants au 1er janvier 2023" },
+  { id: "paris", niveau: 1, q: "Nombre d'habitants de la ville de Paris", v: 2103778, source: "Insee, recensement de 2023 : 2 103 778 habitants (dossier complet de la commune de Paris)" },
   { id: "pop-1950", niveau: 1, q: "Population mondiale en 1950", v: 2.5e9, source: "ONU : environ 2,5 milliards" },
   { id: "mammiferes", niveau: 2, q: "Nombre d'espèces de mammifères actuelles décrites", v: 6640, source: "environ 6 640 espèces (synthèse de Wikipédia, d'après la Mammal Diversity Database)" },
   { id: "oiseaux", niveau: 2, q: "Nombre d'espèces d'oiseaux actuelles", v: 11000, source: "plus de 11 000 espèces (11 131 dans AviList, la liste mondiale de référence, 2025)" },
