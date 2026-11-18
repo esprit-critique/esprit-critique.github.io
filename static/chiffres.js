@@ -550,18 +550,19 @@ const JEUX = [
         estJuste: r => r.juste
       }, (a, zone, fini) => {
         zone.appendChild(el("p", "cas", a.texte));
+        let reponse = null;   // modifiable jusqu'au choix de la confiance, qui corrige
         const reponses = [["Vrai", true], ["Faux", false]].map(([texte, valeur], k) => {
           const b = boutonChoix(texte, k);
           b.addEventListener("click", () => {
-            reponses.forEach(x => { x.disabled = true; });
-            b.classList.add("choisi");
-            demanderConfiance(valeur);
+            marquerChoix(reponses, b);
+            if (reponse === null) demanderConfiance();
+            reponse = valeur;
           });
           zone.appendChild(b);
           return b;
         });
 
-        function demanderConfiance(valeur) {
+        function demanderConfiance() {
           const bloc = el("div", "bloc-confiance");
           bloc.appendChild(el("p", "consigne", "À quel point êtes-vous sûr ?"));
           const rangee = el("div", "rangee-confiance");
@@ -571,8 +572,9 @@ const JEUX = [
             b.classList.add("confiance");
             b.addEventListener("click", () => {
               boutons.forEach(x => { x.disabled = true; });
+              reponses.forEach(x => { x.disabled = true; });
               b.classList.add("choisi");
-              corriger(valeur, niveau);
+              corriger(reponse, niveau);
             });
             rangee.appendChild(b);
             return b;

@@ -126,10 +126,12 @@ const AFFIRMATIONS_CECITE = [
 function echelleNeuf(surChoix) {
   const bloc = el("div", "echelle-sept echelle-neuf");
   const rangee = el("div", "echelle-sept-boutons");
+  let premier = true;
   const boutons = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => {
     const b = el("button", "choix", String(n));
     b.setAttribute("aria-label", n + " sur 9");
-    b.addEventListener("click", () => { boutons.forEach(x => { x.disabled = true; }); b.classList.add("choisi"); surChoix(n); });
+    // Comme echelleSept : un avis reste modifiable jusqu'à « Suivant »
+    b.addEventListener("click", () => { marquerChoix(boutons, b); surChoix(n, premier); premier = false; });
     rangee.appendChild(b);
     return b;
   });
@@ -349,7 +351,10 @@ EXPERIENCES.push(
       const reponses = [];
       const commencer = () => derouler(zone, AFFIRMATIONS_CECITE, (a, zone, fini) => {
         zone.appendChild(el("p", "cas", T("« {0} »", T(a))));
-        zone.appendChild(echelleNeuf(n => { reponses.push(n); const r = el("div", "retour-quiz"); zone.appendChild(r); fini(n, r); }));
+        zone.appendChild(echelleNeuf((n, premier) => {
+          if (!premier) { reponses[reponses.length - 1] = n; return; }
+          reponses.push(n); const r = el("div", "retour-quiz"); zone.appendChild(r); fini(n, r);
+        }));
       }, () => justifier(), "Affirmation");
       if (dejaFait) {
         zone.appendChild(paragraphe("Vous avez déjà fait cette expérience : vous en connaissez le principe, qui ne peut plus vous surprendre. Vous pouvez la refaire, ou la proposer à quelqu'un d'autre.", "source"));
@@ -869,7 +874,7 @@ EXPERIENCES.push(
         const n = notes[e.k] || (notes[e.k] = []);
         if (e.type === "note") {
           zone.appendChild(el("p", "cas", T("Comment comprenez-vous le fonctionnement d'{0} ?", T(m.objet))));
-          zone.appendChild(echelle(v => { n.push(v); fini(null, zone); }));
+          zone.appendChild(echelle((v, premier) => { if (premier) { n.push(v); fini(null, zone); } else n[n.length - 1] = v; }));
           return;
         }
         if (e.type === "expliquer") {
@@ -885,7 +890,7 @@ EXPERIENCES.push(
             texte.disabled = true;
             ok.remove();
             zone.appendChild(paragraphe("Après avoir écrit votre explication, comment jugez-vous maintenant votre compréhension ?"));
-            zone.appendChild(echelle(v => { n.push(v); fini(null, zone); }));
+            zone.appendChild(echelle((v, premier) => { if (premier) { n.push(v); fini(null, zone); } else n[n.length - 1] = v; }));
           });
           return;
         }
@@ -904,7 +909,7 @@ EXPERIENCES.push(
             retour.appendChild(paragraphe(m.explication));
             retour.appendChild(paragraphe(m.source, "source"));
             retour.appendChild(paragraphe("Et maintenant, comment jugez-vous votre compréhension de départ ?"));
-            retour.appendChild(echelle(v => { n.push(v); fini({ k: e.k, juste: e.juste }, retour); }));
+            retour.appendChild(echelle((v, premier) => { if (premier) { n.push(v); fini({ k: e.k, juste: e.juste }, retour); } else n[n.length - 1] = v; }));
             zone.appendChild(retour);
           });
           zone.appendChild(b);
