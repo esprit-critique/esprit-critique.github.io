@@ -389,6 +389,9 @@ h3.titre-bloc {
   text-decoration: none;
   text-align: center;
 }
+/* Lien stylé en bouton : un <a> ne centre pas son texte en hauteur comme un <button> ; sans flex, le texte restait en
+   haut des 44 px (visible sous Safari). .bouton.large, plus précis, garde son display: flex */
+a.bouton { display: inline-flex; align-items: center; justify-content: center; text-align: center; }
 .bouton { min-height: 44px; transition: background-color 0.15s, border-color 0.15s, opacity 0.15s, transform 0.1s; }
 .bouton:active { opacity: 0.85; transform: scale(0.985); }
 .bouton-danger { color: var(--rouge); border-color: var(--rouge); margin-top: 12px; }
@@ -1653,7 +1656,7 @@ label[for] { display: block; margin: 0 0 8px; }
   .sommaire-fiche li { margin: 0 0 8px; }
   .rail-fiche .surtitre { margin-bottom: 8px; }
   .sommaire-fiche .lien { font-size: 14px; text-align: left; }
-  #vue-fiches.large .lien.retour { display: inline-block; margin-left: calc((100% - var(--largeur-lecture) - 300px) / 2); }
+  #vue-fiches.large .lien.retour { display: inline-flex; margin-left: calc((100% - var(--largeur-lecture) - 300px) / 2); }
 }
 
 /* Glyphes de catégorie (app.js, GLYPHES_CATEGORIE) */
@@ -1822,7 +1825,7 @@ label[for] { display: block; margin: 0 0 8px; }
 .grand-nombre.petit { font-size: 34px; margin-left: auto; display: inline; }
 .avertissement-maitrise { color: var(--discret); }
 .onglets-profil { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 8px; border-bottom: 1px solid var(--trait); }
-.onglet-profil { min-height: 44px; padding: 8px 12px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--discret); font-weight: 600; }
+.onglet-profil { min-height: 44px; padding: 8px 12px; border: 0; border-top: 3px solid transparent; border-bottom: 3px solid transparent; background: none; color: var(--discret); font-weight: 600; }
 .onglet-profil[aria-selected="true"] { color: var(--texte); border-bottom-color: var(--accent); }
 /* Sur téléphone, les six onglets passaient sur deux lignes, et la seconde ne se lisait plus comme des onglets. Ils
    restent sur une ligne qui défile au doigt : le bord droit s'estompe et l'onglet suivant est coupé, signe qu'il y a
@@ -2228,3 +2231,10 @@ label[for] { display: block; margin: 0 0 8px; }
 .pdj-records dd { margin: 0; color: var(--discret); }
 .pdj-archives { columns: 2; padding-left: 20px; margin: 0 0 12px; }
 .pdj-archives li { margin-bottom: 4px; }
+
+/* Défi sur mesure (tirage.js) : raccourcis qui passent à la ligne, cases en grille (une colonne sur téléphone) */
+.raccourcis-fiches { display: flex; flex-wrap: wrap; gap: 8px; }
+.choix-fiches { border: 0; padding: 0; margin: 20px 0 0; min-width: 0; }
+.choix-fiches legend { padding: 0; }
+.cases-fiches { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 0 16px; }
+.cases-fiches .case-tirage input { accent-color: var(--accent); width: 18px; height: 18px; flex: none; }
