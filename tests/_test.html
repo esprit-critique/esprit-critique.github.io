@@ -303,6 +303,11 @@ f.onload = async () => {
     ok("défi libre : #defi/123 ouvre la page du défi libre n° 123", vue().querySelector(".page-titre").textContent === "Défi libre" && /123/.test(vue().textContent));
     await aller("defi/pas-un-nombre");
     ok("défi libre : une graine invalide est remplacée par une graine valide", /^#defi\/\d+$/.test(w.location.hash), w.location.hash);
+    // Défi sur mesure : le code de l'adresse redonne exactement les fiches choisies ; un code piégé ne donne rien
+    const clesPerso = [...w.eval("INDEX").keys()];
+    const allerRetour = cles => { const d = w.decoderDefiPerso(w.codeDefiPerso(cles, 42)); return d && d.graine === 42 && JSON.stringify([...d.cles].sort()) === JSON.stringify([...cles].sort()); };
+    ok("défi sur mesure : le code redonne les fiches choisies (une, dix, toutes)", allerRetour(clesPerso.slice(0, 1)) && allerRetour(clesPerso.filter((c, k) => k % 9 === 0)) && allerRetour(clesPerso));
+    ok("défi sur mesure : codes piégés refusés", ["", "x", "AAAA.AAAA-12", "<b>.x-1", "QQ.QQ-1234567890", "QQ.QQ"].every(c => w.decoderDefiPerso(c) === null));
     // Défier un ami : le score à battre (entier de 0 à 10) est lu dans l'adresse ; tout autre texte en est retiré
     await aller("defi/123/7");
     ok("défier un ami : #defi/123/7 annonce le score à battre", w.location.hash === "#defi/123/7" && /score à battre est de 7 \/ 10/.test(vue().textContent));
