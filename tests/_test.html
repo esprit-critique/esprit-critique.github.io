@@ -395,6 +395,8 @@ f.onload = async () => {
       const ateliersF = w.eval("ateliersDeLaFiche")(cle);
       if (ateliersF.length && carte.querySelectorAll(".ateliers-fiche a").length !== ateliersF.length) manques.push(cle + " : ateliers");
       (fiche.lies || []).forEach(l => { const v = w.eval("INDEX").get(l); if (v && !carte.querySelector('.voir-aussi a[href="#' + v.type + "/" + v.fiche.id + '"]')) manques.push(cle + " : voir aussi " + l); });
+      // Lien inverse : une fiche qui cite celle-ci apparaît aussi dans son « Voir aussi »
+      w.eval("INDEX").forEach((v, k) => { if ((v.fiche.lies || []).includes(cle) && !carte.querySelector('.voir-aussi a[href="#' + v.type + "/" + v.fiche.id + '"]')) manques.push(cle + " : voir aussi inverse " + k); });
       // Hiérarchie des titres : un seul h1, en premier ; un h3 seulement sous un h2 ou dans le groupe de tête
       const titres = [...carte.querySelectorAll("h1, h2, h3, h4")];
       let dernier = 0;
