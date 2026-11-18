@@ -887,6 +887,9 @@ const CITATIONS = [
     explication: "Malraux a plusieurs fois démenti l'avoir prononcée. André Frossard affirmait l'avoir entendue sous une autre forme : « Le XXIe siècle sera mystique ou ne sera pas »." },
   { id: "statistiques", niveau: 3, texte: "Il y a trois sortes de mensonges : les mensonges, les sacrés mensonges et les statistiques.", auteur: "Benjamin Disraeli", statut: "apocryphe",
     explication: "Mark Twain l'attribuait à Disraeli, mais la phrase ne figure dans aucun de ses écrits et n'apparaît qu'après sa mort. Son auteur reste inconnu." },
+  // Ajoutée le 18 novembre 2026 : « depuis » (premier jour d'apparition) pour ne pas rebattre les cartes déjà jouées
+  { id: "impossible", niveau: 2, depuis: 20776, texte: "Impossible n'est pas français.", auteur: "Napoléon", statut: "deformee",
+    explication: "Le 9 juillet 1813, à Dresde, Napoléon répond au général Lemarois, gouverneur de Magdebourg, qui jugeait impossible d'envoyer de l'avoine : « “Ce n'est pas possible”, m'écrivez-vous : cela n'est pas français. » La formule courte, devenue proverbe, résume la lettre (Correspondance de Napoléon Ier, tome XXV, lettre n° 20256)." },
   { id: "gandhi", niveau: 3, texte: "Sois le changement que tu veux voir dans le monde.", auteur: "Gandhi", statut: "deformee",
     explication: "La formule ne figure pas dans ses écrits et n'apparaît pas avant les années 1970. Le passage le plus proche, de 1913, dit : « Si nous pouvions nous changer nous-mêmes, les tendances du monde changeraient aussi. » La version courte efface l'idée que changement personnel et changement social vont ensemble." },
   { id: "watson", niveau: 1, texte: "Élémentaire, mon cher Watson.", auteur: "Sherlock Holmes, chez Conan Doyle", statut: "deformee",
