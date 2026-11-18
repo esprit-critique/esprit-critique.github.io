@@ -635,8 +635,12 @@ function ouvrirAtelier(conteneur, atelier, adresseCourante) {
   const rang = tous.findIndex(a => a.atelier === atelier);
   const nav = el("div", "nav-atelier");
   nav.appendChild(lienVers("#ateliers", "← Ateliers", "lien retour"));
+  // Parcours en cours : le lien de droite mène à sa prochaine étape (en gris), pour ne pas perdre le fil ; sinon, à
+  // l'atelier suivant de la liste
+  const etape = typeof etapeApres === "function" && rang >= 0 ? etapeApres(tous[rang].adresse) : null;
   const suivant = tous[(rang + 1) % tous.length];
-  nav.appendChild(lienVers(suivant.adresse, T(suivant.atelier.titre) + " →", "lien retour atelier-suivant"));
+  nav.appendChild(etape ? lienVers(etape.adresse, T("Parcours : {0}", etape.texte) + " →", "lien retour atelier-suivant")
+    : lienVers(suivant.adresse, T(suivant.atelier.titre) + " →", "lien retour atelier-suivant"));
   conteneur.appendChild(nav);
 
   const carte = el("article", "carte");

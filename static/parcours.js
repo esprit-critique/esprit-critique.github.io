@@ -132,7 +132,7 @@ function descriptionEtape(etape, p) {
   }
   if (genre === "a") {
     const a = tousLesAteliers().find(x => x.atelier.id === reste[0]);
-    return { texte: T("Atelier : {0}", a.atelier.titre), adresse: a.adresse };
+    return { texte: T("Atelier : {0}", T(a.atelier.titre)), adresse: a.adresse };
   }
   if (genre === "s") return { texte: T("Une première série de quiz"), adresse: "#quiz/tout" };
   return { texte: T("Quiz ciblé : cinq situations sur les notions du parcours, 4 sur 5 pour valider"), adresse: "#parcours/" + p.id + "/quiz" };
@@ -151,6 +151,15 @@ function prochaineEtape() {
   if (!p) return null;
   const e = p.etapes.find(x => !etapeFaite(x, p, d));
   return { parcours: p, ...descriptionEtape(e, p) };
+}
+
+// Étape du parcours actif à faire après celle qu'on est en train de faire (adresse) : la première non faite ailleurs
+function etapeApres(adresse) {
+  const d = donneesParcours();
+  const p = PARCOURS.find(x => x.id === d.parcours.actif && avancementParcours(x, d) < x.etapes.length);
+  if (!p) return null;
+  const e = p.etapes.map(x => ({ x, ...descriptionEtape(x, p) })).find(({ x, adresse: a }) => !etapeFaite(x, p, d) && a !== adresse);
+  return e ? { parcours: p, texte: e.texte, adresse: e.adresse } : null;
 }
 
 // ===================== Pages =====================
