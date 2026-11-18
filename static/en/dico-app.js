@@ -239,6 +239,8 @@ EN_AJOUTER([
   ["Afficher cette aide", "Show this help"],
   ["Raccourcis clavier", "Keyboard shortcuts"],
   ["Installer l'application", "Install the app"],
+  ["Hors ligne", "Offline"],
+  ["Le site fonctionne sans connexion une fois chargé, dans la langue visitée. Ce bouton enregistre aussi l'autre langue.", "Once loaded, the site works without a connection, in the language you visited. This button saves the other language too."],
   ["Tout garder pour le hors-ligne", "Keep everything for offline use"],
   ["Enregistrement en cours…", "Saving…"],
   ["délai", "timeout"],
