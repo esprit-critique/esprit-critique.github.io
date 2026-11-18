@@ -867,7 +867,7 @@
     casSup: ["“In my family, we’ve always done it this way: no need to change our approach to bringing up children.”",
       "“Hazing has existed in this school since its founding: it’s a custom, there’s no reason to ban it.”"],
     parade: "Ask what reasons, apart from age, justify the practice.",
-    source: "Described in the classical logic tradition.",
+    source: "Jeremy Bentham, “The Book of Fallacies” (1824), Part I, chapter 2: “The Wisdom of our Ancestors, or Chinese Argument”.",
     celebre: "Bloodletting was practised in medicine for more than two millennia. In December 1799, George Washington, suffering from a severe throat infection, was bled four times in about twelve hours. Estimates of the volume taken range from 2.4 to 3.7 litres, 40% or more of his blood. He died that same evening.",
     distinction: "The appeal to tradition invokes the age of a practice; the appeal to nature, its natural character."
   },
@@ -898,7 +898,7 @@
     casSup: ["A charity presents a water purification device by showing sick children, without giving any data on the device’s effectiveness.",
       "“Think of all those families who will suffer!” exclaims a member of parliament, without answering the specific objection raised about the cost of the proposal."],
     parade: "Acknowledge the emotion, then return to the question: “I understand, but what are the reasons to think it is true?”",
-    source: "In the Rhetoric, Aristotle distinguishes pathos (emotion), ethos (the speaker’s credibility) and logos (reasoning).",
+    source: "In the Rhetoric (Book I, chapter 2), Aristotle distinguishes pathos (emotion), ethos (the speaker’s credibility) and logos (reasoning).",
     celebre: "“Daisy” (1964), a Lyndon Johnson campaign ad: a little girl pulls the petals off a daisy, then a countdown ends in a nuclear explosion. The ad contains no argument about his opponent’s programme; it merely suggests danger.",
     distinction: "The appeal to emotion stirs a feeling in place of reasons; the appeal to consequences judges a claim true or false according to whether its effects would be desirable."
   },
@@ -914,7 +914,7 @@
     casSup: ["“If the universe had no purpose, life would have no meaning; so the universe must have a purpose.”",
       "“This treatment has to work: otherwise, thousands of patients would have suffered for nothing.”"],
     parade: "Separate two questions: “Is it true?” and “What should we do if it is?” Answering the second does not settle the first.",
-    source: "Described in the classical logic tradition.",
+    source: "David Hume, A Treatise of Human Nature (1739, Book II, Part 3, Section 2): refuting a hypothesis by pointing to its dangerous consequences for religion and morality is, in his words, the most common and the most blameable method of reasoning.",
     distinction: "The slippery slope predicts a chain of consequences in order to reject a measure; the appeal to consequences rejects a claim because its consequences would be unpleasant, without discussing the evidence."
   },
   "sophismes:genetique": {
@@ -991,7 +991,7 @@
     casSup: ["A journalist asks a mayor: “Why did you let rents explode in your city?”, although no figure shows an unusual rise.",
       "A survey asks: “What measure should be taken as a priority against the explosion of crime in your city?”, although crime there is stable."],
     parade: "Reject the presupposition before answering: “Your question assumes that…, which has not been established.”",
-    source: "Described by Aristotle in the Sophistical Refutations.",
+    source: "Described by Aristotle in the Sophistical Refutations (chapters 4 and 5): making several questions into one, to which a single answer is expected.",
     distinction: "The loaded question slips a presupposition into a question; begging the question slips the conclusion into the premises of an argument."
   },
   "sophismes:poteaux": {
@@ -1082,7 +1082,7 @@
     casSup: ["“Forgetting to return a library book or stealing from a bookshop is the same thing: either way, you keep a book that isn’t yours.”",
       "“This newspaper once got a date wrong, that one invented a whole interview: neither is reliable, they’re as bad as each other.”"],
     parade: "Compare scale and evidence, not just category: “Are the two comparable in seriousness, frequency, soundness?”",
-    source: "Studied in research on the media coverage of science under the name “false balance”.",
+    source: "Studied in research on the media coverage of science under the name “false balance”. Maxwell and Jules Boykoff, “Balance as bias” (Global Environmental Change, 2004): in the US prestige press from 1988 to 2002, the pursuit of balance drew popular discourse away from the scientific consensus on global warming.",
     celebre: "In 2011, a report commissioned by the BBC Trust from the geneticist Steve Jones criticised the BBC for giving excessive attention to fringe opinions in its science coverage, notably on climate, in the name of an overly rigid application of impartiality.",
     distinction: "The middle ground fallacy concludes that the truth lies between two positions; false equivalence asserts that two positions or two facts are equal."
   },
@@ -1145,7 +1145,7 @@
     casSup: ["“If we let children play video games for an hour a day, they’ll end up dropping out of school and never leaving their rooms.”",
       "“If we let café terraces stay open until midnight, soon there will be noise all night, then fights, and the neighbourhood will become unlivable.”"],
     parade: "Ask for each link in the chain to be justified: “Why would B necessarily follow from A?”",
-    source: "Described in the classical logic tradition. Not all arguments of this type are fallacious: they are legitimate when each step is supported.",
+    source: "Douglas Walton, “Slippery Slope Arguments” (1992): not all arguments of this type are fallacious; they are legitimate when each step is supported.",
     celebre: "The “domino theory”, set out by President Eisenhower on 7 April 1954: if Indochina fell under communist control, the whole of Southeast Asia would follow. It was used to justify American involvement in Vietnam.",
     distinction: "The slippery slope announces a chain of undemonstrated steps; the appeal to consequences rejects a claim because of its consequences, with no intermediate chain."
   },
@@ -1191,7 +1191,7 @@
     casSup: ["After being badly served twice in Italian restaurants, Fabrice declares that “Italian cooking is overrated”.",
       "Having come across three rude tourists from the same country, Nadia concludes that “everyone from that country is ill-mannered”."],
     parade: "Ask how many cases were observed, how they were chosen, and what broader data say.",
-    source: "Described by Aristotle in the Sophistical Refutations.",
+    source: "John Stuart Mill, A System of Logic (1843), Book V, chapter 5, “Fallacies of Generalization”: following Bacon, he criticises induction by simple enumeration, which rests on fewer instances than it should.",
     distinction: "Hasty generalisation concludes from too few cases; cherry-picking, from cases chosen from among others that contradict the conclusion."
   },
   "sophismes:vrai-ecossais": {
@@ -1221,7 +1221,7 @@
     casSup: ["“Every part of this car is very light, so the car is very light.”",
       "“This country is rich: so each of its inhabitants must be rich.”"],
     parade: "Ask whether the property depends on how the whole is organised, or only on each element taken separately.",
-    source: "Described by Aristotle in the Sophistical Refutations. In economics, the “paradox of thrift”, popularised by Keynes, is a classic example.",
+    source: "Described by Aristotle in the Sophistical Refutations (chapter 4, among the fallacies dependent on language). In economics, the “paradox of thrift”, popularised by Keynes, is a classic example.",
     distinction: "Composition transfers a property from the parts to the whole; equivocation plays on two senses of the same word."
   },
   "sophismes:cherry-picking": {
@@ -1236,7 +1236,7 @@
     casSup: ["A website presents the only study favourable to its product, leaving out the nine others that show no effect.",
       "To show that the winter was mild, a columnist cites only the three hottest days of the season."],
     parade: "Ask for the full data set, the full period, and how the selection was made. Prefer meta-analyses to isolated studies.",
-    source: "Publication bias, whereby positive results are published more often than null results, is an institutional form of it.",
+    source: "Publication bias, whereby positive results are published more often than null results, is an institutional form of it: Robert Rosenthal called it “the file drawer problem” (Psychological Bulletin, 1979).",
     celebre: "Those who deny global warming have long claimed that the climate has not warmed “since 1998”. That year was exceptionally hot because of a strong El Niño episode: taking it as a starting point hid the long-term trend.",
     distinction: "Cherry-picking discards the unfavourable data; hasty generalisation concludes from too little data."
   },
@@ -1252,7 +1252,7 @@
     casSup: ["“If he won the lottery, he buys himself a nice car. He bought himself a nice car. So he won the lottery.”",
       "“If the cat knocked over the vase, there’s water on the floor. There’s water on the floor. So it was the cat.”"],
     parade: "Look for other possible causes of Q. Check that you are not using the converse of the implication.",
-    source: "A formal fallacy known since ancient logic; Aristotle mentions it in the Sophistical Refutations.",
+    source: "A formal fallacy known since ancient logic. Aristotle mentions it in the Sophistical Refutations (chapter 5): since the ground is wet after rain, we suppose that it has rained when the ground is wet.",
     distinction: "Both invert an implication “if P then Q”: affirming the consequent concludes from Q to P, denying the antecedent concludes from not-P to not-Q."
   },
   "sophismes:negation-antecedent": {
@@ -1282,7 +1282,7 @@
     casSup: ["“I am an honest person, and you can believe me, since I never lie.”",
       "“This treatment works, because those who follow it feel better; and those who feel better must owe it to this treatment.”"],
     parade: "Ask for a justification independent of the conclusion: “How do we know that without first assuming it is true?”",
-    source: "Described by Aristotle in the Prior Analytics. “Petitio principii” literally means “asking for the starting point to be granted”.",
+    source: "Described by Aristotle in the Prior Analytics (Book II, chapter 16). “Petitio principii” literally means “asking for the starting point to be granted”.",
     distinction: "Begging the question assumes the conclusion in the premises of an argument; the loaded question slips a presupposition into a question."
   },
   "sophismes:ignorance": {
@@ -1328,7 +1328,7 @@
     casSup: ["“Nothing is better than happiness. A sandwich is better than nothing. So a sandwich is better than happiness.”",
       "“One must respect the law. The law of the jungle is a law. So one must respect the law of the jungle.”"],
     parade: "Ask for the precise definition of the term and check that it stays the same throughout the reasoning.",
-    source: "Described by Aristotle in the Sophistical Refutations (fallacies “dependent on language”).",
+    source: "Described by Aristotle in the Sophistical Refutations (chapter 4, fallacies “dependent on language”).",
     distinction: "Equivocation slides a word from one sense to another during an argument; the persuasive definition imposes a new sense from the outset on a value-laden word."
   },
   "sophismes:hors-contexte": {
@@ -1359,7 +1359,7 @@
     casSup: ["“One hair fewer doesn’t make you bald. So you can lose your hair one at a time without ever going bald.”",
       "“One minute late doesn’t matter, nor do two, nor three: so you can’t blame anyone for arriving an hour late.”"],
     parade: "Accept that a distinction that is blurred at the boundary remains sharp at the extremes. Distinguish “where exactly should the threshold go?” from “do we need a threshold?”",
-    source: "The sorites paradox, or paradox of the heap, is attributed to Eubulides of Miletus, a Greek philosopher of the fourth century BC.",
+    source: "The sorites paradox, or paradox of the heap, is among the arguments that Diogenes Laertius attributes to Eubulides of Miletus, of the Megarian school (Lives of Eminent Philosophers, Book II, 108).",
     distinction: "The slippery slope predicts chained consequences; the continuum fallacy denies a difference because it is reached in small steps."
   },
   "sophismes:definition-persuasive": {
