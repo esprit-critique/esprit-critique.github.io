@@ -85,7 +85,9 @@ f.onload = async () => {
         if (champs.length && valider) { champs.forEach((c, k) => remplir(c, String(k % 2 ? 60 : 20))); valider.click(); continue; }
         // Choix multiple (double piège) : cocher des propositions différentes, puis valider dès que c'est possible
         if (valider && choix.some(c => c.classList.contains("choisi"))) { valider.click(); continue; }
-        const libres = choix.filter(c => !c.classList.contains("choisi"));
+        // Un choix déjà fait reste modifiable tant que rien n'est révélé : passer alors à la suite au lieu de changer d'avis
+        const suivantPret = choix.some(c => c.classList.contains("choisi")) && visibles("[data-suivant]").length;
+        const libres = suivantPret ? [] : choix.filter(c => !c.classList.contains("choisi"));
         if (libres.length) { libres[Math.min(1, libres.length - 1)].click(); continue; }
         const suivant = visibles("[data-suivant]").find(b => !/Rejouer|Recommencer|Nouvelle série|autres|nouvelle|Deux nouvelles|Trois autres|Quatre autres|Cinq autres/.test(b.textContent));
         if (suivant) {
@@ -294,6 +296,22 @@ f.onload = async () => {
     ok("Fermi : produit, vraie valeur et facteurs sourcés", /Votre produit/.test(vue().textContent) && /Facteur par facteur/.test(vue().textContent) && textesSuspects().length === 0, textesSuspects().join());
     controler();
     w.localStorage.removeItem("niveaux");
+
+    // ---------- Choix modifiables tant que rien n'est révélé ----------
+    await aller("accueil"); await aller("chiffres/vrai-faux");
+    const vfBoutons = () => visibles("button.choix").filter(b => /^\d(Vrai|Faux)$/.test(b.textContent));
+    vfBoutons()[0].click(); vfBoutons()[1].click(); await pause(10);
+    ok("vrai ou faux : la réponse se change avant la confiance (un seul bloc de confiance, dernier choix marqué)",
+      vue().querySelectorAll(".bloc-confiance").length === 1 && vfBoutons().length === 2 && vfBoutons()[1].getAttribute("aria-pressed") === "true" && vfBoutons()[0].getAttribute("aria-pressed") === "false");
+    visibles(".bloc-confiance button")[0].click(); await pause(10);
+    const vfTous = [...vue().querySelectorAll("button.choix")].filter(b => /^\d(Vrai|Faux)$/.test(b.textContent));
+    ok("vrai ou faux : la confiance corrige la dernière réponse et fige les deux",
+      vfBoutons().length === 0 && vfTous[1].matches(".juste, .faux") && !vfTous[0].classList.contains("faux"));
+    await aller("accueil"); await aller("tests/etudes");
+    const sept = () => visibles(".echelle-sept button");
+    sept()[1].click(); sept()[5].click(); await pause(10);
+    ok("échelle de 1 à 7 : l'avis se change avant « Suivant », qui n'apparaît qu'une fois",
+      vue().querySelectorAll("[data-suivant]").length === 1 && sept().length === 7 && vue().querySelectorAll('.echelle-sept [aria-pressed="true"]').length === 1 && sept()[5].getAttribute("aria-pressed") === "true");
 
     // ---------- Lot P4 : perception et raisonnement ----------
     const tauxObs = w.eval("tauxObservateur"), PH = w.eval("PARAMETRES_HASARD");
