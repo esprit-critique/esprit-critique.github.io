@@ -888,10 +888,14 @@ function afficherAccueil() {
   ligneSalut.append(avatar, textesSalut);
   tete.appendChild(ligneSalut);
   tete.appendChild(el("p", "page-intro", T("{0} biais et {1} sophismes, un quiz qui revient sur vos erreurs, et {2} ateliers : données réelles, perception, expériences classiques et philosophie.", BIAIS.length, SOPHISMES.length, tousLesAteliers().length)));
-  // Nouveau visiteur (aucune activité, aucun atelier) : l'accueil en trois écrans (profil.js), sinon l'emblème en grand
-  const bienvenue = nouveau ? carteBienvenue() : null;
+  // Nouveau visiteur (aucune activité, aucun atelier) : l'accueil en trois écrans (profil.js), sinon l'emblème en grand.
+  // #accueil/presentation (bouton ci-dessous, lien du guide) le rouvre à la demande
+  const presentation = location.hash === "#accueil/presentation";
+  const bienvenue = nouveau || presentation ? carteBienvenue(presentation) : null;
   if (bienvenue) tete.appendChild(bienvenue);
   else if (nouveau) tete.appendChild(ouverture());
+  // Les cinq premiers jours d'activité, un bouton pour revoir la présentation ; ensuite, elle reste dans le guide
+  else if (lire("activite", []).length < 5) tete.appendChild(lienVers("#accueil/presentation", "Présenter le site", "bouton secondaire presenter-site"));
   const nbAReviser = clesAReviser().length;
   const appel = el("div", "appel-action");
   const etape = prochaineEtape();
