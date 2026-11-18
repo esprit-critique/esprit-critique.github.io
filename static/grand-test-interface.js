@@ -1388,4 +1388,7 @@ if (GRAND_TEST_VISIBLE) {
     resume: "Quatre situations où la preuve permet de conclure, ou où une règle apprise ne s'applique plus : l'esprit critique n'est pas le contre-pied.",
     lancer(zone) { atelierDouterJuste(zone); }
   });
+  // Déclarés ici, hors d'ateliers.js : leurs fiches doivent les proposer comme les autres ateliers
+  ATELIERS_DES_FICHES["biais:faux-souvenirs"].unshift("#tests/faux-souvenirs");
+  ATELIERS_DES_FICHES["sophismes:sophisme-sophisme"] = [...(ATELIERS_DES_FICHES["sophismes:sophisme-sophisme"] || []), "#tests/douter-juste"];
 }
