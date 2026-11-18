@@ -276,7 +276,7 @@ f.onload = async () => {
     }
   };
   await pause(150);
-  if (etapes[scenario]) await etapes[scenario]();
+  if (Object.hasOwn(etapes, scenario)) await etapes[scenario]();
   else if (scenario.startsWith("aller:")) await aller(decodeURIComponent(scenario.slice(6)));
   if (!["quiz-faux-verdict", "accueil-agenda", "proches", "debat", "reparer", "reformuler", "entrainement", "moniteur-bilan", "carnet", "portrait-niveaux", "defi", "calcul-vf", "classement-nord", "double-piege", "thog"].includes(scenario)) w.scrollTo(0, 0);
   // « schema:biais/simpson » : la fiche, défilée jusqu'à son illustration

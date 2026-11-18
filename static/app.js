@@ -1335,7 +1335,8 @@ function afficherFiche(type, fiche) {
 
   // Le contenu en quatre temps, après le groupe de tête (schéma, illustration, mécanisme) qui suit le chapô
   let illustration = null;
-  if (typeof SCHEMAS !== "undefined" && SCHEMAS[cle]) {
+  // Object.hasOwn : la clé doit être un schéma de l'objet, jamais une propriété héritée (alerte CodeQL)
+  if (typeof SCHEMAS !== "undefined" && Object.hasOwn(SCHEMAS, cle)) {
     const { svg, legende } = SCHEMAS[cle]();
     const figure = el("figure", "schema");
     figure.append(svg, el("figcaption", null, legende));
