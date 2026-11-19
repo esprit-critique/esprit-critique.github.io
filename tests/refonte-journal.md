@@ -634,3 +634,17 @@ Vérifications : banc `progression` 104 / 104 (dont neuf contrôles du mode sobr
 `affichage` à 390 px, clair : 0 défaut sur 118 pages, mode sobre compris (accueil, séance, profil, fiche, guide) ;
 les quatre configurations dans l'intégration continue. Captures avant et après (accueil, quiz, fiche, profil ; 390
 clair, 1 280 sombre) envoyées au propriétaire, non versées au dépôt.
+
+## Bouton du mode sobre dans l'en-tête (19 novembre 2026, branche `claude/bouton-mode-sobre`)
+
+Demande du propriétaire : le mode sobre ne se quittait que depuis le profil ; un bouton à icône, accessible de partout.
+- Bouton `.bouton-sobre` (`aria-pressed`, icône de viseur) dans l'en-tête des deux langues : au bout de la ligne de
+  recherche sur téléphone (la première ligne est pleine), avant le profil sur ordinateur. Il passe par
+  `choisirModeSobre()` (profil.js) ; `appliquerAnimations()` (app.js) tient son état à jour.
+- Pages redessinées au changement : accueil, profil, fiches, cartes, guide, ateliers (position de défilement
+  gardée). Un jeu, un quiz ou une séance en cours n'est pas redessiné : la partie serait perdue et comptée
+  abandonnée ; le changement vaut dès l'écran suivant.
+- Mode sobre : le filet coloré du catalogue sous l'en-tête est caché (`html.sobre .spectre`).
+
+Vérifications : captures à 390 px clair et 1 280 px sombre, activation puis retour, sans erreur JavaScript ;
+`noms_globaux`, `securite`, `en/controle` OK.

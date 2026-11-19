@@ -2258,3 +2258,19 @@ label[for] { display: block; margin: 0 0 8px; }
   html.sobre #vue-fiches.large .lien.retour { margin-left: calc((100% - var(--largeur-lecture)) / 2); }
 }
 .quiz-entete { flex-wrap: wrap; gap: 4px 12px; }
+
+/* Bouton du mode sobre (en-tête) : même trait fin que le bouton de langue ; enfoncé, il prend la couleur du texte.
+   Téléphone : au bout de la ligne de recherche (la première ligne est pleine) ; ordinateur : avant le profil. */
+.bouton-sobre { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px; padding: 0;
+  border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--carte); color: var(--discret); cursor: pointer; }
+.bouton-sobre svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.bouton-sobre:hover, .bouton-sobre:focus-visible { color: var(--texte); border-color: var(--texte); }
+.bouton-sobre[aria-pressed="true"] { background: var(--texte); border-color: var(--texte); color: var(--fond); }
+.bouton-sobre[aria-pressed="true"] circle { fill: currentColor; }
+@media (max-width: 759px) {
+  .bouton-sobre { position: absolute; right: 0; bottom: 0; }
+  .recherche-globale { margin-right: 52px; }
+}
+@media (min-width: 760px) { .bouton-sobre { order: 3; } }
+/* Mode sobre : moins à regarder autour de la tâche ; le filet coloré du catalogue est un ornement */
+html.sobre .spectre { display: none; }
