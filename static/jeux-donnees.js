@@ -742,15 +742,20 @@ const VRAI_FAUX = [
 // Événements datés. « date » (année-mois-jour) départage deux événements de la même année.
 // « vers » : date approximative.
 const EVENEMENTS = [
+  { id: "chauvet", nom: "Peintures de la grotte Chauvet (Ardèche)", annee: -34000, vers: true },
+  { id: "lascaux", nom: "Peintures de la grotte de Lascaux (Dordogne)", annee: -19000, vers: true },
   { id: "pyramide", nom: "Construction de la grande pyramide de Khéops", annee: -2560, vers: true },
   { id: "mammouths", nom: "Disparition des derniers mammouths laineux (île Wrangel)", annee: -2000, vers: true },
   { id: "alexandre", nom: "Mort d'Alexandre le Grand, à Babylone", annee: -323 },
   { id: "cleopatre", nom: "Mort de Cléopâtre", annee: -30 },
   { id: "pompei", nom: "Éruption du Vésuve qui ensevelit Pompéi", annee: 79 },
+  { id: "colisee", nom: "Inauguration du Colisée à Rome", annee: 80 },
   { id: "empire-occident", nom: "Déposition de Romulus Augustule, dernier empereur romain d'Occident", annee: 476 },
   { id: "charlemagne", nom: "Couronnement de Charlemagne", annee: 800 },
+  { id: "vikings", nom: "Présence attestée des Vikings à Terre-Neuve (L'Anse aux Meadows)", annee: 1021 },
   { id: "hastings", nom: "Bataille d'Hastings", annee: 1066 },
   { id: "oxford", nom: "Premiers enseignements attestés à Oxford", annee: 1096 },
+  { id: "moscou", nom: "Première mention de Moscou dans une chronique", annee: 1147 },
   { id: "magna-carta", nom: "Scellement de la Grande Charte (Magna Carta) par Jean sans Terre", annee: 1215, date: "1215-06-15" },
   { id: "tenochtitlan", nom: "Fondation de Tenochtitlan, la capitale aztèque", annee: 1325 },
   { id: "peste", nom: "Arrivée de la peste noire en Europe", annee: 1347 },
@@ -762,25 +767,37 @@ const EVENEMENTS = [
   { id: "vinci", nom: "Mort de Léonard de Vinci", annee: 1519 },
   { id: "copernic", nom: "Copernic publie sa théorie héliocentrique", annee: 1543 },
   { id: "quebec", nom: "Fondation de Québec", annee: 1608 },
+  { id: "shakespeare", nom: "Mort de Shakespeare", annee: 1616 },
   { id: "harvard", nom: "Fondation de l'université Harvard", annee: 1636 },
+  { id: "galilee", nom: "Mort de Galilée", annee: 1642, date: "1642-01-08" },
+  { id: "dodo", nom: "Dernière observation confirmée d'un dodo (île Maurice)", annee: 1662 },
   { id: "principia", nom: "Newton publie les « Principia »", annee: 1687 },
+  { id: "itza", nom: "Conquête espagnole du royaume maya itza (Petén, Guatemala)", annee: 1697 },
   { id: "louis14", nom: "Mort de Louis XIV", annee: 1715 },
   { id: "independance", nom: "Déclaration d'indépendance des États-Unis", annee: 1776 },
+  { id: "goldi", nom: "Exécution d'Anna Göldi, condamnée comme sorcière à Glaris (Suisse)", annee: 1782 },
   { id: "montgolfiere", nom: "Premier vol habité en montgolfière", annee: 1783 },
   { id: "bastille", nom: "Prise de la Bastille", annee: 1789 },
+  { id: "mozart", nom: "Mort de Mozart", annee: 1791, date: "1791-12-05" },
   { id: "jenner", sujet: "vaccins", nom: "Première vaccination contre la variole (Jenner)", annee: 1796 },
   { id: "sacre", sujet: "napoleon", nom: "Sacre de Napoléon Ier", annee: 1804 },
+  { id: "saint-empire", nom: "Fin du Saint-Empire romain germanique", annee: 1806, date: "1806-08-06" },
   { id: "waterloo", sujet: "napoleon", nom: "Bataille de Waterloo", annee: 1815 },
   { id: "mort-napoleon", sujet: "napoleon", nom: "Mort de Napoléon Ier", annee: 1821 },
   { id: "briquet", nom: "Invention du premier briquet à gaz (lampe de Döbereiner)", annee: 1823 },
+  { id: "megalosaure", nom: "Description du mégalosaure, premier dinosaure nommé", annee: 1824, date: "1824-02-20" },
   { id: "photo", nom: "Plus ancienne photographie conservée (Niépce)", annee: 1827 },
   { id: "allumette", nom: "Premières allumettes à friction (John Walker)", annee: 1827 },
   { id: "train", nom: "Première ligne de chemin de fer pour voyageurs (Liverpool–Manchester)", annee: 1830 },
+  { id: "esclavage-britannique", sujet: "esclavage", nom: "Entrée en vigueur de l'abolition de l'esclavage dans les colonies britanniques", annee: 1834, date: "1834-08-01" },
   { id: "fax", nom: "Brevet du fax (Alexander Bain)", annee: 1843 },
+  { id: "neptune", nom: "Découverte de la planète Neptune", annee: 1846 },
   { id: "esclavage-france", sujet: "esclavage", nom: "Abolition définitive de l'esclavage dans les colonies françaises", annee: 1848 },
+  { id: "neandertal", nom: "Découverte de l'homme de Néandertal (vallée de Neander, Allemagne)", annee: 1856 },
   { id: "darwin", nom: "Darwin publie « L'Origine des espèces »", annee: 1859 },
   { id: "metro-londres", sujet: "metro", nom: "Ouverture du métro de Londres", annee: 1863 },
   { id: "secession", nom: "Fin de la guerre de Sécession", annee: 1865 },
+  { id: "nokia", nom: "Fondation de Nokia, alors fabrique de pâte à papier en Finlande", annee: 1865 },
   { id: "capital", nom: "Marx publie le premier livre du « Capital »", annee: 1867 },
   { id: "suez", nom: "Ouverture du canal de Suez", annee: 1869, date: "1869-11-17" },
   { id: "mendeleiev", nom: "Présentation du tableau périodique des éléments par Mendeleïev", annee: 1869, date: "1869-03-06" },
@@ -793,6 +810,8 @@ const EVENEMENTS = [
   { id: "bresil", sujet: "esclavage", nom: "Abolition de l'esclavage au Brésil", annee: 1888 },
   { id: "eiffel", nom: "Inauguration de la tour Eiffel", annee: 1889, date: "1889-03-31" },
   { id: "nintendo", nom: "Fondation de Nintendo", annee: 1889, date: "1889-09-23" },
+  { id: "van-gogh", nom: "Mort de Vincent van Gogh", annee: 1890, date: "1890-07-29" },
+  { id: "wounded-knee", nom: "Massacre de Lakotas par l'armée américaine à Wounded Knee", annee: 1890, date: "1890-12-29" },
   { id: "nouvelle-zelande", nom: "Premier vote des femmes à des élections nationales (Nouvelle-Zélande)", annee: 1893 },
   { id: "rayons-x", nom: "Découverte des rayons X (Röntgen)", annee: 1895, date: "1895-11-08" },
   { id: "cinema", nom: "Première projection publique payante du cinématographe Lumière", annee: 1895, date: "1895-12-28" },
@@ -803,34 +822,43 @@ const EVENEMENTS = [
   { id: "tour-de-france", nom: "Premier Tour de France", annee: 1903, date: "1903-07-01" },
   { id: "relativite", nom: "Einstein publie la relativité restreinte", annee: 1905 },
   { id: "titanic", nom: "Naufrage du Titanic", annee: 1912 },
+  { id: "chine-empire", nom: "Abdication du dernier empereur de Chine", annee: 1912 },
   { id: "guerre-1914", sujet: "guerres", nom: "Début de la Première Guerre mondiale", annee: 1914 },
   { id: "octobre", sujet: "guerres", nom: "Révolution d'Octobre en Russie", annee: 1917 },
+  { id: "elizabeth", nom: "Naissance de la reine Elizabeth II", annee: 1926, date: "1926-04-21" },
   { id: "penicilline", nom: "Découverte de la pénicilline (Fleming)", annee: 1928 },
   { id: "mlk", nom: "Naissance de Martin Luther King", annee: 1929, date: "1929-01-15" },
   { id: "anne-frank", nom: "Naissance d'Anne Frank", annee: 1929, date: "1929-06-12" },
   { id: "krach", nom: "Krach boursier de Wall Street", annee: 1929, date: "1929-10-24" },
   { id: "pluton", nom: "Découverte de Pluton", annee: 1930 },
   { id: "coupe-du-monde", nom: "Première Coupe du monde de football", annee: 1930 },
+  { id: "turquie", nom: "Droit de vote des femmes aux élections législatives en Turquie", annee: 1934, date: "1934-12-05" },
+  { id: "thylacine", nom: "Mort du dernier thylacine (tigre de Tasmanie) connu", annee: 1936, date: "1936-09-07" },
   { id: "fin-guerre", sujet: "guerres", nom: "Fin de la Seconde Guerre mondiale", annee: 1945 },
   { id: "vote-francaises", nom: "Premier vote des Françaises", annee: 1945 },
   { id: "inde", nom: "Indépendance de l'Inde", annee: 1947 },
   { id: "dudh", nom: "Adoption de la Déclaration universelle des droits de l'homme", annee: 1948, date: "1948-12-10" },
   { id: "adn", nom: "Découverte de la structure de l'ADN", annee: 1953 },
   { id: "spoutnik", sujet: "espace", nom: "Lancement de Spoutnik, premier satellite artificiel", annee: 1957 },
+  { id: "tennis", nom: "Présentation de « Tennis for Two », l'un des premiers jeux vidéo", annee: 1958, date: "1958-10-18" },
   { id: "gagarine", sujet: "espace", nom: "Premier humain dans l'espace (Gagarine)", annee: 1961, date: "1961-04-12" },
   { id: "mur", sujet: "berlin", nom: "Construction du mur de Berlin", annee: 1961, date: "1961-08-13" },
   { id: "kennedy", nom: "Assassinat de John F. Kennedy", annee: 1963 },
   { id: "greffe", nom: "Première greffe du cœur", annee: 1967 },
   { id: "lune", sujet: "espace", nom: "Premiers pas sur la Lune", annee: 1969 },
+  { id: "suisse-vote", sujet: "vote-suisse", nom: "Droit de vote des femmes en Suisse, au niveau fédéral", annee: 1971, date: "1971-02-07" },
   { id: "picasso", nom: "Mort de Pablo Picasso", annee: 1973 },
+  { id: "apple", nom: "Fondation d'Apple", annee: 1976 },
   { id: "star-wars", nom: "Sortie de « Star Wars » aux États-Unis", annee: 1977, date: "1977-05-25" },
   { id: "guillotine", sujet: "peine", nom: "Dernière exécution par guillotine en France", annee: 1977, date: "1977-09-10" },
   { id: "fiv", nom: "Naissance du premier bébé conçu par fécondation in vitro", annee: 1978 },
   { id: "variole", sujet: "vaccins", nom: "Éradication de la variole déclarée par l'OMS", annee: 1980 },
   { id: "peine-de-mort", sujet: "peine", nom: "Abolition de la peine de mort en France", annee: 1981 },
+  { id: "mauritanie", sujet: "esclavage", nom: "Abolition de l'esclavage en Mauritanie", annee: 1981 },
   { id: "tchernobyl", nom: "Catastrophe de Tchernobyl", annee: 1986 },
   { id: "chute-mur", sujet: "berlin", nom: "Chute du mur de Berlin", annee: 1989 },
   { id: "mandela", nom: "Libération de Nelson Mandela", annee: 1990, date: "1990-02-11" },
+  { id: "appenzell", sujet: "vote-suisse", nom: "Le Tribunal fédéral impose le droit de vote des femmes au canton d'Appenzell Rhodes-Intérieures", annee: 1990, date: "1990-11-27" },
   { id: "web", sujet: "internet", nom: "Premier site web (Tim Berners-Lee)", annee: 1991 },
   { id: "urss", nom: "Dissolution de l'URSS", annee: 1991, date: "1991-12-26" },
   { id: "tunnel", nom: "Ouverture du tunnel sous la Manche", annee: 1994 },
@@ -857,7 +885,68 @@ const PAIRES_CELEBRES = [
   { a: "mlk", b: "anne-frank", note: "Martin Luther King et Anne Frank sont nés la même année, en 1929 : on les associe pourtant à des époques différentes." },
   { a: "mort-napoleon", b: "photo", note: "Napoléon est mort six ans avant la plus ancienne photographie conservée : il n'existe aucune photographie de lui." },
   { a: "lune", b: "picasso", note: "Picasso était encore vivant lors des premiers pas sur la Lune." },
-  { a: "wright", b: "tour-de-france", note: "Même année : le premier Tour de France part en juillet 1903, le premier vol des frères Wright a lieu en décembre." }
+  { a: "wright", b: "tour-de-france", note: "Même année : le premier Tour de France part en juillet 1903, le premier vol des frères Wright a lieu en décembre." },
+  // Ajouts du 19 novembre 2026 (« depuis » : ils rejoignent le cycle en cours sans changer les jours passés).
+  // Chaque date nouvelle a été lue sur la source citée en commentaire.
+  // Ministère de la Culture, archeologie.culture.gouv.fr/chauvet et /lascaux : « il y a 36 000 ans », « il y a 21 000 ans »
+  { a: "chauvet", b: "lascaux", depuis: 20778, note: "Les peintures de la grotte Chauvet datent d'il y a environ 36 000 ans, celles de Lascaux d'il y a environ 21 000 ans : Chauvet, découverte en 1994, est bien plus ancienne que Lascaux, découverte en 1940." },
+  // Parc archéologique du Colisée (colosseo.it) : jeux inauguraux de Titus de juin à septembre 80 ; Pompéi : 79
+  { a: "pompei", b: "colisee", depuis: 20778, note: "Le Colisée a été inauguré par l'empereur Titus en 80, l'année qui a suivi l'éruption du Vésuve qui a enseveli Pompéi." },
+  // Kuitems et al., Nature, 2021, « Evidence for European presence in the Americas in AD 1021 » ; université de Groningue
+  { a: "vikings", b: "hastings", depuis: 20778, note: "Des bois coupés par des Vikings à Terre-Neuve ont été datés de l'an 1021 (Nature, 2021) : 45 ans avant la bataille d'Hastings, et près de cinq siècles avant Colomb." },
+  // Ville de Moscou (mos.ru) : première mention fiable dans la Chronique d'Ipatiev, en 1147
+  { a: "oxford", b: "moscou", depuis: 20778, note: "On enseignait déjà à Oxford en 1096 ; la première mention de Moscou dans une chronique date de 1147." },
+  // Ville de Québec (ville.quebec.qc.ca) : Champlain fonde Québec en 1608 ; Shakespeare Birthplace Trust : mort en 1616
+  { a: "quebec", b: "shakespeare", depuis: 20778, note: "Québec a été fondée en 1608 ; Shakespeare est mort huit ans plus tard, en 1616." },
+  // Harvard (harvard.edu) : fondée le 28 octobre 1636 ; Museo Galileo : mort de Galilée le 8 janvier 1642
+  { a: "harvard", b: "galilee", depuis: 20778, note: "Harvard a été fondée en 1636 ; Galilée est mort plus de cinq ans plus tard, en janvier 1642." },
+  // Natural History Museum de Londres : dernière observation fiable du dodo en 1662
+  { a: "harvard", b: "dodo", depuis: 20778, note: "Harvard existait depuis 26 ans lors de la dernière observation confirmée d'un dodo, en 1662, à l'île Maurice." },
+  // Penn Museum, revue Expedition : les Itza du Petén résistent jusqu'en 1697 (G. D. Jones, « The Conquest of the Last Maya Kingdom »)
+  { a: "principia", b: "itza", depuis: 20778, note: "Les Itza, au Guatemala, ont résisté à la conquête espagnole jusqu'en 1697, dix ans après la publication des Principia de Newton." },
+  // Musée Anna Göldi et Dictionnaire historique de la Suisse : exécution en 1782, réhabilitation par le parlement glaronais en 2008
+  { a: "independance", b: "goldi", depuis: 20778, note: "Anna Göldi a été exécutée comme sorcière à Glaris, en Suisse, en 1782, six ans après la déclaration d'indépendance des États-Unis. Le parlement du canton l'a réhabilitée en 2008." },
+  { a: "goldi", b: "montgolfiere", depuis: 20778, note: "Anna Göldi a été exécutée comme sorcière en Suisse en 1782 ; le premier vol habité en montgolfière a eu lieu l'année suivante." },
+  // Fondation Mozarteum : mort le 5 décembre 1791 à Vienne
+  { a: "bastille", b: "mozart", depuis: 20778, note: "Mozart est mort le 5 décembre 1791, plus de deux ans après la prise de la Bastille." },
+  // Deutsches Historisches Museum : François II dépose la couronne du Saint-Empire le 6 août 1806
+  { a: "jenner", b: "saint-empire", depuis: 20778, note: "Le Saint-Empire romain germanique existait encore lors de la première vaccination : il a pris fin le 6 août 1806." },
+  // Natural History Museum de Londres : Buckland présente le mégalosaure le 20 février 1824
+  { a: "mort-napoleon", b: "megalosaure", depuis: 20778, note: "Napoléon est mort en 1821, trois ans avant la description du premier dinosaure nommé, le mégalosaure ; le mot « dinosaure » n'a été créé qu'en 1842." },
+  // Science and Industry Museum : ligne ouverte le 15 septembre 1830 ; Archives nationales britanniques : loi en vigueur le 1er août 1834
+  { a: "train", b: "esclavage-britannique", depuis: 20778, note: "La ligne Liverpool–Manchester transportait des voyageurs depuis près de quatre ans quand l'abolition de l'esclavage est entrée en vigueur dans les colonies britanniques, le 1er août 1834." },
+  // NASA : Neptune découverte en 1846 par Galle
+  { a: "fax", b: "neptune", depuis: 20778, note: "Le principe du fax a été breveté en 1843, trois ans avant la découverte de Neptune." },
+  // Musée de Néandertal (Mettmann) : ossements trouvés en août 1856
+  { a: "neandertal", b: "darwin", depuis: 20778, note: "Les ossements de l'homme de Néandertal ont été trouvés en août 1856, trois ans avant la publication de « L'Origine des espèces »." },
+  // Nokia, rapport annuel (formulaire 20-F) : fabrique de pâte à papier fondée en 1865 par Fredrik Idestam
+  { a: "nokia", b: "suez", depuis: 20778, note: "Nokia est née en 1865 comme fabrique de pâte à papier en Finlande, quatre ans avant l'ouverture du canal de Suez." },
+  // Nintendo (nintendo.co.jp) : cartes hanafuda dès 1889 ; musée Van Gogh : mort en juillet 1890
+  { a: "nintendo", b: "van-gogh", depuis: 20778, note: "Nintendo, qui fabriquait alors des cartes à jouer, a été fondée en 1889 ; Van Gogh est mort en juillet 1890." },
+  // Bibliothèque nationale de médecine des États-Unis (NLM) : massacre du 29 décembre 1890
+  { a: "eiffel", b: "wounded-knee", depuis: 20778, note: "La tour Eiffel était inaugurée depuis plus d'un an et demi quand l'armée américaine a massacré des Lakotas à Wounded Knee, le 29 décembre 1890." },
+  // Université Fordham (Internet Modern History Sourcebook) : proclamation de l'abdication, 1912
+  { a: "relativite", b: "chine-empire", depuis: 20778, note: "La Chine avait encore un empereur quand Einstein a publié la relativité restreinte, en 1905 : le dernier a abdiqué en 1912." },
+  // Famille royale britannique (royal.uk) : naissance le 21 avril 1926
+  { a: "elizabeth", b: "penicilline", depuis: 20778, note: "Elizabeth II est née en avril 1926, deux ans avant la découverte de la pénicilline." },
+  // Grande Assemblée nationale de Turquie (tbmm.gov.tr) : droit de vote et d'éligibilité aux législatives le 5 décembre 1934
+  { a: "turquie", b: "vote-francaises", depuis: 20778, note: "Les Turques ont obtenu le droit de vote aux élections législatives le 5 décembre 1934, plus de dix ans avant le premier vote des Françaises." },
+  // Musée national d'Australie : mort du dernier thylacine connu le 7 septembre 1936 ; NASA : Pluton découverte en 1930
+  { a: "pluton", b: "thylacine", depuis: 20778, note: "Le dernier thylacine connu est mort au zoo de Hobart le 7 septembre 1936, six ans après la découverte de Pluton." },
+  // Laboratoire national de Brookhaven : « Tennis for Two » présenté le 18 octobre 1958
+  { a: "tennis", b: "gagarine", depuis: 20778, note: "« Tennis for Two », l'un des premiers jeux vidéo, a été présenté au public en octobre 1958, deux ans et demi avant le vol de Gagarine." },
+  // Ville de Berlin (berlin.de) : début de la construction du Mur le 13 août 1961
+  { a: "gagarine", b: "mur", depuis: 20778, note: "Même année : Gagarine vole dans l'espace le 12 avril 1961, la construction du mur de Berlin commence le 13 août." },
+  // Musée de l'histoire de l'informatique (Computer History Museum) : Apple Computer fondée en 1976
+  { a: "apple", b: "guillotine", depuis: 20778, note: "Apple a été fondée en 1976, un an avant la dernière exécution par la guillotine en France." },
+  // Assemblée fédérale suisse (parlament.ch) : droit de vote et d'éligibilité des femmes le 7 février 1971
+  { a: "lune", b: "suisse-vote", depuis: 20778, note: "Des hommes avaient marché sur la Lune depuis plus d'un an quand les Suissesses ont obtenu le droit de vote au niveau fédéral, le 7 février 1971." },
+  // Dictionnaire historique de la Suisse : arrêt du Tribunal fédéral du 27 novembre 1990
+  { a: "chute-mur", b: "appenzell", depuis: 20778, note: "Le mur de Berlin était tombé depuis un an quand le Tribunal fédéral a imposé le droit de vote des femmes à Appenzell Rhodes-Intérieures, le 27 novembre 1990 : la landsgemeinde l'avait encore refusé la même année." },
+  // Haut-Commissariat des Nations unies aux droits de l'homme : loi de 1981, esclavage criminalisé en 2007 seulement
+  { a: "star-wars", b: "mauritanie", depuis: 20778, note: "La Mauritanie a aboli l'esclavage en 1981, quatre ans après la sortie de Star Wars ; il n'y est devenu un crime qu'en 2007." },
+  // Jeanne d'Arc : 1431 ; prise de Constantinople : 29 mai 1453
+  { a: "jeanne", b: "constantinople", depuis: 20778, note: "Quand Jeanne d'Arc est morte, en 1431, l'Empire romain d'Orient existait encore : il a pris fin avec la prise de Constantinople, en 1453." }
 ];
 
 // ===================== Ordres de grandeur =====================

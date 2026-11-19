@@ -138,6 +138,22 @@ lecture automatique, 403 ; Crossref, OpenAlex et Semantic Scholar n'ont pas le r
 - Sailer et Homner (2020) : le tableau du lot B donnait r = 0,31 ; le guide affiche déjà g = 0,49 (apprentissage),
   valeur vérifiée auparavant. Le r n'est pas affiché.
 
+## « Lequel a eu lieu en premier ? » : paires ajoutées le 19 novembre 2026
+
+Trente paires ajoutées à `PAIRES_CELEBRES` (`depuis: 20778`), sources citées en commentaire dans `jeux-donnees.js`.
+
+- Écartée : **fondation de Peugeot / Waterloo** : 1810 selon la marque (peugeot.fr), 1812 pour l'aciérie Peugeot Frères
+  Aînés selon la Plateforme ouverte du patrimoine, 1815 selon le Musée des arts décoratifs ; Waterloo est en 1815.
+- Source secondaire : **Itza (1697)** : Penn Museum, revue *Expedition* (« A Peninsula That May Have Been an Island ») ;
+  source primaire à lire : G. D. Jones, *The Conquest of the Last Maya Kingdom*, Stanford University Press, 1998.
+- Source lue seulement par extraits de moteur de recherche (pages illisibles hors navigateur) : **Colisée (80)**
+  (colosseo.it, « Blood and the Arena »), **Nokia (1865)** (Nokia, formulaire 20-F), **vote des Turques (5 décembre
+  1934)** (comptes rendus de la Grande Assemblée nationale de Turquie). À relire sur la page elle-même.
+- Dates reprises d'`EVENEMENTS` sans nouvelle lecture : Oxford (1096), Hastings, Jeanne d'Arc, Constantinople, Principia,
+  indépendance des États-Unis, montgolfière, Bastille, Jenner, mort de Napoléon, train Liverpool–Manchester (relu : 15
+  septembre 1830), fax, Darwin, Suez, relativité, pénicilline, premier vote des Françaises, Gagarine, Star Wars,
+  guillotine.
+
 ## Le monde en chiffres : questions écartées faute de chiffre lisible (ajout du 19 novembre 2026)
 
 Cherchées dans l'API de la Banque mondiale (World Development Indicators) le 19 novembre 2026 ; pas de valeur mondiale
