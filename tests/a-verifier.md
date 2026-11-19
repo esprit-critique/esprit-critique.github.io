@@ -25,6 +25,9 @@ en 1912 pour expliquer l'illusion de la Lune : « Rapports entre quelques illusi
 l'appréciation de grandeur des astres à l'horizon », Archives italiennes de biologie, 58, 1912, non trouvé en ligne le
 18 novembre 2026). La piste Bertamini et Wade (2023, *Perception*) ne convient pas : elle traduit un autre article de
 Ponzo (1928, sur la numérosité). À ajouter seulement avec l'article de 1912 lu.
+Nouvel essai le 19 novembre 2026 : archive.org n'a, des *Archives italiennes de biologie*, que les tomes 60, 62 et
+68-69 datés d'après 1910, et des numérisations Google du XIXe siècle (deux parcourues, sans Ponzo) ; tome 58 toujours
+introuvable. Pistes restantes : HathiTrust, Biodiversity Heritage Library, Gallica.
 
 ## Synchronisation : textes à relire avant d'activer SYNCHRO_URL (refonte, lot 6, 11 novembre 2026)
 
@@ -72,7 +75,8 @@ lue : elle décrit le mécanisme sans employer le terme ; l'article de Gawande, 
 
 Restent générales, sans erreur relevée : `poteaux` (expression idiomatique), `faux-dilemme`, `juste-milieu`,
 `cause-unique`, `negation-antecedent` et `sophisme-sophisme` (le recueil de Madsen Pirie, 1985, n'a pas pu être
-consulté).
+consulté : le 19 novembre 2026, l'exemplaire d'archive.org, `bookoffallacytra0000piri`, est en prêt contrôlé, et sa
+recherche plein texte est refusée sans emprunt).
 
 ## Vrai ou faux : sources secondaires à remplacer (audit du 18 novembre 2026)
 
@@ -100,22 +104,29 @@ Puis `tomate` (Cour suprême des États-Unis, Nix v. Hedden, 1893 : « Botanical
 Puis `alcool-chaleur` (Johnston et al., Eur. J. Appl. Physiol. 1996, résumé, PMID 8897037 : débit sanguin accru dans les doigts, aucun effet sur la baisse de la température interne en eau à 28 °C ; « le corps en perd plus vite » retiré), `tete-chaleur` (Pretorius et al., J. Appl. Physiol. 2006, résumé, PMID 16614357 : la tête, 7 % de la surface du corps, n'augmente la perte de chaleur totale que de 10 % en eau à 17 °C ; le BMJ 2008 de Vreeman et Carroll, payant, abandonné), `poisson-rouge` (Gee, Stephenson et Wright, J. Exp. Anal. Behav. 1994, résumé, PMID 16812735 : anticipation de l'heure du repas, maintenue quelques jours ; « au moins trois mois » et « formes, couleurs et sons », non lus, retirés), `diamants` (Shirey et Shigley, Gems & Gemology 2013, texte intégral sur gia.edu : diamants stables au-delà de 140 km, la plupart âgés de milliards d'années ; « 150 à 200 km » et les premières plantes terrestres, non lus, retirés), `chine-heure` (China Daily, China Services Info, 2025 : un seul fuseau, UTC+8) et `abeilles` (Ramirez-Moreno, Galizia et Nouvian, Phil. Trans. R. Soc. B 2025, texte intégral sur PMC : piquer un vertébré se termine par la mort de l'abeille ; « contre d'autres insectes, elle peut piquer sans mourir », non lu, retiré).
 Puis `groenland` et `afrique` (ONU, Division de statistique, Annuaire statistique, tableau « Population, density and surface area », CSV lu : Afrique 29 648 000 km², au lieu de 30,3 millions ; Groenland 2 166 000 ; Chine 9 600 000 ; États-Unis 9 834 000 ; Inde 3 287 000 km² ; la phrase sur la projection de Mercator, sans source lue, retirée), `rome` et `paris-montreal` (NOAA, NCEI, liste des stations GHCN-Daily : Roma Ciampino 41,78° N, Central Park 40,78° N, Paris-Montsouris 48,82° N, Montréal-Trudeau 45,47° N ; les phrases sur le climat, non sourcées, retirées), `cent-ans` (BnF, notice RAMEAU : 24 mai 1337, 15 octobre 1453 ; « longues trêves », non lues, retirées) et `pingouins` (Planet-Vie, École normale supérieure : une seule espèce de pingouin, qui vole, dans l'hémisphère Nord ; 18 espèces de manchots, toutes dans l'hémisphère Sud).
 Puis `desert` (Australian Antarctic Division, « Antarctic geography and geology » : continent le plus sec, autant d'humidité sur le plateau que les déserts chauds, 13 661 000 km² ; USGS, « Deserts: Geology and Resources » : désert défini par la pluie, mais Sahara donné comme le plus grand désert, les déserts polaires étant classés à part ; l'explication dit désormais que la réponse dépend de cette définition ; « 9,2 millions de km² », non lu, retiré), `vomitorium` (Macrobe, Saturnales, VI, 4, 3, lu sur LacusCurtius : passages par lesquels la foule qui entre « se déverse » sur les gradins ; « couloir de sortie » corrigé), `cleopatre` (Rosicrucian Egyptian Museum : pyramides de Gizeh commencées vers 2560 avant notre ère, Cléopâtre VII, 69-30 avant notre ère) et `trex` (Carnegie Museum of Natural History : Tyrannosaurus 66 à 68 millions d'années, Stegosaurus 145 à 150 ; « 69 » et « 155 » corrigés, écart minimal porté à 77 millions d'années).
-Puis `ver` (Rajagopalan et al., In Vitro Cell. Dev. Biol. Anim. 2022, résumé, PMID 35920958 : chez Eudrilus eugeniae, seul le morceau qui garde le clitellum se régénère, les dix premiers segments coupés meurent en général en quatre jours ; Bely, Integr. Comp. Biol. 2006, résumé, PMID 21672762 : régénération de l'arrière presque universelle chez les annélides, de l'avant moins répandue ; « seules quelques espèces » corrigé), `robot` (ministère tchèque des Affaires étrangères, page de l'ambassade à Copenhague, 2021, et texte de Jaroslav Veis publié par l'ambassade à Erevan : premier emploi dans R.U.R., publiée en novembre 1920, mot soufflé par Josef Čapek ; l'étymologie robota, « travail forcé », absente des pages lues, retirée) et `bebe-os` (Hsu, Chen et Chen, Int. J. Mol. Sci. 2024, texte intégral sur PMC : environ 270 os chez le nourrisson, 206 chez l'adulte ; simple mention dans une revue sur l'ostéoporose, faute d'avoir trouvé une source d'anatomie lisible). À vérifier à la main : `colomb`, Jeffrey Burton Russell, « Inventing the Flat Earth », History Today (https://www.historytoday.com/archive/inventing-flat-earth, refus 403 ; l'exposition « 1492: An Ongoing Voyage » de la Library of Congress, lue, ne traite pas la question) ; `fuseaux`, aucune page officielle française donnant le nombre de fuseaux horaires de la France n'a été trouvée (piste : décrets fixant l'heure légale de chaque territoire, sur Légifrance).
+Puis `ver` (Rajagopalan et al., In Vitro Cell. Dev. Biol. Anim. 2022, résumé, PMID 35920958 : chez Eudrilus eugeniae, seul le morceau qui garde le clitellum se régénère, les dix premiers segments coupés meurent en général en quatre jours ; Bely, Integr. Comp. Biol. 2006, résumé, PMID 21672762 : régénération de l'arrière presque universelle chez les annélides, de l'avant moins répandue ; « seules quelques espèces » corrigé), `robot` (ministère tchèque des Affaires étrangères, page de l'ambassade à Copenhague, 2021, et texte de Jaroslav Veis publié par l'ambassade à Erevan : premier emploi dans R.U.R., publiée en novembre 1920, mot soufflé par Josef Čapek ; l'étymologie robota, « travail forcé », absente des pages lues, retirée) et `bebe-os` (Hsu, Chen et Chen, Int. J. Mol. Sci. 2024, texte intégral sur PMC : environ 270 os chez le nourrisson, 206 chez l'adulte ; simple mention dans une revue sur l'ostéoporose, faute d'avoir trouvé une source d'anatomie lisible). Puis, le 19 novembre 2026, les deux dernières : `colomb` (Jeffrey Burton Russell, *Inventing the Flat Earth: Columbus and Modern Historians*, Praeger, 1991, texte numérisé sur archive.org, `InventingFlatEarth` ; p. 2 : « All educated people throughout Europe knew the earth's spherical shape and its approximate circumference » ; p. 8 : les opposants, citant Ptolémée, « argued that the circumference of the earth was too great and the distance too far », « They rightly feared… » ; l'article de History Today, toujours refusé (403), abandonné ; la communication de Russell à l'American Scientific Affiliation, 1997, lue sur asa3.org, confirme sans parler de la circonférence ; « sous-estimait fortement la circonférence », non dit tel quel, remplacé par l'objection des contradicteurs) et `fuseaux` (décret n° 2017-292 du 6 mars 2017 relatif au temps légal français, lu sur Légifrance, JORFTEXT000034154759 : neuf décalages, de −8 h à Clipperton à +12 h à Wallis-et-Futuna, terre Adélie +10 h ; la Nouvelle-Calédonie et la Polynésie française, exclues du décret (article 5), lues dans la base tz de l'IANA, version 2026f, fichier `australasia` : Nouméa +11, Tahiti −10, Marquises −9:30, Gambier −9 ; soit treize. Comparaison lue dans la même base : Russie onze décalages actuels (`zone1970.tab` et `europe`), États-Unis et territoires dix (`zone.tab`). « 12, 13 avec la terre Adélie », chiffres de Wikipédia, remplacés. Le superlatif « le pays qui compte le plus » n'a été comparé qu'à la Russie et aux États-Unis ; le Royaume-Uni et l'Australie, avec leurs territoires, n'ont pas été recomptés).
 
-Restent sourcées sur Wikipédia (2), à reprendre une à une sur la source primaire : `colomb`, `fuseaux`.
+Plus aucune affirmation du vrai ou faux n'a Wikipédia pour seule source.
 
 ## Loi de Goodhart, formulation de Strathern (audit des points, 19 novembre 2026)
 
-Non affichée : la formulation « lorsqu'une mesure devient un objectif, elle cesse d'être une bonne mesure » est
-attribuée à Marilyn Strathern, « “Improving ratings”: audit in the British University system », *European Review*,
-5(3), 305-321, 1997 (référence vérifiée sur Cambridge Core et RePEc). La phrase elle-même n'a pas pu être lue dans
-l'article : les copies en ligne (gwern.net, archive.org) n'étaient pas accessibles depuis la session. Le guide dit
-seulement « ce qu'on appelle la loi de Goodhart », sans citation ni date. À ajouter avec la page de l'article lue.
+Vérifiée et affichée le 19 novembre 2026 : la phrase « When a measure becomes a target, it ceases to be a good
+measure. » a été lue p. 308 de Marilyn Strathern, « “Improving ratings”: audit in the British University system »,
+*European Review*, 5(3), 305-321, 1997 (copie numérisée de l'article sur gwern.net, texte extrait du PDF). Strathern
+précise que c'est Hoskin qui y voit la « loi de Goodhart ». Ajoutée au guide « Comment votre maîtrise est calculée »
+(français et anglais), avec la référence et la page.
 
 ## Mode sobre (lot B, 19 novembre 2026) : sources non affichées
 
-Références confirmées sur Crossref, mais résumé non lu (Crossref ne le fournit pas, PubMed ne les indexe pas) :
-leurs résultats ne sont pas cités sur le site.
+Références confirmées sur Crossref. Le 19 novembre 2026, résumés lus et résultats ajoutés à l'article du guide
+`#guide/sobre` (français et anglais) pour Leroy 2009 (résumé sur IDEAS/RePEc, repris de l'éditeur : il est difficile de
+détacher son attention d'une tâche inachevée, et la tâche suivante en pâtit), Sundararajan et Adesope 2020 (résumé sur
+la page Springer : inclure des détails séduisants peut gêner l'apprentissage ; le résumé ne donne aucun chiffre, aucun
+n'est affiché), Gollwitzer et Sheeran 2006 (résumé sur Semantic Scholar, copie libre sur KOPS, Constance : 94 tests,
+d = 0,65) et Sheeran, Listrom et Gollwitzer 2024 (résumé sur Semantic Scholar et OpenAlex : 642 tests,
+0,27 ≤ d ≤ 0,66). Les tailles d'effet ne sont pas affichées, seulement le nombre de tests.
+Reste non lu : Hanus et Fox 2015 (ScienceDirect, ResearchGate et les catalogues qui reprennent le résumé refusent la
+lecture automatique, 403 ; Crossref, OpenAlex et Semantic Scholar n'ont pas le résumé) : non cité.
 - Leroy (2009), « Why is it so hard to do my work? The challenge of attention residue… », *Organizational Behavior
   and Human Decision Processes*, 109(2), 168-181 : le résidu d'attention d'une tâche inachevée.
 - Hanus et Fox (2015), *Computers & Education*, 80, 152-161 : badges et classement en cours.
