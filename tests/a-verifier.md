@@ -111,3 +111,18 @@ attribuée à Marilyn Strathern, « “Improving ratings”: audit in the Britis
 5(3), 305-321, 1997 (référence vérifiée sur Cambridge Core et RePEc). La phrase elle-même n'a pas pu être lue dans
 l'article : les copies en ligne (gwern.net, archive.org) n'étaient pas accessibles depuis la session. Le guide dit
 seulement « ce qu'on appelle la loi de Goodhart », sans citation ni date. À ajouter avec la page de l'article lue.
+
+## Mode sobre (lot B, 19 novembre 2026) : sources non affichées
+
+Références confirmées sur Crossref, mais résumé non lu (Crossref ne le fournit pas, PubMed ne les indexe pas) :
+leurs résultats ne sont pas cités sur le site.
+- Leroy (2009), « Why is it so hard to do my work? The challenge of attention residue… », *Organizational Behavior
+  and Human Decision Processes*, 109(2), 168-181 : le résidu d'attention d'une tâche inachevée.
+- Hanus et Fox (2015), *Computers & Education*, 80, 152-161 : badges et classement en cours.
+- Sundararajan et Adesope (2020), « Keep it coherent: a meta-analysis of the seductive details effect »,
+  *Educational Psychology Review*, 32(3), 707-734.
+- Gollwitzer et Sheeran (2006), *Advances in Experimental Social Psychology*, 38, 69-119 ; Sheeran, Listrom et
+  Gollwitzer (2024), « The when and how of planning… », *European Review of Social Psychology*, 36(1), 162-194
+  (en ligne le 27 mars 2024) : intentions de mise en œuvre (d = 0,65, puis plus faible).
+- Sailer et Homner (2020) : le tableau du lot B donnait r = 0,31 ; le guide affiche déjà g = 0,49 (apprentissage),
+  valeur vérifiée auparavant. Le r n'est pas affiché.

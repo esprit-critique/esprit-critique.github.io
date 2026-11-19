@@ -255,7 +255,7 @@ f.onload = async () => {
     w.location.reload();
     await new Promise(r => { f.onload = r; });
     await pause(200);
-    const d2 = f.contentDocument;
+    let d2 = f.contentDocument;
     ok("rattrapage au chargement : clé lucidite créée", !!w.localStorage.getItem("lucidite"));
     const avant = JSON.parse(w.localStorage.getItem("lucidite")).total;
     w.gagner("situation-jour", true);
@@ -331,6 +331,56 @@ f.onload = async () => {
     ok("audit A10 : « Noctambule » s'obtient en choisissant le thème sombre", !!boutonSombre && (JSON.parse(w.localStorage.getItem("distinctions")).drapeaux.secrets || []).includes("noctambule"));
     const boutonAuto = d2.querySelector('[data-theme-choix="auto"]');
     if (boutonAuto) boutonAuto.click();
+
+    // ---------- Mode sobre, devenu mode concentration (lot B) ----------
+    const sauve = ["reglages", "memoire", "lucidite", "activite"].map(k => [k, w.localStorage.getItem(k)]);
+    w.localStorage.setItem("reglages", JSON.stringify({ sobre: true }));
+    // Trois notions dues aujourd'hui (la mémoire du site est lue au chargement : rechargement)
+    const clesDues = [...ev("INDEX").keys()].slice(0, 3);
+    w.localStorage.setItem("memoire", JSON.stringify(Object.fromEntries(clesDues.map(c => [c, { b: 2, d: w.jourAppareil() - 1, n: 2, j: 2 }]))));
+    w.localStorage.setItem("activite", JSON.stringify([w.jourAppareil() - 2, w.jourAppareil() - 1]));
+    w.location.hash = "accueil";
+    w.location.reload();
+    await new Promise(r => { f.onload = r; });
+    await pause(250);
+    const d3 = f.contentDocument, va = d3.getElementById("vue-accueil");
+    ok("mode sobre : animations réduites par défaut, classe « sobre » posée", d3.documentElement.dataset.animations === "reduites" && d3.documentElement.classList.contains("sobre"));
+    ok("mode sobre : accueil réduit à une action (révisions dues) et un lien « Autres activités »", !!va.querySelector(".accueil-sobre") && va.querySelectorAll(".bouton").length === 1
+      && /3 notions à revoir|3 concepts to review/.test(va.textContent) && !!va.querySelector("details.autres-activites"));
+    ok("mode sobre : ni série de jours, ni colonne latérale, ni salutation, ni carte de bienvenue, ni illusion du jour",
+      !va.querySelector(".serie-jours, .colonne-laterale, .salut-accueil, .carte-bienvenue, .carte-progression-v2"), va.textContent.slice(0, 120));
+    va.querySelector(".accueil-sobre .bouton").click();
+    await pause(250);
+    const vq = d3.getElementById("vue-quiz");
+    ok("séance : au plus 12 questions, révisions dues d'abord, « S'arrêter ici » visible", w.eval("quiz.mode") === "seance" && w.eval("quiz.serie.length") <= 12
+      && clesDues.includes(w.eval("cleFiche(quiz.serie[0].type, quiz.serie[0].fiche)")) && !!vq.querySelector(".arret-seance"), String(w.eval("quiz.serie.length")));
+    const choixQ = vq.querySelector(".choix:not(:disabled)");
+    if (choixQ) choixQ.click();
+    await pause(100);
+    const certQ = vq.querySelector(".certitude button, [data-certitude]");
+    if (certQ) certQ.click();
+    await pause(150);
+    ok("séance : aucune récompense pendant la tâche (pastille, moment, grade, série)", !d3.querySelector(".pastille-points, .moment, .bandeau-grade, .serie-jours"));
+    ok("mode sobre : pas de « Chrono » dans les filtres du quiz", ![...d3.querySelectorAll("#filtres-quiz .puce")].some(b => /Chrono|Timed/.test(b.textContent)));
+    vq.querySelector(".arret-seance").click();
+    await pause(150);
+    const bilanS = vq.querySelector(".bilan-seance");
+    ok("séance : « S'arrêter ici » mène au récapitulatif sobre (sans points), avec « Terminer » et le choix d'un moment",
+      !!bilanS && /Terminer|Finish/.test(bilanS.textContent) && /agenda|calendar/i.test(bilanS.textContent) && !/points de lucidité|clarity points/.test(bilanS.textContent), bilanS ? bilanS.textContent.slice(0, 160) : "pas de bilan");
+    w.location.hash = "profil";
+    await pause(250);
+    const vp = d3.getElementById("vue-profil");
+    ok("mode sobre : profil replié (ni maîtrise, ni onglets) derrière « Voir ma progression », réglages visibles",
+      !vp.querySelector(".profil-maitrise, .onglets-profil") && /Voir ma progression|See my progress/.test(vp.textContent) && !!vp.querySelector('input[type="checkbox"]'));
+    w.location.hash = "biais/ancrage";
+    await pause(250);
+    ok("mode sobre : fiche sur une colonne, sans rail latéral", !!d3.querySelector("#vue-fiches .fiche-mise-en-page.sans-rail") && !d3.querySelector("#vue-fiches .rail-fiche"));
+    sauve.forEach(([k, v]) => { if (v === null) w.localStorage.removeItem(k); else w.localStorage.setItem(k, v); });
+    w.location.hash = "accueil";
+    w.location.reload();
+    await new Promise(r => { f.onload = r; });
+    await pause(250);
+    d2 = f.contentDocument;
 
     // ---------- Parcours (parcours.js, lot 5) ----------
     const PARC = ev("PARCOURS");

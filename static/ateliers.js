@@ -362,10 +362,12 @@ function afficherScore(zone, id, score, sur, texteScore, options) {
     zone.appendChild(bilanNiveaux(id));
     delete PARTIES_EN_COURS[id];
   }
-  if (r.nouveauRecord) zone.appendChild(el("p", "verdict juste", T(niveau ? "Nouveau record au niveau {0}. L'ancien était de {1} / {2}." : "Nouveau record. L'ancien était de {1} / {2}.", niveau, fr(r.ancienRecord), sur)));
-  else if (r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", T(niveau ? "Votre record au niveau {0} : {1} / {2} · {3} jouées." : "Votre record : {1} / {2} · {3} jouées.", niveau, fr(r.record), sur, pluriel(r.parties, "partie"))));
+  // Mode sobre : ni records ni mention « atelier maîtrisé » (des récompenses) ; l'historique des parties reste
+  const sobre = modeSobre();
+  if (!sobre && r.nouveauRecord) zone.appendChild(el("p", "verdict juste", T(niveau ? "Nouveau record au niveau {0}. L'ancien était de {1} / {2}." : "Nouveau record. L'ancien était de {1} / {2}.", niveau, fr(r.ancienRecord), sur)));
+  else if (!sobre && r.parties > 1 && r.record !== undefined) zone.appendChild(el("p", "source", T(niveau ? "Votre record au niveau {0} : {1} / {2} · {3} jouées." : "Votre record : {1} / {2} · {3} jouées.", niveau, fr(r.record), sur, pluriel(r.parties, "partie"))));
   if (r.historique && r.historique.length > 1) zone.appendChild(histogrammeParties(r.historique, sur));
-  if (niveau === 3 && atelierMaitrise(id)) zone.appendChild(el("p", "source", "Atelier maîtrisé : au moins 90 % au niveau 3 sur trois parties."));
+  if (!sobre && niveau === 3 && atelierMaitrise(id)) zone.appendChild(el("p", "source", "Atelier maîtrisé : au moins 90 % au niveau 3 sur trois parties."));
   const maitrise = blocMaitriseJeu(id, avant);
   if (maitrise) zone.appendChild(maitrise);
 }

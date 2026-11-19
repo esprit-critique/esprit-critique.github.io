@@ -2242,3 +2242,18 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Formes des pays (chiffres.js, formesSurfaces) : le trait garde son épaisseur malgré la mise à l'échelle */
 .forme-pays { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+
+/* ===================== Mode sobre (concentration) =====================
+   Accueil réduit à une action, autres activités repliées, séance bornée, fiche sur une colonne */
+.accueil-sobre { max-width: var(--largeur-lecture); margin-left: auto; margin-right: auto; }
+.accueil-sobre .page-titre { margin-bottom: 12px; }
+.autres-activites { max-width: var(--largeur-lecture); margin: 16px auto 0; }
+.autres-activites summary { display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; }
+.autres-activites a { display: inline-flex; align-items: center; min-height: 44px; }
+.arret-seance { min-height: 44px; font-size: 14px; }
+.pause-douce { margin: 0 0 10px; }
+@media (min-width: 1040px) {
+  .fiche-mise-en-page.sans-rail { grid-template-columns: minmax(0, var(--largeur-lecture)); }
+  html.sobre #vue-fiches.large .lien.retour { margin-left: calc((100% - var(--largeur-lecture)) / 2); }
+}
+.quiz-entete { flex-wrap: wrap; gap: 4px 12px; }

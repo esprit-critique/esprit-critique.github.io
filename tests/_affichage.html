@@ -94,6 +94,26 @@ f.onload = async () => {
     await aller("portrait");
     noter("#portrait (rempli)", w.controleAffichage());
 
+    // 4. Mode sobre (mode concentration) : accueil à une action, séance, profil replié, fiche sur une colonne
+    w.localStorage.setItem("reglages", JSON.stringify({ sobre: true }));
+    w.eval("appliquerAnimations()");
+    const memSobre = w.eval("memoire"), jourSobre = w.eval("aujourdHui()");
+    w.eval("[...INDEX.keys()]").slice(0, 4).forEach(c => { memSobre[c] = { b: 2, d: jourSobre - 1, n: 2, j: 2 }; });
+    for (const a of ["accueil", "profil", "biais/ancrage", "guide/sobre"]) {
+      await aller(a);
+      adresses.push(a + " (sobre)");
+      noter("#" + a + " (mode sobre)", w.controleAffichage());
+    }
+    await aller("accueil");
+    doc.querySelector("#vue-accueil .accueil-sobre .bouton").click();
+    await pause(200);
+    adresses.push("quiz (séance)");
+    noter("#quiz (séance, mode sobre)", w.controleAffichage());
+    doc.querySelector("#vue-quiz .arret-seance").click();
+    await pause(150);
+    w.localStorage.removeItem("reglages");
+    w.eval("appliquerAnimations()");
+
     // Rapport : résumé, puis défauts regroupés par type
     const lignes = [];
     const types = [...new Set(trouves.map(d => d.type))];

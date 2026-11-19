@@ -17,7 +17,15 @@ function donneesProgression() {
   });
 }
 
-const modeSobre = () => !!lire("reglages", {}).sobre;
+const modeSobre = () => !!(lire("reglages", {}) || {}).sobre;
+// Active ou quitte le mode sobre (réglages, carte de bienvenue) : un choix réversible, rien n'est perdu
+function choisirModeSobre(actif) {
+  ecrire("reglages", { ...(lire("reglages", {}) || {}), sobre: !!actif });
+  appliquerAnimations();   // app.js : animations réduites par défaut, classe « sobre »
+  majBoutonProfil();
+}
+// Mode sobre : la progression (maîtrise, distinctions…) est repliée derrière « Voir ma progression », le temps de la visite
+let progressionDepliee = false;
 
 // Calcule la maîtrise, photographie le jour, détecte un changement de grade et les distinctions nouvelles.
 // annoncer : faux au chargement (rien n'est annoncé au premier affichage, seulement après une action)
@@ -138,6 +146,7 @@ window.addEventListener("load", () => {
 // Ligne du bilan : points gagnés, ou limite du jour atteinte. La pastille « +N » ne suffit pas : elle est masquée
 // quand les animations sont réduites, et rien ne s'affichait quand une limite bloquait le gain.
 function lignePoints(points, bloque, limite) {
+  if (modeSobre()) return null;   // mode sobre : les points sont comptés, jamais annoncés
   if (points > 0) return el("p", "source", T("+{0} points de lucidité.", points));
   if (bloque) return el("p", "source", T("Pas de points pour cette partie : {0} Ils reviennent demain.", T(limite)));
   return null;
@@ -846,6 +855,19 @@ function afficherPageProfil(onglet) {
   const { m, etat } = majMaitrise(false);
   const profil = lire("profil", {}) || {};
   const grade = gradeDe(etat.meilleure || 0);
+  if (modeSobre() && !progressionDepliee) {
+    zone.appendChild(el("h1", "page-titre", profil.pseudo || T("Votre profil")));
+    zone.appendChild(el("p", "source", "Mode sobre : votre progression continue d'être comptée, mais elle n'est pas affichée."));
+    const voir = el("button", "bouton secondaire", "Voir ma progression");
+    voir.type = "button";
+    voir.addEventListener("click", () => { progressionDepliee = true; afficherPageProfil(); });
+    zone.appendChild(voir);
+    const panneau = el("div", "panneau-profil");
+    panneau.appendChild(el("h2", null, "Réglages"));
+    zone.appendChild(panneau);
+    ongletReglages(panneau, m, etat);
+    return;
+  }
   // En tête : blason, pseudonyme, insigne du grade, maîtrise, jauge vers le grade suivant
   const tete = el("div", "profil-tete");
   const identite = el("div", "profil-identite");
@@ -1153,9 +1175,11 @@ function ongletReglages(p) {
   etiquette.htmlFor = champ.id;
   champ.addEventListener("change", () => { ecrire("profil", { ...profil, pseudo: champ.value.trim().slice(0, 24) }); afficherPageProfil(); });
   p.append(etiquette, champ);
-  reglagesPersonnage(p, profil);
-  p.appendChild(el("p", "consigne", "Objectif du jour"));
+  // Le personnage et ses équipements « à gagner » sont des récompenses : absents en mode sobre
+  if (!modeSobre()) reglagesPersonnage(p, profil);
+  // Objectif du jour (en points) : sans objet en mode sobre, où les points ne sont pas affichés
   const objectif = el("div", "puces");
+  if (!modeSobre()) p.appendChild(el("p", "consigne", "Objectif du jour"));
   [30, 60, 100].forEach(v => {
     const b = el("button", "puce" + (lire("objectif", 60) === v ? " active" : ""), T("{0} points", v));
     b.type = "button";
@@ -1163,14 +1187,25 @@ function ongletReglages(p) {
     b.addEventListener("click", () => { ecrire("objectif", v); afficherPageProfil(); });
     objectif.appendChild(b);
   });
-  p.appendChild(objectif);
+  if (!modeSobre()) p.appendChild(objectif);
   const sobre = el("label", "case-tirage");
   const caseSobre = el("input");
   caseSobre.type = "checkbox";
   caseSobre.checked = modeSobre();
-  caseSobre.addEventListener("change", () => { ecrire("reglages", { ...lire("reglages", {}), sobre: caseSobre.checked }); majBoutonProfil(); afficherPageProfil(); });
-  sobre.append(caseSobre, texteNoeud(" " + T("Mode sobre : cacher la maîtrise, les grades, les points et les distinctions (tout continue d'être compté)")));
+  caseSobre.addEventListener("change", () => { choisirModeSobre(caseSobre.checked); afficherPageProfil(); });
+  sobre.append(caseSobre, texteNoeud(" " + T("Mode sobre : l'essentiel, sans points ni distractions (tout continue d'être compté)")));
   p.appendChild(sobre);
+  // Pause proposée au bout de 25 minutes (mode sobre seulement), désactivable
+  if (modeSobre()) {
+    const pause = el("label", "case-tirage");
+    const casePause = el("input");
+    casePause.type = "checkbox";
+    casePause.checked = (lire("reglages", {}) || {}).pause !== false;
+    casePause.addEventListener("change", () => ecrire("reglages", { ...(lire("reglages", {}) || {}), pause: casePause.checked }));
+    pause.append(casePause, texteNoeud(" " + T("Proposer une pause après 25 minutes")));
+    p.appendChild(pause);
+  }
+  p.appendChild(lienVers("#guide/sobre", "Le mode sobre : pourquoi ces choix", "lien-discret"));
   // Thème et animations : les choix du pied de page, repris ici ; un clic actionne le bouton du pied, qui applique le
   // réglage et met à jour l'état (aria-pressed) des deux rangées
   [["Thème", "theme-choix", [["auto", "Auto"], ["light", "Clair"], ["dark", "Sombre"]]],
@@ -1808,6 +1843,14 @@ function carteBienvenue(demandee) {
         puces.appendChild(b);
       });
       carte.appendChild(puces);
+      // Le mode sobre, proposé comme une option (case non cochée) : un choix réversible, dans le profil
+      const sobre = el("label", "case-tirage");
+      const caseSobre = el("input");
+      caseSobre.type = "checkbox";
+      caseSobre.checked = modeSobre();
+      caseSobre.addEventListener("change", () => choisirModeSobre(caseSobre.checked));
+      sobre.append(caseSobre, texteNoeud(" " + T("Ou bien le mode sobre : l'essentiel, sans points ni distractions. Réversible à tout moment dans le profil.")));
+      carte.appendChild(sobre);
     } else {
       carte.append(el("h2", null, "Par où commencer ?"), el("p", "source", "« Premiers pas » fait le tour du site en une vingtaine de minutes : une illusion, deux fiches, un test de réflexion, deux quiz. Rien n'est verrouillé : tout reste ouvert."));
       const actions = el("div", "actions");

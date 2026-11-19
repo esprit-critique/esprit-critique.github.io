@@ -277,6 +277,88 @@ function enregistrerReponse(cle, juste, certitude) {
   if (juste && due && avant && lire("erreursSures", []).some(e => e.cle === cle)) compter("leconsRetenues");
 }
 
+// ===================== Mode sobre : accueil et séance (mode concentration) =====================
+// Accueil réduit à une seule action suivante : les révisions dues (séance bornée), sinon la situation du jour, sinon
+// une fiche pas encore lue ; puis un seul lien « Autres activités ». Ni salutation variée, ni série de jours, ni
+// illusion, ni citation, ni colonne latérale : des détails attrayants mais hors de la tâche (guide, « Le mode sobre »).
+function afficherAccueilSobre(zone) {
+  const carte = el("article", "carte accueil-sobre");
+  carte.appendChild(el("h1", "page-titre", "Aujourd'hui"));
+  const dues = clesAReviser().length;
+  const q = situationDuJour(), memo = lire("jour", null);
+  const dejaRepondu = memo && memo.jour === aujourdHui() ? q.options.find(o => o.id === memo.choix) : null;
+  const nonLue = [...INDEX.entries()].find(([cle]) => !(lire("fichesLues", []) || []).includes(cle));
+  if (dues) {
+    carte.append(el("p", "surtitre", "À faire maintenant"), el("h2", null, T("{0} à revoir", pluriel(dues, "notion"))),
+      el("p", "source", T("Une séance courte : les révisions dues, puis des notions proches mélangées ; {0} questions au plus, et vous pouvez vous arrêter à tout moment.", TAILLE_SEANCE)));
+    const b = el("button", "bouton", "Commencer");
+    b.type = "button";
+    b.addEventListener("click", lancerSeance);
+    carte.appendChild(b);
+  } else if (!dejaRepondu) {
+    carte.appendChild(el("p", "surtitre", "Situation du jour"));
+    rendreQuestion(carte, q, null, option => {
+      ecrire("jour", { jour: aujourdHui(), choix: option.id });
+      enregistrerReponse(cleFiche(q.type, q.fiche), option === q.fiche);
+      gagner("situation-jour", option === q.fiche);
+    }, actions => {
+      actions.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, "Lire la fiche", "bouton secondaire"));
+      const fin = el("button", "bouton", "Terminer");
+      fin.type = "button";
+      fin.addEventListener("click", afficherAccueil);
+      actions.appendChild(fin);
+    });
+  } else if (nonLue) {
+    const { type, fiche } = nonLue[1];
+    carte.append(el("p", "surtitre", "À lire"), el("h2", null, fiche.nom), el("p", "source", "Aucune révision due aujourd'hui. Une fiche que vous n'avez pas encore lue :"));
+    carte.appendChild(lienVers("#" + type + "/" + fiche.id, "Lire la fiche", "bouton"));
+  } else {
+    carte.append(el("h2", null, "Rien de prévu aujourd'hui"), el("p", "source", "Aucune révision due, toutes les fiches lues. Une séance de notions proches reste possible."));
+    const b = el("button", "bouton secondaire", "Une séance de notions proches");
+    b.type = "button";
+    b.addEventListener("click", lancerSeance);
+    carte.appendChild(b);
+  }
+  const prochaine = prochaineRevision();
+  if (!dues && prochaine !== null) carte.appendChild(el("p", "source", prochaine - aujourdHui() <= 1 ? T("Prochaine révision demain.") : T("Prochaine révision dans {0} jours.", prochaine - aujourdHui())));
+  // Les autres activités, repliées : un seul lien, natif (details), accessible au clavier
+  const autres = el("details", "autres-activites");
+  autres.appendChild(el("summary", "lien", "Autres activités"));
+  const liste = el("ul", "liste-simple");
+  [["#biais", T("Les {0} fiches", BIAIS.length + SOPHISMES.length)], ["#quiz", "Le quiz"], ["#ateliers", "Les ateliers"], ["#parcours", "Les parcours"], ["#profil", "Profil et réglages"]]
+    .forEach(([adresse, texte]) => { const li = el("li"); li.appendChild(lienVers(adresse, texte)); liste.appendChild(li); });
+  autres.appendChild(liste);
+  zone.append(carte, autres);
+}
+
+// Séance bornée : révisions dues d'abord (se souvenir vaut mieux que relire : Roediger et Karpicke, 2006), puis des
+// paires de notions proches mélangées (alterner des catégories proches aide à les distinguer : Brunmair et Richter,
+// 2019), puis une fin nette et un récapitulatif. Mode interne du quiz, jamais enregistré dans modeQuiz.
+const TAILLE_SEANCE = 12, REVISIONS_SEANCE_MAX = 10;
+// Début de la visite : la pause facultative est proposée au bout de 25 minutes (mode sobre)
+const DEBUT_VISITE = Date.now();
+function lancerSeance() {
+  quiz.mode = "seance";
+  nouvelleSerie();
+  if (location.hash === "#quiz") afficherQuiz(); else location.hash = "quiz";
+}
+function serieDeSeance() {
+  const revisions = clesAReviser().slice(0, REVISIONS_SEANCE_MAX).map(c => {
+    const { type, fiche } = INDEX.get(c);
+    const q = creerQuestion(type, fiche);
+    const situations = (fiche.casSup && fiche.casSup.length ? fiche.casSup : [fiche.cas, fiche.cas2]).filter(Boolean);
+    if (situations.length) q.cas = situations[(memoire[c] ? memoire[c].n : 0) % situations.length];
+    return q;
+  });
+  return [...revisions, ...serieDeDuels().slice(0, Math.max(2, TAILLE_SEANCE - revisions.length))];
+}
+// Pause facultative, non modale, désactivable (reglages.pause === false) : au bout d'environ 25 minutes, des pauses à
+// heure fixe donnent le même travail accompli avec une meilleure humeur que des pauses libres (Biwer et al., 2023)
+function lignePause() {
+  if (!modeSobre() || (lire("reglages", {}) || {}).pause === false || Date.now() - DEBUT_VISITE < 25 * 60000) return null;
+  return el("p", "source pause-douce", "Une pause de quelques minutes ?");
+}
+
 // Fichier .ics des révisions prévues sur les 60 prochains jours (les révisions en retard comptent pour aujourd'hui)
 function exporterRevisions() {
   const auj = aujourdHui();
@@ -876,6 +958,7 @@ function ouverture() {
 function afficherAccueil() {
   const zone = $("vue-accueil");
   zone.replaceChildren();
+  if (modeSobre()) { zone.classList.remove("large"); afficherAccueilSobre(zone); return; }
   zone.classList.add("large");
   const date = new Date().toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
   const resultats = lire("resultatsAteliers", {});
@@ -1476,7 +1559,8 @@ function afficherFiche(type, fiche) {
     });
     lecteur.observe(pied);
   }
-  miseEnPage.append(colonne, rail);
+  // Mode sobre : une colonne, sans rail latéral pendant la lecture (les liens « Voir aussi » restent en fin de fiche)
+  if (modeSobre()) { miseEnPage.classList.add("sans-rail"); miseEnPage.append(colonne); } else miseEnPage.append(colonne, rail);
   zone.appendChild(miseEnPage);
 
   // Barre d'actions collante (téléphone) : acquise, « Je l'ai repéré », carte suivante
@@ -1575,6 +1659,12 @@ function nouvelleSerie() {
   let choisies;
   quiz.points = [];
   quiz.pointsDonnes = false;
+  if (quiz.mode === "seance") {
+    quiz.serie = serieDeSeance();
+    quiz.index = 0;
+    quiz.bonnes = 0;
+    return;
+  }
   if (quiz.mode === "proches") {
     quiz.serie = serieDeDuels();
     quiz.index = 0;
@@ -1620,7 +1710,8 @@ function afficherFiltresQuiz() {
   const zone = $("filtres-quiz");
   zone.replaceChildren();
   document.querySelectorAll(".option-certitude").forEach(o => o.remove());
-  MODES_QUIZ.forEach(([mode, libelle]) => {
+  // Mode sobre : pas de « Chrono » (choix de conception : le site entraîne la réflexion lente, pas la vitesse)
+  MODES_QUIZ.filter(([mode]) => !(mode === "chrono" && modeSobre())).forEach(([mode, libelle]) => {
     const texte = mode === "reviser" ? T("{0} ({1})", T(libelle), clesAReviser().length) : libelle;
     const puce = el("button", "puce" + (quiz.mode === mode ? " active" : ""), texte);
     puce.addEventListener("click", () => lancerQuiz(mode));
@@ -1640,7 +1731,8 @@ function afficherQuiz() {
   afficherFiltresQuiz();
   const zone = $("zone-quiz");
   zone.replaceChildren();
-  // Mode chrono : situations tirées au hasard, quatre propositions, 60 secondes
+  // Mode chrono : situations tirées au hasard, quatre propositions, 60 secondes (masqué en mode sobre)
+  if (quiz.mode === "chrono" && modeSobre()) { quiz.mode = "tout"; nouvelleSerie(); }
   if (quiz.mode === "chrono") {
     const fiches = [...INDEX.values()];
     partieChrono(zone, {
@@ -1689,6 +1781,21 @@ function afficherQuiz() {
   rempli.style.background = "var(--vert)";
   jauge.appendChild(rempli);
   jauge.style.marginBottom = "14px";
+  // Séance : « S'arrêter ici » toujours visible, une fin nette plutôt qu'une tâche laissée en suspens
+  if (quiz.mode === "seance") {
+    const arret = el("button", "lien arret-seance", "S'arrêter ici");
+    arret.type = "button";
+    arret.addEventListener("click", () => {
+      const faites = quiz.serie.filter(x => x.reponse).length;
+      if (!faites) { quiz.serie = []; quiz.mode = lire("modeQuiz", "tout"); location.hash = "accueil"; return; }
+      quiz.serie = quiz.serie.slice(0, faites);
+      quiz.index = faites;
+      afficherQuiz();
+    });
+    entete.appendChild(arret);
+  }
+  const pause = lignePause();
+  if (pause) zone.appendChild(pause);
 
   const carte = el("article", "carte");
   if (!q.reponse) q.certitude = !q.libre && lire("certitudeQuiz", true);
@@ -1736,6 +1843,7 @@ function afficherBilan(zone) {
     quiz.bloque = gainBloque(lire("lucidite", {}), "quiz", aujourdHui());
     quiz.pointsGagnes = gagner("quiz", totalSerie(quiz.points || []), String(Date.now()));
   }
+  if (quiz.mode === "seance") { bilanSeance(zone); return; }
   const ratees = quiz.serie.filter(q => q.reponse !== q.fiche);
   const records = lire("records", {});
   const ancien = records[quiz.mode];
@@ -1760,7 +1868,7 @@ function afficherBilan(zone) {
   else if (ratio >= 0.5) message = "Des bases solides ; quelques notions à revoir.";
   else message = "Les fiches ci-dessous méritent une relecture.";
   carte.appendChild(el("p", null, message));
-  if (quiz.mode !== "reviser" && ancien !== undefined) {
+  if (quiz.mode !== "reviser" && ancien !== undefined && !modeSobre()) {
     carte.appendChild(el("p", "source", T("Meilleur score précédent dans ce mode : {0} / {1}.", ancien, TAILLE_SERIE)));
   }
   if (ratees.length > 0) {
@@ -1793,6 +1901,35 @@ function afficherBilan(zone) {
     actions.appendChild(revoir);
   }
   carte.appendChild(actions);
+  zone.appendChild(carte);
+}
+
+// Récapitulatif sobre d'une séance : notions revues, prochaine révision, phrase de clôture, « Terminer ». Proposer de
+// choisir soi-même un moment (fichier d'agenda) plutôt qu'un rappel : ni notification ni relance.
+function bilanSeance(zone) {
+  const n = quiz.serie.length, ratees = quiz.serie.filter(q => q.reponse !== q.fiche);
+  const carte = el("article", "carte bilan-seance");
+  carte.append(el("p", "consigne", "Fin de la séance"), el("h2", null, T("{0} revues, {1} justes", pluriel(n, "question"), quiz.bonnes)));
+  if (ratees.length) {
+    carte.appendChild(el("p", "consigne", "À revoir"));
+    const ul = el("ul", "liste-simple");
+    ratees.forEach(q => { const li = el("li"); li.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, q.fiche.nom)); ul.appendChild(li); });
+    carte.appendChild(ul);
+  }
+  const prochaine = prochaineRevision();
+  if (prochaine !== null) carte.appendChild(el("p", null, prochaine <= aujourdHui() ? T("D'autres révisions restent dues aujourd'hui.")
+    : prochaine - aujourdHui() === 1 ? T("Prochaine révision demain.") : T("Prochaine révision dans {0} jours.", prochaine - aujourdHui())));
+  carte.appendChild(el("p", "source", "C'est tout pour aujourd'hui. Les notions reviendront au moment prévu : c'est l'espacement qui fait le travail."));
+  const actions = el("div", "actions");
+  const terminer = el("button", "bouton", "Terminer");
+  terminer.type = "button";
+  terminer.dataset.suivant = "1";
+  terminer.addEventListener("click", () => { quiz.serie = []; quiz.mode = lire("modeQuiz", "tout"); location.hash = "accueil"; });
+  const moment = el("button", "bouton secondaire", "Choisir un moment pour la prochaine révision");
+  moment.type = "button";
+  moment.addEventListener("click", () => exporterRevisions());
+  actions.append(terminer, moment);
+  carte.append(actions, el("p", "source", "Un fichier d'agenda, avec les jours de vos prochaines révisions : vous y choisissez l'heure. Le site n'envoie aucun rappel."));
   zone.appendChild(carte);
 }
 
@@ -2216,20 +2353,26 @@ function glypheCategorie(categorie) {
 }
 
 // ===================== Réglages et mouvement (DESIGN.md, « Mouvement ») =====================
-// reglages = { animations: "auto" | "reduites" }
-const reglages = lire("reglages", {});
-function animationsReduites() {
-  return reglages.animations === "reduites" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// reglages = { animations: "auto" | "reduites", sobre, pause }
+// Choix effectif : celui de l'utilisateur ; sans choix, « réduites » en mode sobre (concentration), « auto » sinon.
+// Relu à chaque fois : le mode sobre se règle ailleurs (profil.js), et une copie gardée au chargement l'écrasait
+function choixAnimations() {
+  const r = lire("reglages", {}) || {};
+  return r.animations === "auto" || r.animations === "reduites" ? r.animations : r.sobre ? "reduites" : "auto";
 }
-// Le réglage réduit pose data-animations="reduites", que style.css traite comme prefers-reduced-motion
+function animationsReduites() {
+  return choixAnimations() === "reduites" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+// Le réglage réduit pose data-animations="reduites", que style.css traite comme prefers-reduced-motion ; le mode
+// sobre pose la classe « sobre » sur la page (style.css)
 function appliquerAnimations() {
-  if (reglages.animations === "reduites") document.documentElement.dataset.animations = "reduites";
+  if (choixAnimations() === "reduites") document.documentElement.dataset.animations = "reduites";
   else delete document.documentElement.dataset.animations;
-  document.querySelectorAll("[data-animations-choix]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.animationsChoix === (reglages.animations || "auto"))));
+  document.documentElement.classList.toggle("sobre", modeSobre());
+  document.querySelectorAll("[data-animations-choix]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.animationsChoix === choixAnimations())));
 }
 document.querySelectorAll("[data-animations-choix]").forEach(b => b.addEventListener("click", () => {
-  reglages.animations = b.dataset.animationsChoix;
-  ecrire("reglages", reglages);
+  ecrire("reglages", { ...(lire("reglages", {}) || {}), animations: b.dataset.animationsChoix });
   appliquerAnimations();
 }));
 appliquerAnimations();
