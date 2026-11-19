@@ -839,7 +839,8 @@ function majBoutonProfil(m, etat) {
   const grade = gradeDe(etat.meilleure || 0);
   const points = (lire("lucidite", {}).jours || {})[aujourdHui()] || 0;
   const objectif = lire("objectif", 60);
-  b.replaceChildren(personnage(etat, 26), anneau(points / objectif, 34, "anneau-profil"), insigne(grade.rang, 18), el("span", "bouton-profil-maitrise", String(globale)));
+  // Insigne du premier grade (un simple point) omis : seul dans l'en-tête, il passait pour un défaut d'affichage
+  b.replaceChildren(...[personnage(etat, 26), anneau(points / objectif, 34, "anneau-profil"), grade.rang ? insigne(grade.rang, 18) : null, el("span", "bouton-profil-maitrise", String(globale))].filter(Boolean));
   b.setAttribute("aria-label", T("Profil : {0}, maîtrise {1} ; {2} points sur {3} pour l'objectif du jour", T(grade.nom), globale, points, objectif));
 }
 
