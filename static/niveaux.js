@@ -288,6 +288,7 @@ function partieChrono(zone, options) {
 // libelle(e) donne le texte d'un élément ; surValidation(ordre) reçoit l'ordre choisi.
 function classementInteractif(zone, elements, libelle, surValidation) {
   let ordre = melanger(elements);
+  zone.appendChild(paragraphe("Déplacez chaque ligne avec les flèches ↑ et ↓, puis validez le classement.", "source"));
   const liste = el("ol", "classement");
   liste.setAttribute("aria-live", "polite");
   const dessiner = focus => {

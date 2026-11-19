@@ -289,7 +289,7 @@ EXPERIENCES.push(
       const etapes = [...questions.map(q => ({ q, tour: 1 })), ...questions.map(q => ({ q, tour: 2 }))];
       derouler(zone, etapes, (e, zone, fini) => {
         const q = e.q;
-        zone.appendChild(el("p", "cas", T("{0} ?", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : ""))));
+        zone.append(el("p", "consigne", "Votre estimation :"), el("p", "cas", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : "")));
         if (e.tour === 2) {
           const p1 = premieres[questions.indexOf(q)];
           zone.appendChild(paragraphe(T("Votre première estimation : {0}. Supposez qu'elle soit fausse. Pourquoi le serait-elle ? Était-elle plutôt trop haute ou trop basse ? Faites une seconde estimation, différente, à partir de cette nouvelle hypothèse.", fr(p1)), "consigne-longue"));

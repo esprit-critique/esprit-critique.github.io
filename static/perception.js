@@ -182,7 +182,7 @@ JEUX.push(
         const [a, b] = m.gauche ? [vrai, faux] : [faux, vrai];
         zone.appendChild(el("p", "cas", m.type === "points"
           ? "L'un de ces nuages a été tiré au hasard (chaque point placé indépendamment des autres). Lequel ?"
-          : T("L'une de ces suites vient de {0} lancers d'une vraie pièce. Laquelle ?", m.p.suite)));
+          : T("L'une de ces suites vient de {0} lancers d'une vraie pièce (P = pile, F = face). Laquelle ?", m.p.suite)));
         const duo = el("div", m.type === "points" ? "duo" : "duo-suites");
         const panneaux = [a, b].map((donnees, k) => {
           const fig = el("figure", "panneau");
@@ -369,13 +369,14 @@ JEUX.push(
           if (niveau === 4 || Math.random() < 0.2) return { cible: moyenne, n: 20, extreme };
           return { cible: signeAuHasard, n: 30, forme: Math.random() < 0.5 ? "courbe" : "groupes" };
         }
-      }, (tirage, zone, fini) => {
+      }, (tirage, zone, fini, niveau) => {
         const cible = tirage.cible;
         const points = tirage.forme ? nuageForme(tirage.forme, tirage.n, Math.sign(cible)) : nuageCorrele(cible, tirage.n);
         // Valeur extrême : un point loin du nuage, à l'opposé de la tendance (ou, au niveau 4, parfois dans son prolongement)
         if (tirage.extreme) points.push([2.8, (tirage.extreme === "prolongement" ? 2.8 : -2.8) * Math.sign(cible || 1)]);
         const r = correlationDe(points);
         zone.appendChild(el("p", "consigne", "Estimez la corrélation"));
+        if (niveau <= 2) zone.appendChild(paragraphe("La corrélation r mesure à quel point les points s'alignent : +1 s'ils forment une ligne qui monte, −1 une ligne qui descend, 0 s'ils n'ont aucune tendance. Placez le curseur, puis validez.", "source"));
         const graphe = dessinCorrelation(points);
         zone.appendChild(graphe);
         const affichage = el("p", "valeur-curseur");
