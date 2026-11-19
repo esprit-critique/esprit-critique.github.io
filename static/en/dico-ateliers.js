@@ -111,6 +111,7 @@ EN_AJOUTER([
   ["Ordres de grandeur", "Orders of magnitude"],
   ["Avant ou après ?", "Before or after?"],
   ["Qui l'a vraiment dit ?", "Who really said it?"],
+  ["{0} : {1} en moyenne", "{0}: {1} on average"],
   ["{0} : {1} en moyenne, record {2} / {3}", "{0}: {1} on average, record {2} / {3}"],
   ["Votre image du monde", "Your picture of the world"],
   ["Votre image du monde est-elle à jour ?", "Is your picture of the world up to date?"],
