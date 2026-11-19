@@ -239,6 +239,19 @@ const SOURCES_LUCIDITE = {
   "parcours-termine": { points: () => 50, unique: true }
 };
 
+// Vrai si une limite (par jour, plafond de points, « une fois ») empêche ce gain aujourd'hui : le bilan le dit au joueur,
+// qui croirait sinon que sa partie n'a pas été prise en compte
+function gainBloque(etat, source, jour, cle = "") {
+  const s = SOURCES_LUCIDITE[source], e = etat || {}, c = e.compteurs || {};
+  if (!s) return false;
+  const id = source + "|" + cle;
+  if (s.unique) return !!(e.uniques && e.uniques[id]);
+  if (c.jour !== jour) return false;
+  const compte = s.parJour ? source : s.parJourCle ? id : null;
+  if (compte && (c[compte] || 0) >= (s.parJour || s.parJourCle)) return true;
+  return !!(s.plafondPoints && (c[source + ":points"] || 0) >= s.plafondPoints);
+}
+
 // Applique un gain à l'état (clé lucidite) et rend [nouvel état, points gagnés]. Pur : même entrée, même sortie.
 // cle : ce qui identifie l'événement (fiche, atelier…) pour les limites « une fois » et « par jour et par clé ».
 function appliquerGain(etat, source, valeur, jour, cle = "") {

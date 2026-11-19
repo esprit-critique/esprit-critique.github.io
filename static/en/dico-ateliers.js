@@ -19,6 +19,8 @@ EN_AJOUTER([
   ["Diminuer", "Decrease"],
   ["Augmenter", "Increase"],
   ["Suivant", "Next"],
+  ["trois parties notées par atelier et par jour au plus.", "at most three scored games per workshop a day."],
+  ["une partie par jour au plus pour cet atelier.", "at most one game a day for this workshop."],
   ["Bilan", "Summary"],
   ["Nouveau record au niveau {0}. L'ancien était de {1} / {2}.", "New record at level {0}. The previous one was {1} / {2}."],
   ["Nouveau record. L'ancien était de {1} / {2}.", "New record. The previous one was {1} / {2}."],

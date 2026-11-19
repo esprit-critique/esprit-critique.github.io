@@ -280,14 +280,17 @@ function tirerNouveaux(cle, elements, n, idDe = e => e.id) {
 
 // Avec un niveau, les records et historiques sont aussi tenus par niveau : r.niveaux[niveau] = { n, record, sur,
 // historique, reussites90 }. Les champs généraux (n, record, historique) restent tenus pour toutes les parties.
-function noterPartie(id, score, sur, niveau) {
+function noterPartie(id, score, sur, niveau, surPoints) {
   const tous = lire("resultatsAteliers", {});
   // Points de lucidité (profil.js) : premier essai, partie notée ou non, atelier maîtrisé
   const premier = !tous[id];
   setTimeout(() => {
-    if (premier) gagner("atelier-premier", 0, id);
-    if (score !== undefined && score !== null && sur) gagner("atelier-note", [score, sur, niveau], id); else gagner("atelier-sans-note", 0, id);
-    if (atelierMaitrise(id)) gagner("atelier-maitrise", 0, id);
+    const source = score !== undefined && score !== null && sur ? "atelier-note" : "atelier-sans-note";
+    const bloque = gainBloque(lire("lucidite", {}), source, aujourdHui(), id);
+    let points = premier ? gagner("atelier-premier", 0, id) : 0;
+    points += gagner(source, source === "atelier-note" ? [score, sur, niveau] : 0, id);
+    if (atelierMaitrise(id)) points += gagner("atelier-maitrise", 0, id);
+    if (surPoints) surPoints(points, bloque, source === "atelier-note" ? "trois parties notées par atelier et par jour au plus." : "une partie par jour au plus pour cet atelier.");
   }, 0);
   const r = migrerResultat(tous[id] || { n: 0, historique: [] });
   const ancienRecord = r.record;
@@ -334,9 +337,10 @@ function afficherScore(zone, id, score, sur, texteScore) {
   const partie = PARTIES_EN_COURS[id];
   const niveau = partie ? niveauDePartie(partie.niveaux) : undefined;
   const avant = maitriseAvant(id);
-  const r = noterPartie(id, score, sur, niveau);
+  const place = el("div");
+  const r = noterPartie(id, score, sur, niveau, (points, bloque, limite) => { const l = lignePoints(points, bloque, limite); if (l) place.replaceWith(l); });
   zone.appendChild(avecPersonnage(el("p", "consigne", "Bilan"), el("p", "reaction", reactionBilan(sur ? score / sur : 0))));   // profil.js
-  zone.appendChild(el("p", "grand-score", texteScore || (score + " / " + sur)));
+  zone.append(el("p", "grand-score", texteScore || (score + " / " + sur)), place);
   if (partie) {
     zone.appendChild(bilanNiveaux(id));
     delete PARTIES_EN_COURS[id];
