@@ -273,6 +273,10 @@ f.onload = async () => {
     await pause(150);
     const premiere = w.location.hash;
     ok("tirage : depuis la liste, une fiche tirée avec son bandeau", /^#biais\//.test(premiere) && !!vue().querySelector(".bandeau-tirage"), premiere);
+    // Safari recharge un cadre sur location.replace("#…") (vérifié le 19 novembre 2026 ; en haut de page, l'ancre change
+    // sans rechargement) : les tirages suivants, qui remplacent l'entrée d'historique, ne se vérifient pas dans le cadre
+    // du banc sous Safari. Le site refuse d'être encadré (refuserEncadrement), les visiteurs ne sont pas concernés.
+    if (!params.has("safari")) {
     touche("r");
     await pause(150);
     const deuxieme = w.location.hash;
@@ -286,6 +290,7 @@ f.onload = async () => {
     w.history.back();
     await pause(200);
     ok("tirage : « retour » ramène à la liste", w.location.hash === "#biais", w.location.hash);
+    } else console.log("BANC: tirage, carte suivante, précédente et retour : non vérifiés sous Safari (cadre rechargé)");
     await aller("biais/ancrage");
     ok("tirage : le bandeau disparaît quand on arrive sur une fiche autrement", !vue().querySelector(".bandeau-tirage") && w.eval("TIRAGE.actif") === false);
     // L'observateur de visibilité dépend du rendu, que le cadre sans fenêtre ne produit pas toujours : la fonction
