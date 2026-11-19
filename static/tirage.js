@@ -317,9 +317,12 @@ function afficherDefiLibre(texte, scoreAmi) {
     derouler(jeu, questionsDuDefi(0, graine), questionDeDefi, resultats => {
       const score = resultats.filter(Boolean).length;
       noterActivite();
-      gagner("defi-libre", score);
+      const bloque = gainBloque(lire("lucidite", {}), "defi-libre", aujourdHui());
+      const points = gagner("defi-libre", score);
       carte.replaceChildren();
       carte.append(el("p", "surtitre", T("Défi libre n° {0}", graine)), el("p", "grand-score", score + " / 10"));
+      const lignePts = lignePoints(points, bloque, "deux défis libres par jour au plus.");
+      if (lignePts) carte.appendChild(lignePts);
       if (ami !== null) carte.appendChild(el("p", "source", score > ami ? T("Défi relevé : vous faites mieux que le score à battre ({0} / 10).", ami)
         : score === ami ? T("Égalité avec le score à battre ({0} / 10).", ami) : T("Le score à battre tient bon : {0} / 10.", ami)));
       carte.appendChild(actionsDefi(score));

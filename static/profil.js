@@ -133,6 +133,14 @@ window.addEventListener("load", () => {
 });
 
 // ===================== Moments de récompense, jamais bloquants =====================
+// Ligne du bilan : points gagnés, ou limite du jour atteinte. La pastille « +N » ne suffit pas : elle est masquée
+// quand les animations sont réduites, et rien ne s'affichait quand une limite bloquait le gain.
+function lignePoints(points, bloque, limite) {
+  if (points > 0) return el("p", "source", T("+{0} points de lucidité.", points));
+  if (bloque) return el("p", "source", T("Pas de points pour cette partie : {0} Ils reviennent demain.", T(limite)));
+  return null;
+}
+
 function montrerPastille(texte) {
   const cible = document.querySelector(".bouton-profil") || document.body;
   const p = el("span", "pastille-points", texte);
