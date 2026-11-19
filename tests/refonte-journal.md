@@ -663,3 +663,19 @@ dans l'en-tête, contrôles de moins de 44 px, désalignements, débordement hor
   ligne du titre.
 - Sommaire du guide : décalé de 20 px par `.guide ul` ; retrait annulé.
 - Non retenus : les rangées de puces et les onglets du profil qui dépassent défilent exprès (fondu au bord).
+
+## Corrections de l'inspection du 19 novembre 2026 (branche `corrections-verificateur`)
+
+Inspection par l'agent `verificateur` (Playwright, toutes les vues, français et anglais, sobre ou non) ; corrigé :
+- Séance : le compteur de bonnes réponses s'écrivait dans `entete.lastChild`, devenu « S'arrêter ici » (lien renommé
+  « 0 bonne réponse ») ; référence gardée au compteur.
+- Profil : un réglage (mode sobre, objectif, pseudonyme, personnage, « Voir ma progression ») redessinait la page et
+  le focus tombait sur `BODY` ; `redessinerProfil()` le rend au contrôle actionné, sans saut de page.
+- Quiz : une séance finie, ou le mode sobre quitté, relançait une séance depuis l'onglet Quiz ; retour à `modeQuiz`.
+- Mode sobre : records des cartes d'atelier et du portrait, bouton chrono du débat truqué, cachés.
+- Bilan de séance : « 1 question revues, 1 justes » ; accord de chaque partie.
+- Accueil sobre : `#accueil/presentation` montre la carte de bienvenue ; la case « mode sobre » de la carte redessine
+  l'accueil ; la situation du jour appelle `gagnerTroisCartes()` comme l'accueil complet.
+- Transition de vue interrompue : rejet attendu intercepté. Puce « All » (anglais) : `min-width: 44px`.
+Non corrigé, à vérifier sur un vrai second appareil : après une fusion de synchronisation au chargement, `memoire`
+(lue une fois, app.js) et un `reglages.sobre` venu d'ailleurs ne seraient pris en compte qu'au rechargement suivant.
