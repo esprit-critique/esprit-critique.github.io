@@ -28,6 +28,7 @@ EN_AJOUTER([
   ["Votre record : {0} points.", "Your record: {0} points."],
   ["Rejouer le chrono", "Play the timed round again"],
   ["Revenir à l'atelier", "Back to the workshop"],
+  ["Déplacez chaque ligne avec les flèches ↑ et ↓, puis validez le classement.", "Move each line with the ↑ and ↓ arrows, then confirm the ranking."],
   ["Monter {0}", "Move {0} up"],
   ["Descendre {0}", "Move {0} down"],
   ["Valider le classement", "Submit the ranking"],

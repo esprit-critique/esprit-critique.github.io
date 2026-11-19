@@ -674,7 +674,7 @@ EXPERIENCES.push(
           tourDeTable(joueurs, (k, nom, ok) => {
             entete(zone, i + 1, 6, "Estimation");
             zone.appendChild(el("p", "consigne", T(manche === 1 ? "Manche {0} : sans voir les autres" : "Manche {0} : en voyant les réponses précédentes", manche)));
-            zone.appendChild(el("p", "cas", T("{0} ?", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : ""))));
+            zone.append(el("p", "consigne", "Votre estimation :"), el("p", "cas", T(q.q) + (q.unite ? " " + T("(en {0})", T(q.unite)) : "")));
             if (manche === 2 && valeurs.length) zone.appendChild(paragraphe(T("Réponses des joueurs précédents : {0}.", valeurs.map(v => fr(v)).join(" ; ")), "source"));
             const champ = el("input", "champ");
             champ.inputMode = "decimal";
@@ -693,7 +693,7 @@ EXPERIENCES.push(
           }, () => {
             resultats.push({ manche, q, valeurs });
             entete(zone, i + 1, 6, "Estimation");
-            zone.appendChild(el("p", "cas", T("{0} ?", T(q.q))));
+            zone.appendChild(el("p", "cas", T(q.q)));
             const moyenne = valeurs.reduce((a, b) => a + b, 0) / valeurs.length;
             const ecart = v => Math.abs(v - q.v) / q.v;
             const mieux = valeurs.filter(v => ecart(v) < ecart(moyenne)).length;

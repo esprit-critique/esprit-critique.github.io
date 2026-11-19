@@ -741,8 +741,8 @@ function questionsDuDefi(jour, graine) {
   const voisins = stable ? new Set([-2, -1, 0, 1, 2].map(k => vraiFauxDuJour(jour + k).id)) : new Set();
   const vfTirees = stable ? tirerSansRemise(difficiles(VRAI_FAUX), 6, jour, 13, 3) : prendre(difficiles(VRAI_FAUX), 3, 13);
   const vfGardees = stable ? [...vfTirees.filter(a => !voisins.has(a.id)), ...vfTirees.filter(a => voisins.has(a.id))].slice(0, 3) : vfTirees;
-  const vf = vfGardees.map(a => ({ texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
-  const citations = prendre(difficiles(CITATIONS), 2, 17).map(c => ({ texte: T("« {0} » — attribuée à {1}", T(c.texte), c.auteur), options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
+  const vf = vfGardees.map(a => ({ consigne: "Cette affirmation est-elle vraie ou fausse ?", texte: a.texte, options: ["Vrai", "Faux"], juste: a.vrai ? 0 : 1, explication: a.explication }));
+  const citations = prendre(difficiles(CITATIONS), 2, 17).map(c => ({ consigne: "Cette citation est-elle authentique, déformée ou inventée ?", texte: T("« {0} » — attribuée à {1}", T(c.texte), c.auteur), options: statuts.map(([, l]) => l), juste: statuts.findIndex(([st]) => st === c.statut), explication: c.explication }));
   const chrono = prendre(PAIRES_CELEBRES, 2, 19).map(p => {
     const [a, b] = melanger([evenement(p.a), evenement(p.b)], alea);
     return { texte: "Lequel a eu lieu en premier ?", options: [a.nom, b.nom], juste: momentEvenement(a) < momentEvenement(b) ? 0 : 1, explication: p.note };
@@ -759,6 +759,7 @@ function gagnerTroisCartes() {
 
 // Une question du défi (du jour ou libre) : choix, correction, explication
 function questionDeDefi(q, zone, fini) {
+  if (q.consigne) zone.appendChild(el("p", "consigne", q.consigne));
   zone.appendChild(el("p", "cas", q.texte));
   const boutons = q.options.map((texte, k) => {
     const b = boutonChoix(texte, k);
