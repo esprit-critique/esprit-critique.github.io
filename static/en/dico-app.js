@@ -45,6 +45,7 @@ EN_AJOUTER([
   ["Inventée ou mal attribuée", "Invented or misattributed"],
   ["Vrai", "True"],
   ["Faux", "False"],
+  ["Cette citation est-elle authentique, déformée ou inventée ?", "Is this quotation genuine, distorted or made up?"],
   ["« {0} » — attribuée à {1}", "“{0}” — attributed to {1}"],
   ["Lequel a eu lieu en premier ?", "Which happened first?"],
   ["Juste.", "Correct."],

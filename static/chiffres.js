@@ -290,7 +290,7 @@ const JEUX = [
         const ind = INDICATEURS_PAYS[duel.cle];
         if (duel.classement) {
           zone.appendChild(el("p", "cas", ind.question));
-          zone.appendChild(el("p", "consigne", T("Classez ces {0} pays, en commençant par la réponse", duel.pays.length)));
+          zone.appendChild(el("p", "consigne", T("Classez ces {0} pays : en haut, celui qui répond le mieux à la question, en bas celui qui y répond le moins.", duel.pays.length)));
           classementInteractif(zone, duel.pays, p => p.nom, ordre => {
             const annee = p => (p.annees && p.annees[duel.cle]) || ANNEES_PAYS[duel.cle];
             const source = p => ind.source ? (ind.source.includes(String(annee(p))) ? T(ind.source) : T("{0}, {1}", T(ind.source), annee(p))) : T("Banque mondiale, {0}", annee(p));
@@ -476,6 +476,7 @@ const JEUX = [
         // Fenêtre de 9 puissances de dix, décalée au hasard pour que sa position ne trahisse pas la réponse
         const debut = Math.max(0, Math.floor(vraie) - 2 - Math.floor(Math.random() * 5));
         const fin = debut + 9;
+        zone.appendChild(el("p", "consigne", "Estimez cette quantité : réglez le curseur, puis validez."));
         zone.appendChild(el("p", "cas", q.q));
         const affichage = el("p", "valeur-curseur");
         const curseur = el("input", "curseur");
