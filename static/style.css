@@ -2274,3 +2274,26 @@ label[for] { display: block; margin: 0 0 8px; }
 @media (min-width: 760px) { .bouton-sobre { order: 3; } }
 /* Mode sobre : moins à regarder autour de la tâche ; le filet coloré du catalogue est un ornement */
 html.sobre .spectre { display: none; }
+/* Très petit téléphone (320 px) : la marque passait sous le bouton de profil. Bouton de langue réduit à « EN »
+   (44 px, le globe retiré) et marque un peu plus petite ; profil et pastille de synchronisation suivent (− 22 px). */
+@media (max-width: 359px) {
+  .marque { font-size: 21px; }
+  .langue-entete { width: 44px; min-height: 44px; padding: 0; justify-content: center; }
+  .langue-entete svg { display: none; }
+  .entete .bouton-profil { right: 52px; }
+  .etat-synchro { right: 85px; }
+}
+/* Grand écran : la place existe pour l'écart habituel des onglets (8 px ne suffit qu'entre 1 040 et 1 239 px, où la
+   ligne unique de l'en-tête est serrée) */
+@media (min-width: 1240px) { .navigation { gap: 20px; } }
+/* Parcours guidés : le filet de lien tombait au bas de la cible de 44 px, loin du texte, comme un trait parasite ; la
+   ligne de séparation suffit. Titre et durée restent sur une ligne, le titre se coupe au besoin. */
+.liste-parcours li { flex-wrap: nowrap; align-items: center; }
+.liste-parcours li .lien-texte { border-bottom: 0; }
+.liste-parcours li .lien-texte:hover { text-decoration: underline; }
+.liste-parcours li .source { flex: none; }
+/* Bouton de profil étroit (≤ 1 039 px), premier grade sans insigne : l'avatar au centre de l'anneau, pas un cercle vide */
+@media (max-width: 1039px) { .bouton-profil:not(:has(.insigne)) .blason { display: block; left: 8px; top: 8px; } }
+/* Sommaire du guide : « .guide ul » (retrait des listes du texte) l'emportait sur « .sommaire », décalant les liens de
+   20 px par rapport au texte de la carte */
+.guide .sommaire { padding-left: 0; margin: 0; }
