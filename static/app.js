@@ -301,6 +301,7 @@ function afficherAccueilSobre(zone) {
       ecrire("jour", { jour: aujourdHui(), choix: option.id });
       enregistrerReponse(cleFiche(q.type, q.fiche), option === q.fiche);
       gagner("situation-jour", option === q.fiche);
+      gagnerTroisCartes();   // comme l'accueil complet : la situation peut être la dernière des trois cartes du jour
     }, actions => {
       actions.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, "Lire la fiche", "bouton secondaire"));
       const fin = el("button", "bouton", "Terminer");
@@ -958,7 +959,13 @@ function ouverture() {
 function afficherAccueil() {
   const zone = $("vue-accueil");
   zone.replaceChildren();
-  if (modeSobre()) { zone.classList.remove("large"); afficherAccueilSobre(zone); return; }
+  if (modeSobre()) {
+    zone.classList.remove("large");
+    // La présentation demandée (lien du guide) reste accessible en mode sobre, au-dessus de l'accueil réduit
+    if (location.hash === "#accueil/presentation") zone.appendChild(carteBienvenue(true));
+    afficherAccueilSobre(zone);
+    return;
+  }
   zone.classList.add("large");
   const date = new Date().toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
   const resultats = lire("resultatsAteliers", {});
@@ -1771,10 +1778,9 @@ function afficherQuiz() {
 
   const q = quiz.serie[quiz.index];
   const entete = el("div", "quiz-entete");
-  entete.append(
-    el("span", null, T("Question {0} / {1}", quiz.index + 1, quiz.serie.length)),
-    el("span", null, pluriel(quiz.bonnes, "bonne réponse", "bonnes réponses"))
-  );
+  // Référence gardée : en séance, « S'arrêter ici » vient après le compteur, qui n'est donc plus le dernier enfant
+  const compteur = el("span", null, pluriel(quiz.bonnes, "bonne réponse", "bonnes réponses"));
+  entete.append(el("span", null, T("Question {0} / {1}", quiz.index + 1, quiz.serie.length)), compteur);
   const jauge = el("div", "jauge");
   const rempli = el("div");
   rempli.style.width = (100 * quiz.index / quiz.serie.length) + "%";
@@ -1811,7 +1817,7 @@ function afficherQuiz() {
     // Les duels n'entrent pas dans les boîtes de révision : un choix entre deux est trop facile
     if (q.voisine) { noterDuel(cle, juste); noterActivite(); } else enregistrerReponse(cle, juste, certitude);
     if (certitude) noterCertitude(cle, certitude, juste);
-    entete.lastChild.textContent = pluriel(quiz.bonnes, "bonne réponse", "bonnes réponses");
+    compteur.textContent = pluriel(quiz.bonnes, "bonne réponse", "bonnes réponses");
   }, actions => {
     actions.appendChild(lienVers("#" + q.type + "/" + q.fiche.id, "Voir la fiche", "bouton secondaire"));
     const fin = quiz.index === quiz.serie.length - 1;
@@ -1909,7 +1915,7 @@ function afficherBilan(zone) {
 function bilanSeance(zone) {
   const n = quiz.serie.length, ratees = quiz.serie.filter(q => q.reponse !== q.fiche);
   const carte = el("article", "carte bilan-seance");
-  carte.append(el("p", "consigne", "Fin de la séance"), el("h2", null, T("{0} revues, {1} justes", pluriel(n, "question"), quiz.bonnes)));
+  carte.append(el("p", "consigne", "Fin de la séance"), el("h2", null, T("{0}, {1}", pluriel(n, "question revue", "questions revues"), pluriel(quiz.bonnes, "juste", "justes"))));
   if (ratees.length) {
     carte.appendChild(el("p", "consigne", "À revoir"));
     const ul = el("ul", "liste-simple");
@@ -2059,6 +2065,9 @@ function afficherPage() {
       ecrire("modeQuiz", id);
       quiz.serie = [];
     }
+    // Une séance (mode sobre) ne se relance pas depuis l'onglet Quiz : finie, ou mode sobre quitté, on revient au mode
+    // choisi par l'utilisateur (« seance » n'est jamais écrit dans modeQuiz)
+    if (quiz.mode === "seance" && (quiz.index >= quiz.serie.length || !modeSobre())) { quiz.mode = lire("modeQuiz", "tout"); quiz.serie = []; }
     // Nouvelle série si aucune n'est en cours, ou si la précédente est terminée
     if (quiz.serie.length === 0 || (precedent.vue !== "quiz" && quiz.index >= quiz.serie.length)) nouvelleSerie();
     afficherQuiz();
@@ -2398,7 +2407,10 @@ function animer(element, images, options) {
 // un cadre (les bancs d'essai) : la mise à jour y attendrait une capture d'écran que le cadre ne fait pas toujours.
 function transitionDeVue(majDom) {
   if (typeof document.startViewTransition !== "function" || animationsReduites() || window.top !== window) { majDom(); return; }
-  document.startViewTransition(majDom);
+  // Deux changements d'adresse rapprochés interrompent la transition : son rejet est attendu, pas une erreur
+  const transition = document.startViewTransition(majDom);
+  transition.ready.catch(() => {});
+  transition.finished.catch(() => {});
 }
 
 // Filet du spectre sous l'en-tête : un segment par catégorie, de largeur proportionnelle à son nombre de fiches

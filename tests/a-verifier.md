@@ -153,3 +153,14 @@ Trente paires ajoutées à `PAIRES_CELEBRES` (`depuis: 20778`), sources citées 
   indépendance des États-Unis, montgolfière, Bastille, Jenner, mort de Napoléon, train Liverpool–Manchester (relu : 15
   septembre 1830), fax, Darwin, Suez, relativité, pénicilline, premier vote des Françaises, Gagarine, Star Wars,
   guillotine.
+
+## Le monde en chiffres : questions écartées faute de chiffre lisible (ajout du 19 novembre 2026)
+
+Cherchées dans l'API de la Banque mondiale (World Development Indicators) le 19 novembre 2026 ; pas de valeur mondiale
+récente, donc pas de question dans `MONDE` :
+- Enfants en âge du primaire non scolarisés (SE.PRM.UNER, SE.PRM.UNER.ZS) : aucune valeur mondiale publiée.
+- Jeunes ni en emploi, ni en études, ni en formation (SL.UEM.NEET.ZS) : aucune valeur mondiale publiée.
+- Population exposée aux particules fines au-delà de la recommandation de l'OMS (EN.ATM.PM25.MC.ZS) : dernière valeur
+  mondiale de 2017, sur l'ancienne recommandation ; à reprendre sur le Global Health Observatory de l'OMS.
+- Morts sur la route après 2019 (SH.STA.TRAF.P5) : dernière valeur mondiale de 2019 ; la question `route` la compare
+  aux homicides de la même année.

@@ -24,6 +24,15 @@ function choisirModeSobre(actif) {
   appliquerAnimations();   // app.js : animations réduites par défaut, classe « sobre »
   majBoutonProfil();
 }
+// Redessin du profil après un réglage : le focus revient sur le contrôle actionné (ou son équivalent dans la page
+// redessinée) et la page ne saute pas ; sinon le focus tombait sur BODY, et le clavier perdait sa place
+function redessinerProfil(cible) {
+  const y = window.scrollY;
+  afficherPageProfil();
+  window.scrollTo(0, y);
+  const e = document.querySelector("#vue-profil " + cible);
+  if (e) e.focus();   // sans preventScroll : si la page a raccourci, le contrôle revient à l'écran
+}
 // Mode sobre : la progression (maîtrise, distinctions…) est repliée derrière « Voir ma progression », le temps de la visite
 let progressionDepliee = false;
 
@@ -861,7 +870,7 @@ function afficherPageProfil(onglet) {
     zone.appendChild(el("p", "source", "Mode sobre : votre progression continue d'être comptée, mais elle n'est pas affichée."));
     const voir = el("button", "bouton secondaire", "Voir ma progression");
     voir.type = "button";
-    voir.addEventListener("click", () => { progressionDepliee = true; afficherPageProfil(); });
+    voir.addEventListener("click", () => { progressionDepliee = true; redessinerProfil(".onglet-profil"); });
     zone.appendChild(voir);
     const panneau = el("div", "panneau-profil");
     panneau.appendChild(el("h2", null, "Réglages"));
@@ -1136,7 +1145,7 @@ function ongletDistinctions(p) {
 // avec la distinction qui le débloque : un objectif visible plutôt qu'une surprise.
 function reglagesPersonnage(p, profil) {
   const { forme, genre, equipement, fond, obtenues, rang } = choixPersonnage();
-  const choisir = champ => valeur => { ecrire("profil", { ...profil, personnage: { ...(profil.personnage || {}), [champ]: valeur } }); majBoutonProfil(); afficherPageProfil(); };
+  const choisir = champ => valeur => { ecrire("profil", { ...profil, personnage: { ...(profil.personnage || {}), [champ]: valeur } }); majBoutonProfil(); redessinerProfil("[data-perso=\"" + champ + ":" + valeur + "\"]"); };
   p.appendChild(el("p", "consigne", "Votre personnage"));
   const apercu = el("div", "apercu-personnage");
   apercu.appendChild(personnage(lire("maitrise", { jours: {}, meilleure: 0 }), 136, true, true));
@@ -1154,6 +1163,7 @@ function reglagesPersonnage(p, profil) {
       b.disabled = !gagne;
       b.setAttribute("aria-pressed", String(id === actuel));
       if (d) b.title = d[3];
+      b.dataset.perso = champ + ":" + id;
       b.addEventListener("click", () => choisir(champ)(id));
       groupe.appendChild(b);
     });
@@ -1174,7 +1184,7 @@ function ongletReglages(p) {
   champ.id = "pseudo-profil";
   const etiquette = el("label", "consigne", "Pseudonyme (24 caractères au plus ; il reste sur cet appareil)");
   etiquette.htmlFor = champ.id;
-  champ.addEventListener("change", () => { ecrire("profil", { ...profil, pseudo: champ.value.trim().slice(0, 24) }); afficherPageProfil(); });
+  champ.addEventListener("change", () => { ecrire("profil", { ...profil, pseudo: champ.value.trim().slice(0, 24) }); redessinerProfil("#pseudo-profil"); });
   p.append(etiquette, champ);
   // Le personnage et ses équipements « à gagner » sont des récompenses : absents en mode sobre
   if (!modeSobre()) reglagesPersonnage(p, profil);
@@ -1185,7 +1195,8 @@ function ongletReglages(p) {
     const b = el("button", "puce" + (lire("objectif", 60) === v ? " active" : ""), T("{0} points", v));
     b.type = "button";
     b.setAttribute("aria-pressed", String(lire("objectif", 60) === v));
-    b.addEventListener("click", () => { ecrire("objectif", v); afficherPageProfil(); });
+    b.dataset.objectif = v;
+    b.addEventListener("click", () => { ecrire("objectif", v); redessinerProfil("[data-objectif=\"" + v + "\"]"); });
     objectif.appendChild(b);
   });
   if (!modeSobre()) p.appendChild(objectif);
@@ -1193,7 +1204,8 @@ function ongletReglages(p) {
   const caseSobre = el("input");
   caseSobre.type = "checkbox";
   caseSobre.checked = modeSobre();
-  caseSobre.addEventListener("change", () => { choisirModeSobre(caseSobre.checked); afficherPageProfil(); });
+  caseSobre.id = "case-sobre";
+  caseSobre.addEventListener("change", () => { choisirModeSobre(caseSobre.checked); redessinerProfil("#case-sobre"); });
   sobre.append(caseSobre, texteNoeud(" " + T("Mode sobre : l'essentiel, sans points ni distractions (tout continue d'être compté)")));
   p.appendChild(sobre);
   // Pause proposée au bout de 25 minutes (mode sobre seulement), désactivable
@@ -1849,7 +1861,15 @@ function carteBienvenue(demandee) {
       const caseSobre = el("input");
       caseSobre.type = "checkbox";
       caseSobre.checked = modeSobre();
-      caseSobre.addEventListener("change", () => choisirModeSobre(caseSobre.checked));
+      caseSobre.id = "case-sobre-bienvenue";
+      // L'accueil est redessiné tout de suite (sinon séries et récompenses restaient affichées) ; le focus revient à la
+      // case si elle est encore là, sinon au contenu
+      caseSobre.addEventListener("change", () => {
+        choisirModeSobre(caseSobre.checked);
+        afficherAccueil();
+        const e = document.getElementById("case-sobre-bienvenue");
+        if (e) e.focus({ preventScroll: true }); else $("contenu").focus();
+      });
       sobre.append(caseSobre, texteNoeud(" " + T("Ou bien le mode sobre : l'essentiel, sans points ni distractions. Réversible à tout moment dans le profil.")));
       carte.appendChild(sobre);
     } else {

@@ -510,7 +510,7 @@ function carteAtelier({ atelier, adresse }) {
   const haut = el("div", "entete-carte");
   const r = resultatAtelier(atelier.id);
   let badge = "";
-  if (r && r.n) badge = "✓ " + pluriel(r.n, "partie") + (r.record !== undefined && r.sur ? " · " + T("record {0}/{1}", r.record, r.sur) : "");
+  if (r && r.n) badge = "✓ " + pluriel(r.n, "partie") + (r.record !== undefined && r.sur && !modeSobre() ? " · " + T("record {0}/{1}", r.record, r.sur) : "");
   haut.append(el("span", "etiquette", atelier.duree), el("span", "badge", badge));
   corps.append(haut, el("h2", null, atelier.titre), el("p", null, atelier.resume));
   // Barre de maîtrise du jeu (profil.js), pour les jeux mesurés déjà joués
@@ -854,7 +854,8 @@ function afficherPortrait() {
     .map(([nom, id]) => [nom, reussiteAtelier(id)]).filter(([, r]) => r);
   if (monde.length) {
     const liste = el("ul", "liste-simple");
-    monde.forEach(([nom, r]) => liste.appendChild(el("li", null, T("{0} : {1} en moyenne, record {2} / {3}", T(nom), pct(r.taux), r.record, r.sur))));
+    // Mode sobre : les records sont des récompenses, cachées (la moyenne reste, c'est le constat du portrait)
+    monde.forEach(([nom, r]) => liste.appendChild(el("li", null, modeSobre() ? T("{0} : {1} en moyenne", T(nom), pct(r.taux)) : T("{0} : {1} en moyenne, record {2} / {3}", T(nom), pct(r.taux), r.record, r.sur))));
     ajouter("Votre image du monde", "#2a8a5c", "#chiffres/monde", liste);
   } else ajouter("Votre image du monde", "#2a8a5c", "#chiffres/monde", null, "Votre image du monde est-elle à jour ?");
 

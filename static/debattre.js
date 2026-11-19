@@ -1002,9 +1002,12 @@ EXPERIENCES.push(
       derouler(zone, debat.repliques, (r, zone, fini) => {
         if (r === debat.repliques[0]) {
           zone.insertBefore(choixNiveau("debat-truque", relancer), zone.firstChild);
-          const chrono = el("button", "lien-bouton", "Mode chrono : 60 secondes");
-          chrono.addEventListener("click", () => chronoDebat(zone, relancer));
-          zone.insertBefore(chrono, zone.children[1]);
+          // Mode sobre : pas de chrono (même choix que pour le quiz : le site entraîne la réflexion lente)
+          if (!modeSobre()) {
+            const chrono = el("button", "lien-bouton", "Mode chrono : 60 secondes");
+            chrono.addEventListener("click", () => chronoDebat(zone, relancer));
+            zone.insertBefore(chrono, zone.children[1]);
+          }
         }
         zone.appendChild(el("p", "consigne", T("{0} · niveau {1}", T(debat.titre), debat.niveau)));
         zone.appendChild(paragraphe(debat.contexte, "source"));
