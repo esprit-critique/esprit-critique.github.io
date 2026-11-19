@@ -648,3 +648,18 @@ Demande du propriétaire : le mode sobre ne se quittait que depuis le profil ; u
 
 Vérifications : captures à 390 px clair et 1 280 px sombre, activation puis retour, sans erreur JavaScript ;
 `noms_globaux`, `securite`, `en/controle` OK.
+
+## Finitions de mise en page (19 novembre 2026, branche `claude/finitions-mise-en-page`)
+
+Audit scripté (Playwright, Chrome) sur 13 largeurs de 320 à 1 920 px, six pages, mode sobre ou non : chevauchements
+dans l'en-tête, contrôles de moins de 44 px, désalignements, débordement horizontal ; captures relues en plus.
+- 320 px : le bouton de profil recouvrait « critique ». Sous 360 px : bouton de langue réduit à « EN » (44 px), marque
+  à 21 px, profil et pastille de synchronisation décalés d'autant.
+- Onglets de l'en-tête : 8 px d'écart dès 1 040 px ; 20 px à partir de 1 240 px, où la place existe (en-tête vérifié en
+  français et en anglais, sobre ou non, sans chevauchement).
+- Bouton de profil : l'insigne du premier grade (un point) passait pour un défaut ; omis. Sous 1 040 px, l'avatar
+  prend alors le centre de l'anneau.
+- Parcours guidés (Ateliers) : filet de lien au bas de la cible de 44 px, loin du texte, retiré ; durée gardée sur la
+  ligne du titre.
+- Sommaire du guide : décalé de 20 px par `.guide ul` ; retrait annulé.
+- Non retenus : les rangées de puces et les onglets du profil qui dépassent défilent exprès (fondu au bord).
