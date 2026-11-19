@@ -483,7 +483,7 @@ const VRAI_FAUX = [
   { id: "trex", niveau: 3, texte: "Le tyrannosaure a vécu plus près de notre époque que de celle du stégosaure.", vrai: true,
     explication: "Tyrannosaurus : il y a 69 à 66 millions d'années. Stegosaurus : il y a 155 à 145 millions d'années, soit au moins 76 millions d'années avant lui.", source: "Wikipedia (en), « Tyrannosaurus » et « Stegosaurus »" },
   { id: "banane", niveau: 2, texte: "Une banane est légèrement radioactive.", vrai: true,
-    explication: "Elle contient du potassium, dont une petite fraction est du potassium 40, radioactif. La dose reçue en la mangeant est infime.", source: "Wikipedia (en), « Banana equivalent dose »" },
+    explication: "Elle contient du potassium, dont une petite fraction est radioactive. En manger une délivre une dose infime, d'environ 0,1 microsievert.", source: "US Environmental Protection Agency (EPA), RadTown, « Natural Radioactivity in Food »" },
   { id: "mauna-kea", niveau: 3, texte: "Mesuré depuis sa base, au fond de l'océan, le Mauna Kea (Hawaï) est plus haut que l'Everest.", vrai: true,
     explication: "Plus de 10 000 m de la base au sommet, contre 8 849 m d'altitude pour l'Everest.", source: "USGS" },
   { id: "pieuvre", niveau: 1, texte: "Les pieuvres ont trois cœurs.", vrai: true,

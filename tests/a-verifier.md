@@ -90,6 +90,9 @@ et `metre` (Arago, Astronomie populaire, XXIII, 14). `big-ben` : vérifié à la
 « Big Ben weighs 13.7 tonnes » ; « Clock Tower to be renamed Elizabeth Tower », 2012), le site refusant la lecture
 automatique. Puis `chimborazo` (NOAA), `pole-sud` (NSIDC) et `atlantique` (NOAA Ocean Exploration), chiffres non vérifiés
 retirés (6 263 m, 2 835 m, 2,5 cm). Puis `alaska` et `bresil` (US Census Bureau, State Area Measurements ;
-Banque mondiale) ; `groenland` et `afrique` attendent une source primaire pour la superficie de l'Afrique.
+Banque mondiale) ; `groenland` et `afrique` attendent une source primaire pour la superficie de l'Afrique. Puis `banane` (EPA, RadTown).
+Sources trouvées mais illisibles automatiquement (à vérifier à la main) : `rhin` (CIPR : Rhin, 1 233 km ; ICPDR : Danube,
+2 857 km), `koala` (ministère australien de l'Environnement, DCCEEW), `dinosaures-humains` (Smithsonian : Homo sapiens
+vers 300 000 ans, lu ; extinction des dinosaures non aviens vers 66 millions d'années, page inaccessible).
 
-Restent sourcées sur Wikipédia (40), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `diamants`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `banane`, `pieuvre`, `abeilles`, `robot`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `galilee`, `pise`, `afrique`, `nil`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
+Restent sourcées sur Wikipédia (39), à reprendre une à une sur la source primaire : `chauves-souris`, `poisson-rouge`, `vikings`, `autruches`, `tete-chaleur`, `desert`, `colomb`, `sahara-vert`, `groenland`, `diamants`, `alcool-chaleur`, `vomitorium`, `cotes`, `ver`, `rhin`, `rome`, `pingouins`, `cent-ans`, `dinosaures-humains`, `cleopatre`, `trex`, `pieuvre`, `abeilles`, `robot`, `ours`, `loire`, `paris-montreal`, `fuseaux`, `chine-heure`, `bebe-os`, `galilee`, `pise`, `afrique`, `nil`, `baleines`, `tomate`, `araignees`, `coeur`, `koala`.
