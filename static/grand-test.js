@@ -1318,7 +1318,9 @@ function calculerScores(t) {
   // E : étalonnage, sur tous les items notés avec certitude
   const avecCertitude = lignes.filter(x => x.juste !== null && x.reponse.certitude !== null).map(x => ({ p: x.reponse.certitude / 100, o: x.juste ? 1 : 0 }));
   const s = avecCertitude.length >= ITEMS_MIN_PLAGE ? surconfiancePlage(avecCertitude, graine) : null;
-  scores.E = s ? { valeur: s.valeur, plage: s.plage ? { bas: s.plage.bas, haut: s.plage.haut, niveau: 0.8, methode: "rééchantillonnage" } : null, n: s.n } : { valeur: null, plage: null, n: avecCertitude.length };
+  // brier : score de Brier de la certitude (règle propre), lu par la maîtrise (progression.js) : l'écart seul entre
+  // certitude et réussite s'annule en se trompant exprès
+  scores.E = s ? { valeur: s.valeur, plage: s.plage ? { bas: s.plage.bas, haut: s.plage.haut, niveau: 0.8, methode: "rééchantillonnage" } : null, n: s.n, brier: brier(avecCertitude).score } : { valeur: null, plage: null, n: avecCertitude.length };
   // F : impartialité, indicateur exploratoire, complet seulement, sans plage
   const societe = lignes.filter(x => x.item.type === "societe" && Array.isArray(x.reponse.valeur));
   const questions = societe.map(x => {

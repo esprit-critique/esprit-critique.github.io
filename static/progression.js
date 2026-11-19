@@ -196,8 +196,9 @@ function maitriseNotions(d, nbFiches) {
 
 // Grand test : chaque axe du dernier test complet dont moins de la moitié des items avaient déjà été vus (même règle que
 // pour le niveau, grand-test.js) compte comme un jeu du domaine le plus proche. A à D : proportion de
-// réussite corrigée d'un hasard estimé à 1/4, pleine confiance à 10 items ; E (étalonnage) : excès de confiance, 0 → 1 000,
-// 30 points → 0. F (exploratoire) ne compte pas.
+// réussite corrigée d'un hasard estimé à 1/4, pleine confiance à 10 items ; E (étalonnage) : score de Brier de la
+// certitude rapporté à 0,25, comme l'étalonnage du vrai ou faux (l'ancien excès de confiance, |certitude − réussite|,
+// s'annulait en se trompant exprès ; un test sans score de Brier ne compte pas pour E). F (exploratoire) ne compte pas.
 const AXES_GRAND_TEST = { A: "raisonner", B: "perception", C: "raisonner", D: "debattre", E: "confiance" };
 function maitriseGrandTest(d) {
   const tests = ((d.grandTest || {}).historiqueTests || []).filter(t => t && t.mode === "complet" && t.dateFin && t.scores
@@ -208,7 +209,8 @@ function maitriseGrandTest(d) {
     const s = scores[axe];
     if (!s || typeof s.valeur !== "number") return;
     const f = Math.min(1, (s.n || 0) / 10);
-    sortie[axe] = [domaine, axe === "E" ? 1000 * Math.max(0, 1 - Math.abs(s.valeur) / 0.3) * f : 1000 * Math.max(0, (s.valeur - 0.25) / 0.75) * f];
+    if (axe === "E") { if (typeof s.brier === "number") sortie[axe] = [domaine, 1000 * Math.max(0, 1 - s.brier / 0.25) * f]; return; }
+    sortie[axe] = [domaine, 1000 * Math.max(0, (s.valeur - 0.25) / 0.75) * f];
   });
   return sortie;
 }

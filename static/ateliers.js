@@ -198,15 +198,28 @@ function remonter(cible) {
 // afficher(element, zone, fini) affiche une question ; quand l'utilisateur a répondu, il appelle
 // fini(resultat, conteneur) : un bouton « suivant » est ajouté dans le conteneur.
 // bilan(resultats) est appelé à la fin.
-function derouler(zone, elements, afficher, bilan, libelle) {
+// suivi : { id, points(resultat) (par défaut : 1 si vrai), max (points d'une question, 1 par défaut) } pour les jeux
+// notés qui corrigent chaque réponse avant le bilan : la partie en cours est enregistrée à chaque réponse et compte
+// même quittée avant la fin (cloreAbandon, niveaux.js), comme dans deroulerNiveaux
+function derouler(zone, elements, afficher, bilan, libelle, suivi) {
   let i = 0;
   const resultats = [];
+  if (suivi) cloreAbandon();
   function etape() {
     zone.replaceChildren();
-    if (i >= elements.length) return bilan(resultats);
+    if (i >= elements.length) {
+      if (suivi) effacer("partieEnCours");
+      return bilan(resultats);
+    }
     entete(zone, i + 1, elements.length, libelle);
+    if (i === 0 && suivi) zone.appendChild(el("p", "source", "Une partie commencée compte, même quittée avant la fin : les questions restantes comptent alors comme manquées."));
     afficher(elements[i], zone, (resultat, conteneur) => {
       resultats.push(resultat);
+      if (suivi) {
+        const points = suivi.points || (r => r ? 1 : 0), max = suivi.max || 1;
+        ecrire("partieEnCours", { id: suivi.id, debut: aujourdHui(), reponses: resultats.length,
+          justes: resultats.reduce((t, r) => t + Math.max(0, Math.min(max, points(r))), 0), sur: max * elements.length });
+      }
       (conteneur || zone).appendChild(boutonSuivant(i === elements.length - 1 ? "Voir le bilan" : "Suivant", () => { i++; etape(); }));
       montrer(conteneur);
     });

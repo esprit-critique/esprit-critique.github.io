@@ -167,8 +167,12 @@ f.onload = async () => {
     delete memC[cleT];
     w.eval("enregistrerReponse")(cleT, true, "hasard");
     ok("certitude : bonne réponse au hasard, la notion ne monte pas de boîte", memC[cleT].b === 0 && memC[cleT].d === w.eval("aujourdHui()") + 1);
+    // Règle de Leitner (audit des points, A1) : une bonne réponse avant l'échéance ne fait pas monter la notion
     w.eval("enregistrerReponse")(cleT, true, "sur");
-    ok("certitude : bonne réponse sûre, la notion monte", memC[cleT].b === 1);
+    ok("certitude : bonne réponse sûre mais anticipée, la notion ne monte pas", memC[cleT].b === 0 && memC[cleT].j === 2);
+    memC[cleT].d = w.eval("aujourdHui()");
+    w.eval("enregistrerReponse")(cleT, true, "sur");
+    ok("certitude : bonne réponse sûre à une révision due, la notion monte", memC[cleT].b === 1);
     w.eval("enregistrerReponse")(cleT, false, "sur");
     w.eval("noterCertitude")(cleT, "sur", false);
     ok("certitude : erreur sûre en boîte 1, révision demain, notée", memC[cleT].b === 1 && memC[cleT].d === w.eval("aujourdHui()") + 1 && JSON.parse(w.localStorage.getItem("erreursSures")).some(e => e.cle === cleT));

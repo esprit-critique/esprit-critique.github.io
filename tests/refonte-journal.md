@@ -588,12 +588,18 @@ Corrections :
   Goodhart. La formulation de Strathern (1997) n'a pas pu être lue dans l'article (sites bloqués par le réseau de la
   session) : `tests/a-verifier.md`, non affichée.
 
-Non corrigé :
-- Ateliers notés hors de `deroulerNiveaux` (fourchettes, réponses libres, jeux qui affichent tout d'un coup) : pas
-  de partie en cours ; quitter avant le bilan n'y enregistre rien.
-- Axe E du Grand test (excès de confiance, |valeur|) : même défaut que l'ancien étalonnage ; le Grand test n'est pas
-  publié (`GRAND_TEST_VISIBLE`).
-- Tout ce qui passe par la console, `localStorage` ou un fichier importé modifié (A11, accepté).
+Corrigé ensuite, à la demande du propriétaire (même branche) :
+- Partie en cours aussi dans `derouler()` (paramètre `suivi`) pour les huit jeux notés qui corrigent chaque réponse
+  avant le bilan : débat truqué, reformuler, Wald, qui doit prouver, pyramide, démonter, latérale, douter juste. Les
+  autres jeux notés (fourchettes, CRT, Wason, logique, foule, comprendre) ne montrent aucune correction avant le
+  bilan : on ne peut pas y abandonner « au vu d'une erreur », rien à corriger.
+- Axe E du Grand test : `scores.E.brier` (score de Brier de la certitude) ; la maîtrise le rapporte à 0,25. Un test
+  enregistré avant ce changement ne compte plus pour E.
 
-Vérifications : banc `progression` 93 / 93 (dont un cas par faille ; sur l'ancien code, ces cas échouent), banc
+Non corrigé, par choix :
+- Tout ce qui passe par la console, `localStorage` ou un fichier importé modifié (A11 : accepté, pas de chiffrement
+  ni de signature, la clé serait dans le code).
+- Formulation de Strathern : toujours pas lue (cambridge.org, gwern.net, archive.org hors du réseau de la session).
+
+Vérifications : banc `progression` 95 / 95 (dont un cas par faille ; sur l'ancien code, ces cas échouent), banc
 `aleatoire` 8 / 8, lancés avec Playwright dans le conteneur ; `noms_globaux`, `securite`, `en/controle` OK.

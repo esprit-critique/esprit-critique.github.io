@@ -80,7 +80,11 @@ f.onload = async () => {
     ok("domaines : un seul jeu parfait sur " + jeuxMonde + " dans « le monde en chiffres » donne 1 000 / " + jeuxMonde, m1.domaines.monde === Math.round(1000 / jeuxMonde), String(m1.domaines.monde));
     ok("domaines : six domaines, maîtrise globale = leur moyenne", Object.keys(m1.domaines).length === 6 && m1.globale === Math.round(Object.values(m1.domaines).reduce((s, x) => s + x, 0) / 6));
     ok("notions : 90 notions en boîte 5 donnent 800 sans duels", ev("maitriseNotions")({ memoire: Object.fromEntries(Array.from({ length: 90 }, (_, k) => ["x" + k, { b: 5 }])) }, 90) === 800);
-    const gt = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { A: { valeur: 1, n: 20 }, B: { valeur: 0.25, n: 20 }, E: { valeur: 0, n: 30 }, F: { valeur: 0.9, n: 10 } } }] } });
+    const gt = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { A: { valeur: 1, n: 20 }, B: { valeur: 0.25, n: 20 }, E: { valeur: 0, n: 30, brier: 0 }, F: { valeur: 0.9, n: 10 } } }] } });
+    // Axe E : score de Brier ; un écart nul obtenu en se trompant exprès (Brier 0,25) ne rapporte rien
+    const gtE = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { E: { valeur: 0, n: 30, brier: 0.25 } } }] } });
+    const gtAncien = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { E: { valeur: 0, n: 30 } } }] } });
+    ok("Grand test, axe E : Brier de 0,25 → 0 malgré un écart nul ; un ancien test sans Brier ne compte pas pour E", gtE.E[1] === 0 && !gtAncien.E, JSON.stringify([gtE, gtAncien]));
     // Audit A9 : un Grand test refait sur des items déjà vus ne compte pas
     const gtVu = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", instances: [{ dejaVu: true }, { dejaVu: true }, { dejaVu: false }], scores: { A: { valeur: 1, n: 20 } } }] } });
     ok("audit A9 : Grand test dont la plupart des items étaient déjà vus : ignoré", Object.keys(gtVu).length === 0, JSON.stringify(gtVu));
@@ -300,6 +304,15 @@ f.onload = async () => {
     const enCours = JSON.parse(w.localStorage.getItem("partieEnCours") || "null");
     ok("audit A5 : dès la première réponse, la partie en cours est enregistrée ; l'écran de jeu le dit", !!enCours && enCours.id === "monde" && enCours.reponses === 1
       && /quittée avant la fin|left before the end/.test(d2.querySelector("#vue-chiffres").textContent), JSON.stringify(enCours));
+    // Jeux déroulés par derouler() qui corrigent chaque réponse (ici « Qui doit prouver ? ») : même suivi
+    w.localStorage.removeItem("partieEnCours");
+    w.location.hash = "tests/qui-prouve";
+    await pause(300);
+    const choixQP = d2.querySelector("#vue-tests .choix:not(:disabled), #vue-tests button.choix");
+    if (choixQP) choixQP.click();
+    await pause(50);
+    const enCoursQP = JSON.parse(w.localStorage.getItem("partieEnCours") || "null");
+    ok("audit A5 : « Qui doit prouver ? » (derouler) enregistre aussi la partie en cours", !!enCoursQP && enCoursQP.id === "qui-prouve" && enCoursQP.reponses === 1 && enCoursQP.sur === 10, JSON.stringify(enCoursQP));
     w.localStorage.removeItem("partieEnCours");
     if (resAvant) w.localStorage.setItem("resultatsAteliers", resAvant);
 
