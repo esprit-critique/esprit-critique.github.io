@@ -129,6 +129,8 @@ EN_AJOUTER([
   ["Voir les réponses", "See the answers"],
   ["Il manque {0} à remplir", "{0} still to fill in"],
   ["Chaque fourchette à 50 % doit tenir dans celle à 90 %", "Each 50% range must fit inside the 90% one"],
+  ["Fourchettes justes : {0} sur {1}. La note sur 10 vient du score de fourchette : une fourchette juste mais immense ne rapporte rien.", "Correct ranges: {0} out of {1}. The mark out of 10 comes from the interval score: a correct but huge range earns nothing."],
+  ["Vos fourchettes contiennent presque toutes la bonne réponse, mais elles sont très larges : vous pouvez les resserrer sans perdre en justesse.", "Almost all your ranges contain the right answer, but they are very wide: you can narrow them without losing accuracy."],
   ["Votre étalonnage est bon : vos fourchettes reflètent correctement votre incertitude.", "Your calibration is good: your ranges correctly reflect your uncertainty."],
   ["Vos fourchettes étaient trop étroites : vous étiez plus sûr de vous que vos connaissances ne le justifiaient.", "Your ranges were too narrow: you were surer of yourself than your knowledge justified."],
   ["Score de fourchette : {0} (plus il est bas, mieux c'est)", "Range score: {0} (the lower, the better)"],

@@ -533,3 +533,67 @@ Durée : ≈ 2 min 30 dans l'intégration continue (quatre tâches en parallèle
 (le temps virtuel de Chrome avance plus vite sur les machines de GitHub). Les polices de Linux n'ont fait apparaître
 aucun défaut d'affichage. La suite complète sous macOS est relancée après le lot 0 (résultat ci-dessous quand il
 arrive).
+
+## Système de points résistant à la triche, lot A (19 novembre 2026, branche `claude/new-session-uvuk8b`)
+
+Point de départ : un commentaire sur r/zetetique (loi de Goodhart). Audit fait en se mettant à la place d'un joueur qui
+maximise ses points ; chaque constat a été vérifié dans le code avant correction.
+
+Décisions du propriétaire : carnet hors de la maîtrise (distinction seule, garde-fous) ; contre la série chanceuse,
+les deux règles (10 parties et confiance à 5, plus meilleure maîtrise lissée) ; lot B : proposer le mode sobre dans
+la carte de bienvenue, case non cochée.
+
+Constats de l'audit vérifiés, avec un écart :
+- **A2 était faux tel qu'écrit, et l'inverse était vrai.** Le carnet enregistre l'issue en texte (« oui », « non »,
+  « annulee »), alors que `MESURES.carnet` et « Prévisionniste » n'acceptaient que des booléens : le carnet comptait
+  toujours 0 (il faisait baisser le domaine « confiance » pour tout le monde) et la distinction était inaccessible.
+  L'exploit décrit ne marchait donc pas, mais il aurait marché dès la correction du format. Le retrait du carnet de
+  la maîtrise fait monter un peu le domaine « confiance » (un jeu de moins dans la moyenne).
+- A8, `jeuConseille` : il proposait le jeu le plus faible du domaine le plus faible, pas le plus rentable, mais le
+  texte disait « Le jeu qui rapporterait le plus ». Remplacé par un conseil d'apprentissage.
+- Les autres constats (A1, A3 à A10) sont exacts.
+
+Corrections :
+- A1 : `reponseLeitner` (progression.js, pure) : la boîte ne monte que si la révision était due ou la notion
+  nouvelle ; une bonne réponse anticipée compte sans changer boîte ni échéance ; une erreur ramène en boîte 1.
+  « Leçon retenue » ne compte que les révisions dues. Forme de `memoire` inchangée. Textes : carte « Révisions »,
+  écran « Rien à réviser », guide.
+- A2 : carnet de type `"aucun"` ; échéance d'au moins 7 jours imposée à l'ajout (`echeance.min`) et dans le calcul
+  (`previsionsRecevables`) ; « Prévisionniste » : dix prévisions recevables créées sur cinq jours différents.
+- A3 : la partie de fourchettes est notée sur 10 par le score de fourchette (`noteFourchettes`, 10 × (1 − score
+  moyen / 3)). Les niveaux notés ainsi portent `largeur: 1` ; les anciennes parties (nombre de fourchettes justes)
+  sont écartées de la maîtrise : un joueur honnête y perd sa maîtrise de ce jeu jusqu'à ses prochaines parties (son
+  grade est gardé). La note règle aussi le niveau automatique. « Fourchettes honnêtes » demande 300 de maîtrise au jeu.
+- A4 : étalonnage par le score de Brier rapporté à 0,25 (`brierEtalonnage`). Il mêle étalonnage et savoir : un
+  joueur parfaitement étalonné à 70 % n'obtient que 160. Choix assumé, dit dans le guide. « Je sais que je ne sais
+  pas » demande 85 % de réussite sur 20 réponses « Sûr ».
+- A5 : clé `partieEnCours` (schéma, `CLES_SAUVEGARDE`, `FORMES_SAUVEGARDE`), écrite à chaque réponse de
+  `deroulerNiveaux` (17 jeux notés) et effacée au bilan ; `cloreAbandon` (niveaux.js) compte la partie, questions
+  restantes manquées, sans points, au lancement d'une partie et au chargement. Une phrase neutre sur l'écran de jeu.
+- A6 : moyenne des 10 dernières parties, pleine confiance à 5 ; meilleure maîtrise = minimum des trois derniers
+  jours photographiés. Limite : un joueur qui s'arrête après une série chanceuse garde sa valeur (la maîtrise ne
+  décline pas sans jouer) et le lissage ne fait que la retarder de deux jours ; c'est la moyenne sur 10 parties qui
+  protège vraiment. Délais des joueurs simulés (règle de Leitner incluse) : moyen, Philosophe au jour 107 ; fort,
+  Virtuose au jour 109 ; « Esprit critique » hors d'atteinte du moyen en six mois.
+- A7 : `aujourdHui()` ne revient jamais avant `jourMax` ; `gagner()` ne paie rien si l'horloge est en retard. Clé
+  propre à l'appareil : ni synchronisée (`CLES_APPAREIL`, coffre.js), ni remplacée par un import. Un jour vu à plus
+  d'un an en avant est ignoré. `SECURITE.md` mis à jour.
+- A8 : chrono plafonné à 3 parties par jour ; ateliers sans note payés une seule fois ; fiche lue après 15 s par
+  1 000 caractères (`dureeLectureMin`) ; « Sur le terrain » et « Naturaliste » sur cinq jours différents ;
+  `conseilApprentissage` (révisions dues, sinon domaine le plus faible).
+- A9 : Grand test : seul compte le dernier test complet dont moins de la moitié des items étaient déjà vus.
+- A10 : « Noctambule » s'obtient en choisissant le thème sombre (même identifiant ; `tests/secrets.md`).
+- A11 : `SECURITE.md`, risques acceptés ; la fiche à partager dit « ni un diplôme, ni une certification ».
+- A12 : article du guide « Comment votre maîtrise est calculée » réécrit (français et anglais), avec la loi de
+  Goodhart. La formulation de Strathern (1997) n'a pas pu être lue dans l'article (sites bloqués par le réseau de la
+  session) : `tests/a-verifier.md`, non affichée.
+
+Non corrigé :
+- Ateliers notés hors de `deroulerNiveaux` (fourchettes, réponses libres, jeux qui affichent tout d'un coup) : pas
+  de partie en cours ; quitter avant le bilan n'y enregistre rien.
+- Axe E du Grand test (excès de confiance, |valeur|) : même défaut que l'ancien étalonnage ; le Grand test n'est pas
+  publié (`GRAND_TEST_VISIBLE`).
+- Tout ce qui passe par la console, `localStorage` ou un fichier importé modifié (A11, accepté).
+
+Vérifications : banc `progression` 93 / 93 (dont un cas par faille ; sur l'ancien code, ces cas échouent), banc
+`aleatoire` 8 / 8, lancés avec Playwright dans le conteneur ; `noms_globaux`, `securite`, `en/controle` OK.

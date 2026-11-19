@@ -280,17 +280,20 @@ function tirerNouveaux(cle, elements, n, idDe = e => e.id) {
 
 // Avec un niveau, les records et historiques sont aussi tenus par niveau : r.niveaux[niveau] = { n, record, sur,
 // historique, reussites90 }. Les champs généraux (n, record, historique) restent tenus pour toutes les parties.
-function noterPartie(id, score, sur, niveau, surPoints) {
+// options.abandon : partie quittée avant la fin (cloreAbandon, niveaux.js), comptée sans points ;
+// options.largeur : partie de fourchettes notée par sa largeur (intervalles, chiffres.js) : le niveau est marqué, et
+// ses anciennes parties, notées au nombre de fourchettes justes, sont écartées (progression.js)
+function noterPartie(id, score, sur, niveau, surPoints, options = {}) {
   const tous = lire("resultatsAteliers", {});
   // Points de lucidité (profil.js) : premier essai, partie notée ou non, atelier maîtrisé
   const premier = !tous[id];
-  setTimeout(() => {
+  if (!options.abandon) setTimeout(() => {
     const source = score !== undefined && score !== null && sur ? "atelier-note" : "atelier-sans-note";
     const bloque = gainBloque(lire("lucidite", {}), source, aujourdHui(), id);
     let points = premier ? gagner("atelier-premier", 0, id) : 0;
     points += gagner(source, source === "atelier-note" ? [score, sur, niveau] : 0, id);
     if (atelierMaitrise(id)) points += gagner("atelier-maitrise", 0, id);
-    if (surPoints) surPoints(points, bloque, source === "atelier-note" ? "trois parties notées par atelier et par jour au plus." : "une partie par jour au plus pour cet atelier.");
+    if (surPoints) surPoints(points, bloque, source === "atelier-note" ? "trois parties notées par atelier et par jour au plus." : "une seule fois pour cet atelier.");
   }, 0);
   const r = migrerResultat(tous[id] || { n: 0, historique: [] });
   const ancienRecord = r.record;
@@ -304,6 +307,7 @@ function noterPartie(id, score, sur, niveau, surPoints) {
     if (niveau) {
       r.niveaux = r.niveaux || {};
       parNiveau = r.niveaux[niveau] || { n: 0, historique: [] };
+      if (options.largeur && !parNiveau.largeur) parNiveau = { n: 0, historique: [], largeur: 1 };
       ancienRecordNiveau = parNiveau.record;
       parNiveau.n++;
       parNiveau.sur = sur;
@@ -333,12 +337,12 @@ function resultatAtelier(id) {
 
 // Affiche le score final d'une partie, l'éventuel record et les dernières parties
 // Pour un atelier à niveaux (deroulerNiveaux), le record et l'historique affichés sont ceux du niveau de la partie
-function afficherScore(zone, id, score, sur, texteScore) {
+function afficherScore(zone, id, score, sur, texteScore, options) {
   const partie = PARTIES_EN_COURS[id];
   const niveau = partie ? niveauDePartie(partie.niveaux) : undefined;
   const avant = maitriseAvant(id);
   const place = el("div");
-  const r = noterPartie(id, score, sur, niveau, (points, bloque, limite) => { const l = lignePoints(points, bloque, limite); if (l) place.replaceWith(l); });
+  const r = noterPartie(id, score, sur, niveau, (points, bloque, limite) => { const l = lignePoints(points, bloque, limite); if (l) place.replaceWith(l); }, options);
   zone.appendChild(avecPersonnage(el("p", "consigne", "Bilan"), el("p", "reaction", reactionBilan(sur ? score / sur : 0))));   // profil.js
   zone.append(el("p", "grand-score", texteScore || (score + " / " + sur)), place);
   if (partie) {

@@ -152,9 +152,21 @@ function generateur(graine) {
 }
 
 // Numéro du jour (heure locale), pour les révisions et la situation du jour
-function aujourdHui() {
+// Jour selon l'horloge de l'appareil
+function jourAppareil() {
   const d = new Date();
   return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+}
+// Jour du site : jamais avant le plus grand jour déjà vu (clé jourMax). Reculer l'horloge de l'appareil ne remet donc
+// à zéro ni les plafonds du jour, ni les cartes du jour, ni la série : le site reste sur le dernier jour vu jusqu'à ce
+// que la date réelle le rattrape. Un saut en avant ne se détecte pas hors ligne, mais il se paie ensuite : tant que la
+// date réelle n'a pas rejoint le jour atteint, tous les jours comptent pour ce seul jour (SECURITE.md). Un jour vu à
+// plus d'un an en avant (horloge remise à une date absurde) est ignoré, pour ne jamais figer le site durablement.
+function aujourdHui() {
+  const j = jourAppareil(), max = lire("jourMax", 0);
+  if (!Number.isInteger(max) || max > j + 366) { ecrire("jourMax", j); return j; }
+  if (j > max) { ecrire("jourMax", j); return j; }
+  return max;
 }
 
 // Le mot et son pluriel (« notion » / « notions ») sont cherchés dans le dictionnaire en anglais : 0 prend le pluriel en anglais.
@@ -200,7 +212,7 @@ const CLES_SAUVEGARDE = [
   "experiencesFaites", "jeuxFaits", "etalonnage", "points", "resultatsAteliers", "vus", "confiance",
   "fourchettes", "illusions", "montyHall", "reponsesPensee", "ancrages", "hasardEcrit", "themePays", "vfJour",
   "duels", "certitudeQuiz", "certitudes", "erreursSures", "debats", "logique", "etudes", "previsions", "niveaux", "defiJour", "chrono", "theme", "reperages", "ceciteFaite", "bingo", "decisions", "bilanFormes", "grandTest", "reglages", "fichesLues",
-  "maitrise", "lucidite", "distinctions", "objectif", "profil", "parcours"
+  "maitrise", "lucidite", "distinctions", "objectif", "profil", "parcours", "jourMax", "partieEnCours"
 ];
 
 // Forme attendue de chaque clé, pour vérifier une sauvegarde importée : une valeur d'une autre forme
@@ -209,8 +221,8 @@ const FORMES_SAUVEGARDE = {
   tableau: ["acquis", "activite", "erreurs", "experiencesFaites", "jeuxFaits", "fourchettes", "illusions", "ancrages", "hasardEcrit",
     "erreursSures", "debats", "logique", "etudes", "previsions", "reperages", "decisions", "fichesLues", "pieces"],
   objet: ["memoire", "records", "jour", "etalonnage", "points", "resultatsAteliers", "vus", "confiance", "montyHall", "reponsesPensee",
-    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages", "maitrise", "lucidite", "distinctions", "profil", "parcours", "pieceJour", "pieceBilan"],
-  nombre: ["objectif"],
+    "vfJour", "duels", "certitudes", "niveaux", "defiJour", "chrono", "bingo", "bilanFormes", "grandTest", "reglages", "maitrise", "lucidite", "distinctions", "profil", "parcours", "pieceJour", "pieceBilan", "partieEnCours"],
+  nombre: ["objectif", "jourMax"],
   texte: ["derniereFiche", "modeQuiz", "typeFiches", "themePays", "theme"],
   booleen: ["certitudeQuiz", "ceciteFaite"]
 };
@@ -227,8 +239,9 @@ function basculerAcquis(cle) {
 }
 
 // ===================== Révision espacée (méthode Leitner) =====================
-// Chaque fiche rencontrée au quiz a une « boîte » de 1 à 5. Bonne réponse : boîte suivante,
-// révision plus tardive. Erreur : retour en boîte 1, révision le lendemain.
+// Chaque fiche rencontrée au quiz a une « boîte » de 1 à 5. Bonne réponse à une révision due (ou à une notion
+// nouvelle) : boîte suivante, révision plus tardive ; bonne réponse anticipée : comptée, sans changer la boîte.
+// Erreur : retour en boîte 1, révision le lendemain (reponseLeitner, progression.js).
 // memoire["biais:ancrage"] = { b: boîte, d: jour de la prochaine révision, n: réponses, j: justes }
 
 const INTERVALLES = [0, 1, 3, 7, 14, 30]; // en jours, selon la boîte
@@ -248,24 +261,20 @@ const memoire = lire("memoire", {});
 // « certitude » (facultative) : "sur", "plutot" ou "hasard". Une bonne réponse donnée au hasard ne fait pas
 // monter la notion de boîte ; une erreur commise en étant sûr la ramène en boîte 1, comme toute erreur.
 function enregistrerReponse(cle, juste, certitude) {
-  const m = memoire[cle] || { b: 0, d: 0, n: 0, j: 0 };
-  const boiteAvant = m.b, dueAujourdhui = m.n > 0 && m.d === aujourdHui();
-  m.n++;
-  if (juste) {
-    m.j++;
-    if (certitude !== "hasard") m.b = Math.min(5, m.b + 1);
-  } else {
-    m.b = 1;
-  }
-  m.d = aujourdHui() + Math.max(1, INTERVALLES[m.b]);
+  const jour = aujourdHui(), avant = memoire[cle];
+  const dueAujourdhui = !!avant && avant.n > 0 && avant.d === jour;
+  // Règle de Leitner (progression.js) : la boîte ne monte que si la révision était due ou la notion nouvelle
+  const { m, due, monte } = reponseLeitner(avant, juste, certitude, jour, INTERVALLES);
   memoire[cle] = m;
   ecrire("memoire", memoire);
   noterActivite();
   // Points de lucidité (profil.js) : montée de boîte, boîte 5, révision faite le jour prévu, erreur sûre corrigée
   // Seule une bonne réponse fait monter de boîte (une erreur place une notion nouvelle en boîte 1 : ce n'est pas une montée)
-  if (juste && m.b > boiteAvant) { gagner("boite", m.b, cle + ":" + m.n); if (m.b === 5) gagner("boite-5", 0, cle); }
+  if (monte) { gagner("boite", m.b, cle + ":" + m.n); if (m.b === 5) gagner("boite-5", 0, cle); }
   if (juste && dueAujourdhui) { gagner("revision-a-l-heure", 1, cle + ":" + m.n); compter("revisionsALHeure"); }
-  if (juste && lire("erreursSures", []).some(e => e.cle === cle)) compter("leconsRetenues");
+  // « Leçon retenue » : seulement quand la révision était due, donc une fois par échéance et non à chaque bonne
+  // réponse du même jour
+  if (juste && due && avant && lire("erreursSures", []).some(e => e.cle === cle)) compter("leconsRetenues");
 }
 
 // Fichier .ics des révisions prévues sur les 60 prochains jours (les révisions en retard comptent pour aujourd'hui)
@@ -955,7 +964,7 @@ function afficherAccueil() {
   carteRevision.appendChild(el("p", "surtitre", "Révisions"));
   if (dues > 0) {
     carteRevision.appendChild(el("h2", null, T("{0} à revoir aujourd'hui", pluriel(dues, "notion"))));
-    carteRevision.appendChild(el("p", "source", "Les notions reviennent après 1, 3, 7, 14 puis 30 jours, tant que vous y répondez correctement."));
+    carteRevision.appendChild(el("p", "source", "Les notions reviennent après 1, 3, 7, 14 puis 30 jours, tant que vous y répondez correctement le jour venu. Une bonne réponse avant ce jour compte, mais ne fait pas avancer la notion : c'est l'espacement qui aide à retenir."));
     const b = el("button", "bouton", "Réviser maintenant");
     b.addEventListener("click", () => lancerQuiz("reviser"));
     carteRevision.appendChild(b);
@@ -1456,9 +1465,15 @@ function afficherFiche(type, fiche) {
   if (bandeau) colonne.appendChild(bandeau);
   colonne.append(carte, nav);
   retournerALArrivee(carte);
-  // Fiche lue quand son pied est atteint (fichesLues)
+  // Fiche lue quand son pied est atteint (fichesLues), et pas avant une durée de lecture minimale (progression.js) :
+  // descendre d'un coup au bas de la fiche ne la marque plus lue. Si l'on quitte la fiche avant, rien n'est noté.
   if ("IntersectionObserver" in window) {
-    const lecteur = new IntersectionObserver(entrees => { if (entrees.some(e => e.isIntersecting)) { noterFicheLue(cle); lecteur.disconnect(); } });
+    const debut = Date.now(), duree = dureeLectureMin(carte.textContent.length);
+    const lecteur = new IntersectionObserver(entrees => {
+      if (!entrees.some(e => e.isIntersecting)) return;
+      lecteur.disconnect();
+      setTimeout(() => { if (pied.isConnected) noterFicheLue(cle); }, Math.max(0, debut + duree - Date.now()));
+    });
     lecteur.observe(pied);
   }
   miseEnPage.append(colonne, rail);
@@ -1645,7 +1660,7 @@ function afficherQuiz() {
       carte.append(dessinVide(), el("h2", null, "Rien à réviser aujourd'hui"));
       const prochaine = prochaineRevision();
       carte.appendChild(el("p", null, prochaine === null
-        ? "Les notions rencontrées au quiz reviendront ici au bon moment : après 1, 3, 7, 14 puis 30 jours tant que vous y répondez juste, dès le lendemain en cas d'erreur."
+        ? "Les notions rencontrées au quiz reviendront ici au bon moment : après 1, 3, 7, 14 puis 30 jours tant que vous y répondez juste, dès le lendemain en cas d'erreur. Une bonne réponse avant ce moment compte, mais ne fait pas avancer la notion."
         : (prochaine - aujourdHui() === 1 ? T("Prochaine révision demain.") : T("Prochaine révision dans {0} jours.", prochaine - aujourdHui()))));
       const b = el("button", "bouton", "Une série de découverte");
       b.addEventListener("click", () => lancerQuiz("tout"));
@@ -2027,8 +2042,11 @@ function sauvegarderAuto(motif) {
 // Remplace la progression par celle d'une copie, nettoyée en profondeur (sauvegarde.js) : seuls les éléments valides restent
 function remplacerProgression(cles) {
   const { valides } = validerSauvegarde(cles);
+  // Le plus grand jour vu est propre à l'appareil : un fichier importé ne le change pas (ni vers l'avant, ni vers l'arrière)
+  const jourMax = lire("jourMax", undefined);
   CLES_SAUVEGARDE.forEach(effacer);
-  Object.entries(valides).forEach(([cle, valeur]) => ecrire(cle, valeur));
+  Object.entries(valides).forEach(([cle, valeur]) => { if (cle !== "jourMax") ecrire(cle, valeur); });
+  if (jourMax !== undefined) ecrire("jourMax", jourMax);
   // Synchronisation active : le prochain envoi remplace le coffre au lieu d'y fusionner, sinon les clés absentes de la
   // copie reviendraient du coffre (coffre.js, synchroniser)
   if (SYNCHRO.actif) { try { localStorage.setItem("remplacementLocal", "1"); } catch (e) { /* la fusion habituelle aura lieu */ } }
@@ -2263,6 +2281,7 @@ document.querySelectorAll("[data-theme-choix]").forEach(b => b.addEventListener(
   const choix = b.dataset.themeChoix;
   if (choix === "auto") effacer("theme"); else ecrire("theme", choix);
   appliquerTheme(choix);
+  if (choix === "dark") trouverSecret("noctambule");   // secret (profil.js)
 }));
 appliquerTheme(lire("theme", "auto"));
 
@@ -2447,6 +2466,7 @@ document.querySelector('.onglet[data-onglet="fiches"]').href = "#" + etat.type;
 if (!location.hash) history.replaceState(null, "", "#accueil");
 // Maîtrise et points (profil.js) : la progression passée convertie une fois en points, puis la photographie du jour
 rattraperProgression();
+cloreAbandon();   // partie laissée inachevée à la visite précédente (niveaux.js)
 majMaitrise(false);
 afficherPage();
 // Synchronisation chiffrée (coffre.js) : rien si SYNCHRO_URL est vide ou si aucun compte n'est actif sur cet appareil

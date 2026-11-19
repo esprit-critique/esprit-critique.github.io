@@ -51,6 +51,9 @@ function majMaitrise(annoncerChangements = true) {
 // Point d'entrée unique des points de lucidité : appelé là où un événement se produit (quiz, ateliers, cartes du jour…)
 function gagner(source, valeur, cle) {
   const jour = aujourdHui();
+  // Horloge de l'appareil reculée sous le plus grand jour vu (app.js) : aucun gain tant que la date réelle ne l'a pas
+  // rattrapé ; les plafonds du jour restent ceux du jour atteint
+  if (jourAppareil() < jour) return 0;
   const [etat, points] = appliquerGain(lire("lucidite", {}), source, valeur, jour, cle);
   if (!points) return 0;
   ecrire("lucidite", etat);
@@ -62,7 +65,6 @@ function gagner(source, valeur, cle) {
   }
   majBoutonProfil();
   const maintenant = new Date();
-  if (maintenant.getHours() < 5) trouverSecret("noctambule");
   if (maintenant.getDay() === 5 && maintenant.getDate() === 13) trouverSecret("vendredi-13");
   return points;
 }
@@ -864,7 +866,7 @@ function afficherPageProfil(onglet) {
   tete.appendChild(chiffre);
   zone.appendChild(tete);
   if (grade.suivant) zone.appendChild(graphiqueJauge(T("Vers le grade « {0} »", T(grade.suivant[1])), etat.meilleure, grade.seuil, grade.suivant[0],
-    T("Encore {0} points de maîtrise. Le jeu qui rapporterait le plus : {1}.", grade.suivant[0] - etat.meilleure, jeuConseille(m))));
+    T("Encore {0} points de maîtrise.", grade.suivant[0] - etat.meilleure) + " " + conseilApprentissage(m)));
   zone.appendChild(el("p", "source avertissement-maitrise", "La maîtrise mesure votre réussite dans les jeux de ce site, pas votre intelligence."));
   zone.appendChild(lienVers("#portrait", "Votre portrait : ce que vos réponses révèlent de votre façon de juger →", "lien-discret"));
   const partage = el("button", "bouton secondaire bouton-partage", "Fiche à partager");
@@ -911,6 +913,20 @@ function afficherPageProfil(onglet) {
     case "parcours": ongletParcours(panneau); break;
     default: ongletEnsemble(panneau, m, etat);
   }
+}
+
+// Conseil d'apprentissage, à la place de « Le jeu qui rapporterait le plus » : viser le chiffre pousse à optimiser
+// l'indicateur plutôt qu'à apprendre (loi de Goodhart). D'abord les révisions dues, sinon le domaine le plus faible.
+// court : le domaine est déjà nommé à côté (graphique en barres)
+function conseilApprentissage(m, court) {
+  const dues = clesAReviser().length;
+  if (dues) return T("Pour apprendre, commencez par vos révisions dues : {0}.", pluriel(dues, "notion"));
+  const [domaine] = Object.entries(m.domaines).sort((a, b) => a[1] - b[1])[0] || [];
+  const nom = (DOMAINES.find(([d]) => d === domaine) || [])[1];
+  if (!nom) return "";
+  if (court) return domaine === "notions" ? T("Une série de quiz y aide.") : T("Par exemple avec « {0} ».", jeuConseille(m));
+  return domaine === "notions" ? T("Pour apprendre, travaillez votre domaine le moins avancé : {0}, avec une série de quiz.", T(nom))
+    : T("Pour apprendre, travaillez votre domaine le moins avancé : {0}, par exemple avec « {1} ».", T(nom), jeuConseille(m));
 }
 
 // Jeu mesuré le plus faible (ou jamais joué) du domaine le plus faible
@@ -984,7 +1000,7 @@ function ongletEnsemble(p, m, etat) {
     messageToile(valeurs, ancien ? ancien[1].slice(1) : null)));
   const faible = valeurs.indexOf(Math.min(...valeurs));
   p.appendChild(graphiqueBarres(T("Les mêmes domaines, en barres"), DOMAINES.map(([, nom], i) => [T(nom), valeurs[i]]).sort((a, b) => b[1] - a[1]), 1000, [500],
-    Math.max(...valeurs) > 0 ? T("À travailler en priorité : {0} ({1}). Jeu conseillé : {2}.", nomsDomaines()[faible], valeurs[faible], T(jeuConseille(m)))
+    Math.max(...valeurs) > 0 ? T("À travailler en priorité : {0} ({1}). {2}", nomsDomaines()[faible], valeurs[faible], conseilApprentissage(m, true))
       : T("Aucun domaine mesuré pour l'instant : une partie suffit pour remplir ce graphique.")));
   // Forces et points faibles
   const jeux = Object.entries(m.jeux).filter(([id]) => tousLesAteliers().some(a => a.atelier.id === id)).map(([id, [, v]]) => [tousLesAteliers().find(a => a.atelier.id === id).atelier.titre, v]);
@@ -1627,7 +1643,8 @@ function partagerGrade(avecPseudo) {
     // Deux rangées de 19 au pas de 44, centrées (1 080 − 19 × 44) / 2 = 122 ; finies à 1 190
     peindreMedailles(ctx, f.medailles, 122, 1102, 44);
     ctx.textAlign = "left"; ctx.font = "italic 26px Newsreader, Georgia, serif"; ctx.fillStyle = "#6b6862";
-    ctx.fillText(T("La maîtrise mesure la réussite dans les jeux du site, pas l'intelligence."), 96, 1224);   // l'adresse est à 1 270
+    // Ni certification ni classement : la maîtrise est calculée sur l'appareil, sans contrôle possible (SECURITE.md)
+    ctx.fillText(T("La réussite aux jeux du site, pas l'intelligence ; ni un diplôme, ni une certification."), 96, 1224, 888);   // l'adresse est à 1 270
     frise(1290);
   });
 }

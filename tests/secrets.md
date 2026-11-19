@@ -9,7 +9,7 @@ synchronisée) ; les conditions sont dans `DISTINCTIONS` (`static/progression.js
 |---|---|---|---|
 | Facile | Les apparences | Toucher l'emblème de l'en-tête (existait déjà). | `app.js`, clic sur `.marque` |
 | Facile | Chercheur de secrets | Taper « secret » dans la recherche. La réponse est un indice vers la console. | `recherche.js` |
-| Facile | Noctambule | Gagner des points entre minuit et 5 heures (heure de l'appareil). | `gagner()`, `profil.js` |
+| Facile | Noctambule | Choisir le thème sombre (bouton de thème). Jusqu'au 19 novembre 2026 : gagner des points entre minuit et 5 h, retiré (ne pas récompenser le jeu nocturne). | `appliquerTheme`, `app.js` |
 | Moyen | Bilingue | Ouvrir le site en français puis en anglais (`/en/`), sur le même appareil. Annoncée à l'action suivante. | chargement, `profil.js` |
 | Moyen | Sésame | Taper « doute » (« doubt » en anglais) au clavier, hors de tout champ : l'emblème se révèle. | `keydown`, `profil.js` |
 | Moyen (rare) | Vendredi 13 | Gagner des points un vendredi 13. Lien : apophénie. | `gagner()`, `profil.js` |

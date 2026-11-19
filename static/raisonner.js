@@ -773,13 +773,17 @@ JEUX.push({
     const echeance = el("input", "champ");
     echeance.type = "date";
     echeance.setAttribute("aria-label", "Échéance");
-    echeance.value = new Date((auj + 7) * 86400000).toISOString().slice(0, 10);
+    echeance.value = new Date((auj + ECART_PREVISION) * 86400000).toISOString().slice(0, 10);
+    // Au moins 7 jours : une prévision pour le jour même, dont on connaît déjà l'issue, n'entraîne pas à prévoir
+    // (et ne compte pas pour la distinction « Prévisionniste », progression.js)
+    echeance.min = echeance.value;
     const ajouter = el("button", "bouton large", "Ajouter au carnet");
     ajouter.dataset.valider = "1";
     ajouter.addEventListener("click", () => {
       const jour = Math.round(Date.parse(echeance.value + "T00:00:00Z") / 86400000);
       if (!texte.value.trim() || texte.value.includes("…")) { texte.focus(); return; }
       if (isNaN(jour)) { echeance.focus(); return; }
+      if (jour - auj < ECART_PREVISION) { ajouter.textContent = T("Échéance dans {0} jours au moins", ECART_PREVISION); echeance.focus(); return; }
       const l = previsions();
       l.push({ id: Date.now().toString(36), texte: texte.value.trim(), p: Number(proba.value), echeance: jour, creee: auj, issue: null });
       enregistrer(l);

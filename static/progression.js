@@ -21,7 +21,7 @@ const MAITRISE_JEUX = {
   ancre: ["confiance", "mesure", 0],   // effet d'ancrage (ancrages)
   foule: ["confiance", "note", 0],   // estimations libres
   comprendre: ["confiance", "note", 0],   // auto-évaluation avant et après explication
-  carnet: ["confiance", "mesure", 0],   // score de Brier des prévisions résolues (previsions)
+  carnet: ["confiance", "aucun", 0],   // outil personnel : l'issue est indiquée par le joueur, invérifiable (audit de 2026)
   decision: ["confiance", "aucun", 0],   // décision guidée : pas de bonne réponse
   "avant-apres": ["confiance", "aucun", 0],   // bilan en deux formes, à faire une fois
   points: ["perception", "aucun", 0],   // estimation de quantités sans bonne réponse notée
@@ -76,9 +76,12 @@ const plafondNiveau = (L, max = 3) => Math.round(500 + 500 * (Math.min(L, max) -
 const moyenneDe = l => l.reduce((s, x) => s + x, 0) / l.length;
 const borner = (x, a, b) => Math.max(a, Math.min(b, x));
 
-// Jeu noté : pour chaque niveau joué, réussite des 5 dernières parties, corrigée du hasard, pondérée par la confiance
-// (min(1, parties / 3)), sous le plafond du niveau ; la maîtrise du jeu est la plus grande de ces valeurs.
+// Jeu noté : pour chaque niveau joué, réussite des 10 dernières parties, corrigée du hasard, pondérée par la confiance
+// (min(1, parties / 5)), sous le plafond du niveau ; la maîtrise du jeu est la plus grande de ces valeurs.
+// Dix parties et non cinq, cinq pour la pleine confiance et non trois : sur dix questions à 50 % de hasard, trois
+// parties chanceuses suffisaient à fixer un niveau élevé, que l'on gardait en s'arrêtant là (meilleur niveau gardé).
 // max : nombre de niveaux de l'atelier (3 par défaut)
+const PARTIES_MOYENNE = 10, PARTIES_CONFIANCE = 5;
 function maitriseNotee(resultat, c, max = 3) {
   if (!resultat) return 0;
   const niveaux = resultat.niveaux && Object.keys(resultat.niveaux).length ? resultat.niveaux
@@ -87,9 +90,9 @@ function maitriseNotee(resultat, c, max = 3) {
   Object.entries(niveaux).forEach(([L, r]) => {
     const h = (r.historique || []).filter(x => typeof x === "number" && isFinite(x));
     if (!h.length || !(r.sur > 0)) return;
-    const reussite = borner(moyenneDe(h.slice(-5)) / r.sur, 0, 1);
+    const reussite = borner(moyenneDe(h.slice(-PARTIES_MOYENNE)) / r.sur, 0, 1);
     const q = Math.max(0, (reussite - c) / (1 - c));
-    const f = Math.min(1, (r.n || h.length) / 3);
+    const f = Math.min(1, (r.n || h.length) / PARTIES_CONFIANCE);
     const plafond = Number(L) ? plafondNiveau(Number(L), max) : 1000;
     meilleure = Math.max(meilleure, plafond * q * f);
   });
@@ -105,30 +108,80 @@ const MESURES = {
     const effet = moyenneDe(l.map(a => Math.abs(a.h / a.b - 1)));
     return 1000 * Math.max(0, 1 - effet / 0.5) * Math.min(1, l.length / 3);
   },
-  // Prévisions : score de Brier des prévisions résolues ; 0 → 1 000, 0,25 (toujours « 50 % ») ou plus → 0 ; 10 au moins pour la pleine confiance
-  carnet: d => {
-    const l = (d.previsions || []).filter(p => typeof p.issue === "boolean" && typeof p.p === "number");
-    if (!l.length) return 0;
-    const brier = moyenneDe(l.map(p => Math.pow(p.p / (p.p > 1 ? 100 : 1) - (p.issue ? 1 : 0), 2)));
-    return 1000 * Math.max(0, 1 - brier / 0.25) * Math.min(1, l.length / 10);
-  }
 };
 
-// Étalonnage (clé confiance : { certitude: [réponses, justes] }) : écart moyen entre certitude et réussite ;
-// 0 → 1 000, 30 points ou plus → 0 ; 30 réponses pour la pleine confiance. Compte comme un jeu du domaine « confiance ».
-function maitriseEtalonnage(d) {
-  const lignes = Object.entries(d.confiance || {}).filter(([k, v]) => Array.isArray(v) && v[0] > 0 && Number(k) > 0);
+// Prévisions du carnet (raisonner.js) : issue « oui », « non » ou « annulee » (true et false acceptés pour d'anciennes
+// données). Ne comptent que les prévisions résolues dont l'échéance tombait au moins 7 jours après leur création : une
+// prévision pour le jour même, dont on connaît déjà l'issue, ne dit rien de la capacité à prévoir.
+const ECART_PREVISION = 7;
+function previsionsRecevables(previsions) {
+  return (Array.isArray(previsions) ? previsions : []).filter(p => p && typeof p.p === "number"
+    && (p.issue === "oui" || p.issue === "non" || typeof p.issue === "boolean")
+    && Number.isInteger(p.echeance) && Number.isInteger(p.creee) && p.echeance - p.creee >= ECART_PREVISION);
+}
+// Score de Brier : moyenne de (probabilité annoncée − issue)², l'issue valant 1 ou 0 ; p en % (anciennes données : 0 à 1)
+const brierPrevisions = l => moyenneDe(l.map(p => Math.pow(p.p / (p.p > 1 ? 100 : 1) - (p.issue === true || p.issue === "oui" ? 1 : 0), 2)));
+
+// Étalonnage (clé confiance : { certitude en % : [réponses, justes] }, vrai ou faux) : score de Brier de la certitude
+// annoncée, rapporté à celui d'un répondant qui annonce toujours 50 % (0,25) : 1 000 × (1 − Brier / 0,25), 0 au pire ;
+// 30 réponses pour la pleine confiance. Une règle de score strictement propre (Gneiting et Raftery, 2007) : on ne
+// l'améliore ni en se trompant exprès, ni en annonçant 50 % partout (ce qui annulait l'ancien écart entre certitude et
+// réussite sans rien savoir). Elle récompense à la fois l'étalonnage et le savoir. Compte comme un jeu du domaine « confiance ».
+function brierEtalonnage(confiance) {
+  const lignes = Object.entries(confiance || {}).filter(([k, v]) => Array.isArray(v) && v[0] > 0 && v[1] >= 0 && v[1] <= v[0] && Number(k) > 0 && Number(k) <= 100);
   const n = lignes.reduce((s, [, v]) => s + v[0], 0);
+  if (!n) return { n: 0, brier: 0.25 };
+  const somme = lignes.reduce((s, [k, [m, j]]) => { const p = Number(k) / 100; return s + j * (1 - p) ** 2 + (m - j) * p ** 2; }, 0);
+  return { n, brier: somme / n };
+}
+function maitriseEtalonnage(d) {
+  const { n, brier } = brierEtalonnage(d.confiance);
   if (!n) return 0;
-  const ecart = lignes.reduce((s, [k, [m, j]]) => s + m * Math.abs(Number(k) / 100 - j / m), 0) / n;
-  return 1000 * Math.max(0, 1 - ecart / 0.3) * Math.min(1, n / 30);
+  return 1000 * Math.max(0, 1 - brier / 0.25) * Math.min(1, n / 30);
+}
+
+// Fourchettes à 90 % (intervalles, chiffres.js) : note d'une partie sur 10 tirée du score de fourchette moyen
+// (scoreFourchette, Gneiting et Raftery, 2007, en ordres de grandeur) : 10 × (1 − score / 3), 0 au pire. Compter les
+// fourchettes justes récompensait les fourchettes immenses (de 0 à 10¹² : 10 sur 10) ; ce score pénalise la largeur
+// autant que l'erreur. Repère : des fourchettes justes d'un facteur 4 donnent 8 ; d'un facteur 10, 7 ; d'un facteur
+// 1 000, 0. Les parties notées ainsi portent « largeur: 1 » dans leur niveau (resultatsAteliers.intervalles) : les
+// anciennes, notées au nombre de fourchettes justes, ne comptent plus dans la maîtrise.
+const SCORE_FOURCHETTE_NUL = 3;
+const noteFourchettes = couts => Math.round(10 * Math.max(0, 1 - moyenneDe(couts) / SCORE_FOURCHETTE_NUL));
+function niveauxNotesParLargeur(r) {
+  if (!r || !r.niveaux) return null;
+  const niveaux = Object.fromEntries(Object.entries(r.niveaux).filter(([, x]) => x && x.largeur));
+  return Object.keys(niveaux).length ? { niveaux } : null;
 }
 
 function maitriseJeu(id, d) {
   const [, type, c] = MAITRISE_JEUX[id] || [];
-  if (type === "note") return maitriseNotee((d.resultatsAteliers || {})[id], c, niveauMax(id));
+  const r = (d.resultatsAteliers || {})[id];
+  if (type === "note") return maitriseNotee(id === "intervalles" ? niveauxNotesParLargeur(r) : r, c, niveauMax(id));
   if (type === "mesure") return MESURES[id] ? MESURES[id](d) : 0;
   return 0;
+}
+
+// Révision espacée (méthode Leitner classique) : une bonne réponse ne fait monter la notion de boîte que si sa révision
+// était due (échéance atteinte) ou si la notion est nouvelle ; une bonne réponse anticipée compte (n, j) sans changer
+// ni la boîte ni l'échéance. Une erreur ramène toujours en boîte 1. « Au hasard » juste : pas de montée, échéance
+// recalculée seulement si la révision était due. Sans cette règle, cinq bonnes réponses le même jour mettaient une
+// notion en boîte 5 (et rapportaient ses points) : l'espacement, que le site enseigne, n'était plus respecté.
+// Rend la nouvelle mémoire de la notion et les faits utiles aux points ; ne modifie pas m.
+function reponseLeitner(m0, juste, certitude, jour, intervalles) {
+  const m = { b: 0, d: 0, n: 0, j: 0, ...(m0 || {}) };
+  const due = m.n === 0 || m.d <= jour;
+  const boiteAvant = m.b;
+  m.n++;
+  if (juste) {
+    m.j++;
+    if (due && certitude !== "hasard") m.b = Math.min(5, m.b + 1);
+    if (due) m.d = jour + Math.max(1, intervalles[m.b]);
+  } else {
+    m.b = 1;
+    m.d = jour + Math.max(1, intervalles[1]);
+  }
+  return { m, due, monte: m.b > boiteAvant && juste };
 }
 
 // Notions : 80 % pour les boîtes de révision (somme des boîtes des 90 fiches / 450), 20 % pour les duels entre notions
@@ -141,12 +194,14 @@ function maitriseNotions(d, nbFiches) {
   return 800 * Math.min(1, boites / (5 * nbFiches)) + 200 * q;
 }
 
-// Grand test : chaque axe du dernier test complet compte comme un jeu du domaine le plus proche. A à D : proportion de
+// Grand test : chaque axe du dernier test complet dont moins de la moitié des items avaient déjà été vus (même règle que
+// pour le niveau, grand-test.js) compte comme un jeu du domaine le plus proche. A à D : proportion de
 // réussite corrigée d'un hasard estimé à 1/4, pleine confiance à 10 items ; E (étalonnage) : excès de confiance, 0 → 1 000,
 // 30 points → 0. F (exploratoire) ne compte pas.
 const AXES_GRAND_TEST = { A: "raisonner", B: "perception", C: "raisonner", D: "debattre", E: "confiance" };
 function maitriseGrandTest(d) {
-  const tests = ((d.grandTest || {}).historiqueTests || []).filter(t => t && t.mode === "complet" && t.dateFin && t.scores);
+  const tests = ((d.grandTest || {}).historiqueTests || []).filter(t => t && t.mode === "complet" && t.dateFin && t.scores
+    && (!Array.isArray(t.instances) || t.instances.filter(x => x && x.dejaVu).length < t.instances.length / 2));
   if (!tests.length) return {};
   const scores = tests[tests.length - 1].scores, sortie = {};
   Object.entries(AXES_GRAND_TEST).forEach(([axe, domaine]) => {
@@ -187,13 +242,17 @@ function gradeDe(meilleure) {
   return { rang: i, nom: GRADES[i][1], seuil: GRADES[i][0], suivant: GRADES[i + 1] || null };
 }
 
-// Photographie du jour (clé maitrise) : 400 jours au plus, meilleure maîtrise atteinte
+// Photographie du jour (clé maitrise) : 400 jours au plus, meilleure maîtrise atteinte. La meilleure maîtrise, qui
+// donne le grade, est lissée : c'est le minimum de la maîtrise globale sur les trois derniers jours photographiés (ou
+// moins au début). Un pic d'un jour (une série chanceuse) ne fixe donc plus un grade. Un grade acquis reste acquis.
+const JOURS_LISSAGE = 3;
 function photographier(etat, jour, m) {
   const e = { jours: {}, meilleure: 0, ...(etat || {}) };
   e.jours = { ...e.jours, [jour]: [m.globale, ...DOMAINES.map(([dom]) => m.domaines[dom])] };
   const cles = Object.keys(e.jours).map(Number).sort((a, b) => a - b);
   cles.slice(0, Math.max(0, cles.length - 400)).forEach(k => { delete e.jours[k]; });
-  e.meilleure = Math.max(e.meilleure || 0, m.globale);
+  const derniers = Object.keys(e.jours).map(Number).sort((a, b) => a - b).slice(-JOURS_LISSAGE);
+  e.meilleure = Math.max(e.meilleure || 0, Math.min(...derniers.map(k => e.jours[k][0])));
   if (!e.depuis) e.depuis = jour;
   return e;
 }
@@ -218,7 +277,7 @@ const SOURCES_LUCIDITE = {
   "boite": { points: b => 2 * b },
   "boite-5": { points: () => 10, unique: true },
   "revision-a-l-heure": { points: n => 3 * n },
-  "chrono": { points: s => Math.min(40, 2 * Math.max(0, s)) },
+  "chrono": { points: s => Math.min(40, 2 * Math.max(0, s)), parJour: 3 },
   "situation-jour": { points: juste => 5 + (juste ? 3 : 0), parJour: 1 },
   "vf-jour": { points: juste => 3 + (juste ? 2 : 0), parJour: 1 },
   "defi-jour": { points: score => 2 * score + 10, parJour: 1 },
@@ -228,7 +287,9 @@ const SOURCES_LUCIDITE = {
   "piece-libre": { points: note => 2 * note, parJour: 2 },
   "piece-etalonnage": { points: p => p, parJour: 3 },
   "atelier-note": { points: ([score, sur, niveau]) => Math.round(10 * borner(score / sur, 0, 1) * ({ 2: 1.5, 3: 2, 4: 2.5, 5: 3 }[niveau] || 1)), parJourCle: 3 },
-  "atelier-sans-note": { points: () => 8, parJourCle: 1 },
+  // Ateliers sans note (expériences, bingo, jeux à plusieurs) : une seule fois par atelier ; les refaire n'apprend
+  // plus grand-chose et rapportait 8 points par jour et par atelier
+  "atelier-sans-note": { points: () => 8, unique: true },
   "atelier-premier": { points: () => 15, unique: true },
   "atelier-maitrise": { points: () => 50, unique: true },
   "galton": { points: justes => 2 * justes, plafondPoints: 20 },
@@ -238,6 +299,10 @@ const SOURCES_LUCIDITE = {
   "etape-parcours": { points: () => 10, unique: true },
   "parcours-termine": { points: () => 50, unique: true }
 };
+
+// Durée minimale avant qu'une fiche compte comme lue (points « fiche-lue », fichesLues), en millisecondes : 15 s pour
+// 1 000 caractères (environ 650 mots par minute : une lecture en diagonale, mais plus un simple défilement)
+const dureeLectureMin = caracteres => Math.round(15 * Math.max(0, caracteres));
 
 // Vrai si une limite (par jour, plafond de points, « une fois ») empêche ce gain aujourd'hui : le bilan le dit au joueur,
 // qui croirait sinon que sa partie n'a pas été prise en compte
@@ -329,10 +394,10 @@ const DISTINCTIONS = [
   ["cartographe", "Cartographe", d => new Set((d.fichesLues || []).map(c => d.categorieDe(c))).size >= 14, "Une fiche lue dans chacune des quatorze catégories.", "#biais"],
   ["codex-complet", "Codex complet", d => Object.keys(d.memoire || {}).length >= d.nbFiches, "Les 90 notions rencontrées au quiz.", "#quiz"],
   ["bien-etalonne", "Bien étalonné", d => { const [n, j] = (d.certitudes || {}).sur || [0, 0]; const t = Object.values(d.certitudes || {}).reduce((s, x) => s + (x[0] || 0), 0); return t >= 50 && n > 0 && j / n >= 0.85; }, "Cinquante réponses avec certitude, et au moins 85 % de réussite quand vous êtes sûr.", "biais:surprecision"],
-  ["je-sais", "Je sais que je ne sais pas", d => ((d.certitudes || {}).hasard || [0])[0] >= 25, "Vingt-cinq réponses déclarées « au hasard » : savoir qu'on ne sait pas.", "biais:dunning-kruger"],
+  ["je-sais", "Je sais que je ne sais pas", d => { const c = d.certitudes || {}, [n, j] = c.sur || [0, 0]; return (c.hasard || [0])[0] >= 25 && n >= 20 && j / n >= 0.85; }, "Vingt-cinq réponses déclarées « au hasard », et au moins 85 % de réussite sur vingt réponses ou plus quand vous êtes sûr : savoir ce qu'on sait, et qu'on ne sait pas.", "biais:dunning-kruger"],
   ["lecon-retenue", "Leçon retenue", d => (d.compteursLucidite || {}).leconsRetenues >= 10, "Dix bonnes réponses à des notions sur lesquelles vous vous étiez trompé en étant sûr.", "#quiz/reviser"],
-  ["fourchettes", "Fourchettes honnêtes", d => { const [n, j] = d.fourchettes || [0, 0]; return n >= 30 && j / n >= 0.85 && j / n <= 0.95; }, "Trente fourchettes à 90 %, dont 85 à 95 % justes : ni trop étroites, ni trop larges.", "#chiffres/intervalles"],
-  ["previsionniste", "Prévisionniste", d => { const l = (d.previsions || []).filter(p => typeof p.issue === "boolean"); return l.length >= 10 && moyenneDe(l.map(p => Math.pow(p.p / (p.p > 1 ? 100 : 1) - (p.issue ? 1 : 0), 2))) <= 0.2; }, "Dix prévisions résolues, avec un score de Brier d'au plus 0,20 (0 : des prévisions parfaites ; 0,25 : toujours « 50 % »).", "#tests/carnet"],
+  ["fourchettes", "Fourchettes honnêtes", d => { const [n, j] = d.fourchettes || [0, 0]; return n >= 30 && j / n >= 0.85 && j / n <= 0.95 && maitriseJeu("intervalles", d) >= 300; }, "Trente fourchettes à 90 %, dont 85 à 95 % justes, et au moins 300 de maîtrise à ce jeu, dont la note pénalise les fourchettes trop larges : ni trop étroites, ni immenses.", "#chiffres/intervalles"],
+  ["previsionniste", "Prévisionniste", d => { const l = previsionsRecevables(d.previsions); return l.length >= 10 && new Set(l.map(p => p.creee)).size >= 5 && brierPrevisions(l) <= 0.2; }, "Dix prévisions résolues, faites au moins sept jours à l'avance et sur cinq jours différents, avec un score de Brier d'au plus 0,20 (0 : des prévisions parfaites ; 0,25 : toujours « 50 % »).", "#tests/carnet"],
   ["bayesien", "Bayésien", d => { const r = ((d.resultatsAteliers || {}).depistage || {}).niveaux; return !!(r && r[3] && (r[3].historique || []).some(x => x / r[3].sur >= 0.9)); }, "« Tests positifs » réussi à 90 % au niveau 3.", "#tests/depistage"],
   ["porte-deux", "Porte numéro deux", d => Object.values(d.montyHall || {}).reduce((s, x) => s + ((x.changer || [0, 0])[1] || 0), 0) >= 20, "Avoir changé de porte vingt fois à Monty Hall.", "#tests/monty-hall"],
   ["sans-ancre", "Sans ancre", d => { const l = (d.ancrages || []).slice(-3); return l.length >= 3 && l.every(a => Math.abs(a.h / a.b - 1) < 0.1); }, "Un effet d'ancrage inférieur à 10 % à chacune de vos trois dernières parties.", "biais:ancrage"],
@@ -340,8 +405,8 @@ const DISTINCTIONS = [
   ["oreille-fine", "Oreille fine", d => { const l = (d.debats || []).slice(-3); return l.length >= 3 && l.every(x => x.d >= 2); }, "Une sensibilité d′ d'au moins 2 à chacun de vos trois derniers débats : une très bonne distinction entre sophismes et répliques recevables.", "#tests/debat-truque"],
   ["homme-acier", "Homme d'acier", d => { const r = ((d.resultatsAteliers || {}).reformuler || {}).niveaux || {}; return !!(r[2] || r[3]); }, "« Reformuler sans trahir » terminé au niveau 2 ou plus.", "#tests/reformuler"],
   ["bingo", "Bingo", d => !!(d.bingo && d.bingo.ligne), "Une ligne complète au bingo des sophismes.", "#tests/bingo"],
-  ["sur-le-terrain", "Sur le terrain", d => (d.reperages || []).length >= 10, "Dix repérages notés : l'esprit critique sert dans la vie courante.", "#accueil"],
-  ["naturaliste", "Naturaliste", d => new Set((d.reperages || []).map(r => r.cle)).size >= 10, "Des repérages pour dix notions différentes.", "#accueil"],
+  ["sur-le-terrain", "Sur le terrain", d => (d.reperages || []).length >= 10 && joursDeReperage(d) >= 5, "Dix repérages notés, sur cinq jours différents au moins : l'esprit critique sert dans la vie courante.", "#accueil"],
+  ["naturaliste", "Naturaliste", d => new Set((d.reperages || []).map(r => r.cle)).size >= 10 && joursDeReperage(d) >= 5, "Des repérages pour dix notions différentes, sur cinq jours différents au moins.", "#accueil"],
   ["decision-eclairee", "Décision éclairée", d => (d.decisions || []).some(x => x.bilanFait), "Une décision guidée dont le bilan a été fait.", "#tests/decision"],
   ["explorateur", "Explorateur", d => Object.keys(d.resultatsAteliers || {}).length >= 25, "Vingt-cinq ateliers essayés.", "#ateliers"],
   ["tour-complet", "Tour complet", d => d.ateliers.every(id => (d.resultatsAteliers || {})[id] || id === "grand-test"), "Tous les ateliers essayés.", "#ateliers"],
@@ -352,7 +417,9 @@ const DISTINCTIONS = [
   ["demonteur", "Démonteur d'illusions", d => ((d.drapeaux || {}).illusions || []).length >= 8, "Avoir vérifié huit illusions du jour différentes.", "#accueil", true],
   // Secrets ajoutés le 15 novembre 2026 (solutions : tests/secrets.md), du plus facile au plus difficile
   ["chercheur", "Chercheur de secrets", d => secretTrouve(d, "chercheur"), "Avoir cherché un secret là où on cherche tout.", "#accueil", true],
-  ["noctambule", "Noctambule", d => secretTrouve(d, "noctambule"), "Avoir gagné des points entre minuit et 5 heures du matin.", "#accueil", true],
+  // Noctambule récompensait des points gagnés entre minuit et 5 h ; le sommeil consolide ce qu'on vient d'apprendre
+  // (Diekelmann et Born, 2010) : même identifiant, autre condition (thème sombre choisi, pour lire le soir)
+  ["noctambule", "Noctambule", d => secretTrouve(d, "noctambule"), "Avoir choisi le thème sombre, pour lire le soir sans s'éblouir. Et dormir ensuite : le sommeil consolide ce qu'on vient d'apprendre.", "#accueil", true],
   ["bilingue", "Bilingue", d => secretTrouve(d, "langue-fr") && secretTrouve(d, "langue-en"), "Avoir visité le site dans ses deux langues.", "#accueil", true],
   ["sesame", "Sésame", d => secretTrouve(d, "sesame"), "Avoir tapé au clavier le mot qui ouvre l'esprit critique, hors de tout champ.", "#accueil", true],
   ["vendredi-13", "Vendredi 13", d => secretTrouve(d, "vendredi-13"), "Avoir joué un vendredi 13, sans qu'il arrive rien de plus qu'un autre jour.", "biais:apophenie", true],
@@ -360,6 +427,7 @@ const DISTINCTIONS = [
   ["seize-sceaux", "Tous les sceaux", d => typeof PARCOURS !== "undefined" && PARCOURS.every(p => avancementParcours(p, donneesParcours()) === p.etapes.length), "Avoir terminé tous les parcours.", "#parcours", true],
   ["cryptographe", "Cryptographe", d => secretTrouve(d, "cryptographe"), "Avoir résolu l'énigme laissée à ceux qui regardent sous le capot.", "#accueil", true]
 ];
+const joursDeReperage = d => new Set((d.reperages || []).map(r => r && r.j)).size;
 const secretTrouve = (d, id) => (((d.drapeaux || {}).secrets) || []).includes(id);
 function distinctionsObtenues(d) {
   return DISTINCTIONS.filter(([, , condition]) => { try { return !!condition(d); } catch (e) { return false; } }).map(([id]) => id);
