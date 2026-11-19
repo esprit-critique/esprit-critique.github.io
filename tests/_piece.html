@@ -168,7 +168,8 @@ f.onload = async () => {
 
     // Animations réduites : l'état final est posé sans attendre
     {
-      w.eval("reglages.animations = 'reduites'; document.documentElement.dataset.animations = 'reduites'");
+      // Le réglage réel (clé reglages), comme le bouton « Réduites » : app.js n'en garde plus de copie en mémoire
+      w.eval("ecrire('reglages', { ...(lire('reglages', {}) || {}), animations: 'reduites' }); appliquerAnimations()");
       w.eval("pieceEnCours = null");
       const g = graines["1-breve"] || graines["1-publicite"];
       await aller("accueil"); await aller("piece/1-" + g);
@@ -178,7 +179,7 @@ f.onload = async () => {
       ok("animations réduites : aucune animation en cours, note et annotations posées", animations === 0 && !!q(".pdj-note-finale") && qa(".pdj-note").every(n => w.getComputedStyle(n).opacity === "1"), "animations : " + animations);
       q(".pdj-bascule").click();
       ok("animations réduites : retournement en échange simple", w.eval("document.getAnimations().filter(a => a.playState === 'running').length") === 0 && /Version rectifiée/.test(q(".pdj-etiquette").textContent));
-      w.eval("reglages.animations = 'auto'; delete document.documentElement.dataset.animations");
+      w.eval("ecrire('reglages', { ...(lire('reglages', {}) || {}), animations: 'auto' }); appliquerAnimations()");
     }
 
     // --- Intégration (lot P3) : pièce du jour enregistrée, une seule tentative, reprise après rechargement ---

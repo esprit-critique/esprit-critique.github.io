@@ -1720,7 +1720,8 @@ label[for] { display: block; margin: 0 0 8px; }
    (bouton quasi invisible et impossible à viser), là où Chrome garde sa largeur */
 .bouton-profil, .bouton-profil > svg { flex: none; }
 .bouton-profil-maitrise { font-family: var(--titre); font-weight: 600; font-size: 15px; font-variant-numeric: oldstyle-nums; }
-@media (max-width: 759px) { .entete .bouton-profil { position: absolute; top: calc(env(safe-area-inset-top) + 12px); right: 74px; } }
+/* Même haut que la marque et le bouton de langue (16 px) : à 12 px, le bouton de profil était 4 px plus haut qu'eux */
+@media (max-width: 759px) { .entete .bouton-profil { position: absolute; top: calc(env(safe-area-inset-top) + 16px); right: 74px; } }
 .anneau-mini .anneau-fond { fill: none; stroke: var(--trait); stroke-width: 4; }
 .anneau-mini .anneau-valeur { fill: none; stroke: var(--vert); stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray var(--duree) var(--courbe); }
 /* Part nulle : le tiret de longueur nulle, à bouts ronds, laisserait une pastille (graphiques.js, melange.js) */
@@ -1896,7 +1897,7 @@ label[for] { display: block; margin: 0 0 8px; }
 /* La pastille d'état de la synchronisation se pose en badge sur le bord bas-gauche du rond du profil (à 45°, sur le cercle
    de 44 px) : seule à côté du bouton, elle flottait sans rapport visible avec lui. Liseré de la couleur du bouton.
    Téléphone : bouton à 12 px du haut et 74 px de la droite, centre (−96, 34) ; centre de la pastille (−111,6 ; 49,6) */
-@media (max-width: 759px) { .etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 45px); right: 107px; z-index: 2; } }
+@media (max-width: 759px) { .etat-synchro { position: absolute; top: calc(env(safe-area-inset-top) + 49px); right: 107px; z-index: 2; } }
 .etat-synchro { width: 10px; height: 10px; border-radius: 50%; background: var(--discret); box-shadow: 0 0 0 2px var(--carte); }
 /* Posée sur le bouton de profil : un toucher la traverse et ouvre le profil (l'état reste lu par son texte invisible) */
 .etat-synchro { pointer-events: none; }
@@ -2242,3 +2243,18 @@ label[for] { display: block; margin: 0 0 8px; }
 
 /* Formes des pays (chiffres.js, formesSurfaces) : le trait garde son épaisseur malgré la mise à l'échelle */
 .forme-pays { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+
+/* ===================== Mode sobre (concentration) =====================
+   Accueil réduit à une action, autres activités repliées, séance bornée, fiche sur une colonne */
+.accueil-sobre { max-width: var(--largeur-lecture); margin-left: auto; margin-right: auto; }
+.accueil-sobre .page-titre { margin-bottom: 12px; }
+.autres-activites { max-width: var(--largeur-lecture); margin: 16px auto 0; }
+.autres-activites summary { display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; }
+.autres-activites a { display: inline-flex; align-items: center; min-height: 44px; }
+.arret-seance { min-height: 44px; font-size: 14px; }
+.pause-douce { margin: 0 0 10px; }
+@media (min-width: 1040px) {
+  .fiche-mise-en-page.sans-rail { grid-template-columns: minmax(0, var(--largeur-lecture)); }
+  html.sobre #vue-fiches.large .lien.retour { margin-left: calc((100% - var(--largeur-lecture)) / 2); }
+}
+.quiz-entete { flex-wrap: wrap; gap: 4px 12px; }

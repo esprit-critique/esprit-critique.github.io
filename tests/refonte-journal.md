@@ -603,3 +603,34 @@ Non corrigé, par choix :
 
 Vérifications : banc `progression` 95 / 95 (dont un cas par faille ; sur l'ancien code, ces cas échouent), banc
 `aleatoire` 8 / 8, lancés avec Playwright dans le conteneur ; `noms_globaux`, `securite`, `en/controle` OK.
+
+## Mode sobre devenu mode concentration, lot B (19 novembre 2026, branche `claude/mode-concentration`)
+
+Même clé (`reglages.sobre`) ; un seul champ ajouté, `reglages.pause` (booléen, schéma), sans migration.
+- Libellé : « Mode sobre : l'essentiel, sans points ni distractions (tout continue d'être compté) ». Article du guide
+  `#guide/sobre` (français et anglais), avec seulement les résultats lus dans le résumé de la source (PubMed ou
+  Crossref) : Deci et al. 1999, Stothart et al. 2015, Roediger et Karpicke 2006, Cepeda et al. 2006, Brunmair et
+  Richter 2019, Silverman et Barasch 2023 (JCR 49(6), imprimé en mars 2023, en ligne en 2022), Biwer et al. 2023.
+  Les autres (Leroy, Hanus et Fox, Sundararajan et Adesope, Gollwitzer et Sheeran) : `tests/a-verifier.md`.
+  Pour lire ces sources, un environnement personnel « esprit-critique.github.io » a été créé (Crossref, PubMed).
+- Récompenses cachées : pastilles, moments, bandeau de grade (déjà), ligne de points des bilans (`lignePoints`),
+  records du quiz et des ateliers, « atelier maîtrisé », série de jours, anneau (déjà), objectif du jour et personnage
+  dans les réglages ; profil replié derrière « Voir ma progression » (le temps de la visite).
+- Accueil (`afficherAccueilSobre`) : une action (révisions dues, sinon situation du jour, sinon fiche non lue), puis
+  « Autres activités » replié (`details`).
+- Séance (`lancerSeance`, mode interne « seance » du quiz, jamais écrit dans `modeQuiz`) : révisions dues (10 au
+  plus) puis paires de notions proches, 12 questions au plus ; « S'arrêter ici » ; récapitulatif `bilanSeance` avec
+  « Terminer » et « Choisir un moment pour la prochaine révision » (export agenda existant).
+- Pause : ligne « Une pause de quelques minutes ? » dans le quiz après 25 minutes de visite, désactivable.
+- Animations : `choixAnimations()` (app.js), réduites par défaut en mode sobre sans choix de l'utilisateur. Défaut
+  ancien corrigé au passage : le réglage des animations écrivait une copie de `reglages` lue au chargement, ce qui
+  effaçait un mode sobre activé entre-temps.
+- Fiche sur une colonne (`sans-rail`) ; « Chrono » retiré des filtres du quiz (choix de conception, dit comme tel).
+- Carte de bienvenue : case « Ou bien le mode sobre… », non cochée.
+- Interruptions : les seuls moments (`montrerMoment`) étaient déjà des récompenses, cachées ; les annonces
+  `aria-live` restent.
+
+Vérifications : banc `progression` 104 / 104 (dont neuf contrôles du mode sobre), banc `test` 170 / 170, banc
+`affichage` à 390 px, clair : 0 défaut sur 118 pages, mode sobre compris (accueil, séance, profil, fiche, guide) ;
+les quatre configurations dans l'intégration continue. Captures avant et après (accueil, quiz, fiche, profil ; 390
+clair, 1 280 sombre) envoyées au propriétaire, non versées au dépôt.

@@ -68,7 +68,7 @@ const SCHEMAS_SAUVEGARDE = {
   decisions: ["liste", { id: "id", texte: "texte", creee: "jour", bilan: "jour", bilanFait: "jour", issue: "texte", jugement: "texte" }, 200],
   bilanFormes: ["dico", { jour: "jour", score: "nombre" }, 20],
   grandTest: ["dico", "libre", 1000],
-  reglages: { animations: "texte", sobre: "booleen" },
+  reglages: { animations: "texte", sobre: "booleen", pause: "booleen" },
   fichesLues: ["liste", "fiche", 500],
   maitrise: { jours: ["dico", ["liste", "nombre", 10], 500], meilleure: "nombre", depuis: "jour", grade: "entier" },
   lucidite: { total: "nombre", jours: ["dico", "nombre", 200], compteurs: ["dico", "libre", 200], uniques: ["dico", "nombre", 2000],
