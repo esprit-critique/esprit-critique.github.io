@@ -2369,6 +2369,7 @@ function appliquerAnimations() {
   if (choixAnimations() === "reduites") document.documentElement.dataset.animations = "reduites";
   else delete document.documentElement.dataset.animations;
   document.documentElement.classList.toggle("sobre", modeSobre());
+  document.querySelectorAll(".bouton-sobre").forEach(b => b.setAttribute("aria-pressed", String(modeSobre())));
   document.querySelectorAll("[data-animations-choix]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.animationsChoix === choixAnimations())));
 }
 document.querySelectorAll("[data-animations-choix]").forEach(b => b.addEventListener("click", () => {
@@ -2376,6 +2377,15 @@ document.querySelectorAll("[data-animations-choix]").forEach(b => b.addEventList
   appliquerAnimations();
 }));
 appliquerAnimations();
+// Bouton de l'en-tête : le mode sobre s'active et se quitte de partout, pas seulement depuis le profil. Seules les pages
+// sans partie en cours sont redessinées : redessiner un jeu ou un quiz perdrait la partie (et la compterait abandonnée) ;
+// ailleurs, le changement vaut dès l'écran suivant.
+document.querySelectorAll(".bouton-sobre").forEach(b => b.addEventListener("click", () => {
+  choisirModeSobre(!modeSobre());
+  const vue = location.hash.slice(1).split("/")[0];
+  if (["", "accueil", "profil", "biais", "sophismes", "cartes", "guide", "ateliers"].includes(vue)) { const y = window.scrollY; afficherPage(); window.scrollTo(0, y); }
+  annoncer(modeSobre() ? T("Mode sobre activé : l'essentiel, sans points ni distractions.") : T("Mode sobre quitté."));
+}));
 
 // Point d'entrée unique des animations lancées par script (element.animate n'est pas arrêté par la règle CSS) :
 // rien quand le mouvement doit être réduit. L'appelant pose d'abord l'état final ; l'animation y mène, et cet état
