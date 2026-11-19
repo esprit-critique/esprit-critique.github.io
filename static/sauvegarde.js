@@ -17,7 +17,7 @@ const SAUVEGARDE_BORNES = { texte: 20000, liste: 5000, dico: 5000, profondeur: 1
 
 // Un historique de parties : jour et mesures, chacune facultative
 const SCH_HISTORIQUE = ["liste", "nombre", 100];
-const SCH_PARTIES = { n: "entier", record: "nombre", sur: "nombre", historique: SCH_HISTORIQUE, jour: "jour", reussites90: "entier" };
+const SCH_PARTIES = { n: "entier", record: "nombre", sur: "nombre", historique: SCH_HISTORIQUE, jour: "jour", reussites90: "entier", largeur: "entier" };
 const SCH_MONTY = { garder: "paire", changer: "paire", "!": ["garder", "changer"] };
 
 const SCHEMAS_SAUVEGARDE = {
@@ -75,6 +75,9 @@ const SCHEMAS_SAUVEGARDE = {
     journal: ["liste", ["liste", "libre", 3], 60], rattrapage: "nombre", rattrapageVu: "booleen", cumuls: ["dico", "entier", 20] },
   distinctions: { obtenues: ["liste", "texte", 100], drapeaux: { embleme: "booleen", illusions: ["liste", "texte", 50], secrets: ["liste", "texte", 50] } },
   objectif: "entier",
+  jourMax: "jour",   // plus grand jour vu (aujourdHui, app.js)
+  // Partie d'atelier commencée et pas encore terminée (deroulerNiveaux, niveaux.js)
+  partieEnCours: { id: "id", niveau: "entier", debut: "jour", reponses: "entier", justes: "entier", sur: "entier", "!": ["id", "reponses", "justes", "sur"] },
   profil: { pseudo: "texte", accueilFait: "booleen", personnage: { forme: "texte", genre: "texte", equipement: "texte", fond: "texte" } },
   parcours: { actif: "texte", quiz: ["dico", "booleen", 50] }
 };

@@ -142,6 +142,7 @@ function deroulerNiveaux(zone, options, afficher, bilan) {
   // au lancement : le mélange peut donc avoir fini de tirer sa question quand le joueur répond.
   const melange = MELANGE.actif ? MELANGE.fin : null;
   const n = melange ? 1 : options.n;
+  if (!melange) cloreAbandon();
   let i = 0;
   let niveau = niveauAtelier(id).niveau;
   const resultats = [], niveaux = [];
@@ -149,12 +150,14 @@ function deroulerNiveaux(zone, options, afficher, bilan) {
     zone.replaceChildren();
     if (i >= n) {
       if (melange) return melange(resultats[0], estJuste(resultats[0]));
+      effacer("partieEnCours");
       PARTIES_EN_COURS[id] = { niveaux, justes: resultats.map(estJuste) };
       enregistrerNiveau(id, { parties: niveauAtelier(id).parties + 1 });
       return bilan(resultats);
     }
     if (i === 0 && !melange) {
       zone.appendChild(choixNiveau(id, relancer));
+      zone.appendChild(el("p", "source", "Une partie commencée compte, même quittée avant la fin : les questions restantes comptent alors comme manquées."));
       if (options.avant) options.avant(zone);
     }
     entete(zone, i + 1, n, libelle, niveau);
@@ -162,6 +165,7 @@ function deroulerNiveaux(zone, options, afficher, bilan) {
     niveaux.push(niveau);
     afficher(element, zone, (resultat, conteneur) => {
       resultats.push(resultat);
+      if (!melange) ecrire("partieEnCours", { id, niveau: niveauDePartie(niveaux), debut: aujourdHui(), reponses: resultats.length, justes: resultats.filter(estJuste).length, sur: n });
       niveau = suivreReponse(id, estJuste(resultat));
       const suite = i === n - 1 ? (melange ? "Question suivante" : "Voir le bilan") : "Suivant";
       (conteneur || zone).appendChild(boutonSuivant(suite, () => { i++; etape(); }));
@@ -169,6 +173,17 @@ function deroulerNiveaux(zone, options, afficher, bilan) {
     }, niveau);
   }
   etape();
+}
+
+// Partie quittée avant son bilan (onglet fermé, page rechargée, autre jeu lancé) : elle compte quand même, les questions
+// sans réponse comptant comme manquées. Sinon, quitter dès la première erreur et ne garder que les bonnes parties
+// gonflait la maîtrise. Comptée sans points de lucidité. Appelée au lancement d'une partie et au chargement (app.js).
+function cloreAbandon() {
+  const p = lire("partieEnCours", null);
+  if (!p) return;
+  effacer("partieEnCours");
+  if (!p.id || !(p.sur > 0) || !sauvegardeAteliersConnus().has(p.id)) return;
+  noterPartie(p.id, Math.min(p.justes, p.sur), p.sur, p.niveau || undefined, null, { abandon: true });
 }
 
 // Lignes du bilan : niveau atteint et réponses justes par niveau
@@ -194,10 +209,11 @@ function atelierMaitrise(id) {
 
 // Ateliers dont les questions s'affichent ensemble : enregistre le niveau de la partie et les réponses
 // justes (pour le bilan), puis ajuste le niveau de la partie suivante
-function noterPartieEntiere(id, niveau, justes) {
+// score, sur : la note qui règle le niveau suivant, si ce n'est pas le nombre de réponses justes (fourchettes)
+function noterPartieEntiere(id, niveau, justes, score = justes.filter(Boolean).length, sur = justes.length) {
   PARTIES_EN_COURS[id] = { niveaux: justes.map(() => niveau), justes };
   enregistrerNiveau(id, { parties: niveauAtelier(id).parties + 1 });
-  suivrePartie(id, justes.filter(Boolean).length, justes.length);
+  suivrePartie(id, score, sur);
 }
 
 // ===================== Mode chrono =====================

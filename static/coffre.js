@@ -155,15 +155,18 @@ async function ecrireEtatSynchro(etat) {
 
 // ===================== Horodatages des clés modifiées =====================
 const SYNCHRO = { actif: false, statut: "inactif", minuterie: null, derniere: 0, enCours: null };
+// Clés propres à cet appareil, jamais synchronisées : le plus grand jour vu suit l'horloge de l'appareil (une horloge
+// fausse ailleurs ne doit pas figer celui-ci), et une partie en cours sur un appareil serait comptée deux fois
+const CLES_APPAREIL = ["jourMax", "partieEnCours"];
 // Appelé par ecrire() : seulement quand un compte est actif sur cet appareil
 function noterModification(cle) {
-  if (!SYNCHRO.actif || !CLES_SAUVEGARDE.includes(cle)) return;
+  if (!SYNCHRO.actif || !CLES_SAUVEGARDE.includes(cle) || CLES_APPAREIL.includes(cle)) return;
   const h = lire("horodatages", {});
   h[cle] = Date.now();
   try { localStorage.setItem("horodatages", JSON.stringify(h)); } catch (e) { /* le prochain envoi prendra la valeur par défaut */ }
   planifierSynchro();
 }
-const progressionLocale = () => ({ cles: Object.fromEntries(CLES_SAUVEGARDE.map(c => [c, lire(c, undefined)]).filter(([, v]) => v !== undefined)), horodatages: lire("horodatages", {}) });
+const progressionLocale = () => ({ cles: Object.fromEntries(CLES_SAUVEGARDE.filter(c => !CLES_APPAREIL.includes(c)).map(c => [c, lire(c, undefined)]).filter(([, v]) => v !== undefined)), horodatages: lire("horodatages", {}) });
 
 // ===================== Échanges avec le serveur =====================
 async function requeteSynchro(methode, secrets, corps, version) {
@@ -201,7 +204,7 @@ async function synchroniser() {
         const fusion = remplacement
           ? (l => ({ cles: l.cles, horodatages: Object.fromEntries(Object.keys(l.cles).map(c => [c, Date.now()])) }))(progressionLocale())
           : fusionnerProgressions(progressionLocale(), distant, etat.base);
-        Object.entries(fusion.cles).forEach(([cle, valeur]) => { if (JSON.stringify(valeur) !== JSON.stringify(lire(cle, undefined))) ecrireSansHorodatage(cle, valeur); });
+        Object.entries(fusion.cles).forEach(([cle, valeur]) => { if (!CLES_APPAREIL.includes(cle) && JSON.stringify(valeur) !== JSON.stringify(lire(cle, undefined))) ecrireSansHorodatage(cle, valeur); });
         localStorage.setItem("horodatages", JSON.stringify(fusion.horodatages));
         const envoi = await requeteSynchro("PUT", secrets, { contenu: await chiffrerCoffre(secrets, fusion) }, version);
         if (envoi.status === 409) continue;   // un autre appareil a écrit entre-temps : on relit et l'on refusionne

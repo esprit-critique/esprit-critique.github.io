@@ -122,6 +122,18 @@ mot de passe faible à ralentir, et l'offre gratuite limite le calcul à 10 ms p
 - **Un fichier de sauvegarde exporté est en clair** : il contient les notes saisies ; le visiteur en a la garde.
 - **Les champs non décrits d'une sauvegarde sont gardés**, bornés (profondeur, tailles, types JSON simples), pour ne
   rien perdre d'une donnée légitime ; le code qui les lit doit rester prudent (le banc à données aléatoires le vérifie).
+- **La progression n'est pas protégée contre la triche.** Tout est calculé dans le navigateur : la console,
+  `localStorage` ou un fichier de sauvegarde modifié puis importé (les schémas valident la forme, pas la
+  vraisemblance) permettent d'écrire n'importe quelle maîtrise, distinction ou série. Aucun chiffrement ni signature :
+  il n'y a ni classement ni enjeu, et la clé serait dans le code. La maîtrise n'est donc jamais présentée comme une
+  certification (la fiche à partager le dit). Les règles du système de points (audit de novembre 2026,
+  `tests/refonte-journal.md`) visent le joueur qui optimise ses points en jouant, pas celui qui modifie ses données.
+- **Horloge de l'appareil** : `aujourdHui()` ne revient jamais avant le plus grand jour vu (clé `jourMax`, propre à
+  l'appareil et non synchronisée). Reculer l'horloge ne remet donc à zéro ni les plafonds du jour, ni les cartes du
+  jour, ni la série. Un saut en avant ne se détecte pas hors ligne : il montre à l'avance les éléments du jour visé,
+  mais se paie ensuite, chaque jour réel comptant pour ce seul jour jusqu'à ce que la date le rattrape. Un jour vu à
+  plus d'un an en avant est ignoré, pour qu'une horloge remise à une date absurde ne fige pas le site ; un fichier
+  importé ne change pas ce jour.
 - **Pas de rapport de violation de la CSP** : `report-uri` est ignoré en balise `meta`, et le site n'a pas de serveur.
 - **Synchronisation** : le code est gardé en clair dans IndexedDB (voir plus haut) ; la limitation des créations de
   coffres et des écritures de chaque coffre est approximative (locale à chaque centre de données) ; un abus peut donc

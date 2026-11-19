@@ -12,6 +12,7 @@ EN_AJOUTER([
   ["Niveau {0} ({1}) choisi : il reste fixe.", "Level {0} ({1}) selected: it stays fixed."],
   ["Points : × 1,5 au niveau 2, × 2 au niveau 3, × 2,5 au niveau 4, × 3 au niveau 5.", "Points: ×1.5 at level 2, ×2 at level 3, ×2.5 at level 4, ×3 at level 5."],
   ["Points : × 1,5 au niveau 2, × 2 au niveau 3.", "Points: ×1.5 at level 2, ×2 at level 3."],
+  ["Une partie commencée compte, même quittée avant la fin : les questions restantes comptent alors comme manquées.", "A round once started counts, even if left before the end: the remaining questions then count as missed."],
   ["Partie jouée au niveau {0} ({1}), jusqu'au niveau {2}.", "Game played at level {0} ({1}), up to level {2}."],
   ["Partie jouée au niveau {0} ({1}).", "Game played at level {0} ({1})."],
   ["niveau {0} : {1} / {2}", "level {0}: {1} / {2}"],

@@ -103,3 +103,11 @@ Puis `desert` (Australian Antarctic Division, « Antarctic geography and geology
 Puis `ver` (Rajagopalan et al., In Vitro Cell. Dev. Biol. Anim. 2022, résumé, PMID 35920958 : chez Eudrilus eugeniae, seul le morceau qui garde le clitellum se régénère, les dix premiers segments coupés meurent en général en quatre jours ; Bely, Integr. Comp. Biol. 2006, résumé, PMID 21672762 : régénération de l'arrière presque universelle chez les annélides, de l'avant moins répandue ; « seules quelques espèces » corrigé), `robot` (ministère tchèque des Affaires étrangères, page de l'ambassade à Copenhague, 2021, et texte de Jaroslav Veis publié par l'ambassade à Erevan : premier emploi dans R.U.R., publiée en novembre 1920, mot soufflé par Josef Čapek ; l'étymologie robota, « travail forcé », absente des pages lues, retirée) et `bebe-os` (Hsu, Chen et Chen, Int. J. Mol. Sci. 2024, texte intégral sur PMC : environ 270 os chez le nourrisson, 206 chez l'adulte ; simple mention dans une revue sur l'ostéoporose, faute d'avoir trouvé une source d'anatomie lisible). À vérifier à la main : `colomb`, Jeffrey Burton Russell, « Inventing the Flat Earth », History Today (https://www.historytoday.com/archive/inventing-flat-earth, refus 403 ; l'exposition « 1492: An Ongoing Voyage » de la Library of Congress, lue, ne traite pas la question) ; `fuseaux`, aucune page officielle française donnant le nombre de fuseaux horaires de la France n'a été trouvée (piste : décrets fixant l'heure légale de chaque territoire, sur Légifrance).
 
 Restent sourcées sur Wikipédia (2), à reprendre une à une sur la source primaire : `colomb`, `fuseaux`.
+
+## Loi de Goodhart, formulation de Strathern (audit des points, 19 novembre 2026)
+
+Non affichée : la formulation « lorsqu'une mesure devient un objectif, elle cesse d'être une bonne mesure » est
+attribuée à Marilyn Strathern, « “Improving ratings”: audit in the British University system », *European Review*,
+5(3), 305-321, 1997 (référence vérifiée sur Cambridge Core et RePEc). La phrase elle-même n'a pas pu être lue dans
+l'article : les copies en ligne (gwern.net, archive.org) n'étaient pas accessibles depuis la session. Le guide dit
+seulement « ce qu'on appelle la loi de Goodhart », sans citation ni date. À ajouter avec la page de l'article lue.

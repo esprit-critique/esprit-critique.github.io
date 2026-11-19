@@ -1097,7 +1097,7 @@ EXPERIENCES.push(
           "Un ton vif, une affirmation discutable ou l'avis d'un expert compétent ne sont pas des sophismes. Et une conclusion n'est pas fausse parce qu'elle a été mal défendue."
         ], [["#sophismes/sophisme-sophisme", "Sophisme du sophisme"], ["#guide/debattre", "Débattre honnêtement"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "debat-truque").lancer(zone), "Un autre débat");
-      }, "Réplique");
+      }, "Réplique", { id: "debat-truque", points: r => r && r.sophisme === r.alerte ? 1 : 0 });
     }
   },
   // ---------------------------------------------------------------
@@ -1321,7 +1321,7 @@ EXPERIENCES.push(
           "L'homme d'acier va plus loin : discuter la meilleure version d'une position. Si elle résiste, on a appris quelque chose ; si elle tombe, la critique est solide."
         ], [["#guide/debattre", "Débattre honnêtement (règles de Rapoport)"], ["#sophismes/homme-de-paille", "Homme de paille"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(e => e.id === "reformuler").lancer(zone));
-      }, "Position");
+      }, "Position", { id: "reformuler", points: r => Number(r) || 0, max: 2 });
     }
   },
   // ---------------------------------------------------------------

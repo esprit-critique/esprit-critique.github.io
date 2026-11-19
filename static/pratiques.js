@@ -190,7 +190,7 @@ EXPERIENCES.push(
           "L'histoire des avions est attribuée au statisticien Abraham Wald, qui travaillait pour l'armée américaine. L'idée est fondée, mais l'anecdote a été enjolivée : ses mémorandums ne font aucune recommandation de blindage, et aucun croquis d'avion de sa main n'est connu (Feature Column de l'American Mathematical Society, 2016)."
         ], [["#biais/survivant", "Biais du survivant"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(x => x.id === "wald").lancer(zone));
-      }, "Situation");
+      }, "Situation", { id: "wald" });
     }
   },
   // ---------------------------------------------------------------
@@ -640,7 +640,7 @@ EXPERIENCES.push(
           "Mais contester un résultat solidement établi, c'est affirmer quelque chose à son tour : il faut alors dire pourquoi les preuves existantes seraient fausses. Et pour une affaire de goût, il n'y a rien à prouver, seulement des raisons à échanger."
         ], [["#sophismes/ignorance", "Appel à l'ignorance"], ["#guide/philosophie", "Outils philosophiques"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(x => x.id === "qui-prouve").lancer(zone));
-      }, "Situation");
+      }, "Situation", { id: "qui-prouve" });
     }
   },
   // ---------------------------------------------------------------
@@ -683,7 +683,7 @@ EXPERIENCES.push(
           "Une réponse vive peut être une bonne réfutation, et une réponse polie, une esquive : c'est le contenu qui compte, pas le ton."
         ], [["#sophismes/ad-hominem", "Attaque personnelle"], ["#sophismes/hareng-rouge", "Diversion"], ["#guide/debattre", "Débattre honnêtement"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(x => x.id === "pyramide").lancer(zone));
-      }, "Réponse");
+      }, "Réponse", { id: "pyramide" });
     }
   },
   // ---------------------------------------------------------------
@@ -1071,7 +1071,7 @@ EXPERIENCES.push(
           "Dessiner l'arbre permet de voir ce qui porte la conclusion. On peut alors vérifier chaque raison, repérer une objection restée sans réponse, et écarter ce qui ne fait que remplir le texte."
         ], [["#sophismes/hareng-rouge", "Hareng rouge"], ["#sophismes/homme-de-paille", "Homme de paille"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(x => x.id === "demonter").lancer(zone), "Un autre argument");
-      }, "Phrase");
+      }, "Phrase", { id: "demonter" });
     }
   }
 );
@@ -1224,7 +1224,7 @@ EXPERIENCES.push(
           "La question utile n'est pas « ce site a-t-il l'air sérieux ? » mais « que disent de lui des sources indépendantes ? » : qui le finance, qui l'écrit, que vaut ce qu'il avance ailleurs."
         ], [["#biais/halo", "Effet de halo"], ["#sophismes/autorite", "Argument d'autorité"]]);
         boutonRejouer(zone, () => EXPERIENCES.find(x => x.id === "laterale").lancer(zone), "D'autres sites");
-      }, "Site");
+      }, "Site", { id: "laterale", points: r => r && r.juste ? 1 : 0 });
     }
   }
 );

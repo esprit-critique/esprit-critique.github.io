@@ -1183,7 +1183,7 @@ function atelierDouterJuste(zone) {
     afficherScore(zone, "douter-juste", justes, resultats.length);
     ajouterExplication(zone, "Douter juste", [MESSAGE_SUR_CORRECTION, "Chaque situation était construite pour que la preuve permette de conclure, ou pour que la règle apprise ne s'applique plus. Rejeter par principe est une erreur aussi."], [["#sophismes/sophisme-sophisme", "Fiche : sophisme du sophisme"]]);
     boutonRejouer(zone, () => atelierDouterJuste(zone));
-  });
+  }, undefined, { id: "douter-juste" });
 }
 
 

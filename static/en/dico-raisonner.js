@@ -319,6 +319,7 @@ EN_AJOUTER([
   ["Probabilité : {0} %", "Probability: {0}%"],
   ["Échéance", "Deadline"],
   ["Ajouter au carnet", "Add to the log"],
+  ["Échéance dans {0} jours au moins", "Due date at least {0} days away"],
   ["Complétez les « … » d'un modèle. Pas d'actualité préenregistrée : elle serait vite périmée.", "Fill in the “…” of a template. No pre-recorded news: it would soon be out of date."],
   ["À résoudre", "To resolve"],
   ["Échéance : {0}", "Deadline: {0}"],

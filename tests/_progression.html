@@ -26,14 +26,18 @@ f.onload = async () => {
     ok("table des jeux : domaines, types et parts de hasard valides", Object.values(MJ).every(([d, t, c]) => ["monde", "confiance", "perception", "raisonner", "debattre", "melange"].includes(d) && ["note", "mesure", "aucun"].includes(t) && c >= 0 && c < 1));
 
     // ---------- Maîtrise d'un jeu noté ----------
-    const noteNiveau = (L, reussite, parties = 3) => ({ niveaux: { [L]: { n: parties, sur: 20, historique: Array(parties).fill(20 * reussite) } } });
+    const noteNiveau = (L, reussite, parties = 5) => ({ niveaux: { [L]: { n: parties, sur: 20, historique: Array(parties).fill(20 * reussite) } } });
     const mN = (r, c) => Math.round(ev("maitriseNotee")(r, c));
     ok("jeu noté : 85 % à quatre réponses donne 400 / 600 / 800 aux niveaux 1, 2, 3", mN(noteNiveau(1, 0.85), 0.25) === 400 && mN(noteNiveau(2, 0.85), 0.25) === 600 && mN(noteNiveau(3, 0.85), 0.25) === 800,
       [1, 2, 3].map(L => mN(noteNiveau(L, 0.85), 0.25)).join(" / "));
-    ok("jeu noté : une seule partie compte pour un tiers", mN(noteNiveau(1, 0.85, 1), 0.25) === 133);
+    ok("jeu noté : une seule partie compte pour un cinquième", mN(noteNiveau(1, 0.85, 1), 0.25) === 80);
     ok("jeu noté : répondre au hasard donne 0", mN(noteNiveau(2, 0.25), 0.25) === 0 && mN(noteNiveau(2, 0.5), 0.5) === 0);
     ok("jeu noté : la meilleure valeur des niveaux est gardée", mN({ niveaux: { 1: noteNiveau(1, 1).niveaux[1], 3: noteNiveau(3, 0.4).niveaux[3] } }, 0.25) === 500);
-    ok("jeu noté : une partie à 100 % au niveau 3 sur trois parties donne 1 000", mN(noteNiveau(3, 1), 0) === 1000);
+    ok("jeu noté : 100 % au niveau 3 sur cinq parties donne 1 000", mN(noteNiveau(3, 1), 0) === 1000);
+    // Audit A6 : trois parties chanceuses au plus haut niveau ne fixent plus la maîtrise (600 et non 1 000), et la
+    // moyenne porte sur les dix dernières parties
+    ok("audit A6 : trois parties parfaites au niveau 3 donnent 600 (pleine confiance à cinq parties)", mN(noteNiveau(3, 1, 3), 0) === 600, String(mN(noteNiveau(3, 1, 3), 0)));
+    ok("audit A6 : la moyenne porte sur les dix dernières parties", mN({ niveaux: { 3: { n: 10, sur: 10, historique: [0, 0, 0, 0, 0, 10, 10, 10, 10, 10] } } }, 0) === 500);
     // Plafonds proportionnels à la difficulté : 500 au niveau 1, 1 000 au plus haut niveau de l'atelier (3 ou 5)
     const pl = ev("plafondNiveau");
     ok("plafonds : 500 / 750 / 1 000 (trois niveaux), 500 / 625 / 750 / 875 / 1 000 (cinq niveaux)",
@@ -44,15 +48,46 @@ f.onload = async () => {
     // Mesures particulières
     const vide = { aujourdhui: 20000 };
     ok("mesures : ancrage nul sur trois parties → 1 000 ; effet de 50 % → 0", Math.round(ev("MESURES").ancre({ ancrages: [1, 2, 3].map(() => ({ h: 1, b: 1 })) })) === 1000 && Math.round(ev("MESURES").ancre({ ancrages: [1, 2, 3].map(() => ({ h: 1.5, b: 1 })) })) === 0);
-    ok("mesures : prévisions parfaites (10) → 1 000 ; toujours 50 % → 0", Math.round(ev("MESURES").carnet({ previsions: Array(10).fill({ p: 1, issue: true }) })) === 1000 && Math.round(ev("MESURES").carnet({ previsions: Array(10).fill({ p: 0.5, issue: true }) })) === 0);
-    ok("mesures : étalonnage parfait sur 40 réponses → 1 000", Math.round(ev("maitriseEtalonnage")({ confiance: { 50: [20, 10], 90: [20, 18] } })) === 1000);
+    // Audit A2 : le carnet (issue indiquée par le joueur) sort de la maîtrise ; « Prévisionniste » demande des
+    // prévisions faites sept jours à l'avance au moins, sur cinq jours différents (issues « oui » / « non » du carnet)
+    ok("audit A2 : le carnet ne compte pas dans la maîtrise", MJ.carnet[1] === "aucun" && ev("maitriseJeu")("carnet", { previsions: Array(10).fill({ p: 95, issue: "oui", creee: 100, echeance: 100 }) }) === 0);
+    const prev = (ecart, jours) => Array.from({ length: 10 }, (_, k) => ({ id: "p" + k, texte: "x", p: 90, issue: "oui", creee: 100 + (k % jours), echeance: 100 + (k % jours) + ecart }));
+    const prevOk = l => ev("distinctionsObtenues")({ previsions: l, ateliers: [], aujourdhui: 200, categorieDe: () => "" }).includes("previsionniste");
+    ok("audit A2 : « Prévisionniste » refusé pour des prévisions du jour même, ou faites en un seul jour ; accordé sinon", !prevOk(prev(0, 5)) && !prevOk(prev(7, 1)) && prevOk(prev(7, 5)));
+    // Audit A4 : étalonnage par le score de Brier ; annoncer 50 % partout et répondre au hasard ne rapporte plus rien
+    ok("audit A4 : « 50 % » partout avec moitié de réussite → 0 (l'ancien écart donnait 1 000)", Math.round(ev("maitriseEtalonnage")({ confiance: { 50: [40, 20] } })) === 0);
+    ok("audit A4 : 99 % et toujours juste sur 40 réponses → 1 000 ; se tromper exprès en annonçant 70 % fait baisser", Math.round(ev("maitriseEtalonnage")({ confiance: { 99: [40, 40] } })) === 1000
+      && ev("maitriseEtalonnage")({ confiance: { 70: [40, 28] } }) > ev("maitriseEtalonnage")({ confiance: { 70: [40, 20] } }));
+    ok("audit A4 : « Je sais que je ne sais pas » demande aussi 85 % de réussite quand on est sûr", (() => {
+      const o = c => ev("distinctionsObtenues")({ certitudes: c, ateliers: [], aujourdhui: 100, categorieDe: () => "" }).includes("je-sais");
+      return !o({ hasard: [25, 5] }) && !o({ hasard: [25, 5], sur: [20, 10] }) && o({ hasard: [25, 5], sur: [20, 18] });
+    })());
+    // Audit A3 : fourchettes notées par le score de fourchette ; des fourchettes immenses ne rapportent rien
+    const sf = (v, b, h) => ev("scoreFourchette")({ v, unite: "km" }, b, h, 0.1);
+    ok("audit A3 : fourchettes de 0 à 10¹² → note 0 ; justes d'un facteur 4 → 8 ; d'un facteur 10 → 7", ev("noteFourchettes")([sf(1e6, 0, 1e12)]) === 0
+      && ev("noteFourchettes")([sf(1e6, 5e5, 2e6)]) === 8 && ev("noteFourchettes")([sf(1e6, 5e5, 5e6)]) === 7);
+    const intervallesAnciens = { intervalles: { n: 5, sur: 10, niveaux: { 3: { n: 5, sur: 10, historique: [10, 10, 10, 10, 10] } } } };
+    const intervallesNotes = { intervalles: { n: 5, sur: 10, niveaux: { 3: { n: 5, sur: 10, largeur: 1, historique: [7, 7, 7, 7, 7] } } } };
+    ok("audit A3 : les anciennes parties, notées au nombre de fourchettes justes, ne comptent plus ; les nouvelles oui",
+      ev("maitriseJeu")("intervalles", { resultatsAteliers: intervallesAnciens }) === 0 && Math.round(ev("maitriseJeu")("intervalles", { resultatsAteliers: intervallesNotes })) === 700);
+    ok("audit A3 : « Fourchettes honnêtes » demande aussi 300 de maîtrise aux fourchettes", (() => {
+      const o = r => ev("distinctionsObtenues")({ fourchettes: [30, 27], resultatsAteliers: r, ateliers: [], aujourdhui: 100, categorieDe: () => "" }).includes("fourchettes");
+      return !o(intervallesAnciens) && o(intervallesNotes);
+    })());
     // Domaines : un jeu jamais joué compte pour zéro
     const m1 = ev("maitrises")({ resultatsAteliers: { monde: noteNiveau(3, 1) } }, ateliers, 90);
     const jeuxMonde = Object.values(m1.jeux).filter(([d]) => d === "monde").length;
     ok("domaines : un seul jeu parfait sur " + jeuxMonde + " dans « le monde en chiffres » donne 1 000 / " + jeuxMonde, m1.domaines.monde === Math.round(1000 / jeuxMonde), String(m1.domaines.monde));
     ok("domaines : six domaines, maîtrise globale = leur moyenne", Object.keys(m1.domaines).length === 6 && m1.globale === Math.round(Object.values(m1.domaines).reduce((s, x) => s + x, 0) / 6));
     ok("notions : 90 notions en boîte 5 donnent 800 sans duels", ev("maitriseNotions")({ memoire: Object.fromEntries(Array.from({ length: 90 }, (_, k) => ["x" + k, { b: 5 }])) }, 90) === 800);
-    const gt = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { A: { valeur: 1, n: 20 }, B: { valeur: 0.25, n: 20 }, E: { valeur: 0, n: 30 }, F: { valeur: 0.9, n: 10 } } }] } });
+    const gt = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { A: { valeur: 1, n: 20 }, B: { valeur: 0.25, n: 20 }, E: { valeur: 0, n: 30, brier: 0 }, F: { valeur: 0.9, n: 10 } } }] } });
+    // Axe E : score de Brier ; un écart nul obtenu en se trompant exprès (Brier 0,25) ne rapporte rien
+    const gtE = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { E: { valeur: 0, n: 30, brier: 0.25 } } }] } });
+    const gtAncien = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", scores: { E: { valeur: 0, n: 30 } } }] } });
+    ok("Grand test, axe E : Brier de 0,25 → 0 malgré un écart nul ; un ancien test sans Brier ne compte pas pour E", gtE.E[1] === 0 && !gtAncien.E, JSON.stringify([gtE, gtAncien]));
+    // Audit A9 : un Grand test refait sur des items déjà vus ne compte pas
+    const gtVu = ev("maitriseGrandTest")({ grandTest: { historiqueTests: [{ mode: "complet", dateFin: "2026-11-01T00:00:00Z", instances: [{ dejaVu: true }, { dejaVu: true }, { dejaVu: false }], scores: { A: { valeur: 1, n: 20 } } }] } });
+    ok("audit A9 : Grand test dont la plupart des items étaient déjà vus : ignoré", Object.keys(gtVu).length === 0, JSON.stringify(gtVu));
     ok("Grand test : ses axes comptent dans les domaines (A parfait → 1 000, B au hasard → 0, E sans excès → 1 000, F exclu)", gt.A[1] === 1000 && gt.B[1] === 0 && gt.E[1] === 1000 && !gt.F && gt.A[0] === "raisonner", JSON.stringify(gt));
 
     // ---------- Grades ----------
@@ -62,6 +97,13 @@ f.onload = async () => {
     photo = ev("photographier")(photo, 100, { globale: 300, domaines: {} });
     photo = ev("photographier")(photo, 101, { globale: 200, domaines: {} });
     ok("photographie : un grade acquis ne se perd pas (meilleure maîtrise gardée)", photo.meilleure === 300 && photo.jours[101][0] === 200 && photo.depuis === 100);
+    // Audit A6 : la meilleure maîtrise est le minimum des trois derniers jours photographiés
+    let lisse = ev("photographier")(null, 10, { globale: 100, domaines: {} });
+    lisse = ev("photographier")(lisse, 11, { globale: 900, domaines: {} });
+    const pic = lisse.meilleure;
+    lisse = ev("photographier")(lisse, 12, { globale: 900, domaines: {} });
+    lisse = ev("photographier")(lisse, 13, { globale: 900, domaines: {} });
+    ok("audit A6 : un pic d'un jour ne fixe pas la meilleure maîtrise (100), trois jours de suite oui (900)", pic === 100 && lisse.meilleure === 900, pic + " / " + lisse.meilleure);
     // Distinctions secrètes : chaque secret noté dans drapeaux.secrets donne la sienne ; « Bilingue » demande les deux langues
     const obtenuesAvec = secrets => ev("distinctionsObtenues")({ drapeaux: { secrets }, ateliers: [], aujourdhui: 100, categorieDe: () => "" });
     const tous = ["chercheur", "noctambule", "langue-fr", "langue-en", "sesame", "vendredi-13", "oeil-de-lynx", "cryptographe"];
@@ -71,6 +113,19 @@ f.onload = async () => {
       obtenuesAvec(tous).join(", "));
     for (let j = 0; j < 450; j++) photo = ev("photographier")(photo, 200 + j, { globale: 10, domaines: {} });
     ok("photographie : 400 jours au plus", Object.keys(photo.jours).length === 400);
+
+    // ---------- Révision espacée (audit A1) ----------
+    const L = (m, juste, jour, cert = "sur") => ev("reponseLeitner")(m, juste, cert, jour, [0, 1, 3, 7, 14, 30]);
+    let mem = null;
+    for (let k = 0; k < 5; k++) mem = L(mem, true, 500).m;
+    ok("audit A1 : cinq bonnes réponses le même jour → boîte 1 (et non 5), échéance inchangée", mem.b === 1 && mem.n === 5 && mem.j === 5 && mem.d === 501, JSON.stringify(mem));
+    const due = L(mem, true, 501);
+    ok("audit A1 : bonne réponse à une révision due → boîte suivante, échéance repoussée", due.due && due.monte && due.m.b === 2 && due.m.d === 504);
+    const tot = L({ b: 4, d: 520, n: 6, j: 6 }, true, 505);
+    ok("audit A1 : bonne réponse anticipée → ni montée ni nouvelle échéance", !tot.due && !tot.monte && tot.m.b === 4 && tot.m.d === 520 && tot.m.j === 7);
+    const faux = L({ b: 4, d: 520, n: 6, j: 6 }, false, 505);
+    ok("audit A1 : une erreur, même anticipée, ramène en boîte 1, révision le lendemain", faux.m.b === 1 && faux.m.d === 506);
+    ok("audit A1 : « au hasard » juste et due → pas de montée", L({ b: 2, d: 505, n: 3, j: 3 }, true, 505, "hasard").m.b === 2);
 
     // ---------- Barème et seuils d'étalonnage ----------
     const bascules = bareme => {
@@ -113,6 +168,14 @@ f.onload = async () => {
     [e, p] = gain(e, "fiche-lue", 0, 5, "biais:ancrage"); const l1 = p;
     [e, p] = gain(e, "fiche-lue", 0, 9, "biais:ancrage");
     ok("plafond : une fiche lue rapporte une seule fois", l1 === 2 && p === 0);
+    // Audit A8 : plafonds ajoutés
+    const chrono = [];
+    for (let k = 0; k < 4; k++) { [e, p] = gain(e, "chrono", 20, 30, "quiz"); chrono.push(p); }
+    ok("audit A8 : chrono, trois parties payées par jour (40, 40, 40, 0)", chrono.join() === "40,40,40,0", chrono.join());
+    [e, p] = gain(e, "atelier-sans-note", 0, 31, "bingo"); const s1 = p;
+    [e, p] = gain(e, "atelier-sans-note", 0, 32, "bingo");
+    ok("audit A8 : un atelier sans note ne rapporte qu'une fois (8 puis 0 le lendemain)", s1 === 8 && p === 0);
+    ok("audit A8 : durée de lecture minimale, 15 s pour 1 000 caractères", ev("dureeLectureMin")(1000) === 15000 && ev("dureeLectureMin")(0) === 0);
     [e, p] = gain(e, "grand-test", "complet", 10, "complet"); const t1 = p;
     [e, p] = gain(e, "grand-test", "complet", 20, "complet"); const t2 = p;
     [e, p] = gain(e, "grand-test", "complet", 41, "complet");
@@ -139,8 +202,12 @@ f.onload = async () => {
     ok("distinctions : aucune sans données", obt({}).length === 0, obt({}).join());
     ok("distinctions : Premier doute, Régulier, Bien étalonné, Sans ancre, Sur le terrain", ["premier-doute", "regulier", "bien-etalonne", "sans-ancre", "sur-le-terrain"].every(id => obt({
       memoire: Object.fromEntries(Array.from({ length: 10 }, (_, k) => ["k" + k, { b: 1 }])), activite: [94, 95, 96, 97, 98, 99, 100],
-      certitudes: { sur: [40, 36], hasard: [10, 4] }, ancrages: [{ h: 1, b: 1 }, { h: 1.05, b: 1 }, { h: 1, b: 1.02 }], reperages: Array(10).fill({ cle: "a" })
+      certitudes: { sur: [40, 36], hasard: [10, 4] }, ancrages: [{ h: 1, b: 1 }, { h: 1.05, b: 1 }, { h: 1, b: 1.02 }], reperages: Array.from({ length: 10 }, (_, k) => ({ cle: "a", j: 90 + (k % 5) }))
     }).includes(id)));
+    ok("audit A8 : « Sur le terrain » et « Naturaliste » refusés pour des repérages faits en un seul jour", (() => {
+      const l = obt({ reperages: Array.from({ length: 10 }, (_, k) => ({ cle: "c" + k, j: 90 })) });
+      return !l.includes("sur-le-terrain") && !l.includes("naturaliste") && obt({ reperages: Array.from({ length: 10 }, (_, k) => ({ cle: "c" + k, j: 90 + (k % 5) })) }).includes("naturaliste");
+    })());
     ok("distinctions : les secrètes (emblème, huit illusions)", obt({ drapeaux: { embleme: true, illusions: ["a", "b", "c", "d", "e", "f", "g", "h"] } }).join() === "apparences,demonteur");
     ok("distinctions : une condition qui échoue sur des données inattendues n'arrête rien", Array.isArray(obt({ certitudes: "x", fourchettes: null, previsions: [null] })));
 
@@ -158,11 +225,9 @@ f.onload = async () => {
       let meilleure = 0;
       const delais = {};
       for (let jour = 1; jour <= 180; jour++) {
-        cles.slice(((jour - 1) * 10) % 90, ((jour - 1) * 10) % 90 + 10).forEach(c => {
-          const m = memoire[c] || { b: 0 };
-          m.b = alea() < p ? Math.min(5, m.b + 1) : 1;
-          memoire[c] = m;
-        });
+        // Une série de dix notions : les révisions dues d'abord, puis des notions nouvelles (règle de Leitner)
+        const dues = cles.filter(c => memoire[c] && memoire[c].d <= jour), nouvelles = cles.filter(c => !memoire[c]);
+        [...dues, ...nouvelles].slice(0, 10).forEach(c => { memoire[c] = ev("reponseLeitner")(memoire[c], alea() < p, "sur", jour, [0, 1, 3, 7, 14, 30]).m; });
         for (let k = 0; k < 1 + (jour % 2); k++) {
           const id = notes[Math.floor(alea() * notes.length)], c = MJ[id][2];
           const L = p > 0.85 && jour > 20 ? 3 : p > 0.7 && jour > 10 ? 2 : 1;
@@ -220,6 +285,52 @@ f.onload = async () => {
       refuse.forme[0] === "humain" && refuse.genre[0] === "neutre" && refuse.equipement[0] === "" && accepte.forme[0] === "robot" && accepte.equipement[0] === "plume");
     w.localStorage.setItem("profil", profilAvant || "{}");
     if (distAvant) w.localStorage.setItem("distinctions", distAvant); else w.localStorage.removeItem("distinctions");
+
+    // ---------- Audit A5 : partie quittée avant la fin ----------
+    const resAvant = w.localStorage.getItem("resultatsAteliers");
+    w.localStorage.setItem("resultatsAteliers", "{}");
+    w.localStorage.setItem("partieEnCours", JSON.stringify({ id: "monde", niveau: 2, debut: w.aujourdHui(), reponses: 3, justes: 3, sur: 10 }));
+    const lucA5 = JSON.parse(w.localStorage.getItem("lucidite")).total;
+    w.cloreAbandon();
+    await pause(50);
+    const monde = (JSON.parse(w.localStorage.getItem("resultatsAteliers")).monde || { niveaux: {} }).niveaux[2];
+    ok("audit A5 : une partie quittée après trois bonnes réponses compte 3 / 10, sans points, et la clé est effacée",
+      !!monde && monde.historique.join() === "3" && monde.sur === 10 && w.localStorage.getItem("partieEnCours") === null && JSON.parse(w.localStorage.getItem("lucidite")).total === lucA5, JSON.stringify(monde));
+    w.location.hash = "chiffres/monde";
+    await pause(300);
+    const choixMonde = d2.querySelector("#vue-chiffres .choix:not(:disabled)");
+    if (choixMonde) choixMonde.click();
+    await pause(50);
+    const enCours = JSON.parse(w.localStorage.getItem("partieEnCours") || "null");
+    ok("audit A5 : dès la première réponse, la partie en cours est enregistrée ; l'écran de jeu le dit", !!enCours && enCours.id === "monde" && enCours.reponses === 1
+      && /quittée avant la fin|left before the end/.test(d2.querySelector("#vue-chiffres").textContent), JSON.stringify(enCours));
+    // Jeux déroulés par derouler() qui corrigent chaque réponse (ici « Qui doit prouver ? ») : même suivi
+    w.localStorage.removeItem("partieEnCours");
+    w.location.hash = "tests/qui-prouve";
+    await pause(300);
+    const choixQP = d2.querySelector("#vue-tests .choix:not(:disabled), #vue-tests button.choix");
+    if (choixQP) choixQP.click();
+    await pause(50);
+    const enCoursQP = JSON.parse(w.localStorage.getItem("partieEnCours") || "null");
+    ok("audit A5 : « Qui doit prouver ? » (derouler) enregistre aussi la partie en cours", !!enCoursQP && enCoursQP.id === "qui-prouve" && enCoursQP.reponses === 1 && enCoursQP.sur === 10, JSON.stringify(enCoursQP));
+    w.localStorage.removeItem("partieEnCours");
+    if (resAvant) w.localStorage.setItem("resultatsAteliers", resAvant);
+
+    // ---------- Audit A7 : horloge de l'appareil reculée ----------
+    const jourReel = w.jourAppareil();
+    w.localStorage.setItem("jourMax", String(jourReel + 3));
+    const lucA7 = JSON.parse(w.localStorage.getItem("lucidite")).total;
+    const gainRecul = w.gagner("trois-cartes", 0);
+    ok("audit A7 : horloge reculée sous le plus grand jour vu → le site reste sur ce jour, aucun gain", w.aujourdHui() === jourReel + 3 && gainRecul === 0 && JSON.parse(w.localStorage.getItem("lucidite")).total === lucA7);
+    w.localStorage.setItem("jourMax", String(jourReel + 400));
+    ok("audit A7 : un jour vu à plus d'un an en avant est ignoré", w.aujourdHui() === jourReel && JSON.parse(w.localStorage.getItem("jourMax")) === jourReel);
+
+    // ---------- Audit A10 : Noctambule ne récompense plus le jeu nocturne ----------
+    const boutonSombre = d2.querySelector('[data-theme-choix="dark"]');
+    if (boutonSombre) boutonSombre.click();
+    ok("audit A10 : « Noctambule » s'obtient en choisissant le thème sombre", !!boutonSombre && (JSON.parse(w.localStorage.getItem("distinctions")).drapeaux.secrets || []).includes("noctambule"));
+    const boutonAuto = d2.querySelector('[data-theme-choix="auto"]');
+    if (boutonAuto) boutonAuto.click();
 
     // ---------- Parcours (parcours.js, lot 5) ----------
     const PARC = ev("PARCOURS");

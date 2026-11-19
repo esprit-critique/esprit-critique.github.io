@@ -787,9 +787,15 @@ const JEUX = [
         const moyenneCout = couts.reduce((a, b) => a + b, 0) / couts.length;
         const dedans50 = double ? questions.filter((q, k) => q.v >= cinquante[k][0] && q.v <= cinquante[k][1]).length : null;
         const couts50 = double ? questions.map((q, k) => scoreFourchette(q, cinquante[k][0], cinquante[k][1], 0.5)) : null;
-        noterPartieEntiere("intervalles", niveau, questions.map((q, k) => q.v >= reponses[k][0] && q.v <= reponses[k][1]));
-        afficherScore(zone, "intervalles", dedans, questions.length);
-        zone.appendChild(paragraphe(dedans >= 8
+        // Note de la partie (progression.js) : le score de fourchette, qui pénalise la largeur autant que l'erreur ;
+        // c'est elle qui compte pour le niveau et la maîtrise, pas le nombre de fourchettes justes
+        const note = noteFourchettes(couts);
+        noterPartieEntiere("intervalles", niveau, questions.map((q, k) => q.v >= reponses[k][0] && q.v <= reponses[k][1]), note, 10);
+        afficherScore(zone, "intervalles", note, 10, undefined, { largeur: true });
+        zone.appendChild(el("p", "verdict", T("Fourchettes justes : {0} sur {1}. La note sur 10 vient du score de fourchette : une fourchette juste mais immense ne rapporte rien.", dedans, questions.length)));
+        zone.appendChild(paragraphe(dedans >= 8 && note <= 3
+          ? "Vos fourchettes contiennent presque toutes la bonne réponse, mais elles sont très larges : vous pouvez les resserrer sans perdre en justesse."
+          : dedans >= 8
           ? "Votre étalonnage est bon : vos fourchettes reflètent correctement votre incertitude."
           : "Vos fourchettes étaient trop étroites : vous étiez plus sûr de vous que vos connaissances ne le justifiaient."));
         zone.appendChild(el("p", "verdict", T("Score de fourchette : {0} (plus il est bas, mieux c'est)", fr(Number(moyenneCout.toFixed(2))))));
