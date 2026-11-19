@@ -1716,7 +1716,11 @@ function afficherQuiz() {
 function afficherBilan(zone) {
   const n = quiz.serie.length;
   // Une seule fois par série : un réaffichage du bilan ne redonne pas de points
-  if (!quiz.pointsDonnes) { quiz.pointsDonnes = true; gagner("quiz", totalSerie(quiz.points || []), String(Date.now())); }
+  if (!quiz.pointsDonnes) {
+    quiz.pointsDonnes = true;
+    quiz.bloque = gainBloque(lire("lucidite", {}), "quiz", aujourdHui());
+    quiz.pointsGagnes = gagner("quiz", totalSerie(quiz.points || []), String(Date.now()));
+  }
   const ratees = quiz.serie.filter(q => q.reponse !== q.fiche);
   const records = lire("records", {});
   const ancien = records[quiz.mode];
@@ -1729,6 +1733,8 @@ function afficherBilan(zone) {
   carte.style.setProperty("--c", "#2a8a5c");
   carte.appendChild(avecPersonnage(el("p", "consigne", quiz.mode === "reviser" ? "Bilan de la révision" : "Bilan de la série"), el("p", "reaction", reactionBilan(n ? quiz.bonnes / n : 0))));
   carte.appendChild(el("p", "grand-score", quiz.bonnes + " / " + n));
+  const lignePts = lignePoints(quiz.pointsGagnes, quiz.bloque, "100 points de quiz par jour au plus.");
+  if (lignePts) carte.appendChild(lignePts);
   // Votre score face au hasard (pas pour la réponse libre : rien à deviner)
   if (quiz.mode !== "libre" && !modeSobre()) carte.appendChild(blocFaceAuHasard(quiz.bonnes, n, quiz.mode === "proches" ? 0.5 : 0.25));
 
