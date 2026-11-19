@@ -349,11 +349,11 @@ f.onload = async () => {
     // Le temps virtuel n'avance pas toujours les transitions dans le cadre : on les mène à leur fin, puis on lit l'état final
     d.getAnimations().forEach(a => a.finish());
     const leurre = illusion.querySelector(".leurre"), repere = illusion.querySelector(".repere, .repere-forme, .repere-plein");
-    // Kanizsa et Jastrow n'ont pas de leurre (la révélation ajoute un repère sans rien effacer) : le test ne doit pas
-    // dépendre de l'illusion que la date a tirée
+    // Kanizsa et Jastrow n'ont pas de leurre (la révélation ajoute un repère sans rien effacer), Zöllner, Hering et le mur
+    // du café pas de repère (la révélation efface les leurres) : le test ne doit pas dépendre de l'illusion que la date a tirée
     ok("mouvement : la révélation finit dans son état final (leurres effacés, repères visibles)",
-      illusion.querySelector(".illusion-dessin").classList.contains("revele") && (!leurre || w.getComputedStyle(leurre).opacity === "0.12") && w.getComputedStyle(repere).opacity === "1",
-      (leurre ? w.getComputedStyle(leurre).opacity : "sans leurre") + " / " + w.getComputedStyle(repere).opacity);
+      illusion.querySelector(".illusion-dessin").classList.contains("revele") && (!leurre || w.getComputedStyle(leurre).opacity === "0.12") && (!repere || w.getComputedStyle(repere).opacity === "1"),
+      (leurre ? w.getComputedStyle(leurre).opacity : "sans leurre") + " / " + (repere ? w.getComputedStyle(repere).opacity : "sans repère"));
     // Chaque animation a une fin (pas de boucle infinie) et dure 2 s au plus
     const sansFin = d.getAnimations().filter(a => { const t = a.effect.getComputedTiming(); return !Number.isFinite(t.endTime) || t.endTime > 2000; });
     ok("mouvement : " + d.getAnimations().length + " animation(s) de la page, toutes finies en 2 s au plus, aucune en boucle", sansFin.length === 0,
