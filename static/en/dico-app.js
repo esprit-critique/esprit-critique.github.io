@@ -182,6 +182,7 @@ EN_AJOUTER([
   ["Question suivante", "Next question"],
   ["Bilan de la révision", "Review summary"],
   ["Bilan de la série", "Set summary"],
+  ["100 points de quiz par jour au plus.", "at most 100 quiz points a day."],
   ["Sans faute.", "Flawless."],
   ["Très bonne maîtrise.", "Very good command."],
   ["Des bases solides ; quelques notions à revoir.", "Solid foundations; a few concepts to go over again."],

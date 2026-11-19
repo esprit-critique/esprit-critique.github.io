@@ -6,6 +6,8 @@ EN_AJOUTER([
   ["{0} points de lucidité aujourd'hui.", "{0} clarity points today."],
   ["Sésame : douter n'est pas tout rejeter, c'est vérifier avant de croire.", "Open sesame: doubting is not rejecting everything, it is checking before believing."],
   ["Esprit critique : vous regardez sous le capot, bonne habitude. Prenez l'initiale des fiches {0}, dans cet ordre, puis cherchez le mot obtenu dans la recherche du site.", "Esprit critique: you are looking under the hood, a good habit. Take the initial of cards {0}, in this order, then search for the word you get in the site’s search."],
+  ["+{0} points de lucidité.", "+{0} clarity points."],
+  ["Pas de points pour cette partie : {0} Ils reviennent demain.", "No points for this game: {0} They come back tomorrow."],
   ["{0} points de lucidité", "{0} clarity points"],
   ["Fermer", "Close"],
   ["Nouveau grade : {0}", "New rank: {0}"],

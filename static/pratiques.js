@@ -1303,6 +1303,7 @@ EXPERIENCES.push(
         }, resultats => {
           const score = resultats.filter(Boolean).length;
           ecrire("bilanFormes", { ...lire("bilanFormes", {}), [forme]: { jour: aujourdHui(), score } });
+          noterPartie("avant-apres");   // comme les autres ateliers sans score : la partie compte au profil
           zone.replaceChildren();
           zone.appendChild(el("p", "consigne", T("Forme {0}", forme)));
           zone.appendChild(el("p", "grand-score", score + " / 20"));

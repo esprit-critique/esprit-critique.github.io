@@ -33,6 +33,7 @@ EN_AJOUTER([
   ["Défi Esprit critique n° {0} : {1} / 10. Ferez-vous mieux ? {2}", "Esprit critique challenge no. {0}: {1} / 10. Can you do better? {2}"],
   ["Créer un défi sur mesure", "Create a custom challenge"],
   ["Défi libre n° {0}", "Free challenge no. {0}"],
+  ["deux défis libres par jour au plus.", "at most two free challenges a day."],
   ["Défi relevé : vous faites mieux que le score à battre ({0} / 10).", "Challenge met: you did better than the score to beat ({0} / 10)."],
   ["Égalité avec le score à battre ({0} / 10).", "A tie with the score to beat ({0} / 10)."],
   ["Le score à battre tient bon : {0} / 10.", "The score to beat holds: {0} / 10."],
