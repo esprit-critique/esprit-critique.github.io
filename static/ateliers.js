@@ -32,7 +32,9 @@ function lireNombre(texte) {
   let t = String(texte).replace(/\s/g, "");
   // Anglais : « 12,000 » est un nombre à milliers ; « 0,05 » (habitude française) reste une décimale
   t = LANGUE === "en" && /^-?\d{1,3}(,\d{3})+(\.|$)/.test(t) ? t.replace(/,/g, "") : t.replace(",", ".");
-  return parseFloat(t.replace(/[^\d.\-]/g, ""));
+  const n = parseFloat(t.replace(/[^\d.\-]/g, ""));
+  // Plus de 309 chiffres : Infinity passerait les contrôles isNaN des ateliers, puis deviendrait null une fois enregistré
+  return Number.isFinite(n) ? n : NaN;
 }
 
 function paragraphe(texte, classe) { return el("p", classe, texte); }

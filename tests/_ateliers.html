@@ -235,6 +235,13 @@ f.onload = async () => {
     await aller("accueil"); await aller("chiffres/carnet");
     const zoneTexte = vue().querySelector("textarea");
     zoneTexte.value = "Je finirai ce rapport avant vendredi";
+    // Échéance à plus de dix ans (Chrome accepte une année à six chiffres) : refusée
+    const champEcheance = vue().querySelector('input[type="date"]'), echeanceProposee = champEcheance.value;
+    champEcheance.value = "2099-01-01";
+    visibles("[data-valider]")[0].click(); await pause(5);
+    ok("carnet : échéance à plus de dix ans refusée", !w.localStorage.getItem("previsions"));
+    champEcheance.value = echeanceProposee;
+    ok("lireNombre : un nombre de plus de 309 chiffres n'est pas un nombre", w.eval('isNaN(lireNombre("9".repeat(400))) && lireNombre("12 000") === 12000'));
     visibles("[data-valider]")[0].click();
     await pause(10);
     ok("carnet : prévision ajoutée, en cours", JSON.parse(w.localStorage.getItem("previsions")).length === 1 && /En cours/.test(vue().textContent));
