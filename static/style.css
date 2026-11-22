@@ -1383,6 +1383,20 @@ label[for] { display: block; margin: 0 0 8px; }
 .bingo-case.cochee { background: var(--c-clair, var(--accent-doux)); border-color: var(--c-fort, var(--accent)); font-weight: 600; }
 .bingo-adresse { overflow-wrap: anywhere; }
 @media print {
+  /* Papier : couleurs du mode clair, même en mode sombre (Safari n'imprime pas les fonds : le texte ivoire du mode
+     sombre devenait invisible). :root répété : plus fort que les sélecteurs du mode sombre */
+  :root:root:root {
+    color-scheme: light;
+    --fond: #ffffff; --carte: #ffffff; --carte-haute: #ffffff; --texte: #1c1b19; --discret: #6b6862; --trait: #dcd7cc;
+    --trait-doux: #ebe7df; --accent: #1d4f91; --accent-doux: #e8edf5; --sur-accent: #ffffff; --encadre: #f1eee7;
+    --vert: #2d6a3e; --vert-doux: #e5efe6; --rouge: #a5281b; --rouge-doux: #f6e4e1; --orange: #c7782a;
+  }
+  :root:root:root .carte {
+    --c-fort: color-mix(in srgb, var(--c, #1d4f91) 86%, black);
+    --c-texte: color-mix(in srgb, var(--c, #1d4f91) 80%, black);
+    --c-clair: color-mix(in srgb, var(--c, #1d4f91) 10%, var(--carte));
+    --sur-c: #ffffff;
+  }
   .entete, .navigation, .pied, .nav-atelier, .tete-atelier .picto-cadre, .actions, .calcul-detail, .annonce { display: none !important; }
   body { background: #fff; color: #000; }
   .carte { border: 0; box-shadow: none; }
@@ -1913,7 +1927,8 @@ label[for] { display: block; margin: 0 0 8px; }
 .actions-synchro { flex-wrap: wrap; }
 .code-synchro { margin-top: 16px; padding: 12px 16px; border: 1px dashed var(--trait); border-radius: var(--rayon-carte); }
 .code-synchro-valeur { font-family: var(--mono); font-size: 21px; letter-spacing: 0.08em; margin: 4px 0 8px; }
-@media print { body * { visibility: hidden; } .code-synchro, .code-synchro * { visibility: visible; } .code-synchro { position: absolute; top: 0; left: 0; } }
+/* Seulement quand le code est affiché : sans :has(), la règle masquait toute page imprimée (bingo : page blanche) */
+@media print { body:has(.code-synchro) * { visibility: hidden; } .code-synchro, .code-synchro * { visibility: visible; } .code-synchro { position: absolute; top: 0; left: 0; } }
 
 /* Se protéger en ligne (enligne.js) */
 .message-fictif { margin: 8px 0 16px; padding: 12px 16px; border: 1px solid var(--trait); border-radius: var(--rayon-carte); background: var(--encadre); }
