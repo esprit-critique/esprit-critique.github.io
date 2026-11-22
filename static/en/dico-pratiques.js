@@ -252,6 +252,7 @@ EN_AJOUTER([
   ["Date du bilan", "Review date"],
   ["Choisissez une date où vous pourrez juger la décision : le bilan vous attendra ici, et vous pourrez l'ajouter à votre agenda.", "Choose a date by which you can judge the decision: the review will wait for you here, and you can add it to your calendar."],
   ["Enregistrer", "Save"],
+  ["Date entre demain et dans dix ans", "Pick a date between tomorrow and ten years from now"],
   ["Décision enregistrée. Bilan prévu le {0}.", "Decision saved. Review scheduled for {0}."],
   ["Ajouter le bilan à mon agenda", "Add the review to my calendar"],
   ["Bilan de décision : {0}", "Decision review: {0}"],
@@ -487,5 +488,4 @@ EN_AJOUTER([
   ["Vous dites que les adolescents dorment trop peu ; mais s'ils se couchent plus tard quand les cours commencent plus tard, ils ne gagneront pas de sommeil.", "You say teenagers get too little sleep; but if they go to bed later when lessons start later, they won’t gain any sleep."],
   ["Près d'un inscrit sur trois a un emploi en semaine, d'après le registre de la bibliothèque.", "Nearly one in three members works during the week, according to the library’s register."],
   ["« {0} »", "“{0}”"]
-]
-);
+]);

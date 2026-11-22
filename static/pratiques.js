@@ -765,12 +765,16 @@ EXPERIENCES.push(
           date.type = "date";
           date.setAttribute("aria-label", "Date du bilan");
           date.value = new Date((auj + 90) * 86400000).toISOString().slice(0, 10);
+          // Bornes : Safari remplit l'année chiffre à chiffre (0002, 0020…), une saisie interrompue donnerait un bilan en l'an 2
+          const iso = j => new Date(j * 86400000).toISOString().slice(0, 10);
+          date.min = iso(auj + 1);
+          date.max = iso(auj + 3650);
           const enregistrer = el("button", "bouton large", "Enregistrer");
           enregistrer.dataset.valider = "1";
           zone.append(date, enregistrer);
           enregistrer.addEventListener("click", () => {
             const jour = Math.round(Date.parse(date.value + "T00:00:00Z") / 86400000);
-            if (isNaN(jour)) { date.focus(); return; }
+            if (isNaN(jour) || jour <= auj || jour > auj + 3650) { enregistrer.textContent = T("Date entre demain et dans dix ans"); date.focus(); return; }
             const l = decisions();
             l.push({ id: Date.now().toString(36), texte: sujet, creee: auj, bilan: jour, reponses });
             ecrire("decisions", l.slice(-50));
