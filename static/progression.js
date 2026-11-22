@@ -406,7 +406,7 @@ const DISTINCTIONS = [
   ["p-005", "p < 0,05", d => !!(d.resultatsAteliers || {}).fabriquer, "« Fabriquer un résultat » terminé : voir comment on fabrique une découverte.", "#tests/fabriquer"],
   ["oreille-fine", "Oreille fine", d => { const l = (d.debats || []).slice(-3); return l.length >= 3 && l.every(x => x.d >= 2); }, "Une sensibilité d′ d'au moins 2 à chacun de vos trois derniers débats : une très bonne distinction entre sophismes et répliques recevables.", "#tests/debat-truque"],
   ["homme-acier", "Homme d'acier", d => { const r = ((d.resultatsAteliers || {}).reformuler || {}).niveaux || {}; return !!(r[2] || r[3]); }, "« Reformuler sans trahir » terminé au niveau 2 ou plus.", "#tests/reformuler"],
-  ["bingo", "Bingo", d => !!(d.bingo && d.bingo.ligne), "Une ligne complète au bingo des sophismes.", "#tests/bingo"],
+  ["bingo", "Bingo", d => !!(d.bingo && BINGO_LIGNES.some(l => l.every(k => (d.bingo.cochees || []).includes(k)))), "Une ligne complète au bingo des sophismes.", "#tests/bingo"],
   ["sur-le-terrain", "Sur le terrain", d => (d.reperages || []).length >= 10 && joursDeReperage(d) >= 5, "Dix repérages notés, sur cinq jours différents au moins : l'esprit critique sert dans la vie courante.", "#accueil"],
   ["naturaliste", "Naturaliste", d => new Set((d.reperages || []).map(r => r.cle)).size >= 10 && joursDeReperage(d) >= 5, "Des repérages pour dix notions différentes, sur cinq jours différents au moins.", "#accueil"],
   ["decision-eclairee", "Décision éclairée", d => (d.decisions || []).some(x => x.bilanFait), "Une décision guidée dont le bilan a été fait.", "#tests/decision"],

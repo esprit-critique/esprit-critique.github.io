@@ -430,6 +430,9 @@ function grilleBingo(graine) {
   return melanger(SOPHISMES, generateur(graine)).slice(0, 16);
 }
 
+// Lignes, colonnes et diagonales de la grille 4 × 4 (aussi lues par la distinction « Bingo », progression.js)
+const BINGO_LIGNES = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15], [0, 4, 8, 12], [1, 5, 9, 13], [2, 6, 10, 14], [3, 7, 11, 15], [0, 5, 10, 15], [3, 6, 9, 12]];
+
 function afficherBingo(zone, graine) {
   graine = Number(graine) || Math.floor(Math.random() * 1e6);
   const fiches = grilleBingo(graine);
@@ -442,10 +445,12 @@ function afficherBingo(zone, graine) {
   grille.setAttribute("aria-label", "Grille de bingo des sophismes");
   const message = el("p", "verdict");
   message.setAttribute("aria-live", "polite");
-  const lignes = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15], [0, 4, 8, 12], [1, 5, 9, 13], [2, 6, 10, 14], [3, 7, 11, 15], [0, 5, 10, 15], [3, 6, 9, 12]];
+  // Une grille où l'on a coché au moins une case compte comme une partie (ateliers essayés), une seule fois
+  let notee = cochees.size > 0;
   const maj = () => {
     ecrire("bingo", { graine, cochees: [...cochees] });
-    const bingo = lignes.some(l => l.every(k => cochees.has(k)));
+    if (!notee && cochees.size) { notee = true; noterPartie("bingo"); }
+    const bingo = BINGO_LIGNES.some(l => l.every(k => cochees.has(k)));
     message.textContent = bingo ? T("Bingo : une ligne complète.") : T("{0} sur 16.", pluriel(cochees.size, "case cochée", "cases cochées"));
   };
   fiches.forEach((f, k) => {

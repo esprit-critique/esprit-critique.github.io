@@ -503,8 +503,11 @@ f.onload = async () => {
     const grille1 = [...vue().querySelectorAll(".bingo-case")].map(b => b.textContent).join("|");
     await aller("accueil"); await aller("bingo/12345");
     ok("bingo : 16 cases, même grille pour la même graine", vue().querySelectorAll(".bingo-case").length === 16 && grille1 === [...vue().querySelectorAll(".bingo-case")].map(b => b.textContent).join("|"));
+    const bingoAvant = (w.eval("resultatAtelier")("bingo") || { n: 0 }).n;
     [0, 1, 2, 3].forEach(k => vue().querySelectorAll(".bingo-case")[k].click());
     ok("bingo : une ligne complète", /Bingo : une ligne/.test(vue().textContent) && /12345/.test(vue().querySelector(".bingo-adresse").textContent));
+    ok("bingo : compté comme essayé, une seule fois pour la grille", (w.eval("resultatAtelier")("bingo") || {}).n === bingoAvant + 1);
+    ok("bingo : la ligne complète ouvre la distinction « Bingo »", w.eval('BINGO_LIGNES.some(l => l.every(k => lire("bingo", {}).cochees.includes(k)))'));
     controler();
     // Décision guidée
     w.localStorage.removeItem("decisions");
