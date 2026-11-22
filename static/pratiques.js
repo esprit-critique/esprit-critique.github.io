@@ -783,7 +783,8 @@ EXPERIENCES.push(
             const l = decisions();
             l.push({ id: Date.now().toString(36), texte: sujet, creee: auj, bilan: jour, reponses });
             ecrire("decisions", l.slice(-50));
-            noterActivite();
+            // Compte comme essayé dès l'enregistrement : le bilan, lui aussi noté, peut attendre des mois
+            noterPartie("decision");
             zone.replaceChildren();
             zone.appendChild(el("p", "verdict juste", T("Décision enregistrée. Bilan prévu le {0}.", dateDe(jour))));
             const agenda = el("button", "bouton secondaire", "Ajouter le bilan à mon agenda");

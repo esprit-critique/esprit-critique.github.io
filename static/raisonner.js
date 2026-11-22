@@ -790,7 +790,8 @@ JEUX.push({
       const l = previsions();
       l.push({ id: Date.now().toString(36), texte: texte.value.trim(), p: Number(proba.value), echeance: jour, creee: auj, issue: null });
       enregistrer(l);
-      noterActivite();
+      // Compte comme essayé dès l'ajout : la résolution, elle aussi notée, attend au moins une semaine
+      noterPartie("carnet");
       JEUX.find(j => j.id === "carnet").lancer(zone);
     });
     form.append(texte, modeles, affichage, curseurAvecBoutons(proba, 5), el("p", "consigne", "Échéance"), echeance, ajouter);
