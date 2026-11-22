@@ -85,6 +85,12 @@ f.onload = async () => {
     ok("maîtrise : trois parties à 90 % ou plus au niveau 3", ev("atelierMaitrise")("sim") === true);
     noter("sim2", 10, 10, 3); noter("sim2", 8, 10, 3); noter("sim2", 10, 10, 3);
     ok("pas de maîtrise avec deux parties à 90 % seulement", ev("atelierMaitrise")("sim2") === false);
+    // Planche de Galton (melange.js) : partie comptée comme essayée, sans note ni points d'atelier
+    await pause(20);   // points différés (setTimeout) des parties notées plus haut
+    const avant = JSON.stringify(w.localStorage.getItem("lucidite"));
+    noter("melange", null, null, undefined, undefined, { sansPoints: true });
+    await pause(20);
+    ok("sansPoints : partie comptée comme essayée, sans points d'atelier", ev("resultatAtelier")("melange").n === 1 && JSON.stringify(w.localStorage.getItem("lucidite")) === avant);
 
     // ---------- Ancienne sauvegarde, sans niveaux ----------
     w.localStorage.clear();

@@ -294,13 +294,14 @@ function tirerNouveaux(cle, elements, n, idDe = e => e.id) {
 // Avec un niveau, les records et historiques sont aussi tenus par niveau : r.niveaux[niveau] = { n, record, sur,
 // historique, reussites90 }. Les champs généraux (n, record, historique) restent tenus pour toutes les parties.
 // options.abandon : partie quittée avant la fin (cloreAbandon, niveaux.js), comptée sans points ;
+// options.sansPoints : partie qui a son propre barème (Planche de Galton, melange.js), comptée sans points d'atelier ;
 // options.largeur : partie de fourchettes notée par sa largeur (intervalles, chiffres.js) : le niveau est marqué, et
 // ses anciennes parties, notées au nombre de fourchettes justes, sont écartées (progression.js)
 function noterPartie(id, score, sur, niveau, surPoints, options = {}) {
   const tous = lire("resultatsAteliers", {});
   // Points de lucidité (profil.js) : premier essai, partie notée ou non, atelier maîtrisé
   const premier = !tous[id];
-  if (!options.abandon) setTimeout(() => {
+  if (!options.abandon && !options.sansPoints) setTimeout(() => {
     const source = score !== undefined && score !== null && sur ? "atelier-note" : "atelier-sans-note";
     const bloque = gainBloque(lire("lucidite", {}), source, aujourdHui(), id);
     let points = premier ? gagner("atelier-premier", 0, id) : 0;
@@ -534,8 +535,7 @@ function atelierConseille() {
   const resultats = lire("resultatsAteliers", {});
   const anciens = new Set([...lire("jeuxFaits", []), ...lire("experiencesFaites", [])]);
   // Le Grand test a sa propre carte mise en avant (carteGrandTest) : il n'est pas repris dans la suggestion
-  // Le mélange n'enregistre pas de résultat : il n'est jamais suggéré comme « jamais essayé »
-  const jamais = tous.filter(a => !resultats[a.atelier.id] && !anciens.has(a.atelier.id) && a.atelier.id !== "grand-test" && a.atelier.section !== "melange");
+  const jamais = tous.filter(a => !resultats[a.atelier.id] && !anciens.has(a.atelier.id) && a.atelier.id !== "grand-test");
   if (jamais.length) return jamais[Math.floor(generateur(aujourdHui())() * jamais.length)];
   return tous.slice().sort((a, b) => ((resultats[a.atelier.id] || {}).jour || 0) - ((resultats[b.atelier.id] || {}).jour || 0))[0];
 }

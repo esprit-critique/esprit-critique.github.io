@@ -112,6 +112,8 @@ function bilanMelange(zone) {
   partie.appendChild(bilan);
   boutonRejouer(partie, () => JEUX.find(j => j.id === "melange").lancer(zone.parentNode));
   annoncer(T("Bilan : {0} bonne(s) réponse(s) sur {1}.", melange.juste, melange.total));
+  // Compte la planche comme essayée (bilan, « Tour complet ») ; sans note (type « aucun », progression.js), ses points restent ceux de « galton »
+  noterPartie("melange", null, null, undefined, undefined, { sansPoints: true });
   gagner("galton", melange.juste);
 }
 
