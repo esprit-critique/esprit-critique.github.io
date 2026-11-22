@@ -506,6 +506,12 @@ f.onload = async () => {
     visibles("[data-valider]")[0].click(); await pause(5);
     for (let k = 0; k < 8; k++) { vue().querySelector("textarea:not(:disabled)").value = "réponse " + k; visibles("[data-valider]")[0].click(); await pause(3); visibles("[data-suivant]")[0].click(); await pause(3); }
     ok("décision : huit questions, puis la date du bilan", /Date du bilan/.test(vue().textContent) && !!vue().querySelector('input[type="date"]'));
+    // Année saisie à moitié (Safari : 0006) : refusée, rien n'est enregistré
+    const champDate = vue().querySelector('input[type="date"]'), dateProposee = champDate.value;
+    champDate.value = "0006-11-23";
+    visibles("[data-valider]")[0].click(); await pause(5);
+    ok("décision : date hors bornes refusée", !w.localStorage.getItem("decisions") && /Date du bilan/.test(vue().textContent));
+    champDate.value = dateProposee;
     visibles("[data-valider]")[0].click(); await pause(5);
     const dec = JSON.parse(w.localStorage.getItem("decisions"));
     ok("décision : enregistrée avec ses huit réponses", dec.length === 1 && dec[0].reponses.length === 8 && /Bilan prévu/.test(vue().textContent));
