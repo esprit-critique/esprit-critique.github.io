@@ -535,7 +535,14 @@ const QUI_PROUVE = [
   { texte: "Paul : « Ce médicament a été autorisé après des essais publiés. » Max : « Ces essais sont truqués. »", reponse: 2,
     explication: "Paul peut montrer l'autorisation et les essais. Max ne se contente pas de douter : accuser de trucage est une affirmation, qu'il doit appuyer à son tour." },
   { texte: "Rose : « La vanille est meilleure que le chocolat. » Jules : « Prouve-le ! »", reponse: 3,
-    explication: "Une préférence ne se prouve pas : exiger une preuve n'a pas de sens ici." }
+    explication: "Une préférence ne se prouve pas : exiger une preuve n'a pas de sens ici." },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  { texte: "Sarah partage une vidéo : « Voici les inondations d'hier dans notre ville. » Adam : « Cette vidéo a été tournée il y a cinq ans, dans un autre pays. »", reponse: 2,
+    explication: "Chacun affirme une date et un lieu précis. Sarah doit pouvoir dire d'où vient la vidéo ; Adam, montrer l'original plus ancien." },
+  { texte: "Hugo : « Il n'y a aucun poisson dans cet étang. » Lou : « Qu'en sais-tu ? »", reponse: 0,
+    explication: "Affirmer une absence, c'est affirmer quelque chose : c'est à Hugo de dire sur quoi il s'appuie, une pêche, un inventaire. Lou ne fait que poser une question." },
+  { texte: "Un institut de géophysique annonce un séisme de magnitude 6, enregistré par des dizaines de stations dont les relevés sont publics. Un internaute : « Je n'y crois pas, prouvez-le. »", reponse: 1,
+    explication: "Les preuves sont déjà là, publiques et concordantes. Pour les rejeter, l'internaute doit dire en quoi tous ces relevés seraient faux." },
 ];
 
 // ===================== La pyramide du désaccord =====================
@@ -620,7 +627,7 @@ EXPERIENCES.push(
     titre: "Qui doit prouver ?",
     resume: "Dans un désaccord, qui doit apporter des preuves : celui qui affirme, celui qui doute, les deux, ou personne ? Dix situations.",
     lancer(zone) {
-      // Dix situations sur vingt, les moins récemment vues d'abord : deux parties de suite ne se ressemblent plus
+      // Dix situations sur vingt-trois, les moins récemment vues d'abord : deux parties de suite ne se ressemblent plus
       derouler(zone, tirerNouveaux("qui-prouve", QUI_PROUVE, 10, q => q.texte), (q, zone, fini) => {
         zone.appendChild(el("p", "cas", q.texte));
         zone.appendChild(el("p", "consigne", "Qui doit apporter des preuves ?"));

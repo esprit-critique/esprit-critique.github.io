@@ -68,7 +68,18 @@ const QUESTIONS_CRT = [
   { id: "bacteries-quatre", niveau: 5, texte: "Une bactérie se divise en deux chaque minute ; partie d'une seule bactérie, la culture remplit un flacon en 60 minutes. Partie de 4 bactéries, en combien de minutes remplit-elle le flacon ?", unite: "minutes", juste: 58, intuitive: 15,
     explication: "Une bactérie devient 4 bactéries en 2 minutes (1, 2, 4). Partir de 4, c'est donc avoir 2 minutes d'avance : 58 minutes. Diviser 60 par 4 suppose que la croissance est proportionnelle au nombre de départ." },
   { id: "aiguilles", niveau: 5, texte: "Combien de fois, en 24 heures à partir de minuit, la grande et la petite aiguille d'une horloge se superposent-elles ?", unite: "fois", juste: 22, intuitive: 24,
-    explication: "La grande aiguille rattrape la petite toutes les 12/11 heures (environ 1 h 05), et non toutes les heures : 11 fois en 12 heures, donc 22 fois en 24 heures. Entre 11 heures et 13 heures, il n'y a qu'une superposition, à midi." }
+    explication: "La grande aiguille rattrape la petite toutes les 12/11 heures (environ 1 h 05), et non toutes les heures : 11 fois en 12 heures, donc 22 fois en 24 heures. Entre 11 heures et 13 heures, il n'y a qu'une superposition, à midi." },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  { id: "demi", niveau: 2, texte: "Divisez 30 par un demi, puis ajoutez 10. Quel nombre obtenez-vous ?", unite: "", juste: 70, intuitive: 25,
+    explication: "On obtient 70. Diviser par un demi, c'est multiplier par 2 : 30 ÷ 0,5 = 60, puis 60 + 10 = 70. On lit « diviser par deux », d'où 15 + 10 = 25." },
+  { id: "pliage", niveau: 2, texte: "On plie une feuille de papier en deux, puis on replie le tout en deux, et ainsi de suite : cinq pliages en tout. Combien d'épaisseurs de papier obtient-on ?", unite: "épaisseurs", juste: 32, intuitive: 10,
+    explication: "On obtient 32 épaisseurs. Chaque pliage double le nombre d'épaisseurs : 2, 4, 8, 16, 32. Compter « deux de plus » par pliage (5 × 2 = 10) traite un doublement comme une addition." },
+  { id: "tunnel", niveau: 3, texte: "Un train de 1 km de long roule à 1 km par minute et traverse un tunnel de 1 km. Combien de minutes s'écoulent entre l'entrée de l'avant du train dans le tunnel et la sortie de l'arrière ?", unite: "minutes", juste: 2, intuitive: 1, mots: { 2: ["deux"], 1: ["une", "un"] },
+    explication: "Il s'écoule 2 minutes. L'avant doit parcourir le tunnel (1 km), puis encore la longueur du train (1 km) pour que l'arrière en sorte : 2 km à 1 km par minute. On oublie que le train lui-même a une longueur." },
+  { id: "pizzas", niveau: 3, texte: "Combien de pizzas de 15 cm de diamètre faut-il pour avoir autant à manger qu'avec une pizza de 30 cm de diamètre, de même épaisseur et de même garniture ?", unite: "pizzas", juste: 4, intuitive: 2, mots: { 4: ["quatre"], 2: ["deux"] },
+    explication: "Il en faut 4. La quantité dépend de la surface, qui varie comme le carré du diamètre : doubler le diamètre multiplie la surface par 2 × 2 = 4. On compare les diamètres au lieu des surfaces." },
+  { id: "saumure", niveau: 5, texte: "Une cuve contient 100 kg d'eau salée, dont 99 % d'eau en poids. On laisse l'eau s'évaporer jusqu'à ce qu'elle ne représente plus que 98 % du poids. Combien pèse alors le contenu de la cuve ?", unite: "kg", juste: 50, intuitive: 99,
+    explication: "Il pèse 50 kg. Le sel ne s'évapore pas : il reste 1 kg de sel, qui représentait 1 % du poids et en représente maintenant 2 %. Le total est donc de 1 ÷ 0,02 = 50 kg. Passer de 99 % à 98 % d'eau semble un changement d'un point, mais la part du sel, elle, double." },
 ];
 
 // Tâche de Wason : versions abstraites (presque toujours ratées) et versions concrètes
@@ -405,7 +416,42 @@ const PROBLEMES = [
     unite: "personnes", reponse: 200, tolerance: 0,
     resultat: "Calcul : la baisse du risque est de 0,5 point, soit 1 sur 200 : il faut traiter 200 personnes pour éviter un infarctus.",
     explication: "On peut annoncer le même résultat comme « un quart d'infarctus en moins » (de 2 à 1,5, c'est −25 %) : c'est exact, mais bien plus impressionnant. Le nombre de personnes à traiter traduit la baisse absolue du risque, celle qui permet de mettre en balance le bénéfice, les effets indésirables et le coût.",
-    liens: [["#biais/cadrage", "Effet de cadrage"]] }
+    liens: [["#biais/cadrage", "Effet de cadrage"]] },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  { id: "urnes", niveau: 2, titre: "Deux urnes", type: "choix",
+    enonce: "Vous gagnez 10 € si vous tirez une bille rouge, les yeux fermés. L'urne A contient 10 billes, dont 1 rouge. L'urne B contient 100 billes, dont 8 rouges. Dans laquelle tirez-vous ?",
+    options: ["L'urne A, avec 1 bille rouge sur 10", "L'urne B, avec 8 billes rouges sur 100", "Les deux se valent"], juste: 0,
+    resultat: "Denes-Raj et Epstein (1994) ont proposé ce choix avec des bonbons : les participants choisissaient souvent le grand bol, plus riche en bonbons gagnants mais moins favorable, et disaient s'y sentir plus de chances tout en sachant que les probabilités étaient contre eux.",
+    explication: "L'urne A donne 10 chances sur 100, l'urne B seulement 8. Le nombre de billes rouges attire l'œil, mais c'est leur proportion qui compte : il faut regarder le dénominateur autant que le numérateur." },
+  { id: "sondages", niveau: 2, titre: "Deux sondages", type: "choix",
+    enonce: "Deux instituts interrogent chacun 1 000 personnes tirées au hasard : l'un dans un pays de 60 millions d'habitants, l'autre dans une ville de 50 000 habitants. Que peut-on dire de la précision de leurs estimations ?",
+    options: ["Celle de la ville est nettement meilleure, car elle interroge 2 % des habitants", "Celle du pays est nettement meilleure, car elle porte sur bien plus de monde", "Elles sont à peu près aussi précises l'une que l'autre"], juste: 2,
+    resultat: "Calcul : pour une opinion partagée à 50 %, la marge d'erreur à 95 % est d'environ 3,10 points dans le pays et 3,07 points dans la ville.",
+    explication: "La précision d'un sondage tiré au hasard dépend surtout du nombre de personnes interrogées, presque pas de la taille de la population : une cuillère suffit à goûter une soupe, que la marmite soit petite ou grande, pourvu qu'elle soit bien mélangée. La part interrogée ne commence à compter que lorsqu'elle devient importante.",
+    liens: [["#biais/taille-echantillon", "Négligence de la taille de l'échantillon"]] },
+  { id: "taille-cours", niveau: 4, titre: "La taille des cours", type: "nombre",
+    enonce: "Un lycée propose deux cours d'option : l'un compte 10 élèves, l'autre 90. Chaque élève suit un seul des deux. On demande à chaque élève combien d'élèves compte son cours, puis l'on fait la moyenne des 100 réponses. Quelle moyenne obtient-on ?",
+    unite: "élèves", reponse: 82, tolerance: 0.5,
+    resultat: "Calcul : 10 élèves répondent 10 et 90 élèves répondent 90 ; (10 × 10 + 90 × 90) / 100 = 82.",
+    explication: "La réponse intuitive, 50, est la taille moyenne des cours, vue par le lycée. Mais la plupart des élèves sont dans le grand cours : vue par les élèves, la taille moyenne est bien plus grande. Feld et Grofman (1977) ont appelé cet écart le paradoxe de la taille des classes." },
+  { id: "projet", niveau: 4, titre: "Dix étapes sans accroc", type: "nombre",
+    enonce: "Un projet comporte 10 étapes indépendantes les unes des autres. Chacune a 95 % de chances de se dérouler sans accroc. Quelle est la probabilité que les 10 étapes se déroulent toutes sans accroc ?",
+    unite: "%", reponse: 60, tolerance: 1.5,
+    resultat: "Calcul : 0,95¹⁰ ≈ 0,599, soit environ 60 %.",
+    explication: "Chaque étape paraît presque sûre, mais il faut que toutes réussissent : les probabilités se multiplient. Il y a donc 4 chances sur 10 qu'au moins une étape connaisse un accroc. Dans une étude de Bar-Hillel (1973), la plupart des participants préféraient parier sur un tel événement « conjonctif » plutôt que sur un événement simple, pourtant un peu plus probable. Tversky et Kahneman (1974) voient dans cette surestimation des événements conjonctifs une source d'optimisme injustifié sur les chances qu'un plan réussisse ou qu'un projet soit terminé à temps.",
+    liens: [["#biais/planification", "Erreur de planification"], ["#biais/conjonction", "Erreur de conjonction"]] },
+  { id: "berkson", niveau: 5, titre: "L'école de cinéma", type: "choix",
+    enonce: "Une école de cinéma admet tout candidat qui obtient au moins 15 sur 20 à l'épreuve d'écriture, ou à l'épreuve technique, ou aux deux. Chez les candidats, les deux notes n'ont aucun lien entre elles. Parmi les élèves admis, pourtant, les meilleurs en écriture sont souvent les moins bons en technique. Que peut-on en conclure ?",
+    options: ["Les deux talents s'opposent : on développe rarement les deux à la fois", "Rien sur les talents : la sélection suffit à créer ce lien", "Les épreuves sont mal conçues : elles mesurent mal les talents"], juste: 1,
+    resultat: "Calcul (notes entières de 0 à 20, indépendantes et toutes aussi probables) : corrélation nulle chez les candidats, d'environ −0,53 chez les admis. Un admis qui a moins de 15 en écriture a en moyenne 17,5 en technique ; un admis qui a 15 ou plus en écriture, 10.",
+    explication: "Un admis faible dans une épreuve est forcément fort dans l'autre, sinon il n'aurait pas été admis. En ne regardant que les admis, on fabrique un lien qui n'existe pas chez les candidats. Joseph Berkson (1946) a décrit ce piège à propos des malades hospitalisés : deux maladies sans lien peuvent sembler liées quand on n'étudie que les patients d'un hôpital.",
+    liens: [["#sophismes/correlation", "Corrélation prise pour causalité"]] },
+  { id: "will-rogers", niveau: 5, titre: "Un examen plus fin", type: "choix",
+    enonce: "Dans un hôpital, les patients atteints d'un cancer vivent en moyenne 7 ans au stade précoce et 2 ans au stade avancé. Un nouvel examen détecte des métastases jusque-là invisibles : certains patients classés au stade précoce passent au stade avancé. Ensuite, la survie moyenne augmente dans les deux stades. Que peut-on en conclure ?",
+    options: ["Les traitements se sont améliorés dans les deux stades", "Rien sur les traitements : le seul reclassement peut faire monter les deux moyennes", "Les chiffres sont faux : les deux moyennes ne peuvent pas monter ensemble"], juste: 1,
+    resultat: "Calcul (données fictives) : au stade précoce, six patients vivent 12, 10, 8, 6, 4 et 2 ans (moyenne 7) ; au stade avancé, trois vivent 3, 2 et 1 an (moyenne 2). Le patient à 4 ans passe au stade avancé : les moyennes deviennent 7,6 et 2,5 ans, et aucun patient ne vit plus longtemps.",
+    explication: "Les patients reclassés vivent moins longtemps que la moyenne du stade précoce, mais plus longtemps que la moyenne du stade avancé : leur départ relève la première moyenne, leur arrivée relève la seconde. Feinstein, Sosin et Wells (1985) ont nommé ce piège « phénomène Will Rogers » : avant de comparer des survies, il faut vérifier que les groupes sont définis de la même façon.",
+    liens: [["#biais/simpson", "Paradoxe de Simpson"]] },
 ];
 
 // Scénarios de dépistage réels ; d'autres sont créés au hasard (voir scenarioAuHasard)
@@ -583,7 +629,7 @@ const EXPERIENCES = [
             resultat.textContent = typo(T("Juste.") + " " + T(q.explication));
           } else {
             if (verdict === "intuitive") intuitives++;
-            resultat.textContent = typo((verdict === "intuitive" ? T("C'est la réponse intuitive, mais elle est fausse.") + " " : T("Réponse attendue : {0}.", q.texteLibre ? "Émilie" : q.juste + " " + T(q.unite)) + " ") + T(q.explication));
+            resultat.textContent = typo((verdict === "intuitive" ? T("C'est la réponse intuitive, mais elle est fausse.") + " " : T("Réponse attendue : {0}.", q.texteLibre ? "Émilie" : q.juste + (q.unite ? " " + T(q.unite) : "")) + " ") + T(q.explication));
           }
           if (q.reussite) resultat.appendChild(el("span", "source bloc", T("Dans l'étude de Thomson et Oppenheimer (2016), {0} % de bonnes réponses.", q.reussite)));
         });
