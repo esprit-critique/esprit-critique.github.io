@@ -245,6 +245,7 @@ f.onload = async () => {
     visibles("[data-valider]")[0].click();
     await pause(10);
     ok("carnet : prévision ajoutée, en cours", JSON.parse(w.localStorage.getItem("previsions")).length === 1 && /En cours/.test(vue().textContent));
+    ok("carnet : compté comme essayé dès l'ajout", !!w.eval("resultatAtelier")("carnet"));
     const icsCarnet = [...vue().querySelectorAll("button")].find(b => /agenda/.test(b.textContent));
     ok("carnet : export des échéances", !!icsCarnet);
     // Échéance passée : la prévision est à résoudre
@@ -525,6 +526,7 @@ f.onload = async () => {
     visibles("[data-valider]")[0].click(); await pause(5);
     const dec = JSON.parse(w.localStorage.getItem("decisions"));
     ok("décision : enregistrée avec ses huit réponses", dec.length === 1 && dec[0].reponses.length === 8 && /Bilan prévu/.test(vue().textContent));
+    ok("décision : comptée comme essayée dès l'enregistrement", !!w.eval("resultatAtelier")("decision"));
     dec[0].bilan = w.eval("aujourdHui()");
     w.localStorage.setItem("decisions", JSON.stringify(dec));
     await aller("accueil"); await aller("tests/decision");
