@@ -131,7 +131,8 @@ const ok = (libelle, condition, detail = '') => {
   const anneaux = await p.$$eval('.melange-bilan .anneau', l => l.map(a => a.querySelector('figcaption').textContent + ' ' + a.querySelector('svg').getAttribute('aria-label')));
   ok('bilan après vingt questions : un anneau par catégorie, avec sa part de bonnes réponses', anneaux.length >= 2 && anneaux.every(a => /sur \d+/.test(a)), JSON.stringify(anneaux));
   const resultatsAteliers = await p.evaluate(() => lire('resultatsAteliers', {}));
-  ok('le mélange n\'enregistre aucune partie', !('melange' in resultatsAteliers));
+  // Une partie finie compte la planche comme essayée (« Tour complet »), sans note : son type est « aucun »
+  ok('le mélange compte comme essayé, sans note', resultatsAteliers.melange && resultatsAteliers.melange.n === 1 && resultatsAteliers.melange.record === undefined, JSON.stringify(resultatsAteliers.melange));
   await p.goto(SITE + '#chiffres/monde', { waitUntil: 'load' });
   await p.waitForTimeout(300);
   const drapeau = await p.evaluate(() => MELANGE.actif);
