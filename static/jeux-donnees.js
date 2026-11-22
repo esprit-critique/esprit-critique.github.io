@@ -349,7 +349,88 @@ const MONDE = [
     explication: "42 % en 2025. L'Organisation internationale du travail parle d'« emploi vulnérable » (estimations de l'OIT, via la Banque mondiale).", public: null },
   { id: "internet-faible-revenu", niveau: 3, depuis: 20778, question: "Dans les pays à faible revenu, quelle part de la population utilise Internet ?",
     options: ["5 %", "23 %", "60 %"], juste: 1,
-    explication: "23 % en 2025, contre 74 % dans le monde (Union internationale des télécommunications, via la Banque mondiale).", public: null }
+    explication: "23 % en 2025, contre 74 % dans le monde (Union internationale des télécommunications, via la Banque mondiale).", public: null },
+  // Ajouts du 22 novembre 2026, contre-vérifiés (agent verificateur-sources) ; « depuis » : 24 novembre.
+  // Sources lues le 22 novembre 2026 : https://desapublications.un.org/un-desa-voice/feature/december-2025/latest-urbanization-data-reveal-worlds-most-populous-cities
+  { id: "jakarta", depuis: 20781, niveau: 3, question: "Quelle est la ville la plus peuplée du monde ?",
+    options: ["Tokyo", "Jakarta", "Shanghai"], juste: 1,
+    explication: "Jakarta, avec près de 42 millions d'habitants, devant Dacca et Tokyo (33 millions), selon les estimations de l'ONU publiées en novembre 2025. Le classement dépend de la façon de délimiter une ville : l'ONU applique désormais la même méthode à tous les pays.", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.eia.gov/todayinenergy/detail.php?id=67844
+  { id: "petrole-etats-unis", depuis: 20781, niveau: 2, question: "Quel pays produit le plus de pétrole brut ?",
+    options: ["l'Arabie saoudite", "la Russie", "les États-Unis"], juste: 2,
+    explication: "Les États-Unis, avec un record de 13,6 millions de barils par jour en 2025, environ 40 % de plus que la Russie ou l'Arabie saoudite (9,6 millions pour cette dernière). Ils sont premiers depuis 2018 (Energy Information Administration).", public: null },
+  // Vérifié via https://www.eia.gov/international/analysis/country/VEN ; https://gulfnews.com/business/energy/list-top-10-countries-with-biggest-confirmed-oil-reserves-1.500399201 ; https://www.opec.org/pr-detail/1484568-2-july-2025.html
+  { id: "reserves-venezuela", depuis: 20781, niveau: 3, question: "Quel pays possède les plus grandes réserves prouvées de pétrole ?",
+    options: ["l'Arabie saoudite", "le Venezuela", "la Russie"], juste: 1,
+    explication: "Le Venezuela, avec environ 303 milliards de barils selon l'OPEP, soit 17 % des réserves mondiales, devant l'Arabie saoudite (environ 267 milliards). Ce chiffre, fourni par le Venezuela, est contesté : des spécialistes le jugent très surestimé. L'essentiel est un pétrole extra-lourd, difficile à exploiter, et le pays ne produisait que 0,8 % du pétrole brut mondial en 2023 (Energy Information Administration ; Associated Press).", public: null },
+  // Sources lues le 22 novembre 2026 : https://unsco.unmissions.org/sites/default/files/2026-03/03_country_and_mission_95_february_2026.pdf
+  { id: "casques-bleus", depuis: 20781, niveau: 2, question: "Quels pays fournissent le plus de casques bleus aux opérations de l'ONU ?",
+    options: ["les cinq membres permanents du Conseil de sécurité", "des pays d'Asie du Sud et d'Afrique", "les pays de l'Union européenne"], juste: 1,
+    explication: "Fin février 2026, le Rwanda (4 405 militaires et policiers), le Népal (4 340), l'Inde (4 278) et le Bangladesh (4 148) arrivaient en tête, sur 47 298 au total. La Chine en fournissait 1 661, la France 609, le Royaume-Uni 251 et les États-Unis 20 (ONU).", public: null },
+  // Sources lues le 22 novembre 2026 : https://digitallibrary.un.org/record/4071844/files/A_RES_79_249-EN.pdf
+  { id: "onu-budget", depuis: 20781, niveau: 3, question: "La quote-part des États-Unis dans le budget ordinaire de l'ONU est de 22 %. Quel pays vient ensuite ?",
+    options: ["le Japon", "l'Allemagne", "la Chine"], juste: 2,
+    explication: "La Chine, avec 20 % pour 2025 à 2027, loin devant le Japon (6,9 %), l'Allemagne (5,7 %), le Royaume-Uni (4,0 %) et la France (3,9 %). La quote-part de chaque pays suit son revenu national, et aucun ne peut payer plus de 22 % (résolution 79/249 de l'Assemblée générale).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.un.org/development/desa/pd/sites/www.un.org.development.desa.pd/files/undesa_pd_2024_ims_stock_by_sex_and_origin.xlsx
+  { id: "diaspora-inde", depuis: 20781, niveau: 2, question: "De quel pays viennent le plus de migrants internationaux (personnes qui vivent hors de leur pays de naissance) ?",
+    options: ["le Mexique", "l'Inde", "la Syrie"], juste: 1,
+    explication: "L'Inde : 18,5 millions de personnes nées en Inde vivaient dans un autre pays en 2024, devant la Chine (11,7 millions) et le Mexique (11,6 millions), sur 304 millions de migrants dans le monde (ONU, International Migrant Stock 2024).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.uu.se/en/press/press-releases/2026/2026-06-09-ucdp-record-number-of-conflicts-between-states ; https://www.prio.org/resolve/PrioPublication/d81ccf0a-03e0-4579-8dd2-b0b2fe845d60
+  { id: "conflits", depuis: 20781, niveau: 2, question: "En 2025, le nombre de conflits armés impliquant au moins un État a été…",
+    options: ["le plus bas depuis 1946", "dans la moyenne depuis la fin de la guerre froide", "le plus élevé depuis 1946"], juste: 2,
+    explication: "65 conflits, le plus haut depuis le début des relevés en 1946, dont 13 guerres (au moins 1 000 morts au combat dans l'année) et 8 entre États, deux fois plus qu'en 2024 (Uppsala Conflict Data Program ; Institut de recherche sur la paix d'Oslo).", public: null },
+  // Sources lues le 22 novembre 2026 : https://api.worldbank.org/v2/country/DZA/indicator/AG.SRF.TOTL.K2?format=json&mrv=1
+  { id: "algerie-vaste", depuis: 20781, niveau: 2, question: "Quel est le pays le plus vaste d'Afrique ?",
+    options: ["la République démocratique du Congo", "l'Algérie", "le Soudan"], juste: 1,
+    explication: "L'Algérie, avec 2,38 millions de km², devant la République démocratique du Congo (2,35 millions) et le Soudan (1,88 million).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.pr260101~c830245e42.en.html
+  { id: "euro-21", depuis: 20781, niveau: 2, question: "Combien des 27 pays de l'Union européenne utilisent l'euro ?",
+    options: ["12", "21", "27"], juste: 1,
+    explication: "21 depuis l'arrivée de la Bulgarie, le 1er janvier 2026. Les six autres gardent leur propre monnaie (Banque centrale européenne).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.un.org/en/our-work/official-languages
+  { id: "langues-onu", depuis: 20781, niveau: 2, question: "Laquelle de ces langues est une langue officielle de l'ONU ?",
+    options: ["l'hindi", "l'allemand", "l'arabe"], juste: 2,
+    explication: "L'arabe. L'ONU a six langues officielles : l'anglais, l'arabe, le chinois, l'espagnol, le français et le russe.", public: null },
+  // Sources lues le 22 novembre 2026 : https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-cobalt.pdf
+  { id: "cobalt-congo", depuis: 20781, niveau: 2, question: "Quelle part du cobalt extrait dans le monde (un métal des batteries) vient de la République démocratique du Congo ?",
+    options: ["environ 15 %", "environ 40 %", "environ 75 %"], juste: 2,
+    explication: "73 % en 2025 (230 000 tonnes sur 310 000), loin devant l'Indonésie (14 %). Le pays détient aussi la moitié des réserves connues (Institut d'études géologiques des États-Unis, USGS).", public: null },
+  // Sources lues le 22 novembre 2026 : https://unctad.org/topic/transport-and-trade-logistics/review-of-maritime-transport ; https://unctad.org/publication/review-maritime-transport-2024
+  { id: "commerce-maritime", depuis: 20781, niveau: 2, question: "Quelle part des marchandises échangées entre pays (en volume) voyage par la mer ?",
+    options: ["environ 20 %", "environ 50 %", "environ 80 %"], juste: 2,
+    explication: "Environ 80 %, et plus encore pour la plupart des pays en développement. D'où l'effet mondial des blocages de détroits ou de canaux, qui allongent les routes et renchérissent le transport (CNUCED, Étude sur les transports maritimes).", public: null },
+  // Sources lues le 22 novembre 2026 : https://api.worldbank.org/v2/country/CHN
+  { id: "chine-ppa", depuis: 20781, niveau: 2, question: "Quand on corrige les écarts de prix entre pays (parité de pouvoir d'achat), quel pays produit le plus de richesse ?",
+    options: ["les États-Unis", "la Chine", "l'Inde"], juste: 1,
+    explication: "La Chine, avec 19,5 % du PIB mondial en 2025, devant les États-Unis (14,6 %) et l'Inde (8,1 %). Aux taux de change du marché, les États-Unis restent premiers (26 %, contre 16 % pour la Chine).", public: null },
+  // Sources lues le 22 novembre 2026 : https://apps.fas.usda.gov/psdonline/downloads/psd_grains_pulses_csv.zip
+  { id: "riz-inde", depuis: 20781, niveau: 2, question: "Quel pays exporte le plus de riz ?",
+    options: ["la Chine", "la Thaïlande", "l'Inde"], juste: 2,
+    explication: "L'Inde, avec environ 23 millions de tonnes sur la campagne 2024-2025, soit plus du tiers des exportations mondiales, devant le Viêt Nam et la Thaïlande (environ 8 millions chacun). L'Inde est aussi devenue le premier producteur, devant la Chine, qui importe plus de riz qu'elle n'en exporte (ministère de l'Agriculture des États-Unis).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.who.int/news-room/fact-sheets/detail/poliomyelitis ; https://www.who.int/news/item/13-11-2026-statement-of-the-forty-sixth-meeting-of-the-polio-ihr-emergency-committee
+  { id: "polio", depuis: 20781, niveau: 2, question: "Dans combien de pays la poliomyélite sauvage circule-t-elle encore en permanence ?",
+    options: ["2", "25", "plus de 100"], juste: 0,
+    explication: "Deux, l'Afghanistan et le Pakistan, contre plus de 125 en 1988, quand on estimait les cas à 350 000 par an. Ils ont baissé de plus de 99 % depuis (OMS).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.who.int/news-room/fact-sheets/detail/malaria
+  { id: "paludisme", depuis: 20781, niveau: 3, question: "Combien de personnes le paludisme tue-t-il chaque année ?",
+    options: ["environ 60 000", "environ 600 000", "environ 6 millions"], juste: 1,
+    explication: "Environ 610 000 en 2024, pour 282 millions de cas. 95 % des décès surviennent dans la région africaine de l'OMS, et les trois quarts de ces morts sont des enfants de moins de 5 ans (OMS).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight
+  { id: "surpoids", depuis: 20781, niveau: 2, question: "Dans le monde, quelle part des adultes est en surpoids (obésité comprise) ?",
+    options: ["15 %", "30 %", "45 %"], juste: 2,
+    explication: "45 % en 2024, soit 2,6 milliards d'adultes, dont 940 millions obèses. L'obésité des adultes a plus que doublé depuis 1990 (OMS).", public: null },
+  // Vérifié via https://ourworldindata.org/grapher/share-plastic-fate.csv ; https://ourworldindata.org/grapher/share-plastic-fate.metadata.json ; https://www.voanews.com/a/percent-of-plastic-worldwide-is-recycled-oecd-says-/6455012.html
+  { id: "plastique", depuis: 20781, niveau: 2, question: "Quelle part des déchets plastiques est finalement recyclée dans le monde ?",
+    options: ["environ 9 %", "environ 30 %", "environ 50 %"], juste: 0,
+    explication: "Environ 9 % en 2019, pertes du recyclage déduites. Près de la moitié finit en décharge, 19 % est incinérée et 22 % est mal gérée (décharges sauvages, brûlage à l'air libre, rejets dans la nature) (OCDE, Global Plastics Outlook).", public: null },
+  // Sources lues le 22 novembre 2026 : https://wmo.int/news/media-centre/ozone-layer-recovery-track-helping-avoid-global-warming-05degc ; https://wmo.int/media/news/small-and-short-lived-2025-ozone-hole-confirms-long-term-recovery-trend
+  { id: "ozone", depuis: 20781, niveau: 2, question: "La couche d'ozone, qui nous protège des ultraviolets…",
+    options: ["continue de s'amincir", "ne change plus", "se reconstitue"], juste: 2,
+    explication: "Elle se reconstitue depuis l'abandon de près de 99 % des substances interdites qui la détruisaient (protocole de Montréal). Selon l'évaluation scientifique de 2022, elle devrait retrouver son état de 1980 vers 2040 dans la plupart du monde, 2045 au-dessus de l'Arctique et 2066 au-dessus de l'Antarctique (Organisation météorologique mondiale et Programme des Nations unies pour l'environnement).", public: null },
+  // Sources lues le 22 novembre 2026 : https://www.iea.org/reports/global-ev-outlook-2026/executive-summary
+  { id: "voitures-electriques", depuis: 20781, niveau: 2, question: "Quelle part des voitures neuves vendues dans le monde en 2025 était électrique (hybrides rechargeables compris) ?",
+    options: ["5 %", "un quart", "la moitié"], juste: 1,
+    explication: "Un quart : plus de 20 millions de voitures, dont 65 % entièrement électriques et le reste hybrides rechargeables. Près de 55 % en Chine, 28 % en Europe, mais un peu moins de 10 % aux États-Unis (Agence internationale de l'énergie).", public: null },
 ];
 
 // ===================== Qu'est-ce qui tue le plus ? =====================
@@ -554,7 +635,7 @@ const VRAI_FAUX = [
   { id: "einstein", niveau: 2, texte: "Einstein a échoué en mathématiques à l'école.", vrai: false,
     explication: "Il excellait en mathématiques. Il a échoué à son premier examen d'entrée à l'École polytechnique de Zurich, passé deux ans avant l'âge habituel, malgré d'excellentes notes en mathématiques et en physique.", source: "biographies d'Einstein" },
   { id: "brioche", niveau: 2, texte: "Marie-Antoinette a dit : « Qu'ils mangent de la brioche ! »", vrai: false,
-    explication: "La phrase apparaît dans les Confessions de Rousseau, écrites quand Marie-Antoinette avait neuf ans, et elle y est attribuée à « une grande princesse ».", source: "Rousseau, Confessions" },
+    explication: "La phrase apparaît dans les Confessions de Rousseau, écrites vers 1767, quand Marie-Antoinette n'était encore qu'une enfant, et elle y est attribuée à « une grande princesse ».", source: "Rousseau, Confessions" },
   { id: "desert", niveau: 1, texte: "Le plus grand désert du monde est le Sahara.", vrai: false,
     explication: "Un désert se définit par la rareté des précipitations. L'Antarctique, continent le plus sec, reçoit sur son plateau à peu près autant d'humidité que les déserts chauds, et couvre 13,7 millions de km². Le Sahara n'est le plus grand désert que si l'on met à part les déserts polaires, comme le fait l'USGS.", source: "Australian Antarctic Division, « Antarctic geography and geology » ; USGS, « Deserts: Geology and Resources » (« What Is a Desert? », « Types of Deserts »)" },
   { id: "chimpanze", niveau: 1, texte: "L'être humain descend du chimpanzé.", vrai: false,
@@ -736,6 +817,64 @@ const VRAI_FAUX = [
     explication: "Les humains dont les ancêtres ont vécu hors d'Afrique tiennent environ 1 à 4 % de leur génome de Néandertal : les deux populations se sont croisées.", source: "Green et al., Science, 2010" },
   { id: "placebo-ouvert", niveau: 3, texte: "Un placebo peut soulager même quand le patient sait qu'il prend un placebo.", vrai: true,
     explication: "Dans un essai de 2010 sur 80 patients atteints du syndrome de l'intestin irritable, ceux qui prenaient des pilules présentées comme sans principe actif allaient mieux que ceux sans traitement. L'essai est petit et court ; le résultat demande à être confirmé.", source: "Kaptchuk et al., PLoS ONE, 2010" },
+  // Ajouts du 22 novembre 2026, contre-vérifiés (agent verificateur-sources) ; « depuis » : 24 novembre.
+  // Vérifié via https://www.swissinfo.ch/eng/swiss-politics/moving-towards-the-un-in-slow-motion/291972 ; https://www.swissinfo.ch/eng/how-the-un--swiss-paradox--was-resolved/32213762 ; http://www.upi.com/Defense-News/2002/09/10/57th-UN-assembly-opens-Switz-made-member/91601031687980/
+  { id: "suisse-onu", depuis: 20781, niveau: 2, texte: "La Suisse est membre de l'ONU depuis la création de l'organisation.", vrai: false,
+    explication: "Elle n'y est entrée que le 10 septembre 2002, comme 190e État membre, après un vote populaire du 3 mars 2002 (environ 55 % de oui). En 1986, les trois quarts des votants avaient refusé l'adhésion.", source: "swissinfo.ch (SSR), « Moving towards the UN in slow motion » et « How the UN “Swiss paradox” was resolved » ; ONU Info, mars 2002" },
+  // Sources lues le 22 novembre 2026 : https://science.nasa.gov/earth/earth-observatory/yesterday-and-tomorrow-islands-91638/ ; https://www.nps.gov/anch/learn/historyculture/how-close-is-alaska-to-russia.htm
+  { id: "diomede", depuis: 20781, niveau: 3, texte: "Au plus près, la Russie et les États-Unis sont séparés par moins de 5 km.", vrai: true,
+    explication: "Dans le détroit de Béring, la Grande Diomède, russe, et la Petite Diomède, américaine, ne sont distantes que d'environ 4 km. La frontière maritime passe entre les deux îles, tout comme la ligne de changement de date. Entre les deux continents, il y a environ 90 km.", source: "NASA Earth Observatory, « Yesterday and Tomorrow Islands » ; National Park Service, « How close is Alaska to Russia? »" },
+  // Sources lues le 22 novembre 2026 : https://european-union.europa.eu/principles-countries-history/history-eu/2010-19_en ; https://www.upi.com/Top_News/World-News/2012/10/12/European-Union-wins-Nobel-Peace-Prize/UPI-48041350039373/
+  { id: "ue-nobel", depuis: 20781, niveau: 2, texte: "L'Union européenne a reçu le prix Nobel de la paix.", vrai: true,
+    explication: "Elle l'a reçu en 2012, au cours d'une cérémonie à Oslo, pour sa contribution pendant plus de six décennies à la paix et à la réconciliation, à la démocratie et aux droits de l'homme en Europe.", source: "Union européenne, « Histoire de l'UE, 2010-2019 » ; Comité Nobel norvégien, 2012" },
+  // Sources lues le 22 novembre 2026 : https://eur-lex.europa.eu/eli/dec/2006/526/oj/eng ; https://api.parliament.uk/historic-hansard/written-answers/1982/mar/01/greenland
+  { id: "groenland-ue", depuis: 20781, niveau: 2, texte: "Le Groenland, qui fait partie du royaume de Danemark, appartient à l'Union européenne.", vrai: false,
+    explication: "Entré dans la Communauté avec le Danemark, il a voté pour en sortir lors d'un référendum en 1982. Depuis le 1er février 1985, les traités ne s'y appliquent plus : il n'est qu'associé à l'Union, comme pays et territoire d'outre-mer.", source: "Décision 2006/526/CE du Conseil (considérant 1) ; Chambre des communes, réponse écrite du 1er mars 1982" },
+  // Sources lues le 22 novembre 2026 : https://www.canada.ca/en/global-affairs/news/2022/06/canada-and-the-kingdom-of-denmark-together-with-greenland-reach-historic-agreement-on-long-standing-boundary-disputes.html ; https://www.canada.ca/en/global-affairs/news/2022/06/boundary-dispute.html ; https://blogs.loc.gov/law/2022/06/the-hans-island-peace-agreement-between-canada-denmark-and-greenland/
+  { id: "ile-hans", depuis: 20781, niveau: 2, texte: "Le Canada et le Danemark se sont disputé une île de l'Arctique jusqu'en 2022.", vrai: true,
+    explication: "Le traité de 1973 sur leur frontière maritime avait laissé de côté l'île de Hans, un rocher inhabité. Des militaires des deux pays y ont longtemps planté leur drapeau en laissant une bouteille de whisky canadien ou d'aquavit : la « guerre du whisky ». L'accord du 14 juin 2022 partage l'île le long d'un ravin naturel.", source: "Affaires mondiales Canada, communiqués du 14 juin 2022 ; Bibliothèque du Congrès, « The Hans Island Peace Agreement… » (2022)" },
+  // Vérifié via https://www.nippon.com/en/features/h00338/ ; https://www.lowyinstitute.org/the-interpreter/ending-60-year-stalemate-japans-push-get-peace-treaty-russia ; https://www.nationthailand.com/news/world/40072494
+  { id: "japon-russie", depuis: 20781, niveau: 3, texte: "Le Japon et la Russie n'ont jamais signé de traité de paix mettant fin à la Seconde Guerre mondiale.", vrai: true,
+    explication: "En 1956, une déclaration commune a mis fin à l'état de guerre et rétabli les relations diplomatiques, mais le traité de paix prévu n'a jamais été conclu. La déclaration promettait au Japon l'île de Shikotan et les îles Habomai, une fois ce traité signé.", source: "Déclaration commune soviéto-japonaise du 19 octobre 1956, articles 1, 2 et 9 (base « The World and Japan », GRIPS et Université de Tokyo) ; nippon.com, « Japan Data » ; Lowy Institute, The Interpreter" },
+  // Sources lues le 22 novembre 2026 : https://www.parlament.ch/en/über-das-parlament/political-women/conquest-of-equal-rights/women-suffrage
+  { id: "suissesses-vote", depuis: 20781, niveau: 2, texte: "En Suisse, les femmes votent aux élections fédérales depuis la fin de la Seconde Guerre mondiale.", vrai: false,
+    explication: "Elles n'ont obtenu le droit de vote et d'éligibilité au niveau fédéral que le 7 février 1971, par un vote des seuls hommes. En 1959, ceux-ci l'avaient refusé à 66,9 %.", source: "Parlement suisse, « Women suffrage »" },
+  // Sources lues le 22 novembre 2026 : https://www.imf.org/external/np/speeches/2000/051900.htm ; https://www.portafolio.co/internacional/presidente-de-ecuador-ratifica-que-el-dolar-es-el-unico-medio-de-pago-626054 ; https://www.larepublica.co/globoeconomia/ecuador-conmemora-25-anos-de-la-dolarizacion-en-busqueda-de-estabilizar-la-economia-4033457
+  { id: "equateur-dollar", depuis: 20781, niveau: 2, texte: "La monnaie officielle de l'Équateur est le dollar américain.", vrai: true,
+    explication: "Le sucre, la monnaie nationale, avait perdu près de 80 % de sa valeur face au dollar en seize mois. Le 9 janvier 2000, le président Jamil Mahuad a annoncé la dollarisation, toujours en vigueur ; un décret l'a confirmée en 2025.", source: "FMI, discours de Stanley Fischer, 19 mai 2000 ; Portafolio, 18 mars 2025" },
+  // Vérifié via https://blogs.loc.gov/law/2020/10/the-crushing-death-of-giles-corey-of-salem-1692/ ; https://news.northeastern.edu/2023/10/18/salem-witch-trials-history-truth
+  { id: "salem", depuis: 20781, niveau: 1, texte: "Lors des procès des sorcières de Salem, en 1692, les condamnés ont été brûlés vifs.", vrai: false,
+    explication: "Dix-neuf personnes ont été pendues, et un homme, Giles Corey, est mort écrasé sous des poids pour avoir refusé d'être jugé. Personne n'a été brûlé.", source: "Bibliothèque du Congrès, « The Crushing Death of Giles Corey of Salem, 1692 » ; Northeastern University (Jessica Parr), 2023" },
+  // Sources lues le 22 novembre 2026 : https://penelope.uchicago.edu/Thayer/E/roman/Texts/Tacitus/Annals/15B*.html ; https://penelope.uchicago.edu/Thayer/E/Journals/CJ/42/4/Nero_Fiddled*.html
+  { id: "neron-violon", depuis: 20781, niveau: 1, texte: "Néron jouait du violon pendant que Rome brûlait.", vrai: false,
+    explication: "Le violon n'existait pas : il n'est apparu que plus d'un millénaire plus tard. Selon Tacite, Néron était à Antium quand l'incendie a éclaté, et une rumeur disait qu'il avait chanté la destruction de Troie sur sa scène privée pendant que la ville brûlait.", source: "Tacite, Annales, XV, 39 ; Gyles, « Nero Fiddled While Rome Burned », The Classical Journal, 1947" },
+  // Sources lues le 22 novembre 2026 : https://science.nasa.gov/venus/venus-facts/
+  { id: "mercure-chaude", depuis: 20781, niveau: 1, texte: "Mercure, la planète la plus proche du Soleil, est la plus chaude du Système solaire.", vrai: false,
+    explication: "La plus chaude est Vénus, deuxième planète à partir du Soleil, avec environ 467 °C en surface : elle est plus chaude encore que Mercure.", source: "NASA Science, « Venus: Facts »" },
+  // Sources lues le 22 novembre 2026 : https://physicstoday.aip.org/opinion/venus-is-not-earths-closest-neighbor
+  { id: "mercure-voisine", depuis: 20781, niveau: 3, texte: "En moyenne dans le temps, la planète la plus proche de la Terre est Mercure, et non Vénus.", vrai: true,
+    explication: "Vénus est celle qui s'approche le plus de nous, mais elle passe aussi de longues périodes de l'autre côté du Soleil. Mercure, sur une orbite bien plus petite, ne s'éloigne jamais autant : sa distance moyenne à la Terre est d'environ 1,04 unité astronomique, contre 1,14 pour Vénus. Le calcul suppose des orbites circulaires dans un même plan.", source: "Stockman, Monroe et Cordner, « Venus is not Earth's closest neighbor », Physics Today, 2019" },
+  // Sources lues le 22 novembre 2026 : https://www.nasa.gov/learning-resources/for-kids-and-students/what-is-microgravity-grades-5-8/
+  { id: "iss-gravite", depuis: 20781, niveau: 2, texte: "Les astronautes flottent dans la Station spatiale internationale parce qu'il n'y a plus de gravité à cette altitude.", vrai: false,
+    explication: "À l'altitude de la station, la gravité terrestre vaut encore environ 90 % de sa valeur au sol. Les astronautes flottent parce qu'ils sont en chute libre, comme la station et tout ce qu'elle contient.", source: "NASA, « What Is Microgravity? »" },
+  // Sources lues le 22 novembre 2026 : https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002533
+  { id: "bacteries-cellules", depuis: 20781, niveau: 2, texte: "Le corps humain contient dix fois plus de bactéries que de cellules humaines.", vrai: false,
+    explication: "Ce rapport de dix pour un, très cité, venait d'une estimation ancienne. Une réévaluation de 2016 compte, pour un homme de 70 kg, environ 38 000 milliards de bactéries pour 30 000 milliards de cellules humaines : à peu près autant.", source: "Sender, Fuchs et Milo, « Revised Estimates for the Number of Human and Bacteria Cells in the Body », PLoS Biology, 2016" },
+  // Vérifié via https://www.sciencedaily.com/releases/2017/07/170727141510.htm ; https://sciencenews.org/article/art-dna-folding
+  { id: "adn-longueur", depuis: 20781, niveau: 2, texte: "Déroulé bout à bout, l'ADN d'une seule de nos cellules mesurerait environ deux mètres.", vrai: true,
+    explication: "Cette longue molécule tient pourtant dans le noyau de la cellule, invisible à l'œil nu, grâce à un repliement très compact autour de protéines.", source: "Salk Institute, 2017 (étude ChromEMT, Science) ; Science News, « The art of DNA folding »" },
+  // Sources lues le 22 novembre 2026 : https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.0010003
+  { id: "chats-sucre", depuis: 20781, niveau: 2, texte: "Les chats ne sentent pas le goût sucré.", vrai: true,
+    explication: "Chez eux, le gène d'une des deux protéines du récepteur du sucré est inactif ; le même défaut se retrouve chez le tigre et le guépard. Les chats ne préfèrent pas les sucres et ne peuvent probablement pas les détecter.", source: "Li et al., « Pseudogenization of a sweet-receptor gene accounts for cats' indifference toward sugar », PLoS Genetics, 2005" },
+  // Sources lues le 22 novembre 2026 : https://www.adfg.alaska.gov/index.cfm?adfg=wildlifenews.view_article&articles_id=56
+  { id: "lemmings", depuis: 20781, niveau: 1, texte: "Les lemmings se suicident en masse en se jetant du haut des falaises.", vrai: false,
+    explication: "C'est un mythe, popularisé par le documentaire de Disney White Wilderness (1958) : les lemmings y avaient été jetés d'une falaise par l'équipe de tournage. Quand la nourriture manque, ils se dispersent et traversent des étendues d'eau à la nage ; certains se noient.", source: "Riley Woodford, « Lemming Suicide Myth », Alaska Fish & Wildlife News, Alaska Department of Fish and Game, septembre 2003" },
+  // Sources lues le 22 novembre 2026 : https://www.cnrtl.fr/etymologie/bistrot
+  { id: "bistrot", depuis: 20781, niveau: 2, texte: "Le mot « bistrot » vient des soldats russes qui criaient « bystro ! » (« vite ! ») dans les cafés parisiens.", vrai: false,
+    explication: "Le mot n'est attesté qu'à partir de 1884, et la forme « bistrot » en 1892, bien après le passage des troupes russes à Paris. Le Trésor de la langue française juge l'hypothèse russe insuffisamment fondée ; l'origine du mot reste obscure.", source: "Trésor de la langue française (CNRTL), « bistro, bistrot », étymologie" },
+  // Sources lues le 22 novembre 2026 : https://patents.google.com/patent/US748626A/en ; https://www.bl.uk/stories/blogs/posts/lizzie-magie-and-the-history-of-monopoly ; https://publicdomainreview.org/collection/the-landlords-game
+  { id: "monopoly", depuis: 20781, niveau: 2, texte: "L'ancêtre du Monopoly a été inventé pour mettre en garde contre les monopoles.", vrai: true,
+    explication: "Lizzie Magie, adepte des idées de l'économiste Henry George, fait breveter en 1904 The Landlord's Game, « le jeu du propriétaire », pour enseigner ces idées. Le jeu reçoit deux séries de règles, dont une « antimonopole », qu'elle juge moralement préférable. Copié de main en main, le jeu a pris le nom de « Monopoly », et c'est la variante où l'on ruine les autres qui l'a emporté.", source: "Brevet américain n° 748 626 (1904) ; British Library, « Lizzie Magie and the history of Monopoly » ; The Public Domain Review" },
 ];
 
 // ===================== Avant ou après ? =====================
@@ -780,7 +919,8 @@ const EVENEMENTS = [
   { id: "bastille", nom: "Prise de la Bastille", annee: 1789 },
   { id: "mozart", nom: "Mort de Mozart", annee: 1791, date: "1791-12-05" },
   { id: "jenner", sujet: "vaccins", nom: "Première vaccination contre la variole (Jenner)", annee: 1796 },
-  { id: "sacre", sujet: "napoleon", nom: "Sacre de Napoléon Ier", annee: 1804 },
+  { id: "sacre", sujet: "napoleon", nom: "Sacre de Napoléon Ier", annee: 1804, date: "1804-12-02" },
+  { id: "haiti", nom: "Proclamation de l'indépendance d'Haïti", annee: 1804, date: "1804-01-01" },
   { id: "saint-empire", nom: "Fin du Saint-Empire romain germanique", annee: 1806, date: "1806-08-06" },
   { id: "waterloo", sujet: "napoleon", nom: "Bataille de Waterloo", annee: 1815 },
   { id: "mort-napoleon", sujet: "napoleon", nom: "Mort de Napoléon Ier", annee: 1821 },
@@ -788,17 +928,21 @@ const EVENEMENTS = [
   { id: "megalosaure", nom: "Description du mégalosaure, premier dinosaure nommé", annee: 1824, date: "1824-02-20" },
   { id: "photo", nom: "Plus ancienne photographie conservée (Niépce)", annee: 1827 },
   { id: "allumette", nom: "Premières allumettes à friction (John Walker)", annee: 1827 },
-  { id: "train", nom: "Première ligne de chemin de fer pour voyageurs (Liverpool–Manchester)", annee: 1830 },
+  { id: "train", nom: "Première ligne de chemin de fer pour voyageurs (Liverpool–Manchester)", annee: 1830, date: "1830-09-15" },
+  { id: "belgique", nom: "Le gouvernement provisoire proclame l'indépendance de la Belgique", annee: 1830, date: "1830-10-04" },
   { id: "esclavage-britannique", sujet: "esclavage", nom: "Entrée en vigueur de l'abolition de l'esclavage dans les colonies britanniques", annee: 1834, date: "1834-08-01" },
   { id: "fax", nom: "Brevet du fax (Alexander Bain)", annee: 1843 },
   { id: "neptune", nom: "Découverte de la planète Neptune", annee: 1846 },
   { id: "esclavage-france", sujet: "esclavage", nom: "Abolition définitive de l'esclavage dans les colonies françaises", annee: 1848 },
   { id: "neandertal", nom: "Découverte de l'homme de Néandertal (vallée de Neander, Allemagne)", annee: 1856 },
+  { id: "sheffield", nom: "Fondation du Sheffield FC, plus ancien club de football encore en activité", annee: 1857 },
   { id: "darwin", nom: "Darwin publie « L'Origine des espèces »", annee: 1859 },
   { id: "metro-londres", sujet: "metro", nom: "Ouverture du métro de Londres", annee: 1863 },
   { id: "secession", nom: "Fin de la guerre de Sécession", annee: 1865 },
   { id: "nokia", nom: "Fondation de Nokia, alors fabrique de pâte à papier en Finlande", annee: 1865 },
+  { id: "uit", nom: "Fondation de l'Union télégraphique internationale (aujourd'hui l'UIT), à Paris", annee: 1865, date: "1865-05-17" },
   { id: "capital", nom: "Marx publie le premier livre du « Capital »", annee: 1867 },
+  { id: "meiji", nom: "Fin du shogunat au Japon : restauration du pouvoir impérial (ère Meiji)", annee: 1868 },
   { id: "suez", nom: "Ouverture du canal de Suez", annee: 1869, date: "1869-11-17" },
   { id: "mendeleiev", nom: "Présentation du tableau périodique des éléments par Mendeleïev", annee: 1869, date: "1869-03-06" },
   { id: "empire-allemand", nom: "Proclamation de l'Empire allemand", annee: 1871 },
@@ -807,9 +951,12 @@ const EVENEMENTS = [
   { id: "pasteur", sujet: "vaccins", nom: "Premier vaccin contre la rage (Pasteur)", annee: 1885 },
   { id: "automobile", nom: "Brevet de la première automobile (Carl Benz)", annee: 1886 },
   { id: "liberte", nom: "Inauguration de la statue de la Liberté", annee: 1886 },
+  { id: "sherlock", nom: "Première aventure de Sherlock Holmes (« Une étude en rouge »)", annee: 1887 },
   { id: "bresil", sujet: "esclavage", nom: "Abolition de l'esclavage au Brésil", annee: 1888 },
+  { id: "eventreur", nom: "Meurtres de « Jack l'Éventreur » à Whitechapel (Londres)", annee: 1888 },
   { id: "eiffel", nom: "Inauguration de la tour Eiffel", annee: 1889, date: "1889-03-31" },
   { id: "nintendo", nom: "Fondation de Nintendo", annee: 1889, date: "1889-09-23" },
+  { id: "bresil-republique", nom: "Proclamation de la République au Brésil, qui met fin à l'Empire", annee: 1889, date: "1889-11-15" },
   { id: "van-gogh", nom: "Mort de Vincent van Gogh", annee: 1890, date: "1890-07-29" },
   { id: "wounded-knee", nom: "Massacre de Lakotas par l'armée américaine à Wounded Knee", annee: 1890, date: "1890-12-29" },
   { id: "nouvelle-zelande", nom: "Premier vote des femmes à des élections nationales (Nouvelle-Zélande)", annee: 1893 },
@@ -818,20 +965,28 @@ const EVENEMENTS = [
   { id: "jo", nom: "Premiers Jeux olympiques modernes (Athènes)", annee: 1896, date: "1896-04-06" },
   { id: "metro-paris", sujet: "metro", nom: "Ouverture du métro de Paris", annee: 1900 },
   { id: "nobel", nom: "Premiers prix Nobel", annee: 1901 },
+  { id: "australie", nom: "Naissance du Commonwealth d'Australie (fédération des six colonies)", annee: 1901, date: "1901-01-01" },
   { id: "wright", nom: "Premier vol motorisé des frères Wright", annee: 1903, date: "1903-12-17" },
   { id: "tour-de-france", nom: "Premier Tour de France", annee: 1903, date: "1903-07-01" },
+  { id: "fifa", nom: "Fondation de la FIFA, à Paris", annee: 1904 },
   { id: "relativite", nom: "Einstein publie la relativité restreinte", annee: 1905 },
+  { id: "norvege", nom: "Le Parlement norvégien rompt l'union avec la Suède", annee: 1905, date: "1905-06-07" },
+  { id: "pole-sud", nom: "Amundsen atteint le pôle Sud", annee: 1911, date: "1911-12-14" },
   { id: "titanic", nom: "Naufrage du Titanic", annee: 1912 },
   { id: "chine-empire", nom: "Abdication du dernier empereur de Chine", annee: 1912 },
   { id: "guerre-1914", sujet: "guerres", nom: "Début de la Première Guerre mondiale", annee: 1914 },
   { id: "octobre", sujet: "guerres", nom: "Révolution d'Octobre en Russie", annee: 1917 },
+  { id: "finlande", nom: "Le Parlement finlandais approuve la déclaration d'indépendance", annee: 1917, date: "1917-12-06" },
   { id: "elizabeth", nom: "Naissance de la reine Elizabeth II", annee: 1926, date: "1926-04-21" },
   { id: "penicilline", nom: "Découverte de la pénicilline (Fleming)", annee: 1928 },
   { id: "mlk", nom: "Naissance de Martin Luther King", annee: 1929, date: "1929-01-15" },
   { id: "anne-frank", nom: "Naissance d'Anne Frank", annee: 1929, date: "1929-06-12" },
   { id: "krach", nom: "Krach boursier de Wall Street", annee: 1929, date: "1929-10-24" },
+  { id: "tintin", nom: "Première apparition de Tintin (« Le Petit Vingtième »)", annee: 1929, date: "1929-01-10" },
+  { id: "vatican", nom: "Signature des accords du Latran, qui créent l'État de la Cité du Vatican", annee: 1929, date: "1929-02-11" },
   { id: "pluton", nom: "Découverte de Pluton", annee: 1930 },
   { id: "coupe-du-monde", nom: "Première Coupe du monde de football", annee: 1930 },
+  { id: "arabie-saoudite", nom: "Proclamation du royaume d'Arabie saoudite", annee: 1932, date: "1932-09-23" },
   { id: "turquie", nom: "Droit de vote des femmes aux élections législatives en Turquie", annee: 1934, date: "1934-12-05" },
   { id: "thylacine", nom: "Mort du dernier thylacine (tigre de Tasmanie) connu", annee: 1936, date: "1936-09-07" },
   { id: "fin-guerre", sujet: "guerres", nom: "Fin de la Seconde Guerre mondiale", annee: 1945 },
@@ -841,11 +996,13 @@ const EVENEMENTS = [
   { id: "adn", nom: "Découverte de la structure de l'ADN", annee: 1953 },
   { id: "spoutnik", sujet: "espace", nom: "Lancement de Spoutnik, premier satellite artificiel", annee: 1957 },
   { id: "tennis", nom: "Présentation de « Tennis for Two », l'un des premiers jeux vidéo", annee: 1958, date: "1958-10-18" },
+  { id: "hawaii", nom: "Hawaï devient le 50e État des États-Unis", annee: 1959, date: "1959-08-21" },
   { id: "gagarine", sujet: "espace", nom: "Premier humain dans l'espace (Gagarine)", annee: 1961, date: "1961-04-12" },
   { id: "mur", sujet: "berlin", nom: "Construction du mur de Berlin", annee: 1961, date: "1961-08-13" },
   { id: "kennedy", nom: "Assassinat de John F. Kennedy", annee: 1963 },
   { id: "greffe", nom: "Première greffe du cœur", annee: 1967 },
-  { id: "lune", sujet: "espace", nom: "Premiers pas sur la Lune", annee: 1969 },
+  { id: "lune", sujet: "espace", nom: "Premiers pas sur la Lune", annee: 1969, date: "1969-07-21" },
+  { id: "arpanet", sujet: "internet", nom: "Premier message envoyé sur ARPANET, l'ancêtre d'Internet", annee: 1969, date: "1969-10-29" },
   { id: "suisse-vote", sujet: "vote-suisse", nom: "Droit de vote des femmes en Suisse, au niveau fédéral", annee: 1971, date: "1971-02-07" },
   { id: "picasso", nom: "Mort de Pablo Picasso", annee: 1973 },
   { id: "apple", nom: "Fondation d'Apple", annee: 1976 },
@@ -866,6 +1023,7 @@ const EVENEMENTS = [
   { id: "euro", nom: "Mise en circulation des pièces et billets en euros", annee: 2002 },
   { id: "facebook", sujet: "internet", nom: "Création de Facebook", annee: 2004 },
   { id: "iphone", sujet: "internet", nom: "Présentation du premier iPhone", annee: 2007 },
+  { id: "soudan-sud", nom: "Indépendance du Soudan du Sud", annee: 2011, date: "2011-07-09" },
   { id: "trou-noir", nom: "Première image d'un trou noir (galaxie M87)", annee: 2019, date: "2019-04-10" }
 ];
 
@@ -946,7 +1104,48 @@ const PAIRES_CELEBRES = [
   // Haut-Commissariat des Nations unies aux droits de l'homme : loi de 1981, esclavage criminalisé en 2007 seulement
   { a: "star-wars", b: "mauritanie", depuis: 20778, note: "La Mauritanie a aboli l'esclavage en 1981, quatre ans après la sortie de Star Wars ; il n'y est devenu un crime qu'en 2007." },
   // Jeanne d'Arc : 1431 ; prise de Constantinople : 29 mai 1453
-  { a: "jeanne", b: "constantinople", depuis: 20778, note: "Quand Jeanne d'Arc est morte, en 1431, l'Empire romain d'Orient existait encore : il a pris fin avec la prise de Constantinople, en 1453." }
+  { a: "jeanne", b: "constantinople", depuis: 20778, note: "Quand Jeanne d'Arc est morte, en 1431, l'Empire romain d'Orient existait encore : il a pris fin avec la prise de Constantinople, en 1453." },
+  // Ajouts du 22 novembre 2026, contre-vérifiés (agent verificateur-sources) ; « depuis » : 24 novembre.
+  // London Transport Museum : métro ouvert le 10 janvier 1863 ; Deutsches Historisches Museum (LeMO) : proclamation de l'Empire le 18 janvier 1871
+  { a: "metro-londres", b: "empire-allemand", depuis: 20781, note: "Le métro de Londres circulait depuis huit ans quand l'Allemagne unifiée est née, avec la proclamation de l'Empire allemand le 18 janvier 1871." },
+  // Fondation Nobel (nobelprize.org) : premier prix de la paix en 1901, Norvège et Suède alors unies ; Store norske leksikon : union rompue par le Storting le 7 juin 1905
+  { a: "nobel", b: "norvege", depuis: 20781, note: "Le prix Nobel de la paix est décerné en Norvège depuis 1901 ; le pays était pourtant encore uni à la Suède : son Parlement n'a rompu l'union que le 7 juin 1905." },
+  // Parliamentary Education Office (Parlement australien) : Commonwealth d'Australie formé le 1er janvier 1901
+  { a: "eiffel", b: "australie", depuis: 20781, note: "La tour Eiffel est plus ancienne que l'Australie en tant que pays : les six colonies britanniques se sont fédérées en Commonwealth d'Australie le 1er janvier 1901." },
+  // Nations unies (maintien de la paix, UNMIS) : Soudan du Sud indépendant le 9 juillet 2011 ; Meta : Facebook lancé en 2004
+  { a: "facebook", b: "soudan-sud", depuis: 20781, note: "Le Soudan du Sud, devenu indépendant le 9 juillet 2011, est plus jeune que Facebook, lancé en 2004." },
+  // Nokia (nokia.com) : « founded in Tampere in 1865 » ; ministère finlandais des Affaires étrangères (um.fi) : indépendance le 6 décembre 1917
+  { a: "nokia", b: "finlande", depuis: 20781, note: "Nokia est plus ancienne que la Finlande indépendante : l'entreprise est née en 1865, le Parlement finlandais a approuvé la déclaration d'indépendance le 6 décembre 1917." },
+  // FIFA : première Coupe du monde du 13 au 30 juillet 1930 ; Autorité générale saoudienne de la statistique (stats.gov.sa) : royaume proclamé le 23 septembre 1932
+  { a: "coupe-du-monde", b: "arabie-saoudite", depuis: 20781, note: "La première Coupe du monde de football (juillet 1930) a précédé de deux ans la proclamation du royaume d'Arabie saoudite sous ce nom, le 23 septembre 1932." },
+  // Université Duke (découverte de la déclaration par Julia Gaffield) : indépendance le 1er janvier 1804 ; Fondation Napoléon : sacre le 2 décembre 1804
+  { a: "haiti", b: "sacre", depuis: 20781, note: "Haïti a proclamé son indépendance vis-à-vis de la France le 1er janvier 1804, onze mois avant le sacre de Napoléon, le 2 décembre 1804." },
+  // Présidence de la République du Brésil (planalto.gov.br) : décret no 1 du 15 novembre 1889 proclamant la République
+  { a: "eiffel", b: "bresil-republique", depuis: 20781, note: "Le Brésil était encore un empire quand la tour Eiffel a été inaugurée, le 31 mars 1889 : la République n'y a été proclamée que le 15 novembre 1889." },
+  // Science and Industry Museum : ligne ouverte le 15 septembre 1830 ; déclaration du gouvernement provisoire belge du 4 octobre 1830 (Huyttens, 1844)
+  { a: "train", b: "belgique", depuis: 20781, note: "La Belgique est plus jeune que le train de voyageurs : la ligne Liverpool–Manchester a ouvert le 15 septembre 1830, et le gouvernement provisoire belge a proclamé l'indépendance le 4 octobre 1830." },
+  // Vatican News et texte des accords (vatican.va) : signés le 11 février 1929, ratifications échangées le 7 juin 1929 ; Fondation Nobel : MLK né le 15 janvier 1929
+  { a: "mlk", b: "vatican", depuis: 20781, note: "L'État de la Cité du Vatican a été créé par les accords du Latran, signés le 11 février 1929 et entrés en vigueur le 7 juin : il est plus jeune que Martin Luther King, né le 15 janvier 1929." },
+  // Archives nationales des États-Unis : Hawaï admis comme 50e État le 21 août 1959 ; NASA : Spoutnik lancé le 4 octobre 1957
+  { a: "spoutnik", b: "hawaii", depuis: 20781, note: "Le premier satellite artificiel, Spoutnik, a été lancé près de deux ans avant que Hawaï devienne le 50e État des États-Unis, le 21 août 1959." },
+  // London Transport Museum : 10 janvier 1863 ; nippon.com (Kawai Atsushi) : édit de restauration du pouvoir impérial en janvier 1868
+  { a: "metro-londres", b: "meiji", depuis: 20781, note: "Le métro de Londres circulait depuis près de cinq ans quand le Japon a mis fin au shogunat, à la fin de 1867 et au début de 1868 : le pouvoir est revenu à l'empereur, ce qui ouvre l'ère Meiji." },
+  // UIT (itu.int) : convention télégraphique internationale signée à Paris le 17 mai 1865
+  { a: "uit", b: "telephone", depuis: 20781, note: "L'Union internationale des télécommunications est plus ancienne que le téléphone : fondée pour le télégraphe à Paris, le 17 mai 1865, elle précède de près de onze ans le brevet de Graham Bell." },
+  // Royal Museums Greenwich et American Museum of Natural History : Amundsen au pôle Sud le 14 décembre 1911
+  { a: "wright", b: "pole-sud", depuis: 20781, note: "On volait déjà en avion depuis près de huit ans quand Amundsen a atteint le pôle Sud, le 14 décembre 1911." },
+  // NASA (NSSDC) : premier pas le 21 juillet 1969 à 2 h 56 TU ; Leonard Kleinrock (UCLA) : premier message ARPANET le 29 octobre 1969
+  { a: "lune", b: "arpanet", depuis: 20781, note: "Même année : on a marché sur la Lune en juillet 1969, trois mois avant le premier message envoyé sur ARPANET, l'ancêtre d'Internet, le 29 octobre." },
+  // Encyclopædia Universalis et Office allemand des brevets (DPMA) : premier épisode de Tintin le 10 janvier 1929
+  { a: "tintin", b: "mlk", depuis: 20781, note: "Tintin est plus âgé que Martin Luther King : il est apparu le 10 janvier 1929 dans « Le Petit Vingtième », cinq jours avant la naissance du pasteur." },
+  // Grolier Club : « Beeton's Christmas Annual » de 1887 paru en novembre ; Archives nationales britanniques : meurtres de l'automne 1888
+  { a: "sherlock", b: "eventreur", depuis: 20781, note: "Sherlock Holmes est plus ancien que Jack l'Éventreur : sa première enquête a paru en novembre 1887, un an avant les meurtres de Whitechapel, à l'automne 1888." },
+  // FIFA (inside.fifa.com) : FIFA fondée en 1904 au 229, rue Saint-Honoré, à Paris ; premier Tour de France en juillet 1903
+  { a: "tour-de-france", b: "fifa", depuis: 20781, note: "Le Tour de France est plus ancien que la FIFA : il est parti en juillet 1903, la fédération internationale de football a été fondée à Paris en 1904." },
+  // Fédération anglaise de football (thefa.com) et Sheffield FC : premier club fondé en 1857
+  { a: "sheffield", b: "darwin", depuis: 20781, note: "Le plus ancien club de football encore en activité, le Sheffield FC, a été fondé en 1857, deux ans avant la publication de « L'Origine des espèces »." },
+  // OMS : dernier cas naturel en Somalie en 1977, éradication déclarée en 1980 ; Computer History Museum : Apple fondée en 1976
+  { a: "apple", b: "variole", depuis: 20781, note: "Apple existait déjà quand la variole circulait encore : l'entreprise est fondée en 1976, le dernier cas naturel connu date de 1977 et l'OMS a déclaré la maladie éradiquée en 1980." },
 ];
 
 // ===================== Ordres de grandeur =====================
@@ -1206,5 +1405,60 @@ const CITATIONS = [
   { id: "edison-genie", niveau: 2, texte: "Le génie, c'est 1 % d'inspiration et 99 % de transpiration.", auteur: "Thomas Edison", statut: "authentique",
     explication: "Edison s'en est réclamé dans une lettre de 1927 ; des versions plus anciennes de ses propos, dès 1898, donnaient 2 % et 98 %." },
   { id: "twain-mensonge", niveau: 3, texte: "Un mensonge peut faire le tour de la Terre pendant que la vérité met ses chaussures.", auteur: "Mark Twain", statut: "apocryphe",
-    explication: "Aucune trace dans ses écrits : l'attribution apparaît vers 1919-1921, après sa mort. L'idée remonte au moins à Jonathan Swift, en 1710 : « Le mensonge vole, et la vérité le suit en boitant. »" }
+    explication: "Aucune trace dans ses écrits : l'attribution apparaît vers 1919-1921, après sa mort. L'idée remonte au moins à Jonathan Swift, en 1710 : « Le mensonge vole, et la vérité le suit en boitant. »" },
+  // Ajouts du 22 novembre 2026, contre-vérifiés (agent verificateur-sources) ; « depuis » : 24 novembre.
+  // Sources lues le 22 novembre 2026 : https://www.margaretthatcher.org/document/106689
+  { id: "thatcher-societe", depuis: 20781, niveau: 3, texte: "La société, ça n'existe pas.", auteur: "Margaret Thatcher", statut: "authentique",
+    explication: "Entretien au magazine « Woman's Own », à Downing Street, le 23 septembre 1987 : « There is no such thing as society. » Elle vise l'idée que l'État doit tout régler, et parle aussitôt d'une « tapisserie vivante d'hommes et de femmes » dont chacun doit aider les plus malheureux." },
+  // Sources lues le 22 novembre 2026 : https://www.elysee.fr/francois-mitterrand/1995/01/17/discours-de-m-francois-mitterrand-president-de-la-republique-sur-le-programme-de-la-presidence-francaise-de-lunion-europeenne-notamment-en-matiere-delargissement-dunion-economique-et-monetaire-dorganisation-de-leurope-sociale-didentite-cultu
+  { id: "mitterrand-nationalisme", depuis: 20781, niveau: 2, texte: "Le nationalisme, c'est la guerre.", auteur: "François Mitterrand", statut: "authentique",
+    explication: "Devant le Parlement européen, à Strasbourg, le 17 janvier 1995, après avoir raconté sa captivité en Allemagne : « il faut vaincre notre histoire et pourtant si on ne la vainc pas, il faut savoir qu'une règle s'imposera […] : le nationalisme, c'est la guerre ! »" },
+  // Sources lues le 22 novembre 2026 : https://www.marxists.org/reference/archive/mao/selected-works/volume-2/mswv2_12.htm
+  { id: "mao-fusil", depuis: 20781, niveau: 2, texte: "Le pouvoir est au bout du fusil.", auteur: "Mao Zedong", statut: "authentique",
+    explication: "« Problèmes de la guerre et de la stratégie », 6 novembre 1938 : « Le pouvoir politique est au bout du fusil. » La phrase qui suit est moins citée : « Notre principe, c'est que le Parti commande au fusil, et que le fusil ne doit jamais commander au Parti. »" },
+  // Vérifié via http://web.archive.org/web/20220706044626/http://db.nelsonmandela.org/speeches/pub_view.asp?pg=item&ItemID=NMS909 ; https://archive.nelsonmandela.org/index.php/za-com-mr-s-909 ; https://barrypopik.com/blog/education_is_the_most_powerful_weapon
+  { id: "mandela-education", depuis: 20781, niveau: 2, texte: "L'éducation est l'arme la plus puissante pour changer le monde.", auteur: "Nelson Mandela", statut: "authentique",
+    explication: "Elle a tout d'une phrase de poster, mais elle est de lui : discours au lancement du réseau éducatif Mindset, à l'université du Witwatersrand, à Johannesburg, le 16 juillet 2003 : « L'éducation est l'arme la plus puissante que nous puissions utiliser pour changer le monde »." },
+  // Vérifié via https://kinginstitute.stanford.edu/our-god-marching ; https://quoteinvestigator.com/2012/11/15/arc-of-universe/
+  { id: "king-arc", depuis: 20781, niveau: 3, texte: "L'arc de l'univers moral est long, mais il penche vers la justice.", auteur: "Martin Luther King", statut: "authentique",
+    explication: "King l'a bien dite, notamment à Montgomery, en Alabama, le 25 mars 1965 : « Combien de temps ? Pas longtemps, car l'arc de l'univers moral est long, mais il penche vers la justice. » Mais il citait : dès 1958, il la mettait entre guillemets. L'image vient d'un sermon du pasteur abolitionniste Theodore Parker, publié en 1853." },
+  // Sources lues le 22 novembre 2026 : https://it.wikisource.org/wiki/Il_Saggiatore/6
+  { id: "galilee-livre", depuis: 20781, niveau: 3, texte: "Le grand livre de l'univers est écrit en langue mathématique.", auteur: "Galilée", statut: "authentique",
+    explication: "« L'Essayeur » (« Il Saggiatore », 1623) : la philosophie « est écrite dans ce très grand livre continuellement ouvert devant nos yeux (je veux dire l'univers) », et « il est écrit en langue mathématique ». Galilée répond à un adversaire qui croit qu'il faut toujours s'appuyer sur l'opinion d'un auteur célèbre." },
+  // Sources lues le 22 novembre 2026 : https://zh.wikisource.org/wiki/道德經_(王弼本
+  { id: "laozi-pas", depuis: 20781, niveau: 2, texte: "Un voyage de mille lieues commence par un premier pas.", auteur: "Lao-tseu", statut: "authentique",
+    explication: "« Tao-tö-king », le livre que la tradition lui attribue, chapitre 64, mot à mot : « Le voyage de mille li commence sous les pieds. » Stanislas Julien traduisait en 1842 : « un voyage de mille lis a commencé par un pas ». Le passage conseille d'agir sur les choses avant qu'elles n'existent, de mettre en ordre avant le désordre : l'arbre le plus large est né d'une pousse fine comme un poil." },
+  // Sources lues le 22 novembre 2026 : https://www.marxists.org/reference/archive/deng-xiaoping/1962/190.htm
+  { id: "deng-chat", depuis: 20781, niveau: 2, texte: "Peu importe que le chat soit blanc ou noir, pourvu qu'il attrape les souris.", auteur: "Deng Xiaoping", statut: "deformee",
+    explication: "Le 7 juillet 1962, devant la Ligue de la jeunesse communiste, Deng reprend un proverbe du Sichuan que citait souvent Liu Bocheng : « Peu importe que le chat soit jaune ou noir, pourvu qu'il attrape les souris. » Le chat jaune est devenu blanc en route ; l'idée reste : juger une organisation agricole à ses résultats." },
+  // Vérifié via https://quoteinvestigator.com/2017/09/25/progress/ ; https://en.wikipedia.org/wiki/Planck%27s_principle
+  { id: "planck-funerailles", depuis: 20781, niveau: 3, texte: "La science progresse d'enterrement en enterrement.", auteur: "Max Planck", statut: "deformee",
+    explication: "Planck écrit, dans son autobiographie scientifique, qu'une vérité scientifique nouvelle ne triomphe pas en convainquant ses adversaires, mais parce que ceux-ci finissent par mourir et qu'une nouvelle génération grandit en la connaissant. La formule courte, plus frappante, est une reprise plus tardive." },
+  // Sources lues le 22 novembre 2026 : https://zh.wikisource.org/wiki/孫子兵法
+  { id: "sunzi", depuis: 20781, niveau: 2, texte: "Connais ton ennemi et connais-toi toi-même.", auteur: "Sun Tzu", statut: "authentique",
+    explication: "« L'Art de la guerre », chapitre III. La suite varie selon les traductions : celle du jésuite Amiot, qui a fait connaître le livre en France au XVIIIe siècle, promet « cent fois vous serez victorieux », alors que le texte chinois dit seulement qu'on « ne sera pas en péril en cent combats ». Qui se connaît sans connaître l'autre gagne une fois sur deux ; qui ne connaît ni l'un ni l'autre est en péril à chaque combat." },
+  // Sources lues le 22 novembre 2026 : https://quoteinvestigator.com/2017/08/13/stages/
+  { id: "gandhi-ignorer", depuis: 20781, niveau: 2, texte: "D'abord ils vous ignorent, puis ils se moquent de vous, puis ils vous combattent, et puis vous gagnez.", auteur: "Gandhi", statut: "apocryphe",
+    explication: "Rien ne l'atteste chez Gandhi : le lien avec lui n'apparaît qu'en 1982. La gradation vient d'un syndicaliste américain, Nicholas Klein, en 1918 : « D'abord ils vous ignorent. Puis ils vous ridiculisent. Puis ils vous attaquent et veulent vous brûler. Et puis ils vous élèvent des monuments. »" },
+  // Sources lues le 22 novembre 2026 : https://quoteinvestigator.com/2013/02/24/truth-revolutionary/
+  { id: "orwell-verite", depuis: 20781, niveau: 3, texte: "En des temps de tromperie universelle, dire la vérité est un acte révolutionnaire.", auteur: "George Orwell", statut: "apocryphe",
+    explication: "Personne ne l'a trouvée dans son œuvre. La plus ancienne trace connue est une épigraphe de 1982, sans le mot « universelle », dans un livre australien sur le commerce de l'uranium ; Orwell était mort en 1950." },
+  // Sources lues le 22 novembre 2026 : http://web.archive.org/web/20260628173441/https://www.nelsonmandela.org/news/entry/deepest-fear-quote-not-mr-mandelas/ ; https://quoteinvestigator.com/2019/06/30/deepest/
+  { id: "mandela-peur", depuis: 20781, niveau: 3, texte: "Notre peur la plus profonde n'est pas d'être insuffisants, c'est d'être puissants au-delà de toute mesure.", auteur: "Nelson Mandela, discours d'investiture (1994)", statut: "apocryphe",
+    explication: "Le passage vient d'un livre de l'Américaine Marianne Williamson, « A Return to Love » (1992). La Fondation Nelson Mandela a précisé en 2007 qu'il ne figure dans aucun des trois discours prononcés lors de son investiture." },
+  // Sources lues le 22 novembre 2026 : https://quoteinvestigator.com/?p=436269 ; https://barrypopik.com/blog/useful_idiot
+  { id: "lenine-idiots", depuis: 20781, niveau: 2, texte: "Les idiots utiles de l'Occident.", auteur: "Lénine", statut: "apocryphe",
+    explication: "On ne la trouve dans aucun texte connu de Lénine. L'expression circule dans les années 1940 pour désigner les démocrates qui font le jeu des communistes ; elle n'est prêtée à Lénine, mort en 1924, que plus tard." },
+  // Sources lues le 22 novembre 2026 : https://quoteinvestigator.com/2010/07/08/laws-sausages/
+  { id: "bismarck-saucisses", depuis: 20781, niveau: 3, texte: "Les lois, c'est comme les saucisses : mieux vaut ne pas voir comment on les fait.", auteur: "Otto von Bismarck", statut: "apocryphe",
+    explication: "Elle est attribuée en 1869 au poète américain John Godfrey Saxe : « Les lois, comme les saucisses, cessent d'inspirer le respect à mesure qu'on sait comment elles sont faites. » Le nom de Bismarck n'y est accolé que dans les années 1930." },
+  // Sources lues le 22 novembre 2026 : https://quoteinvestigator.com/2014/09/02/job-love/
+  { id: "confucius-travail", depuis: 20781, niveau: 2, texte: "Choisis un travail que tu aimes, et tu n'auras pas à travailler un seul jour de ta vie.", auteur: "Confucius", statut: "apocryphe",
+    explication: "Rien de tel chez Confucius. La plus ancienne trace connue date de 1982, dans le magazine des anciens élèves de Princeton : un professeur de philosophie la tenait d'« un ancien ». Elle n'est prêtée à Confucius que plus tard." },
+  // Sources lues le 22 novembre 2026 : https://quoteinvestigator.com/2026/07/10/democracy-five/ ; https://richardlangworth.com/voter
+  { id: "churchill-electeur", depuis: 20781, niveau: 3, texte: "Le meilleur argument contre la démocratie, c'est une conversation de cinq minutes avec l'électeur moyen.", auteur: "Winston Churchill", statut: "apocryphe",
+    explication: "Introuvable dans ses discours et ses écrits : Richard Langworth, spécialiste de ses citations, la classe parmi les fausses attributions. Churchill disait plutôt, aux Communes en octobre 1944, qu'à la base de tous les hommages rendus à la démocratie il y a « le petit homme qui entre dans le petit isoloir, avec un petit crayon, et trace une petite croix sur un petit bout de papier », et qu'aucun discours ne saurait atténuer l'importance de ce geste." },
+  // Sources lues le 22 novembre 2026 : https://archive.org/details/in.ernet.dli.2015.264687
+  { id: "aristote-habitude", depuis: 20781, niveau: 3, texte: "Nous sommes ce que nous faisons de manière répétée. L'excellence n'est donc pas un acte, mais une habitude.", auteur: "Aristote", statut: "apocryphe",
+    explication: "La phrase est de l'historien américain Will Durant, dans « The Story of Philosophy » (1926), qui résume l'« Éthique à Nicomaque » : il y met les mots d'Aristote entre guillemets, pas ceux-là. L'idée est bien d'Aristote : on devient vertueux en agissant vertueusement." },
 ];

@@ -34,8 +34,12 @@ passe. Refonte en cours : brief dans `tests/refonte-brief.md`, plan dans `tests/
 - Phrase assemblée par le code : `T("texte avec {0}", valeur)`. Après chaque modification de texte :
   `python3 tests/en/extraire.py --manquants`, puis `tests/en/ajouter.py`, puis `python3 tests/en/controle.py`.
 - Typographie française par `typo()` ; conventions anglaises dans `DESIGN.md`.
-- Tout fait chiffré ou attribué porte sa source vérifiée sur la source primaire ; sinon il va dans
-  `tests/a-verifier.md` et n'est pas affiché.
+- Tout fait chiffré ou attribué porte sa source vérifiée sur la source primaire. Si elle est inaccessible : au moins
+  deux sources secondaires sérieuses et concordantes qui la citent (institution, encyclopédie savante, article revu,
+  média de référence), notées « vérifié via X, qui cite Y » en commentaire. Sinon il va dans `tests/a-verifier.md`
+  et n'est pas affiché.
+- Propositions de contenu (`tests/propositions-*.md`) : contre-vérifiées par l'agent `verificateur-sources` avant
+  toute intégration ; seuls les éléments « VALIDÉ » ou corrigés entrent dans `static/`.
 - Élément ajouté à un stock tiré chaque jour (`VRAI_FAUX`, `MONDE`, `CITATIONS`, `PAIRES_CELEBRES`, fiches) : lui donner
   `depuis:` (numéro du jour de sa première apparition, le lendemain de la publication), sinon il rebat les cartes déjà
   jouées ; le banc `rotation` le vérifie contre `tests/rotation-manifeste.json`.
