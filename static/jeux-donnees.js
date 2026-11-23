@@ -887,7 +887,7 @@ const VRAI_FAUX = [
     explication: "Il n'y a pas d'année zéro dans la numérotation historique des années. C'est pourquoi le troisième millénaire a commencé en 2001, et non en 2000. Les astronomes, eux, comptent une année 0 juste avant l'an 1.", source: "United States Naval Observatory, « The Start of the 21st Century and the 3rd Millennium »" },
   // Sources lues le 22 novembre 2026 : https://science.nasa.gov/saturn/moons/
   { id: "saturne-lunes", depuis: 20782, niveau: 2, texte: "Jupiter est la planète du Système solaire qui compte le plus de lunes connues.", vrai: false,
-    explication: "C'est Saturne, et de loin : en août 2026, la NASA lui comptait 293 lunes confirmées, bien plus qu'à toute autre planète. Ce nombre augmente au fil des découvertes.", source: "NASA Science, « Saturn Moons »" },
+    explication: "C'est Saturne, et de loin : en août 2026, la NASA lui comptait 293 lunes confirmées, bien plus qu'à toute autre planète. Ce nombre augmente au fil des découvertes.", source: "NASA Science, « Saturn Moons » (chiffre d'août 2026)" },
   // Sources lues le 22 novembre 2026 : https://science.nasa.gov/moon/moonquakes/
   { id: "seismes-lune", depuis: 20782, niveau: 2, texte: "Il y a des séismes sur la Lune.", vrai: true,
     explication: "Les sismomètres déposés par les astronautes d'Apollo l'ont montré. Les plus profonds, à des centaines de kilomètres sous la surface, sont dus aux marées causées par la Terre. D'autres, moins profonds, viennent de ce que la Lune rétrécit en refroidissant : ils peuvent atteindre une magnitude de 5,5 et durer plus de dix minutes.", source: "NASA Science, « Moonquakes »" },
