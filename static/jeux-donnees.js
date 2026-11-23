@@ -1069,18 +1069,26 @@ const EVENEMENTS = [
   { id: "jenner", sujet: "vaccins", nom: "Première vaccination contre la variole (Jenner)", annee: 1796 },
   { id: "sacre", sujet: "napoleon", nom: "Sacre de Napoléon Ier", annee: 1804, date: "1804-12-02" },
   { id: "haiti", nom: "Proclamation de l'indépendance d'Haïti", annee: 1804, date: "1804-01-01" },
+  { id: "locomotive", nom: "Premier trajet d'une locomotive à vapeur sur rails (Trevithick, pays de Galles)", annee: 1804, date: "1804-02-21" },
   { id: "saint-empire", nom: "Fin du Saint-Empire romain germanique", annee: 1806, date: "1806-08-06" },
   { id: "waterloo", sujet: "napoleon", nom: "Bataille de Waterloo", annee: 1815 },
+  { id: "draisienne", nom: "Première sortie de la draisienne, ancêtre du vélo (Karl Drais)", annee: 1817, date: "1817-06-12" },
   { id: "mort-napoleon", sujet: "napoleon", nom: "Mort de Napoléon Ier", annee: 1821 },
   { id: "briquet", nom: "Invention du premier briquet à gaz (lampe de Döbereiner)", annee: 1823 },
   { id: "megalosaure", nom: "Description du mégalosaure, premier dinosaure nommé", annee: 1824, date: "1824-02-20" },
+  { id: "neuvieme", nom: "Création de la Neuvième Symphonie de Beethoven, à Vienne", annee: 1824, date: "1824-05-07" },
   { id: "photo", nom: "Plus ancienne photographie conservée (Niépce)", annee: 1827 },
   { id: "allumette", nom: "Premières allumettes à friction (John Walker)", annee: 1827 },
+  { id: "mexique-esclavage", sujet: "esclavage", nom: "Décret d'abolition de l'esclavage au Mexique", annee: 1829, date: "1829-09-15" },
   { id: "train", nom: "Première ligne de chemin de fer pour voyageurs (Liverpool–Manchester)", annee: 1830, date: "1830-09-15" },
   { id: "belgique", nom: "Le gouvernement provisoire proclame l'indépendance de la Belgique", annee: 1830, date: "1830-10-04" },
   { id: "esclavage-britannique", sujet: "esclavage", nom: "Entrée en vigueur de l'abolition de l'esclavage dans les colonies britanniques", annee: 1834, date: "1834-08-01" },
+  { id: "waitangi", nom: "Signature du traité de Waitangi entre la Couronne britannique et des chefs maoris (Nouvelle-Zélande)", annee: 1840, date: "1840-02-06" },
+  { id: "penny-black", nom: "Premier timbre-poste, le Penny Black, valable au Royaume-Uni", annee: 1840, date: "1840-05-06" },
   { id: "fax", nom: "Brevet du fax (Alexander Bain)", annee: 1843 },
-  { id: "neptune", nom: "Découverte de la planète Neptune", annee: 1846 },
+  { id: "neptune", nom: "Découverte de la planète Neptune", annee: 1846, date: "1846-09-23" },
+  { id: "anesthesie", nom: "Première démonstration publique d'une opération sous anesthésie (éther, Boston)", annee: 1846, date: "1846-10-16" },
+  { id: "liberia", nom: "Proclamation de l'indépendance du Liberia", annee: 1847, date: "1847-07-26" },
   { id: "esclavage-france", sujet: "esclavage", nom: "Abolition définitive de l'esclavage dans les colonies françaises", annee: 1848 },
   { id: "neandertal", nom: "Découverte de l'homme de Néandertal (vallée de Neander, Allemagne)", annee: 1856 },
   { id: "sheffield", nom: "Fondation du Sheffield FC, plus ancien club de football encore en activité", annee: 1857 },
@@ -1091,6 +1099,7 @@ const EVENEMENTS = [
   { id: "uit", nom: "Fondation de l'Union télégraphique internationale (aujourd'hui l'UIT), à Paris", annee: 1865, date: "1865-05-17" },
   { id: "capital", nom: "Marx publie le premier livre du « Capital »", annee: 1867 },
   { id: "meiji", nom: "Fin du shogunat au Japon : restauration du pouvoir impérial (ère Meiji)", annee: 1868 },
+  { id: "feu-circulation", nom: "Premier feu de circulation, à Londres", annee: 1868 },
   { id: "suez", nom: "Ouverture du canal de Suez", annee: 1869, date: "1869-11-17" },
   { id: "mendeleiev", nom: "Présentation du tableau périodique des éléments par Mendeleïev", annee: 1869, date: "1869-03-06" },
   { id: "empire-allemand", nom: "Proclamation de l'Empire allemand", annee: 1871 },
@@ -1107,7 +1116,9 @@ const EVENEMENTS = [
   { id: "bresil-republique", nom: "Proclamation de la République au Brésil, qui met fin à l'Empire", annee: 1889, date: "1889-11-15" },
   { id: "van-gogh", nom: "Mort de Vincent van Gogh", annee: 1890, date: "1890-07-29" },
   { id: "wounded-knee", nom: "Massacre de Lakotas par l'armée américaine à Wounded Knee", annee: 1890, date: "1890-12-29" },
+  { id: "basket", nom: "Invention du basket-ball (James Naismith, Springfield)", annee: 1891 },
   { id: "nouvelle-zelande", nom: "Premier vote des femmes à des élections nationales (Nouvelle-Zélande)", annee: 1893 },
+  { id: "hawaii-royaume", nom: "Renversement de la reine Liliʻuokalani, dernière souveraine du royaume d'Hawaï", annee: 1893, date: "1893-01-17" },
   { id: "rayons-x", nom: "Découverte des rayons X (Röntgen)", annee: 1895, date: "1895-11-08" },
   { id: "cinema", nom: "Première projection publique payante du cinématographe Lumière", annee: 1895, date: "1895-12-28" },
   { id: "jo", nom: "Premiers Jeux olympiques modernes (Athènes)", annee: 1896, date: "1896-04-06" },
@@ -1116,9 +1127,11 @@ const EVENEMENTS = [
   { id: "australie", nom: "Naissance du Commonwealth d'Australie (fédération des six colonies)", annee: 1901, date: "1901-01-01" },
   { id: "wright", nom: "Premier vol motorisé des frères Wright", annee: 1903, date: "1903-12-17" },
   { id: "tour-de-france", nom: "Premier Tour de France", annee: 1903, date: "1903-07-01" },
+  { id: "panama", nom: "Le Panama se sépare de la Colombie et proclame son indépendance", annee: 1903, date: "1903-11-03" },
   { id: "fifa", nom: "Fondation de la FIFA, à Paris", annee: 1904 },
   { id: "relativite", nom: "Einstein publie la relativité restreinte", annee: 1905 },
   { id: "norvege", nom: "Le Parlement norvégien rompt l'union avec la Suède", annee: 1905, date: "1905-06-07" },
+  { id: "congo-belge", nom: "La Belgique annexe l'État indépendant du Congo, dont le roi Léopold II était le souverain", annee: 1908, date: "1908-11-15" },
   { id: "pole-sud", nom: "Amundsen atteint le pôle Sud", annee: 1911, date: "1911-12-14" },
   { id: "titanic", nom: "Naufrage du Titanic", annee: 1912 },
   { id: "chine-empire", nom: "Abdication du dernier empereur de Chine", annee: 1912 },
@@ -1126,7 +1139,9 @@ const EVENEMENTS = [
   { id: "octobre", sujet: "guerres", nom: "Révolution d'Octobre en Russie", annee: 1917 },
   { id: "finlande", nom: "Le Parlement finlandais approuve la déclaration d'indépendance", annee: 1917, date: "1917-12-06" },
   { id: "elizabeth", nom: "Naissance de la reine Elizabeth II", annee: 1926, date: "1926-04-21" },
+  { id: "monet", nom: "Mort de Claude Monet", annee: 1926, date: "1926-12-05" },
   { id: "penicilline", nom: "Découverte de la pénicilline (Fleming)", annee: 1928 },
+  { id: "mickey", nom: "Sortie de « Steamboat Willie », premier dessin animé de Mickey sorti en salle", annee: 1928, date: "1928-11-18" },
   { id: "mlk", nom: "Naissance de Martin Luther King", annee: 1929, date: "1929-01-15" },
   { id: "anne-frank", nom: "Naissance d'Anne Frank", annee: 1929, date: "1929-06-12" },
   { id: "krach", nom: "Krach boursier de Wall Street", annee: 1929, date: "1929-10-24" },
@@ -1145,6 +1160,8 @@ const EVENEMENTS = [
   { id: "spoutnik", sujet: "espace", nom: "Lancement de Spoutnik, premier satellite artificiel", annee: 1957 },
   { id: "tennis", nom: "Présentation de « Tennis for Two », l'un des premiers jeux vidéo", annee: 1958, date: "1958-10-18" },
   { id: "hawaii", nom: "Hawaï devient le 50e État des États-Unis", annee: 1959, date: "1959-08-21" },
+  { id: "barbie", nom: "Présentation de la première poupée Barbie, à New York", annee: 1959, date: "1959-03-09" },
+  { id: "brasilia", nom: "Inauguration de Brasília, nouvelle capitale du Brésil", annee: 1960, date: "1960-04-21" },
   { id: "gagarine", sujet: "espace", nom: "Premier humain dans l'espace (Gagarine)", annee: 1961, date: "1961-04-12" },
   { id: "mur", sujet: "berlin", nom: "Construction du mur de Berlin", annee: 1961, date: "1961-08-13" },
   { id: "kennedy", nom: "Assassinat de John F. Kennedy", annee: 1963 },
@@ -1152,6 +1169,8 @@ const EVENEMENTS = [
   { id: "lune", sujet: "espace", nom: "Premiers pas sur la Lune", annee: 1969, date: "1969-07-21" },
   { id: "arpanet", sujet: "internet", nom: "Premier message envoyé sur ARPANET, l'ancêtre d'Internet", annee: 1969, date: "1969-10-29" },
   { id: "suisse-vote", sujet: "vote-suisse", nom: "Droit de vote des femmes en Suisse, au niveau fédéral", annee: 1971, date: "1971-02-07" },
+  { id: "disney-world", nom: "Ouverture de Walt Disney World (Floride)", annee: 1971, date: "1971-10-01" },
+  { id: "emirats", nom: "Proclamation des Émirats arabes unis", annee: 1971, date: "1971-12-02" },
   { id: "picasso", nom: "Mort de Pablo Picasso", annee: 1973 },
   { id: "apple", nom: "Fondation d'Apple", annee: 1976 },
   { id: "star-wars", nom: "Sortie de « Star Wars » aux États-Unis", annee: 1977, date: "1977-05-25" },
@@ -1167,10 +1186,14 @@ const EVENEMENTS = [
   { id: "web", sujet: "internet", nom: "Premier site web (Tim Berners-Lee)", annee: 1991 },
   { id: "urss", nom: "Dissolution de l'URSS", annee: 1991, date: "1991-12-26" },
   { id: "tunnel", nom: "Ouverture du tunnel sous la Manche", annee: 1994 },
+  { id: "google", sujet: "internet", nom: "Création de l'entreprise Google", annee: 1998 },
+  { id: "bhoutan-tv", nom: "Lancement de la télévision nationale au Bhoutan", annee: 1999, date: "1999-06-02" },
+  { id: "macao", nom: "Rétrocession de Macao par le Portugal à la Chine", annee: 1999, date: "1999-12-20" },
   { id: "wikipedia", sujet: "internet", nom: "Création de Wikipédia", annee: 2001 },
   { id: "euro", nom: "Mise en circulation des pièces et billets en euros", annee: 2002 },
   { id: "facebook", sujet: "internet", nom: "Création de Facebook", annee: 2004 },
   { id: "iphone", sujet: "internet", nom: "Présentation du premier iPhone", annee: 2007 },
+  { id: "nepal", nom: "Abolition de la monarchie au Népal, qui devient une république", annee: 2008, date: "2008-05-28" },
   { id: "soudan-sud", nom: "Indépendance du Soudan du Sud", annee: 2011, date: "2011-07-09" },
   { id: "trou-noir", nom: "Première image d'un trou noir (galaxie M87)", annee: 2019, date: "2019-04-10" }
 ];
@@ -1294,6 +1317,45 @@ const PAIRES_CELEBRES = [
   { a: "sheffield", b: "darwin", depuis: 20781, note: "Le plus ancien club de football encore en activité, le Sheffield FC, a été fondé en 1857, deux ans avant la publication de « L'Origine des espèces »." },
   // OMS : dernier cas naturel en Somalie en 1977, éradication déclarée en 1980 ; Computer History Museum : Apple fondée en 1976
   { a: "apple", b: "variole", depuis: 20781, note: "Apple existait déjà quand la variole circulait encore : l'entreprise est fondée en 1976, le dernier cas naturel connu date de 1977 et l'OMS a déclaré la maladie éradiquée en 1980." },
+  // Ajouts du 23 novembre 2026 (lot 2), contre-vérifiés (agent verificateur-sources) ; « depuis » : 25 novembre.
+  // Bibliothèque du Congrès (blogs.loc.gov) : indépendance du Liberia le 26 juillet 1847 ; Office of the Historian (département d'État) : 1847
+  { a: "liberia", b: "esclavage-france", depuis: 20782, note: "Le Liberia, fondé par d'anciens esclaves et des Noirs nés libres venus des États-Unis, a proclamé son indépendance le 26 juillet 1847 : la France n'a aboli définitivement l'esclavage dans ses colonies que l'année suivante, en 1848." },
+  // Département d'État (Foreign Relations of the United States, 1903, doc. 229) : soulèvement de Panama le 3 novembre 1903
+  { a: "tour-de-france", b: "panama", depuis: 20782, note: "Le Tour de France est plus ancien que le Panama : la course est partie le 1er juillet 1903, et le Panama ne s'est séparé de la Colombie que le 3 novembre 1903." },
+  // Sénat fédéral du Brésil (senado.leg.br) : Brasília inaugurée le 21 avril 1960 ; Laboratoire de Brookhaven : « Tennis for Two » le 18 octobre 1958
+  { a: "tennis", b: "brasilia", depuis: 20782, note: "Brasília, la capitale du Brésil, est plus jeune que l'un des premiers jeux vidéo : « Tennis for Two » a été présenté en octobre 1958, la ville a été inaugurée le 21 avril 1960." },
+  // Ministère émirien des Affaires étrangères (mofa.gov.ae) : proclamation le 2 décembre 1971 ; Walt Disney Archives (d23.com) : ouverture le 1er octobre 1971
+  { a: "disney-world", b: "emirats", depuis: 20782, note: "Les Émirats arabes unis sont plus jeunes que Walt Disney World : le parc de Floride a ouvert le 1er octobre 1971, la fédération a été proclamée le 2 décembre 1971." },
+  // Tribunal de Waitangi (waitangitribunal.govt.nz) : traité signé le 6 février 1840 ; The Postal Museum (Londres) : Penny Black valable le 6 mai 1840
+  { a: "waitangi", b: "penny-black", depuis: 20782, note: "Le traité de Waitangi, entre la Couronne britannique et des chefs maoris, a été signé le 6 février 1840 ; le premier timbre-poste, le Penny Black, n'a été valable au Royaume-Uni que trois mois plus tard, le 6 mai 1840." },
+  // Service des parcs nationaux (nps.gov) : statue inaugurée le 28 octobre 1886 ; Congrès des États-Unis, résolution d'excuses (Public Law 103-150, 1993) : monarchie renversée le 17 janvier 1893
+  { a: "liberte", b: "hawaii-royaume", depuis: 20782, note: "Hawaï était encore un royaume indépendant quand la statue de la Liberté a été inaugurée, en 1886 : sa reine a été renversée le 17 janvier 1893 par un comité soutenu par des militaires américains." },
+  // Archives générales du Royaume de Belgique (agatha.arch.be), repères chronologiques : transfert effectif de souveraineté le 15 novembre 1908
+  { a: "wright", b: "congo-belge", depuis: 20782, note: "Le Congo n'était pas encore une colonie belge quand les frères Wright ont volé, en 1903 : c'était un État dont le roi des Belges Léopold II était le souverain, et la Belgique ne l'a annexé que le 15 novembre 1908." },
+  // Bhutan Broadcasting Service, rapport annuel 2019 : télévision lancée le 2 juin 1999
+  { a: "web", b: "bhoutan-tv", depuis: 20782, note: "Le web existait depuis huit ans quand le Bhoutan a lancé sa télévision nationale, le 2 juin 1999." },
+  // NPR, 28 mai 2008, et The Irish Times, 29 mai 2008 : l'Assemblée constituante abolit la monarchie le 28 mai 2008
+  { a: "iphone", b: "nepal", depuis: 20782, note: "Le Népal était encore un royaume quand le premier iPhone a été présenté, en 2007 : l'Assemblée constituante n'a aboli la monarchie que le 28 mai 2008." },
+  // Google (about.google, « Our story ») : Google Inc. née en août 1998 ; Annuaire officiel de Macao 2023 (gcs.gov.mo) : souveraineté chinoise le 20 décembre 1999
+  { a: "google", b: "macao", depuis: 20782, note: "Macao était encore administré par le Portugal quand Google a été créé, en 1998 : le territoire n'a été rendu à la Chine que le 20 décembre 1999." },
+  // Journal officiel de la Fédération (DOF, sidof.segob.gob.mx) et Commission nationale des droits de l'homme du Mexique : décret de Vicente Guerrero du 15 septembre 1829
+  { a: "mexique-esclavage", b: "esclavage-britannique", depuis: 20782, note: "Le Mexique a décrété l'abolition de l'esclavage le 15 septembre 1829, près de cinq ans avant son entrée en vigueur dans les colonies britanniques, le 1er août 1834." },
+  // Amgueddfa Cymru – Musée national du pays de Galles : locomotive de Trevithick le 21 février 1804 ; deutschland.de : draisienne le 12 juin 1817
+  { a: "locomotive", b: "draisienne", depuis: 20782, note: "La locomotive à vapeur est plus ancienne que le vélo : celle de Trevithick a roulé sur des rails le 21 février 1804, plus de treize ans avant la première sortie de la draisienne de Karl Drais, le 12 juin 1817." },
+  // NASA : Neptune observée dans la nuit du 23 au 24 septembre 1846 ; Linda Hall Library et PMC (Bigelow) : démonstration de l'éther le 16 octobre 1846
+  { a: "neptune", b: "anesthesie", depuis: 20782, note: "Même année : Neptune a été découverte en septembre 1846, trois semaines avant la première opération publique sous anesthésie, le 16 octobre 1846 à Boston." },
+  // Smithsonian Magazine et NBC News (2018) : feu installé devant le Parlement, à Londres, en décembre 1868 ; plaque de la Ville de Westminster : « 9th Dec. 1868 »
+  { a: "feu-circulation", b: "automobile", depuis: 20782, note: "Le feu de circulation est plus ancien que l'automobile : le premier a été installé à Londres en décembre 1868, pour les voitures à cheval, dix-sept ans avant le brevet de Carl Benz, en 1886." },
+  // Famille royale britannique : naissance le 21 avril 1926 ; National Gallery of Victoria et Visit Paris Region (centenaire Monet) : mort à Giverny le 5 décembre 1926
+  { a: "elizabeth", b: "monet", depuis: 20782, note: "Claude Monet, le peintre des « Nymphéas », était encore vivant à la naissance d'Elizabeth II, le 21 avril 1926 : il est mort à Giverny le 5 décembre 1926." },
+  // Walt Disney Archives (d23.com) : « Steamboat Willie » sorti le 18 novembre 1928 ; Tintin : 10 janvier 1929
+  { a: "mickey", b: "tintin", depuis: 20782, note: "Mickey est un peu plus âgé que Tintin : « Steamboat Willie » est sorti à New York le 18 novembre 1928, moins de deux mois avant la première apparition de Tintin, le 10 janvier 1929." },
+  // Natural History Museum de Londres : mégalosaure présenté le 20 février 1824 ; Orchestre philharmonique de Vienne : Neuvième créée le 7 mai 1824
+  { a: "megalosaure", b: "neuvieme", depuis: 20782, note: "Même année : le premier dinosaure nommé, le mégalosaure, a été présenté le 20 février 1824, deux mois et demi avant la création de la Neuvième Symphonie de Beethoven, le 7 mai 1824 à Vienne." },
+  // Springfield College : règles du basket-ball écrites par James Naismith en décembre 1891 ; Naismith Basketball Hall of Fame : hiver 1891 ; musée Van Gogh : mort le 29 juillet 1890
+  { a: "van-gogh", b: "basket", depuis: 20782, note: "Van Gogh est mort avant l'invention du basket-ball : il est mort le 29 juillet 1890, et James Naismith a écrit les règles du jeu en décembre 1891." },
+  // Time (« Barbie Turns 50 », 2009) et CBS News (2023) : Barbie présentée le 9 mars 1959 ; Archives nationales des États-Unis : Hawaï 50e État le 21 août 1959
+  { a: "barbie", b: "hawaii", depuis: 20782, note: "La poupée Barbie est plus âgée que l'État d'Hawaï : elle a été présentée à New York le 9 mars 1959, plus de cinq mois avant que Hawaï devienne le 50e État des États-Unis, le 21 août." },
 ];
 
 // ===================== Ordres de grandeur =====================
