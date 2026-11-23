@@ -2317,3 +2317,6 @@ html.sobre .spectre { display: none; }
 /* Sommaire du guide : « .guide ul » (retrait des listes du texte) l'emportait sur « .sommaire », décalant les liens de
    20 px par rapport au texte de la carte */
 .guide .sommaire { padding-left: 0; margin: 0; }
+/* Parcours en cours, au bas d'une fiche qui en est une étape (app.js) */
+.parcours-fiche:not(:empty) { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--trait-doux); }
+.parcours-fiche .source { margin: 0 0 8px; }

@@ -1555,6 +1555,20 @@ function afficherFiche(type, fiche) {
   if (bandeau) colonne.appendChild(bandeau);
   colonne.append(carte, nav);
   retournerALArrivee(carte);
+  // Parcours en cours dont cette fiche est une étape : dire si elle compte déjà, et mener à la suite. Sans cela, l'étape
+  // semblait ignorée (la lecture ne compte qu'après un temps minimal) et rien sur la fiche ne menait à la suite du parcours
+  const parcoursFiche = el("div", "parcours-fiche");
+  const majParcoursFiche = () => {
+    const d = typeof donneesParcours === "function" ? donneesParcours() : null;
+    const p = d && PARCOURS.find(x => x.id === d.parcours.actif && x.etapes.includes("f:" + cle));
+    if (!p) { parcoursFiche.replaceChildren(); return; }
+    const lue = (d.fichesLues || []).includes(cle), suite = etapeApres("#" + type + "/" + fiche.id);
+    parcoursFiche.replaceChildren(el("p", "source", lue ? T("Parcours « {0} » : fiche lue, étape validée.", T(p.titre))
+      : T("Parcours « {0} » : la fiche comptera comme lue une fois son bas atteint, après un temps de lecture.", T(p.titre))));
+    if (suite) parcoursFiche.appendChild(lienVers(suite.adresse, T("Continuer le parcours : {0}", suite.texte) + " →", lue ? "bouton" : "bouton secondaire"));
+  };
+  majParcoursFiche();
+  pied.appendChild(parcoursFiche);
   // Fiche lue quand son pied est atteint (fichesLues), et pas avant une durée de lecture minimale (progression.js) :
   // descendre d'un coup au bas de la fiche ne la marque plus lue. Si l'on quitte la fiche avant, rien n'est noté.
   if ("IntersectionObserver" in window) {
@@ -1562,7 +1576,7 @@ function afficherFiche(type, fiche) {
     const lecteur = new IntersectionObserver(entrees => {
       if (!entrees.some(e => e.isIntersecting)) return;
       lecteur.disconnect();
-      setTimeout(() => { if (pied.isConnected) noterFicheLue(cle); }, Math.max(0, debut + duree - Date.now()));
+      setTimeout(() => { if (pied.isConnected) { noterFicheLue(cle); majParcoursFiche(); } }, Math.max(0, debut + duree - Date.now()));
     });
     lecteur.observe(pied);
   }

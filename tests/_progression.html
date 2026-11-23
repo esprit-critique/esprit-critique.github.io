@@ -432,6 +432,18 @@ f.onload = async () => {
     ok("quiz ciblé : cinq questions, puis un score sur 5", !!scoreQuiz && / \/ 5$/.test(scoreQuiz.textContent), scoreQuiz ? scoreQuiz.textContent : "aucun score");
     const valide = !!(JSON.parse(w.localStorage.getItem("parcours")).quiz || {})["premiers-pas"];
     ok("quiz ciblé : validé seulement à 4 sur 5", valide === (Number(scoreQuiz.textContent.split(" ")[0]) >= 4));
+    // Fiche étape du parcours actif : état de la lecture, puis lien vers la suite du parcours
+    w.localStorage.setItem("fichesLues", "[]");
+    w.localStorage.setItem("resultatsAteliers", "{}");
+    w.localStorage.setItem("parcours", JSON.stringify({ actif: "premiers-pas" }));
+    w.location.hash = "biais/confirmation"; await pause(250);
+    const pf = () => d2.querySelector("#vue-fiches .parcours-fiche");
+    ok("fiche étape d'un parcours : « comptera comme lue », et la suite proposée", !!pf() && /comptera comme lue/.test(pf().textContent) && !!pf().querySelector('a[href="#chiffres/illusion"]'), pf() ? pf().textContent : "absent");
+    w.localStorage.setItem("fichesLues", JSON.stringify(["biais:confirmation"]));
+    w.location.hash = "accueil"; await pause(100); w.location.hash = "biais/confirmation"; await pause(250);
+    ok("fiche étape déjà lue : « étape validée », bouton principal vers la suite", !!pf() && /étape validée/.test(pf().textContent) && !!pf().querySelector("a.bouton:not(.secondaire)"), pf() ? pf().textContent : "absent");
+    w.location.hash = "sophismes/ad-hominem"; await pause(250);
+    ok("fiche hors du parcours : rien d'ajouté", !pf() || pf().textContent === "");
     w.localStorage.clear();
     w.location.hash = "parcours-vide"; w.location.hash = "accueil";
     await pause(200);
