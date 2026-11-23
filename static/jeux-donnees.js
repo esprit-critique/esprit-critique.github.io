@@ -555,7 +555,26 @@ const ETALONNAGE = [
   { id: "coree", niveau: 3, q: "Nombre moyen d'enfants par femme en Corée du Sud en 2024", unite: "enfants", v: 0.75, note: "le plus bas du monde (Banque mondiale)" },
   { id: "japon-65", niveau: 3, q: "Part des 65 ans et plus dans la population du Japon en 2025", unite: "%", v: 30.0, note: "Banque mondiale" },
   { id: "bangladesh", niveau: 3, q: "Densité de population du Bangladesh en 2024", unite: "habitants par km²", v: 1333, note: "Banque mondiale" },
-  { id: "russie", niveau: 2, q: "Superficie de la Russie", unite: "millions de km²", v: 17.1, note: "Banque mondiale" }
+  { id: "russie", niveau: 2, q: "Superficie de la Russie", unite: "millions de km²", v: 17.1, note: "Banque mondiale" },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-rare-earths.pdf
+  { id: "terres-rares-chine", niveau: 3, q: "Part de la Chine dans la production minière mondiale de terres rares en 2025", unite: "%", v: 69, note: "270 000 tonnes sur 390 000, estimation de l'USGS (Mineral Commodity Summaries 2026)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://en.mofa.gov.tw/AlliesIndex.aspx?n=1294&sms=1007
+  // Liste du ministère des Affaires étrangères de la République de Chine (mise à jour le 2 novembre 2026), concordante avec
+  // la liste de Reuters du 2 mai 2026 (« Factbox-Taiwan's 12 remaining diplomatic allies »)
+  { id: "taiwan-allies", niveau: 3, q: "Nombre d'États qui entretiennent des relations diplomatiques officielles avec la République de Chine (Taïwan), en novembre 2026", unite: "États", v: 12, note: "sept en Amérique latine et dans les Caraïbes, trois dans le Pacifique, l'Eswatini et le Saint-Siège (ministère des Affaires étrangères de la République de Chine, liste du 2 novembre 2026 ; Reuters)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://data.imf.org/en/news/imf-data-brief-september-30
+  { id: "dollar-reserves", niveau: 2, q: "Part du dollar américain dans les réserves de change officielles du monde (2e trimestre 2026)", unite: "%", v: 56.7, note: "56,70 % ; euro : 20,60 % (FMI, enquête COFER)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.internationalboundarycommission.org/en/about/the-boundary.php ; https://www.internationalboundarycommission.org/en/the-boundary-and-you/interesting-facts.php
+  { id: "frontiere-canada", niveau: 2, q: "Longueur de la frontière entre le Canada et les États-Unis, Alaska compris", unite: "km", v: 8891, note: "dont 2 475 km avec l'Alaska (Commission de la frontière internationale)" },
+  // Vérifié via https://history.state.gov/milestones/1953-1960/bandung-conf ; https://asianafricanmuseum.org/en/sejarah-konferensi-asia-afrika/
+  { id: "bandung", niveau: 3, q: "Année de la conférence de Bandung (Indonésie), qui réunit vingt-neuf pays d'Asie et d'Afrique", unite: "", v: 1955, note: "avril 1955 (Office of the Historian, département d'État des États-Unis ; musée de la Conférence asiatique-africaine, Bandung)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+  { id: "liberation", niveau: 2, q: "Vitesse de libération de la Terre : vitesse minimale, au départ de sa surface, pour échapper à son attraction sans propulsion", unite: "km/s", v: 11.2, note: "11,186 km/s (NASA)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1371/journal.pone.0092633&resultType=core&format=json
+  { id: "baleine-cuvier", niveau: 3, q: "Profondeur de la plus profonde plongée mesurée chez une baleine à bec de Cuvier", unite: "m", v: 2992, note: "plongée de 137,5 minutes, deux records pour un mammifère à leur publication (Schorr et al., PLoS ONE, 2014)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.gencodegenes.org/human/stats.html ; https://www.gencodegenes.org/human/releases.html
+  { id: "genes", niveau: 3, q: "Nombre de gènes codant des protéines dans le génome humain", unite: "gènes", v: 19442, note: "GENCODE, version 50 (juin 2026) ; s'y ajoutent près de 36 000 gènes d'ARN longs non codants" },
 ];
 
 // ===================== L'ancre =====================
@@ -591,7 +610,18 @@ const ANCRES = [
   { id: "deces-fr", q: "Nombre de décès en France en 2025", unite: "décès", v: 651000, note: "Insee : pour la première fois depuis 1945, plus de décès que de naissances" },
   { id: "paris-nice", q: "Distance à vol d'oiseau entre Paris et Nice", unite: "km", v: 687, note: "calcul d'après les coordonnées des deux villes sur Wikipédia" },
   { id: "ue", q: "Nombre de pays membres de l'Union européenne", unite: "pays", v: 27, note: "Wikipédia, « Union européenne »" },
-  { id: "mercure-diametre", q: "Diamètre de Mercure", unite: "km", v: 4879, note: "NASA" }
+  { id: "mercure-diametre", q: "Diamètre de Mercure", unite: "km", v: 4879, note: "NASA" },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://stat.gl/publ/en/BE/202601/contents/Population%20estimates.htm
+  { id: "groenland-pop", q: "Population du Groenland au 1er janvier 2026", unite: "habitants", v: 56740, note: "Statistique Groenland" },
+  // Sources lues les 22 et 23 novembre 2026 : https://avalon.law.yale.edu/17th_century/westphal.asp
+  { id: "westphalie", q: "Année des traités de Westphalie, qui mettent fin à la guerre de Trente Ans", unite: "", v: 1648, annee: true, note: "traité de Münster, conclu le 24 octobre 1648 (texte publié par l'Avalon Project, université Yale)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalCharacteristics.aspx
+  { id: "suez-longueur", q: "Longueur du canal de Suez", unite: "km", v: 193, note: "193,3 km depuis 2010, contre 164 km à l'ouverture en 1869 (Autorité du canal de Suez)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1371/journal.pbio.1002533&resultType=core&format=json
+  { id: "bacteries-masse", q: "Masse totale des bactéries hébergées par le corps d'un homme de 70 kg", unite: "g", v: 200, note: "environ 0,2 kg (Sender, Fuchs et Milo, PLoS Biology, 2016)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1038/s41598-021-02447-0&resultType=core&format=json
+  { id: "mille-pattes", q: "Nombre de pattes du mille-pattes qui en a le plus (Eumillipes persephone, Australie)", unite: "pattes", v: 1306, note: "spécimen décrit en 2021 ; aucun mille-pattes connu n'en avait jusque-là plus de 750 (Marek et al., Scientific Reports, 2021)" },
 ];
 
 // ===================== Vrai ou faux ? =====================
@@ -858,55 +888,55 @@ const VRAI_FAUX = [
   { id: "monopoly", depuis: 20781, niveau: 2, texte: "L'ancêtre du Monopoly a été inventé pour mettre en garde contre les monopoles.", vrai: true,
     explication: "Lizzie Magie, adepte des idées de l'économiste Henry George, fait breveter en 1904 The Landlord's Game, « le jeu du propriétaire », pour enseigner ces idées. Le jeu reçoit deux séries de règles, dont une « antimonopole », qu'elle juge moralement préférable. Copié de main en main, le jeu a pris le nom de « Monopoly », et c'est la variante où l'on ruine les autres qui l'a emporté.", source: "Brevet américain n° 748 626 (1904) ; British Library, « Lizzie Magie and the history of Monopoly » ; The Public Domain Review" },
   // Ajouts du 23 novembre 2026 (lot 2), contre-vérifiés (agent verificateur-sources) ; « depuis » : 25 novembre.
-  // Sources lues le 22 novembre 2026 : https://2009-2017.state.gov/t/isn/4785.htm ; https://www.smithsonianmag.com/history/there-never-was-such-a-thing-as-a-red-phone-in-the-white-house-1129598/
+  // Sources lues les 22 et 23 novembre 2026 : https://2009-2017.state.gov/t/isn/4785.htm ; https://www.smithsonianmag.com/history/there-never-was-such-a-thing-as-a-red-phone-in-the-white-house-1129598/
   { id: "telephone-rouge", depuis: 20782, niveau: 2, texte: "Pendant la guerre froide, le « téléphone rouge » permettait aux dirigeants américain et soviétique de se parler de vive voix.", vrai: false,
     explication: "Ce n'était pas un téléphone. L'accord du 20 juin 1963, conclu après la crise des missiles de Cuba, prévoyait des téléscripteurs reliés par télégraphe et par radiotélégraphe : on y échangeait des messages écrits. Le terminal américain était au Pentagone, pas à la Maison-Blanche. Le télécopieur a remplacé les téléscripteurs dans les années 1980.", source: "Département d'État américain, « Memorandum of Understanding… Regarding the Establishment of a Direct Communications Link » (1963) ; Smithsonian Magazine, 2013" },
-  // Sources lues le 22 novembre 2026 : https://www.constituteproject.org/constitution/Bolivia_2009?lang=es ; https://www.icj-cij.org/case/153
+  // Sources lues les 22 et 23 novembre 2026 : https://www.constituteproject.org/constitution/Bolivia_2009?lang=es ; https://www.icj-cij.org/case/153
   { id: "bolivie-marine", depuis: 20782, niveau: 2, texte: "La Bolivie, qui n'a aucun accès à la mer, possède une marine militaire.", vrai: true,
     explication: "Sa Constitution de 2009 compte l'Armada boliviana parmi les armes des forces armées, avec l'armée de terre et l'armée de l'air. Elle lui confie l'administration et la protection des intérêts « maritimes, fluviaux et lacustres » du pays et de sa marine marchande.", source: "Constitution de l'État plurinational de Bolivie (2009), articles 243 et 268 ; Cour internationale de justice, affaire Bolivie c. Chili" },
-  // Sources lues le 22 novembre 2026 : https://thecommonwealth.org/history
+  // Sources lues les 22 et 23 novembre 2026 : https://thecommonwealth.org/history
   { id: "commonwealth", depuis: 20782, niveau: 3, texte: "Le Mozambique et le Rwanda, qui n'ont jamais été des colonies britanniques, sont membres du Commonwealth.", vrai: true,
     explication: "Le Mozambique y est entré en 1995, le Rwanda en 2009, puis le Gabon et le Togo en 2022. Le Commonwealth lui-même dit de ces quatre pays qu'ils n'ont « aucun lien historique avec l'Empire britannique ».", source: "Commonwealth, « Our history »" },
-  // Sources lues le 22 novembre 2026 : https://2009-2017.state.gov/t/avc/trty/193967.htm ; https://www.ats.aq/e/antarctictreaty.html
+  // Sources lues les 22 et 23 novembre 2026 : https://2009-2017.state.gov/t/avc/trty/193967.htm ; https://www.ats.aq/e/antarctictreaty.html
   { id: "antarctique-traite", depuis: 20782, niveau: 2, texte: "En pleine guerre froide, les États-Unis et l'URSS ont signé ensemble un traité qui démilitarise tout un continent.", vrai: true,
     explication: "Le traité sur l'Antarctique, signé à Washington le 1er décembre 1959 par douze pays, dont les deux superpuissances, réserve le continent aux activités pacifiques. Il y interdit les bases militaires, les manœuvres et les essais d'armes, ainsi que les explosions nucléaires. Le département d'État américain le présente comme le premier des accords de limitation des armements de l'après-guerre.", source: "Département d'État américain, « Antarctic Treaty » (texte et historique)" },
-  // Sources lues le 22 novembre 2026 : https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalHistory.aspx ; https://www.imarest.org/resource/the-suez-great-bitter-lake-saga.html ; https://www.aljazeera.com/programmes/aljazeeraworld/2019/11/suez-yellow-fleet-191119110234435.html
+  // Sources lues les 22 et 23 novembre 2026 : https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalHistory.aspx ; https://www.imarest.org/resource/the-suez-great-bitter-lake-saga.html ; https://www.aljazeera.com/programmes/aljazeeraworld/2019/11/suez-yellow-fleet-191119110234435.html
   { id: "suez-fermeture", depuis: 20782, niveau: 2, texte: "Le canal de Suez est resté fermé à la navigation pendant huit ans, de 1967 à 1975.", vrai: true,
     explication: "La navigation s'est arrêtée avec la guerre de juin 1967. Le canal n'a rouvert que le 5 juin 1975, après avoir été débarrassé des épaves et des restes de la guerre. Une quinzaine de cargos y ont été pris au piège en 1967, et la plupart y sont restés jusqu'à la réouverture ; le sable qui les recouvrait leur a valu le surnom de « flotte jaune ».", source: "Autorité du canal de Suez, « Canal History » ; IMarEST, « The Suez Great Bitter Lake saga », 2021 ; Al Jazeera, 2019" },
-  // Sources lues le 22 novembre 2026 : https://nato.int/en/about-us/nato-history/history-by-theme/my-country-and-nato/iceland-and-nato
+  // Sources lues les 22 et 23 novembre 2026 : https://nato.int/en/about-us/nato-history/history-by-theme/my-country-and-nato/iceland-and-nato
   { id: "islande-armee", depuis: 20782, niveau: 2, texte: "L'Islande, membre fondateur de l'OTAN, n'a pas d'armée.", vrai: true,
     explication: "C'est le seul pays de l'Alliance sans forces militaires propres. Elle a fourni des terrains et des installations, ainsi que ses garde-côtes ; une force américaine y a stationné en permanence jusqu'en 2006, en vertu d'un accord de défense de 1951. Le jour du vote de l'adhésion, en 1949, une émeute a éclaté à Reykjavik.", source: "OTAN, « Iceland and NATO »" },
-  // Sources lues le 22 novembre 2026 : https://www.un.org/en/about-us/growth-in-un-membership ; https://www.un.org/en/about-us/member-states/ukraine ; https://www.un.org/en/about-us/member-states/belarus
+  // Sources lues les 22 et 23 novembre 2026 : https://www.un.org/en/about-us/growth-in-un-membership ; https://www.un.org/en/about-us/member-states/ukraine ; https://www.un.org/en/about-us/member-states/belarus
   { id: "onu-ukraine", depuis: 20782, niveau: 3, texte: "L'Ukraine et la Biélorussie sont membres fondateurs de l'ONU, alors qu'elles faisaient partie de l'URSS en 1945.", vrai: true,
     explication: "La liste des 51 membres d'origine, en 1945, compte la république socialiste soviétique d'Ukraine et celle de Biélorussie, à côté de l'Union soviétique elle-même. Elles ont pris leur nom actuel en 1991.", source: "ONU, « Growth in United Nations membership » et fiches des États membres" },
-  // Sources lues le 22 novembre 2026 : https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126:book=7:chapter=202
+  // Sources lues les 22 et 23 novembre 2026 : https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126:book=7:chapter=202
   { id: "thermopyles", depuis: 20782, niveau: 2, texte: "Aux Thermopyles, face à l'armée perse, les Grecs n'étaient que 300 Spartiates.", vrai: false,
     explication: "Selon Hérodote, les 300 Spartiates de Léonidas n'étaient qu'une partie des troupes : il énumère aussi des contingents d'Arcadie, de Corinthe, de Phlionte et de Mycènes, 700 Thespiens, 400 Thébains, des Locriens et un millier de Phocidiens. Une inscription sur place parlait de « quatre mille » Péloponnésiens. Avant le dernier combat, Léonidas renvoya la plupart des alliés ; les Thespiens et les Thébains restèrent avec les Spartiates.", source: "Hérodote, Histoires, VII, 202-203, 220-222 et 228 (trad. Godley, Perseus)" },
-  // Sources lues le 22 novembre 2026 : https://aa.usno.navy.mil/faq/millennium
+  // Sources lues les 22 et 23 novembre 2026 : https://aa.usno.navy.mil/faq/millennium
   { id: "an-zero", depuis: 20782, niveau: 3, texte: "Dans notre calendrier, l'an 1 avant J.-C. est immédiatement suivi de l'an 1 après J.-C.", vrai: true,
     explication: "Il n'y a pas d'année zéro dans la numérotation historique des années. C'est pourquoi le troisième millénaire a commencé en 2001, et non en 2000. Les astronomes, eux, comptent une année 0 juste avant l'an 1.", source: "United States Naval Observatory, « The Start of the 21st Century and the 3rd Millennium »" },
-  // Sources lues le 22 novembre 2026 : https://science.nasa.gov/saturn/moons/
+  // Sources lues les 22 et 23 novembre 2026 : https://science.nasa.gov/saturn/moons/
   { id: "saturne-lunes", depuis: 20782, niveau: 2, texte: "Jupiter est la planète du Système solaire qui compte le plus de lunes connues.", vrai: false,
     explication: "C'est Saturne, et de loin : en août 2026, la NASA lui comptait 293 lunes confirmées, bien plus qu'à toute autre planète. Ce nombre augmente au fil des découvertes.", source: "NASA Science, « Saturn Moons » (chiffre d'août 2026)" },
-  // Sources lues le 22 novembre 2026 : https://science.nasa.gov/moon/moonquakes/
+  // Sources lues les 22 et 23 novembre 2026 : https://science.nasa.gov/moon/moonquakes/
   { id: "seismes-lune", depuis: 20782, niveau: 2, texte: "Il y a des séismes sur la Lune.", vrai: true,
     explication: "Les sismomètres déposés par les astronautes d'Apollo l'ont montré. Les plus profonds, à des centaines de kilomètres sous la surface, sont dus aux marées causées par la Terre. D'autres, moins profonds, viennent de ce que la Lune rétrécit en refroidissant : ils peuvent atteindre une magnitude de 5,5 et durer plus de dix minutes.", source: "NASA Science, « Moonquakes »" },
-  // Sources lues le 22 novembre 2026 : https://wmo.int/media/news/climate-change-triggers-mounting-food-insecurity-poverty-and-displacement-africa
+  // Sources lues les 22 et 23 novembre 2026 : https://wmo.int/media/news/climate-change-triggers-mounting-food-insecurity-poverty-and-displacement-africa
   { id: "glaciers-afrique", depuis: 20782, niveau: 2, texte: "Il existe des glaciers en Afrique.", vrai: true,
     explication: "En 2021, l'Organisation météorologique mondiale en recensait sur trois montagnes : le massif du mont Kenya, les monts Rwenzori, en Ouganda, et le Kilimandjaro, en Tanzanie. Ils reculent plus vite que la moyenne mondiale : à ce rythme, ils auront disparu dans les années 2040, ceux du mont Kenya dix ans plus tôt.", source: "Organisation météorologique mondiale, communiqué du 19 octobre 2021 (State of the Climate in Africa 2020)" },
-  // Sources lues le 22 novembre 2026 : https://www.nobelprize.org/prizes/medicine/2005/press-release/ ; https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/symptoms-causes
+  // Sources lues les 22 et 23 novembre 2026 : https://www.nobelprize.org/prizes/medicine/2005/press-release/ ; https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/symptoms-causes
   { id: "ulcere-bacterie", depuis: 20782, niveau: 2, texte: "Une bactérie est l'une des principales causes des ulcères de l'estomac.", vrai: true,
     explication: "Quand Robin Warren et Barry Marshall ont découvert Helicobacter pylori, en 1982, on attribuait surtout les ulcères au stress et au mode de vie. Ils ont montré le rôle de cette bactérie, ce qui leur a valu le prix Nobel de médecine 2005. Aujourd'hui, l'infection par H. pylori et les anti-inflammatoires comme l'aspirine ou l'ibuprofène en sont les deux causes les plus fréquentes.", source: "Assemblée Nobel de l'Institut Karolinska, communiqué du 3 octobre 2005 ; NIH (NIDDK), « Symptoms & Causes of Peptic Ulcers »" },
-  // Sources lues le 22 novembre 2026 : https://www.redcross.org/take-a-class/resources/articles/eating-before-swimming-myth
+  // Sources lues les 22 et 23 novembre 2026 : https://www.redcross.org/take-a-class/resources/articles/eating-before-swimming-myth
   { id: "baignade", depuis: 20782, niveau: 1, texte: "Se baigner juste après avoir mangé augmente le risque de noyade.", vrai: false,
     explication: "Selon le conseil scientifique de la Croix-Rouge américaine, manger avant de nager n'a eu aucun effet sur les performances et presque aucun effet indésirable, quel que soit le délai après le repas. Se baigner moins d'une heure après avoir mangé n'augmente pas le risque de noyade, et aucune grande organisation médicale ou de sécurité ne recommande d'attendre.", source: "Croix-Rouge américaine, Scientific Advisory Council, « Does eating right before swimming have health risks or increase the risk of drowning? », 2024" },
-  // Sources lues le 22 novembre 2026 : https://www.fda.gov/radiation-emitting-products/resources-you-radiation-emitting-products/microwave-ovens
+  // Sources lues les 22 et 23 novembre 2026 : https://www.fda.gov/radiation-emitting-products/resources-you-radiation-emitting-products/microwave-ovens
   { id: "micro-ondes", depuis: 20782, niveau: 1, texte: "Les aliments chauffés au four à micro-ondes deviennent légèrement radioactifs.", vrai: false,
     explication: "Les micro-ondes font vibrer les molécules d'eau des aliments, ce qui produit la chaleur qui les cuit. Absorbée par l'aliment, cette énergie se change en chaleur et ne le rend ni « radioactif » ni « contaminé ».", source: "Food and Drug Administration (États-Unis), « Microwave Ovens »" },
-  // Sources lues le 22 novembre 2026 : https://americanhistory.si.edu/collections/object/nmah_334663
+  // Sources lues les 22 et 23 novembre 2026 : https://americanhistory.si.edu/collections/object/nmah_334663
   { id: "bug-1947", depuis: 20782, niveau: 2, texte: "Le mot « bug » est né en 1947, quand des ingénieurs ont trouvé un papillon de nuit coincé dans un ordinateur.", vrai: false,
     explication: "Le papillon a bien existé : en 1947, l'équipe de l'ordinateur Mark II, à Harvard, l'a collé dans son cahier avec la mention « premier cas réel de bug trouvé ». Mais le mot était déjà en usage : les ingénieurs américains appelaient « bugs » les petits défauts des machines, et Thomas Edison en parlait dès les années 1870.", source: "Smithsonian, National Museum of American History, « Log Book With Computer Bug »" },
-  // Sources lues le 22 novembre 2026 : https://www.musee-rodin.fr/musee/collections/oeuvres/penseur ; https://www.museivaticani.va/content/museivaticani/fr/collezioni/musei/collezione-d_arte-contemporanea/sala-2--van-gogh--gauguin--medardo-rosso/auguste-rodin--le-penseur.html
+  // Sources lues les 22 et 23 novembre 2026 : https://www.musee-rodin.fr/musee/collections/oeuvres/penseur ; https://www.museivaticani.va/content/museivaticani/fr/collezioni/musei/collezione-d_arte-contemporanea/sala-2--van-gogh--gauguin--medardo-rosso/auguste-rodin--le-penseur.html
   { id: "penseur-dante", depuis: 20782, niveau: 2, texte: "Le Penseur de Rodin représentait, à l'origine, le poète Dante.", vrai: true,
     explication: "Créé vers 1880 pour couronner La Porte de l'Enfer, inspirée de la Divine Comédie, il s'appelait alors Le Poète : c'était Dante, penché pour observer les cercles de l'Enfer en méditant sur son œuvre. Il n'a reçu son titre actuel qu'ensuite.", source: "Musée Rodin, notice « Le Penseur » ; Musées du Vatican, « Auguste Rodin, Le Penseur »" },
   // Vérifié via https://trackingcolour.com/about ; https://www.smithsonianmag.com/arts-culture/true-colors-17888/
@@ -1206,7 +1236,7 @@ const GRANDEURS = [
   { id: "deces-jour", niveau: 2, q: "Nombre de décès par jour dans le monde", v: 167000, source: "61 millions de décès en 2023 (OMS)" },
   { id: "naissances-jour", niveau: 2, q: "Nombre de naissances par jour dans le monde", v: 363000, source: "taux de natalité de 16,3 ‰ en 2024 (Banque mondiale)" },
   { id: "battements", niveau: 2, q: "Nombre de battements de cœur au cours d'une vie de 80 ans", v: 2.9e9, source: "calcul pour 70 battements par minute" },
-  { id: "oceans", niveau: 3, q: "Volume total des océans, en kilomètres cubes", v: 1.335e9, source: "Charette et Smith, 2010" },
+  { id: "oceans", niveau: 3, q: "Volume total des océans, en kilomètres cubes", v: 1.332e9, source: "Charette et Smith, 2010" },
   { id: "lumiere-an", niveau: 3, q: "Distance parcourue par la lumière en un an, en kilomètres", v: 9.461e12, source: "définition de l'année-lumière" },
   { id: "proxima", niveau: 3, q: "Distance de l'étoile la plus proche du Soleil (Proxima du Centaure), en kilomètres", v: 4.0e13, source: "4,24 années-lumière" },
   { id: "pop-1800", niveau: 1, q: "Population mondiale en 1800", v: 1e9, source: "estimations historiques : environ 1 milliard (Our World in Data, d'après l'ONU)" },
@@ -1239,7 +1269,25 @@ const GRANDEURS = [
   { id: "andromede", niveau: 3, q: "Distance de la galaxie d'Andromède, en années-lumière", v: 2.5e6, source: "environ 2,5 millions d'années-lumière (NASA)" },
   { id: "neptune", niveau: 3, q: "Distance moyenne entre le Soleil et Neptune, en kilomètres", v: 4.5e9, source: "NASA : 30,07 unités astronomiques, soit environ 4,5 milliards de km" },
   { id: "rotation", niveau: 3, q: "Vitesse d'un point de l'équateur entraîné par la rotation de la Terre, en km/h", v: 1674, source: "calcul : 40 075 km parcourus en 23 h 56 min" },
-  { id: "soleil-volume", niveau: 3, q: "Nombre de Terres qui tiendraient dans le volume du Soleil", v: 1304000, source: "NASA : volume du Soleil égal à 1 304 000 fois celui de la Terre" }
+  { id: "soleil-volume", niveau: 3, q: "Nombre de Terres qui tiendraient dans le volume du Soleil", v: 1304000, source: "NASA : volume du Soleil égal à 1 304 000 fois celui de la Terre" },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny ; https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date
+  // Trésor américain, API « Debt to the Penny », lue le 22 novembre 2026 : tot_pub_debt_out_amt = 40709780700317.02 au 2026-11-19
+  { id: "dette-usa", niveau: 2, q: "Dette publique fédérale des États-Unis au 19 novembre 2026, en dollars", v: 4.071e13, source: "40 710 milliards de dollars au 19 novembre 2026, y compris 7 808 milliards détenus par des organismes fédéraux (Trésor américain, « Debt to the Penny »)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www2.telegeography.com/submarine-cable-faqs-frequently-asked-questions
+  { id: "cables-sous-marins", niveau: 3, q: "Longueur totale des câbles sous-marins de télécommunication en service début 2026, en kilomètres", v: 1.5e6, source: "plus de 1,5 million de km début 2026 (TeleGeography)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://legacy.slavevoyages.org/assessment/estimates ; https://www.neh.gov/humanities/2010/septemberoctober/feature/gross-injustice
+  { id: "traite", niveau: 2, q: "Nombre d'Africains embarqués de force sur les navires de la traite transatlantique, de 1501 à 1866", v: 1.25e7, source: "estimation : 12,5 millions (base de données Slave Voyages)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.mersenne.org/primes/?press=M136279841 ; https://www.mersenne.org/
+  { id: "premier-chiffres", niveau: 3, q: "Nombre de chiffres du plus grand nombre premier connu en novembre 2026", v: 41024320, source: "2 puissance 136 279 841, moins 1, découvert le 12 octobre 2024 : 41 024 320 chiffres (GIMPS)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.pnas.org/doi/10.1073/pnas.2023170118 ; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1073/pnas.2023170118&resultType=core&format=json ; https://pmc.ncbi.nlm.nih.gov/articles/PMC8166167/
+  // Volaille exclue : vérifié via National Geographic (« this study only looked at wild birds », poulets ≈ 25 milliards à part)
+  // et Smithsonian (« 50 billion total wild birds »), qui citent Callaghan et al. (2021) ; l'étude repose sur les observations eBird
+  { id: "oiseaux-sauvages", niveau: 2, q: "Nombre d'oiseaux sauvages sur Terre", v: 5e10, source: "environ 50 milliards, à peu près six par être humain, volailles d'élevage non comptées ; estimation très incertaine (Callaghan, Nakagawa et Cornwell, PNAS, 2021)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1038/s41591-020-01182-9&resultType=core&format=json
+  { id: "cellules-jour", niveau: 3, q: "Nombre de cellules que le corps d'un adulte remplace chaque jour", v: 3.3e11, source: "environ 330 milliards, dont près de 90 % de cellules sanguines (Sender et Milo, Nature Medicine, 2021)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+  { id: "terre-orbite", niveau: 2, q: "Distance parcourue en un an par la Terre sur son orbite autour du Soleil, en kilomètres", v: 9.4e8, source: "calcul : une orbite presque circulaire de 149,6 millions de km de rayon moyen, soit environ 940 millions de km (NASA)" },
 ];
 
 // Méthode de Fermi (niveau 3 d'« Ordres de grandeur ») : quantités de GRANDEURS décomposées en facteurs sourcés.
@@ -1271,7 +1319,16 @@ const FERMI = [
     ["Jours dans une année", 365, "calendrier"]] },
   { id: "rotation", facteurs: [
     ["Circonférence de la Terre à l'équateur, en km", 40075, "NASA : rayon équatorial de 6 378 km"],
-    ["Durée d'un tour de la Terre sur elle-même, en heures", 23.93, "jour sidéral : 23 h 56 min", true]] }
+    ["Durée d'un tour de la Terre sur elle-même, en heures", 23.93, "jour sidéral : 23 h 56 min", true]] },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+  { id: "terre-orbite", facteurs: [
+    ["Vitesse moyenne de la Terre sur son orbite, en km par seconde", 29.78, "NASA"],
+    ["Secondes dans une année", 31557600, "calcul : 365,25 jours de 86 400 secondes"]] },
+  // Sources lues les 22 et 23 novembre 2026 : https://tos.org/oceanography/assets/docs/23-2_charette.pdf
+  { id: "oceans", facteurs: [
+    ["Surface des océans, en km²", 3.6184e8, "Charette et Smith, Oceanography, 2010 : 361,84 millions de km²"],
+    ["Profondeur moyenne des océans, en km", 3.682, "Charette et Smith, Oceanography, 2010 : 3 682 m"]] },
 ];
 
 // ===================== Le nord est où ? =====================
