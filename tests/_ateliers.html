@@ -199,8 +199,8 @@ f.onload = async () => {
     // ---------- Logique contre croyance : contenus et mesures ----------
     const SYL = w.eval("SYLLOGISMES");
     const cases = [[true, true], [true, false], [false, true], [false, false]].map(([v, c]) => SYL.filter(x => x.valide === v && x.credible === c).length);
-    ok("syllogismes : 32, huit par case", SYL.length === 32 && cases.every(n => n === 8) && new Set(SYL.map(x => x.id)).size === 32);
-    ok("syllogismes : six avec trois justifications, une seule correcte", SYL.filter(x => x.justifications).length === 6 && SYL.filter(x => x.justifications).every(x => x.justifications.length === 3 && x.justifications.filter(j => j[1]).length === 1));
+    ok("syllogismes : 37, neuf ou dix par case (une partie en tire quatre)", SYL.length === 37 && cases.every(n => n >= 9 && n <= 10) && new Set(SYL.map(x => x.id)).size === 37);
+    ok("syllogismes : huit avec trois justifications, une seule correcte", SYL.filter(x => x.justifications).length === 8 && SYL.filter(x => x.justifications).every(x => x.justifications.length === 3 && x.justifications.filter(j => j[1]).length === 1));
     const hist = JSON.parse(w.localStorage.getItem("logique") || "[]");
     ok("logique : indices enregistrés après les parties", hist.length === 3 && hist.every(h => Math.abs(h.l) <= 4 && Math.abs(h.c) <= 4));
     ok("études : asymétrie enregistrée", JSON.parse(w.localStorage.getItem("etudes") || "[]").length >= 1);
@@ -700,7 +700,8 @@ f.onload = async () => {
     const q = id => Q.find(x => x.id === id);
     ok("CRT : « deuxième », « 2e » justes ; « premier » intuitif", corriger(q("course"), "deuxième") === "juste" && corriger(q("course"), "2e") === "juste" && corriger(q("course"), "premier") === "intuitive");
     ok("CRT : « Émilie » juste, « Juin » intuitif", corriger(q("emilie"), "Émilie") === "juste" && corriger(q("emilie"), "juin") === "intuitive");
-    ok("CRT : « aucun » et « 0 » justes pour le trou", corriger(q("trou"), "aucun") === "juste" && corriger(q("trou"), "0") === "juste" && corriger(q("trou"), "27") === "intuitive");
+    ok("CRT : réponses anglaises en toutes lettres (« four », « second », « none »)", corriger(q("pizzas"), "four") === "juste" && corriger(q("pizzas"), "two") === "intuitive" && corriger(q("course"), "second") === "juste" && corriger(q("trou"), "none") === "juste" && corriger(q("demi"), "70") === "juste");
+    ok("CRT : « aucun » et « 0 » justes pour le trou",corriger(q("trou"), "aucun") === "juste" && corriger(q("trou"), "0") === "juste" && corriger(q("trou"), "27") === "intuitive");
 
     // ---------- Quatre cartes ----------
     await aller("tests/wason");

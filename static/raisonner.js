@@ -10,9 +10,9 @@ const majuscule1 = t => t.charAt(0).toUpperCase() + t.slice(1);
 const pointsAsym = (v, brut) => fr(Number(v.toFixed(1))) + " " + (LANGUE === "en" ? T(Number(v.toFixed(1)) === 1 ? "point" : "points") : (brut >= 2 ? "points" : "point"));
 
 // ===================== Logique contre croyance =====================
-// 32 syllogismes : 8 dans chaque case (valide ou non, conclusion crédible ou non) ; une partie en tire 4 par case,
+// 37 syllogismes : 9 ou 10 dans chaque case (valide ou non, conclusion crédible ou non) ; une partie en tire 4 par case,
 // pour que deux parties de suite ne se ressemblent pas tout en gardant les indices de −4 à +4.
-// « justifications » : pour six d'entre eux, trois explications, dont une seule correcte.
+// « justifications » : pour huit d'entre eux, trois explications, dont une seule correcte.
 
 const SYLLOGISMES = [
   { id: "chiens", p: ["Tous les chiens sont des mammifères.", "Tous les mammifères respirent de l'air."], c: "Tous les chiens respirent de l'air.", valide: true, credible: true },
@@ -76,7 +76,23 @@ const SYLLOGISMES = [
   { id: "requins", p: ["Tous les mammifères ont une colonne vertébrale.", "Les requins ont une colonne vertébrale."], c: "Les requins sont des mammifères.", valide: false, credible: false },
   { id: "voitures", p: ["Certaines machines volent.", "Les voitures sont des machines."], c: "Certaines voitures volent.", valide: false, credible: false },
   { id: "soleil", p: ["Si un objet est une ampoule, il produit de la lumière.", "Le soleil n'est pas une ampoule."], c: "Le soleil ne produit pas de lumière.", valide: false, credible: false },
-  { id: "elephants", p: ["Aucun oiseau n'est un mammifère.", "Aucun éléphant n'est un oiseau."], c: "Aucun éléphant n'est un mammifère.", valide: false, credible: false }
+  { id: "elephants", p: ["Aucun oiseau n'est un mammifère.", "Aucun éléphant n'est un oiseau."], c: "Aucun éléphant n'est un mammifère.", valide: false, credible: false },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  { id: "quinze", p: ["Si un nombre est divisible par 4, il est pair.", "15 n'est pas un nombre pair."], c: "15 n'est pas divisible par 4.", valide: true, credible: true },
+  { id: "requins-branchies", p: ["Tous les poissons ont des branchies.", "Les requins n'ont pas de branchies."], c: "Les requins ne sont pas des poissons.", valide: true, credible: false,
+    justifications: [
+      ["Valide : si tous les poissons avaient des branchies et que les requins n'en avaient pas, les requins ne pourraient pas être des poissons.", true],
+      ["Non valide : les requins sont des poissons, donc la conclusion est fausse et le raisonnement ne tient pas.", false],
+      ["Non valide : la seconde prémisse est fausse, puisque les requins ont des branchies, donc la conclusion ne découle pas des prémisses.", false]
+    ] },
+  { id: "medecins-meres", p: ["Certains médecins sont des femmes.", "Certaines femmes sont des mères."], c: "Certains médecins sont des mères.", valide: false, credible: true,
+    justifications: [
+      ["Valide : des médecins sont des femmes, des femmes sont des mères, donc certaines de ces femmes médecins sont forcément des mères.", false],
+      ["Non valide : les femmes qui sont mères ne sont peut-être pas celles qui sont médecins ; la conclusion est vraie, mais elle ne découle pas des prémisses.", true],
+      ["Valide : tout le monde connaît des femmes médecins qui ont des enfants.", false]
+    ] },
+  { id: "dauphins-requins", p: ["Tous les requins sont des poissons.", "Aucun dauphin n'est un requin."], c: "Aucun dauphin n'est un poisson.", valide: false, credible: true },
+  { id: "chats-poissons", p: ["Certains chats sont des animaux de compagnie.", "Certains animaux de compagnie sont des poissons."], c: "Certains chats sont des poissons.", valide: false, credible: false },
 ];
 
 // Énoncé d'un syllogisme

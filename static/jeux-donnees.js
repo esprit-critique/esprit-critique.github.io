@@ -431,6 +431,87 @@ const MONDE = [
   { id: "voitures-electriques", depuis: 20781, niveau: 2, question: "Quelle part des voitures neuves vendues dans le monde en 2025 était électrique (hybrides rechargeables compris) ?",
     options: ["5 %", "un quart", "la moitié"], juste: 1,
     explication: "Un quart : plus de 20 millions de voitures, dont 65 % entièrement électriques et le reste hybrides rechargeables. Près de 55 % en Chine, 28 % en Europe, mais un peu moins de 10 % aux États-Unis (Agence internationale de l'énergie).", public: null },
+  // Ajouts du 23 novembre 2026 (lot 2), contre-vérifiés (agent verificateur-sources) ; « depuis » : 25 novembre.
+  // Sources lues les 22 et 23 novembre 2026 : https://www.imf.org/external/datamapper/api/v1/GGXWDG_NGDP
+  { id: "dette-japon", depuis: 20782, niveau: 2, question: "Lequel de ces pays a la dette publique la plus élevée par rapport à la richesse qu'il produit ?",
+    options: ["la Grèce", "les États-Unis", "le Japon"], juste: 2,
+    explication: "Le Japon : environ 205 % de son PIB en 2025, l'un des taux les plus élevés du monde, devant la Grèce (147 %), l'Italie (137 %) et les États-Unis (124 %) (Fonds monétaire international, octobre 2026).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.sipri.org/sites/default/files/2026-04/2604_milex_2025.pdf
+  { id: "armee-allemagne", depuis: 20782, niveau: 3, question: "En 2025, lequel de ces pays a dépensé le plus pour ses armées ?",
+    options: ["le Royaume-Uni", "la France", "l'Allemagne"], juste: 2,
+    explication: "L'Allemagne, avec 114 milliards de dollars, au quatrième rang mondial, devant le Royaume-Uni (89 milliards) et la France (68 milliards). Ses dépenses ont augmenté de 24 % en un an et dépassent 2 % de son PIB pour la première fois depuis 1990 (Institut international de recherche sur la paix de Stockholm, SIPRI).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://api.unhcr.org/population/v1/population/?yearFrom=2025&yearTo=2025&coo_all=true&cf_type=ISO
+  { id: "deplaces-soudan", depuis: 20782, niveau: 3, question: "Fin 2025, de quel pays venait le plus grand nombre de personnes forcées de fuir (réfugiés et déplacés dans leur propre pays) ?",
+    options: ["la Syrie", "l'Ukraine", "le Soudan"], juste: 2,
+    explication: "Du Soudan : près de 13 millions de personnes, dont 9,1 millions déplacées à l'intérieur du pays et 3,8 millions réfugiées ou demandeuses d'asile à l'étranger. Suivaient la Syrie (10,6 millions) et l'Ukraine (9 millions) (Haut-Commissariat des Nations unies pour les réfugiés, HCR).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://apps.fas.usda.gov/psdonline/circulars/grain.pdf
+  { id: "ble-russie", depuis: 20782, niveau: 2, question: "Quel pays exporte le plus de blé ?",
+    options: ["les États-Unis", "le Canada", "la Russie"], juste: 2,
+    explication: "La Russie, avec 48 millions de tonnes sur la campagne 2025-2026, soit plus d'un cinquième du blé échangé dans le monde, devant l'Union européenne (32 millions), le Canada (30 millions) et les États-Unis (24 millions) (ministère de l'Agriculture des États-Unis).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://arctic-council.org/about/states/ ; https://arctic-council.org/about/
+  { id: "arctique-huit", depuis: 20782, niveau: 2, question: "Combien de pays ont une partie de leur territoire dans l'Arctique ?",
+    options: ["3", "5", "8"], juste: 2,
+    explication: "Huit : le Canada, le Danemark (par le Groenland), les États-Unis (par l'Alaska), la Finlande, l'Islande, la Norvège, la Russie et la Suède. Ils forment le Conseil de l'Arctique, et leurs régions arctiques comptent environ quatre millions d'habitants (Conseil de l'Arctique).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard
+  { id: "age-median-afrique", depuis: 20782, niveau: 2, question: "En Afrique subsaharienne, la moitié des habitants a moins de…",
+    options: ["18 ans", "28 ans", "38 ans"], juste: 0,
+    explication: "18 ans (âge médian en 2025), contre 31 ans dans le monde et 43 ans en Europe. En 2050, il serait encore de 23 ans (ONU, World Population Prospects 2024).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://api.worldbank.org/v2/country/UZB/indicator/SP.POP.TOTL?format=json&mrv=1
+  { id: "ouzbekistan-peuple", depuis: 20782, niveau: 3, question: "Lequel de ces pays d'Asie centrale compte le plus d'habitants ?",
+    options: ["le Kazakhstan", "l'Ouzbékistan", "le Turkménistan"], juste: 1,
+    explication: "L'Ouzbékistan, avec 37 millions d'habitants en 2025, près du double du Kazakhstan (21 millions), pourtant six fois plus vaste. Le Turkménistan en compte 7,6 millions (Banque mondiale).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.un.org/ohrlls/content/list-lldcs
+  { id: "kazakhstan-enclave", depuis: 20782, niveau: 2, question: "Lequel de ces pays, tous sans accès à l'océan, est le plus vaste ?",
+    options: ["la Mongolie", "le Tchad", "le Kazakhstan"], juste: 2,
+    explication: "Le Kazakhstan, avec 2,7 millions de km², devant la Mongolie (1,6 million) et le Tchad (1,3 million). C'est le plus vaste pays sans accès à l'océan du monde : il borde la Caspienne, mais c'est une mer fermée (Banque mondiale).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.stats.gov.cn/english/PressRelease//202602/t20260228_1962661.html ; https://www.stats.gov.cn/english/PressRelease/202302/t20230227_1918979.html
+  { id: "chine-deces", depuis: 20782, niveau: 3, question: "En 2025, en Chine, y a-t-il eu plus de naissances ou plus de décès ?",
+    options: ["nettement plus de naissances", "à peu près autant", "nettement plus de décès"], juste: 2,
+    explication: "Nettement plus de décès : 11,3 millions, contre 7,9 millions de naissances. La population a perdu 3,4 millions d'habitants en un an, à 1,405 milliard ; elle baisse depuis 2022 (Bureau national des statistiques de Chine).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://european-union.europa.eu/principles-countries-history/languages_fr
+  { id: "ue-langues", depuis: 20782, niveau: 2, question: "Combien de langues officielles l'Union européenne compte-t-elle ?",
+    options: ["3", "12", "24"], juste: 2,
+    explication: "24. Tout citoyen peut écrire aux institutions européennes dans l'une d'elles et doit recevoir une réponse dans la même langue. Les dernières ajoutées sont le bulgare, l'irlandais et le roumain (2007), puis le croate (2013) (Union européenne).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data.zip
+  { id: "canne-a-sucre", depuis: 20782, niveau: 3, question: "Quelle plante cultivée est la plus récoltée au monde, en tonnes ?",
+    options: ["le blé", "le riz", "la canne à sucre"], juste: 2,
+    explication: "La canne à sucre : 1,94 milliard de tonnes en 2024, devant le maïs (1,22 milliard), le riz (0,82) et le blé (0,80) (Organisation des Nations unies pour l'alimentation et l'agriculture, FAO).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.unep.org/news-and-stories/press-release/world-squanders-over-1-billion-meals-day-un-report
+  { id: "gaspillage-foyers", depuis: 20782, niveau: 2, question: "Où est jetée la plus grande partie de la nourriture gaspillée dans le monde (hors pertes à la production) ?",
+    options: ["dans les magasins", "dans les restaurants et les cantines", "dans les foyers"], juste: 2,
+    explication: "Dans les foyers : 60 % du gaspillage, contre 28 % pour la restauration et 12 % pour les commerces. En 2022, 1,05 milliard de tonnes ont été gaspillées, près d'un cinquième de la nourriture disponible pour les consommateurs, parties non comestibles comprises (Programme des Nations unies pour l'environnement).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.usgs.gov/special-topics/water-science-school/science/where-earths-water
+  { id: "eau-souterraine", depuis: 20782, niveau: 3, question: "En dehors des glaces, où se trouve l'essentiel de l'eau douce de la Terre ?",
+    options: ["dans les lacs et les rivières", "sous terre, dans les nappes", "dans l'atmosphère"], juste: 1,
+    explication: "Sous terre : environ 30 % de l'eau douce, contre 0,26 % pour les lacs et 0,006 % pour les rivières. Les glaces et neiges permanentes en retiennent 69 %. Et l'eau douce ne représente que 2,5 % de l'eau de la planète (Institut d'études géologiques des États-Unis, USGS, d'après Shiklomanov).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://iho.int/en/global-seabed-mapping-reaches-new-milestone-as-five-million-square-kilometres-added-in-a-year ; https://seabed2030.org/?p=3108 ; https://www.ncei.noaa.gov/node/231
+  { id: "fonds-marins", depuis: 20782, niveau: 2, question: "Quelle part du fond des océans a été cartographiée à partir de mesures directes de profondeur ?",
+    options: ["environ 5 %", "environ 30 %", "environ 90 %"], juste: 1,
+    explication: "28,7 % en avril 2026, soit environ 104 millions de km², selon le projet international Seabed 2030. Ailleurs, les cartes reposent sur des profondeurs estimées, surtout d'après des mesures de la gravité par satellite (NOAA).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.protectedplanet.net/en/thematic-areas/marine-protected-areas
+  { id: "haute-mer", depuis: 20782, niveau: 3, question: "Quelle part de l'océan mondial se trouve en haute mer, hors de la juridiction de tout pays ?",
+    options: ["environ 10 %", "environ 35 %", "environ 60 %"], juste: 2,
+    explication: "61 %, soit près de la moitié de la surface de la Terre. Environ 1,5 % de la haute mer est protégé, contre 23 % des eaux nationales, qui s'étendent jusqu'à 200 milles marins des côtes (Protected Planet, Programme des Nations unies pour l'environnement).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://planet4589.org/space/stats/active.html
+  { id: "starlink", depuis: 20782, niveau: 2, question: "En novembre 2026, quelle part des satellites en activité autour de la Terre appartenait à une seule constellation, Starlink, de l'entreprise SpaceX ?",
+    options: ["environ 5 %", "environ 25 %", "près des deux tiers"], juste: 2,
+    explication: "Près des deux tiers : 11 195 satellites Starlink sur 17 246 satellites actifs au 18 novembre 2026, selon le catalogue de l'astrophysicien Jonathan McDowell ; 66 % selon le catalogue CelesTrak. Cette part change chaque mois, au fil des lancements et des retraits.", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.who.int/news-room/fact-sheets/detail/mental-disorders ; https://www.who.int/news/item/02-09-2025-over-a-billion-people-living-with-mental-health-conditions-services-require-urgent-scale-up
+  { id: "troubles-mentaux", depuis: 20782, niveau: 2, question: "Dans le monde, combien de personnes vivent avec un trouble mental (anxiété, dépression…) ?",
+    options: ["environ 1 sur 100", "environ 1 sur 30", "environ 1 sur 7"], juste: 2,
+    explication: "Près d'une sur sept, soit 1,2 milliard de personnes en 2023. Les plus fréquents sont les troubles anxieux (470 millions de personnes) et la dépression (322 millions) (Organisation mondiale de la santé).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.unwomen.org/en/news-stories/press-release/2025/11/every-day-137-women-and-girls-are-killed-by-intimate-partners-or-family-members ; https://internetcontenidos.inegi.org.mx/contenidos/unodc/wp-content/uploads/2025/11/Femicide_Brief_2025_compressed.pdf
+  { id: "feminicides", depuis: 20782, niveau: 3, question: "Dans le monde, quand une femme est tuée volontairement, qui est le plus souvent l'auteur ?",
+    options: ["un inconnu", "une connaissance hors de la famille", "son partenaire ou un membre de sa famille"], juste: 2,
+    explication: "Son partenaire ou un membre de sa famille, dans 60 % des cas : environ 50 000 femmes et filles sur 83 000 tuées volontairement en 2024 (estimations). Chez les hommes, qui représentent 80 % des victimes d'homicide, cette part n'est que de 11 % (Office des Nations unies contre la drogue et le crime ; ONU Femmes).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://aci.aero/2026/07/15/worlds-busiest-airports-atlanta-holds-asia-climbs-strong-demand-while-asia-pacific-growth-reshape-the-rankings/
+  { id: "aeroport-atlanta", depuis: 20782, niveau: 2, question: "Quel est l'aéroport le plus fréquenté du monde, en nombre de passagers ?",
+    options: ["Londres-Heathrow", "Dubaï", "Atlanta"], juste: 2,
+    explication: "Atlanta, aux États-Unis, avec 106 millions de passagers en 2025, devant Dubaï (95 millions) et Tokyo-Haneda (92 millions) ; Londres-Heathrow est septième (84 millions). En tout, 9,8 milliards de passagers ont été comptés dans les aéroports du monde (Conseil international des aéroports).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.itu.int/en/mediacentre/Pages/PR-2026-02-03-Porto-Submarine-Cable-Resilience-Summit.aspx ; https://resources.telegeography.com/2023-mythbusting-part-3
+  { id: "cables-sous-marins", depuis: 20782, niveau: 2, question: "Comment voyagent l'essentiel des données d'Internet entre les pays ?",
+    options: ["par satellite", "par des câbles posés au fond de la mer", "par des antennes relais"], juste: 1,
+    explication: "Par des câbles sous-marins, qui transportent plus de 99 % du trafic international de données (Union internationale des télécommunications).", public: null },
 ];
 
 // ===================== Qu'est-ce qui tue le plus ? =====================
@@ -555,7 +636,26 @@ const ETALONNAGE = [
   { id: "coree", niveau: 3, q: "Nombre moyen d'enfants par femme en Corée du Sud en 2024", unite: "enfants", v: 0.75, note: "le plus bas du monde (Banque mondiale)" },
   { id: "japon-65", niveau: 3, q: "Part des 65 ans et plus dans la population du Japon en 2025", unite: "%", v: 30.0, note: "Banque mondiale" },
   { id: "bangladesh", niveau: 3, q: "Densité de population du Bangladesh en 2024", unite: "habitants par km²", v: 1333, note: "Banque mondiale" },
-  { id: "russie", niveau: 2, q: "Superficie de la Russie", unite: "millions de km²", v: 17.1, note: "Banque mondiale" }
+  { id: "russie", niveau: 2, q: "Superficie de la Russie", unite: "millions de km²", v: 17.1, note: "Banque mondiale" },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-rare-earths.pdf
+  { id: "terres-rares-chine", niveau: 3, q: "Part de la Chine dans la production minière mondiale de terres rares en 2025", unite: "%", v: 69, note: "270 000 tonnes sur 390 000, estimation de l'USGS (Mineral Commodity Summaries 2026)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://en.mofa.gov.tw/AlliesIndex.aspx?n=1294&sms=1007
+  // Liste du ministère des Affaires étrangères de la République de Chine (mise à jour le 2 novembre 2026), concordante avec
+  // la liste de Reuters du 2 mai 2026 (« Factbox-Taiwan's 12 remaining diplomatic allies »)
+  { id: "taiwan-allies", niveau: 3, q: "Nombre d'États qui entretiennent des relations diplomatiques officielles avec la République de Chine (Taïwan), en novembre 2026", unite: "États", v: 12, note: "sept en Amérique latine et dans les Caraïbes, trois dans le Pacifique, l'Eswatini et le Saint-Siège (ministère des Affaires étrangères de la République de Chine, liste du 2 novembre 2026 ; Reuters)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://data.imf.org/en/news/imf-data-brief-september-30
+  { id: "dollar-reserves", niveau: 2, q: "Part du dollar américain dans les réserves de change officielles du monde (2e trimestre 2026)", unite: "%", v: 56.7, note: "56,70 % ; euro : 20,60 % (FMI, enquête COFER)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.internationalboundarycommission.org/en/about/the-boundary.php ; https://www.internationalboundarycommission.org/en/the-boundary-and-you/interesting-facts.php
+  { id: "frontiere-canada", niveau: 2, q: "Longueur de la frontière entre le Canada et les États-Unis, Alaska compris", unite: "km", v: 8891, note: "dont 2 475 km avec l'Alaska (Commission de la frontière internationale)" },
+  // Vérifié via https://history.state.gov/milestones/1953-1960/bandung-conf ; https://asianafricanmuseum.org/en/sejarah-konferensi-asia-afrika/
+  { id: "bandung", niveau: 3, q: "Année de la conférence de Bandung (Indonésie), qui réunit vingt-neuf pays d'Asie et d'Afrique", unite: "", v: 1955, note: "avril 1955 (Office of the Historian, département d'État des États-Unis ; musée de la Conférence asiatique-africaine, Bandung)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+  { id: "liberation", niveau: 2, q: "Vitesse de libération de la Terre : vitesse minimale, au départ de sa surface, pour échapper à son attraction sans propulsion", unite: "km/s", v: 11.2, note: "11,186 km/s (NASA)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1371/journal.pone.0092633&resultType=core&format=json
+  { id: "baleine-cuvier", niveau: 3, q: "Profondeur de la plus profonde plongée mesurée chez une baleine à bec de Cuvier", unite: "m", v: 2992, note: "plongée de 137,5 minutes, deux records pour un mammifère à leur publication (Schorr et al., PLoS ONE, 2014)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.gencodegenes.org/human/stats.html ; https://www.gencodegenes.org/human/releases.html
+  { id: "genes", niveau: 3, q: "Nombre de gènes codant des protéines dans le génome humain", unite: "gènes", v: 19442, note: "GENCODE, version 50 (juin 2026) ; s'y ajoutent près de 36 000 gènes d'ARN longs non codants" },
 ];
 
 // ===================== L'ancre =====================
@@ -591,7 +691,18 @@ const ANCRES = [
   { id: "deces-fr", q: "Nombre de décès en France en 2025", unite: "décès", v: 651000, note: "Insee : pour la première fois depuis 1945, plus de décès que de naissances" },
   { id: "paris-nice", q: "Distance à vol d'oiseau entre Paris et Nice", unite: "km", v: 687, note: "calcul d'après les coordonnées des deux villes sur Wikipédia" },
   { id: "ue", q: "Nombre de pays membres de l'Union européenne", unite: "pays", v: 27, note: "Wikipédia, « Union européenne »" },
-  { id: "mercure-diametre", q: "Diamètre de Mercure", unite: "km", v: 4879, note: "NASA" }
+  { id: "mercure-diametre", q: "Diamètre de Mercure", unite: "km", v: 4879, note: "NASA" },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://stat.gl/publ/en/BE/202601/contents/Population%20estimates.htm
+  { id: "groenland-pop", q: "Population du Groenland au 1er janvier 2026", unite: "habitants", v: 56740, note: "Statistique Groenland" },
+  // Sources lues les 22 et 23 novembre 2026 : https://avalon.law.yale.edu/17th_century/westphal.asp
+  { id: "westphalie", q: "Année des traités de Westphalie, qui mettent fin à la guerre de Trente Ans", unite: "", v: 1648, annee: true, note: "traité de Münster, conclu le 24 octobre 1648 (texte publié par l'Avalon Project, université Yale)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalCharacteristics.aspx
+  { id: "suez-longueur", q: "Longueur du canal de Suez", unite: "km", v: 193, note: "193,3 km depuis 2010, contre 164 km à l'ouverture en 1869 (Autorité du canal de Suez)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1371/journal.pbio.1002533&resultType=core&format=json
+  { id: "bacteries-masse", q: "Masse totale des bactéries hébergées par le corps d'un homme de 70 kg", unite: "g", v: 200, note: "environ 0,2 kg (Sender, Fuchs et Milo, PLoS Biology, 2016)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1038/s41598-021-02447-0&resultType=core&format=json
+  { id: "mille-pattes", q: "Nombre de pattes du mille-pattes qui en a le plus (Eumillipes persephone, Australie)", unite: "pattes", v: 1306, note: "spécimen décrit en 2021 ; aucun mille-pattes connu n'en avait jusque-là plus de 750 (Marek et al., Scientific Reports, 2021)" },
 ];
 
 // ===================== Vrai ou faux ? =====================
@@ -842,39 +953,76 @@ const VRAI_FAUX = [
   // Sources lues le 22 novembre 2026 : https://www.imf.org/external/np/speeches/2000/051900.htm ; https://www.portafolio.co/internacional/presidente-de-ecuador-ratifica-que-el-dolar-es-el-unico-medio-de-pago-626054 ; https://www.larepublica.co/globoeconomia/ecuador-conmemora-25-anos-de-la-dolarizacion-en-busqueda-de-estabilizar-la-economia-4033457
   { id: "equateur-dollar", depuis: 20781, niveau: 2, texte: "La monnaie officielle de l'Équateur est le dollar américain.", vrai: true,
     explication: "Le sucre, la monnaie nationale, avait perdu près de 80 % de sa valeur face au dollar en seize mois. Le 9 janvier 2000, le président Jamil Mahuad a annoncé la dollarisation, toujours en vigueur ; un décret l'a confirmée en 2025.", source: "FMI, discours de Stanley Fischer, 19 mai 2000 ; Portafolio, 18 mars 2025" },
-  // Vérifié via https://blogs.loc.gov/law/2020/10/the-crushing-death-of-giles-corey-of-salem-1692/ ; https://news.northeastern.edu/2023/10/18/salem-witch-trials-history-truth
-  { id: "salem", depuis: 20781, niveau: 1, texte: "Lors des procès des sorcières de Salem, en 1692, les condamnés ont été brûlés vifs.", vrai: false,
-    explication: "Dix-neuf personnes ont été pendues, et un homme, Giles Corey, est mort écrasé sous des poids pour avoir refusé d'être jugé. Personne n'a été brûlé.", source: "Bibliothèque du Congrès, « The Crushing Death of Giles Corey of Salem, 1692 » ; Northeastern University (Jessica Parr), 2023" },
   // Sources lues le 22 novembre 2026 : https://penelope.uchicago.edu/Thayer/E/roman/Texts/Tacitus/Annals/15B*.html ; https://penelope.uchicago.edu/Thayer/E/Journals/CJ/42/4/Nero_Fiddled*.html
   { id: "neron-violon", depuis: 20781, niveau: 1, texte: "Néron jouait du violon pendant que Rome brûlait.", vrai: false,
     explication: "Le violon n'existait pas : il n'est apparu que plus d'un millénaire plus tard. Selon Tacite, Néron était à Antium quand l'incendie a éclaté, et une rumeur disait qu'il avait chanté la destruction de Troie sur sa scène privée pendant que la ville brûlait.", source: "Tacite, Annales, XV, 39 ; Gyles, « Nero Fiddled While Rome Burned », The Classical Journal, 1947" },
-  // Sources lues le 22 novembre 2026 : https://science.nasa.gov/venus/venus-facts/
-  { id: "mercure-chaude", depuis: 20781, niveau: 1, texte: "Mercure, la planète la plus proche du Soleil, est la plus chaude du Système solaire.", vrai: false,
-    explication: "La plus chaude est Vénus, deuxième planète à partir du Soleil, avec environ 467 °C en surface : elle est plus chaude encore que Mercure.", source: "NASA Science, « Venus: Facts »" },
   // Sources lues le 22 novembre 2026 : https://physicstoday.aip.org/opinion/venus-is-not-earths-closest-neighbor
   { id: "mercure-voisine", depuis: 20781, niveau: 3, texte: "En moyenne dans le temps, la planète la plus proche de la Terre est Mercure, et non Vénus.", vrai: true,
     explication: "Vénus est celle qui s'approche le plus de nous, mais elle passe aussi de longues périodes de l'autre côté du Soleil. Mercure, sur une orbite bien plus petite, ne s'éloigne jamais autant : sa distance moyenne à la Terre est d'environ 1,04 unité astronomique, contre 1,14 pour Vénus. Le calcul suppose des orbites circulaires dans un même plan.", source: "Stockman, Monroe et Cordner, « Venus is not Earth's closest neighbor », Physics Today, 2019" },
-  // Sources lues le 22 novembre 2026 : https://www.nasa.gov/learning-resources/for-kids-and-students/what-is-microgravity-grades-5-8/
-  { id: "iss-gravite", depuis: 20781, niveau: 2, texte: "Les astronautes flottent dans la Station spatiale internationale parce qu'il n'y a plus de gravité à cette altitude.", vrai: false,
-    explication: "À l'altitude de la station, la gravité terrestre vaut encore environ 90 % de sa valeur au sol. Les astronautes flottent parce qu'ils sont en chute libre, comme la station et tout ce qu'elle contient.", source: "NASA, « What Is Microgravity? »" },
   // Sources lues le 22 novembre 2026 : https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002533
   { id: "bacteries-cellules", depuis: 20781, niveau: 2, texte: "Le corps humain contient dix fois plus de bactéries que de cellules humaines.", vrai: false,
     explication: "Ce rapport de dix pour un, très cité, venait d'une estimation ancienne. Une réévaluation de 2016 compte, pour un homme de 70 kg, environ 38 000 milliards de bactéries pour 30 000 milliards de cellules humaines : à peu près autant.", source: "Sender, Fuchs et Milo, « Revised Estimates for the Number of Human and Bacteria Cells in the Body », PLoS Biology, 2016" },
   // Vérifié via https://www.sciencedaily.com/releases/2017/07/170727141510.htm ; https://sciencenews.org/article/art-dna-folding
   { id: "adn-longueur", depuis: 20781, niveau: 2, texte: "Déroulé bout à bout, l'ADN d'une seule de nos cellules mesurerait environ deux mètres.", vrai: true,
     explication: "Cette longue molécule tient pourtant dans le noyau de la cellule, invisible à l'œil nu, grâce à un repliement très compact autour de protéines.", source: "Salk Institute, 2017 (étude ChromEMT, Science) ; Science News, « The art of DNA folding »" },
-  // Sources lues le 22 novembre 2026 : https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.0010003
-  { id: "chats-sucre", depuis: 20781, niveau: 2, texte: "Les chats ne sentent pas le goût sucré.", vrai: true,
-    explication: "Chez eux, le gène d'une des deux protéines du récepteur du sucré est inactif ; le même défaut se retrouve chez le tigre et le guépard. Les chats ne préfèrent pas les sucres et ne peuvent probablement pas les détecter.", source: "Li et al., « Pseudogenization of a sweet-receptor gene accounts for cats' indifference toward sugar », PLoS Genetics, 2005" },
-  // Sources lues le 22 novembre 2026 : https://www.adfg.alaska.gov/index.cfm?adfg=wildlifenews.view_article&articles_id=56
-  { id: "lemmings", depuis: 20781, niveau: 1, texte: "Les lemmings se suicident en masse en se jetant du haut des falaises.", vrai: false,
-    explication: "C'est un mythe, popularisé par le documentaire de Disney White Wilderness (1958) : les lemmings y avaient été jetés d'une falaise par l'équipe de tournage. Quand la nourriture manque, ils se dispersent et traversent des étendues d'eau à la nage ; certains se noient.", source: "Riley Woodford, « Lemming Suicide Myth », Alaska Fish & Wildlife News, Alaska Department of Fish and Game, septembre 2003" },
-  // Sources lues le 22 novembre 2026 : https://www.cnrtl.fr/etymologie/bistrot
-  { id: "bistrot", depuis: 20781, niveau: 2, texte: "Le mot « bistrot » vient des soldats russes qui criaient « bystro ! » (« vite ! ») dans les cafés parisiens.", vrai: false,
-    explication: "Le mot n'est attesté qu'à partir de 1884, et la forme « bistrot » en 1892, bien après le passage des troupes russes à Paris. Le Trésor de la langue française juge l'hypothèse russe insuffisamment fondée ; l'origine du mot reste obscure.", source: "Trésor de la langue française (CNRTL), « bistro, bistrot », étymologie" },
   // Sources lues le 22 novembre 2026 : https://patents.google.com/patent/US748626A/en ; https://www.bl.uk/stories/blogs/posts/lizzie-magie-and-the-history-of-monopoly ; https://publicdomainreview.org/collection/the-landlords-game
   { id: "monopoly", depuis: 20781, niveau: 2, texte: "L'ancêtre du Monopoly a été inventé pour mettre en garde contre les monopoles.", vrai: true,
     explication: "Lizzie Magie, adepte des idées de l'économiste Henry George, fait breveter en 1904 The Landlord's Game, « le jeu du propriétaire », pour enseigner ces idées. Le jeu reçoit deux séries de règles, dont une « antimonopole », qu'elle juge moralement préférable. Copié de main en main, le jeu a pris le nom de « Monopoly », et c'est la variante où l'on ruine les autres qui l'a emporté.", source: "Brevet américain n° 748 626 (1904) ; British Library, « Lizzie Magie and the history of Monopoly » ; The Public Domain Review" },
+  // Ajouts du 23 novembre 2026 (lot 2), contre-vérifiés (agent verificateur-sources) ; « depuis » : 25 novembre.
+  // Sources lues les 22 et 23 novembre 2026 : https://2009-2017.state.gov/t/isn/4785.htm ; https://www.smithsonianmag.com/history/there-never-was-such-a-thing-as-a-red-phone-in-the-white-house-1129598/
+  { id: "telephone-rouge", depuis: 20782, niveau: 2, texte: "Pendant la guerre froide, le « téléphone rouge » permettait aux dirigeants américain et soviétique de se parler de vive voix.", vrai: false,
+    explication: "Ce n'était pas un téléphone. L'accord du 20 juin 1963, conclu après la crise des missiles de Cuba, prévoyait des téléscripteurs reliés par télégraphe et par radiotélégraphe : on y échangeait des messages écrits. Le terminal américain était au Pentagone, pas à la Maison-Blanche. Le télécopieur a remplacé les téléscripteurs dans les années 1980.", source: "Département d'État américain, « Memorandum of Understanding… Regarding the Establishment of a Direct Communications Link » (1963) ; Smithsonian Magazine, 2013" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.constituteproject.org/constitution/Bolivia_2009?lang=es ; https://www.icj-cij.org/case/153
+  { id: "bolivie-marine", depuis: 20782, niveau: 2, texte: "La Bolivie, qui n'a aucun accès à la mer, possède une marine militaire.", vrai: true,
+    explication: "Sa Constitution de 2009 compte l'Armada boliviana parmi les armes des forces armées, avec l'armée de terre et l'armée de l'air. Elle lui confie l'administration et la protection des intérêts « maritimes, fluviaux et lacustres » du pays et de sa marine marchande.", source: "Constitution de l'État plurinational de Bolivie (2009), articles 243 et 268 ; Cour internationale de justice, affaire Bolivie c. Chili" },
+  // Sources lues les 22 et 23 novembre 2026 : https://thecommonwealth.org/history
+  { id: "commonwealth", depuis: 20782, niveau: 3, texte: "Le Mozambique et le Rwanda, qui n'ont jamais été des colonies britanniques, sont membres du Commonwealth.", vrai: true,
+    explication: "Le Mozambique y est entré en 1995, le Rwanda en 2009, puis le Gabon et le Togo en 2022. Le Commonwealth lui-même dit de ces quatre pays qu'ils n'ont « aucun lien historique avec l'Empire britannique ».", source: "Commonwealth, « Our history »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://2009-2017.state.gov/t/avc/trty/193967.htm ; https://www.ats.aq/e/antarctictreaty.html
+  { id: "antarctique-traite", depuis: 20782, niveau: 2, texte: "En pleine guerre froide, les États-Unis et l'URSS ont signé ensemble un traité qui démilitarise tout un continent.", vrai: true,
+    explication: "Le traité sur l'Antarctique, signé à Washington le 1er décembre 1959 par douze pays, dont les deux superpuissances, réserve le continent aux activités pacifiques. Il y interdit les bases militaires, les manœuvres et les essais d'armes, ainsi que les explosions nucléaires. Le département d'État américain le présente comme le premier des accords de limitation des armements de l'après-guerre.", source: "Département d'État américain, « Antarctic Treaty » (texte et historique)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalHistory.aspx ; https://www.imarest.org/resource/the-suez-great-bitter-lake-saga.html ; https://www.aljazeera.com/programmes/aljazeeraworld/2019/11/suez-yellow-fleet-191119110234435.html
+  { id: "suez-fermeture", depuis: 20782, niveau: 2, texte: "Le canal de Suez est resté fermé à la navigation pendant huit ans, de 1967 à 1975.", vrai: true,
+    explication: "La navigation s'est arrêtée avec la guerre de juin 1967. Le canal n'a rouvert que le 5 juin 1975, après avoir été débarrassé des épaves et des restes de la guerre. Une quinzaine de cargos y ont été pris au piège en 1967, et la plupart y sont restés jusqu'à la réouverture ; le sable qui les recouvrait leur a valu le surnom de « flotte jaune ».", source: "Autorité du canal de Suez, « Canal History » ; IMarEST, « The Suez Great Bitter Lake saga », 2021 ; Al Jazeera, 2019" },
+  // Sources lues les 22 et 23 novembre 2026 : https://nato.int/en/about-us/nato-history/history-by-theme/my-country-and-nato/iceland-and-nato
+  { id: "islande-armee", depuis: 20782, niveau: 2, texte: "L'Islande, membre fondateur de l'OTAN, n'a pas d'armée.", vrai: true,
+    explication: "C'est le seul pays de l'Alliance sans forces militaires propres. Elle a fourni des terrains et des installations, ainsi que ses garde-côtes ; une force américaine y a stationné en permanence jusqu'en 2006, en vertu d'un accord de défense de 1951. Le jour du vote de l'adhésion, en 1949, une émeute a éclaté à Reykjavik.", source: "OTAN, « Iceland and NATO »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.un.org/en/about-us/growth-in-un-membership ; https://www.un.org/en/about-us/member-states/ukraine ; https://www.un.org/en/about-us/member-states/belarus
+  { id: "onu-ukraine", depuis: 20782, niveau: 3, texte: "L'Ukraine et la Biélorussie sont membres fondateurs de l'ONU, alors qu'elles faisaient partie de l'URSS en 1945.", vrai: true,
+    explication: "La liste des 51 membres d'origine, en 1945, compte la république socialiste soviétique d'Ukraine et celle de Biélorussie, à côté de l'Union soviétique elle-même. Elles ont pris leur nom actuel en 1991.", source: "ONU, « Growth in United Nations membership » et fiches des États membres" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126:book=7:chapter=202
+  { id: "thermopyles", depuis: 20782, niveau: 2, texte: "Aux Thermopyles, face à l'armée perse, les Grecs n'étaient que 300 Spartiates.", vrai: false,
+    explication: "Selon Hérodote, les 300 Spartiates de Léonidas n'étaient qu'une partie des troupes : il énumère aussi des contingents d'Arcadie, de Corinthe, de Phlionte et de Mycènes, 700 Thespiens, 400 Thébains, des Locriens et un millier de Phocidiens. Une inscription sur place parlait de « quatre mille » Péloponnésiens. Avant le dernier combat, Léonidas renvoya la plupart des alliés ; les Thespiens et les Thébains restèrent avec les Spartiates.", source: "Hérodote, Histoires, VII, 202-203, 220-222 et 228 (trad. Godley, Perseus)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://aa.usno.navy.mil/faq/millennium
+  { id: "an-zero", depuis: 20782, niveau: 3, texte: "Dans notre calendrier, l'an 1 avant J.-C. est immédiatement suivi de l'an 1 après J.-C.", vrai: true,
+    explication: "Il n'y a pas d'année zéro dans la numérotation historique des années. C'est pourquoi le troisième millénaire a commencé en 2001, et non en 2000. Les astronomes, eux, comptent une année 0 juste avant l'an 1.", source: "United States Naval Observatory, « The Start of the 21st Century and the 3rd Millennium »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://science.nasa.gov/saturn/moons/
+  { id: "saturne-lunes", depuis: 20782, niveau: 2, texte: "Jupiter est la planète du Système solaire qui compte le plus de lunes connues.", vrai: false,
+    explication: "C'est Saturne, et de loin : en août 2026, la NASA lui comptait 293 lunes confirmées, bien plus qu'à toute autre planète. Ce nombre augmente au fil des découvertes.", source: "NASA Science, « Saturn Moons » (chiffre d'août 2026)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://science.nasa.gov/moon/moonquakes/
+  { id: "seismes-lune", depuis: 20782, niveau: 2, texte: "Il y a des séismes sur la Lune.", vrai: true,
+    explication: "Les sismomètres déposés par les astronautes d'Apollo l'ont montré. Les plus profonds, à des centaines de kilomètres sous la surface, sont dus aux marées causées par la Terre. D'autres, moins profonds, viennent de ce que la Lune rétrécit en refroidissant : ils peuvent atteindre une magnitude de 5,5 et durer plus de dix minutes.", source: "NASA Science, « Moonquakes »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://wmo.int/media/news/climate-change-triggers-mounting-food-insecurity-poverty-and-displacement-africa
+  { id: "glaciers-afrique", depuis: 20782, niveau: 2, texte: "Il existe des glaciers en Afrique.", vrai: true,
+    explication: "En 2021, l'Organisation météorologique mondiale en recensait sur trois montagnes : le massif du mont Kenya, les monts Rwenzori, en Ouganda, et le Kilimandjaro, en Tanzanie. Ils reculent plus vite que la moyenne mondiale : à ce rythme, ils auront disparu dans les années 2040, ceux du mont Kenya dix ans plus tôt.", source: "Organisation météorologique mondiale, communiqué du 19 octobre 2021 (State of the Climate in Africa 2020)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.nobelprize.org/prizes/medicine/2005/press-release/ ; https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/symptoms-causes
+  { id: "ulcere-bacterie", depuis: 20782, niveau: 2, texte: "Une bactérie est l'une des principales causes des ulcères de l'estomac.", vrai: true,
+    explication: "Quand Robin Warren et Barry Marshall ont découvert Helicobacter pylori, en 1982, on attribuait surtout les ulcères au stress et au mode de vie. Ils ont montré le rôle de cette bactérie, ce qui leur a valu le prix Nobel de médecine 2005. Aujourd'hui, l'infection par H. pylori et les anti-inflammatoires comme l'aspirine ou l'ibuprofène en sont les deux causes les plus fréquentes.", source: "Assemblée Nobel de l'Institut Karolinska, communiqué du 3 octobre 2005 ; NIH (NIDDK), « Symptoms & Causes of Peptic Ulcers »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.redcross.org/take-a-class/resources/articles/eating-before-swimming-myth
+  { id: "baignade", depuis: 20782, niveau: 1, texte: "Se baigner juste après avoir mangé augmente le risque de noyade.", vrai: false,
+    explication: "Selon le conseil scientifique de la Croix-Rouge américaine, manger avant de nager n'a eu aucun effet sur les performances et presque aucun effet indésirable, quel que soit le délai après le repas. Se baigner moins d'une heure après avoir mangé n'augmente pas le risque de noyade, et aucune grande organisation médicale ou de sécurité ne recommande d'attendre.", source: "Croix-Rouge américaine, Scientific Advisory Council, « Does eating right before swimming have health risks or increase the risk of drowning? », 2024" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.fda.gov/radiation-emitting-products/resources-you-radiation-emitting-products/microwave-ovens
+  { id: "micro-ondes", depuis: 20782, niveau: 1, texte: "Les aliments chauffés au four à micro-ondes deviennent légèrement radioactifs.", vrai: false,
+    explication: "Les micro-ondes font vibrer les molécules d'eau des aliments, ce qui produit la chaleur qui les cuit. Absorbée par l'aliment, cette énergie se change en chaleur et ne le rend ni « radioactif » ni « contaminé ».", source: "Food and Drug Administration (États-Unis), « Microwave Ovens »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://americanhistory.si.edu/collections/object/nmah_334663
+  { id: "bug-1947", depuis: 20782, niveau: 2, texte: "Le mot « bug » est né en 1947, quand des ingénieurs ont trouvé un papillon de nuit coincé dans un ordinateur.", vrai: false,
+    explication: "Le papillon a bien existé : en 1947, l'équipe de l'ordinateur Mark II, à Harvard, l'a collé dans son cahier avec la mention « premier cas réel de bug trouvé ». Mais le mot était déjà en usage : les ingénieurs américains appelaient « bugs » les petits défauts des machines, et Thomas Edison en parlait dès les années 1870.", source: "Smithsonian, National Museum of American History, « Log Book With Computer Bug »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.musee-rodin.fr/musee/collections/oeuvres/penseur ; https://www.museivaticani.va/content/museivaticani/fr/collezioni/musei/collezione-d_arte-contemporanea/sala-2--van-gogh--gauguin--medardo-rosso/auguste-rodin--le-penseur.html
+  { id: "penseur-dante", depuis: 20782, niveau: 2, texte: "Le Penseur de Rodin représentait, à l'origine, le poète Dante.", vrai: true,
+    explication: "Créé vers 1880 pour couronner La Porte de l'Enfer, inspirée de la Divine Comédie, il s'appelait alors Le Poète : c'était Dante, penché pour observer les cercles de l'Enfer en méditant sur son œuvre. Il n'a reçu son titre actuel qu'ensuite.", source: "Musée Rodin, notice « Le Penseur » ; Musées du Vatican, « Auguste Rodin, Le Penseur »" },
+  // Vérifié via https://trackingcolour.com/about ; https://www.smithsonianmag.com/arts-culture/true-colors-17888/
+  { id: "statues-couleurs", depuis: 20782, niveau: 2, texte: "Les sculptures de la Grèce antique étaient laissées en marbre blanc, sans peinture.", vrai: false,
+    explication: "Depuis 1900 environ, de nombreux spécialistes savent que la sculpture antique était polychrome, c'est-à-dire peinte de plusieurs couleurs. Le temps et les intempéries ont effacé la plupart de ces couleurs ; pour le grand public, ces statues sont pourtant restées blanches.", source: "Ny Carlsberg Glyptotek, projet de recherche Tracking Colour ; Smithsonian Magazine, « True Colors », 2008" },
 ];
 
 // ===================== Avant ou après ? =====================
@@ -921,18 +1069,26 @@ const EVENEMENTS = [
   { id: "jenner", sujet: "vaccins", nom: "Première vaccination contre la variole (Jenner)", annee: 1796 },
   { id: "sacre", sujet: "napoleon", nom: "Sacre de Napoléon Ier", annee: 1804, date: "1804-12-02" },
   { id: "haiti", nom: "Proclamation de l'indépendance d'Haïti", annee: 1804, date: "1804-01-01" },
+  { id: "locomotive", nom: "Premier trajet d'une locomotive à vapeur sur rails (Trevithick, pays de Galles)", annee: 1804, date: "1804-02-21" },
   { id: "saint-empire", nom: "Fin du Saint-Empire romain germanique", annee: 1806, date: "1806-08-06" },
   { id: "waterloo", sujet: "napoleon", nom: "Bataille de Waterloo", annee: 1815 },
+  { id: "draisienne", nom: "Première sortie de la draisienne, ancêtre du vélo (Karl Drais)", annee: 1817, date: "1817-06-12" },
   { id: "mort-napoleon", sujet: "napoleon", nom: "Mort de Napoléon Ier", annee: 1821 },
   { id: "briquet", nom: "Invention du premier briquet à gaz (lampe de Döbereiner)", annee: 1823 },
   { id: "megalosaure", nom: "Description du mégalosaure, premier dinosaure nommé", annee: 1824, date: "1824-02-20" },
+  { id: "neuvieme", nom: "Création de la Neuvième Symphonie de Beethoven, à Vienne", annee: 1824, date: "1824-05-07" },
   { id: "photo", nom: "Plus ancienne photographie conservée (Niépce)", annee: 1827 },
   { id: "allumette", nom: "Premières allumettes à friction (John Walker)", annee: 1827 },
+  { id: "mexique-esclavage", sujet: "esclavage", nom: "Décret d'abolition de l'esclavage au Mexique", annee: 1829, date: "1829-09-15" },
   { id: "train", nom: "Première ligne de chemin de fer pour voyageurs (Liverpool–Manchester)", annee: 1830, date: "1830-09-15" },
   { id: "belgique", nom: "Le gouvernement provisoire proclame l'indépendance de la Belgique", annee: 1830, date: "1830-10-04" },
   { id: "esclavage-britannique", sujet: "esclavage", nom: "Entrée en vigueur de l'abolition de l'esclavage dans les colonies britanniques", annee: 1834, date: "1834-08-01" },
+  { id: "waitangi", nom: "Signature du traité de Waitangi entre la Couronne britannique et des chefs maoris (Nouvelle-Zélande)", annee: 1840, date: "1840-02-06" },
+  { id: "penny-black", nom: "Premier timbre-poste, le Penny Black, valable au Royaume-Uni", annee: 1840, date: "1840-05-06" },
   { id: "fax", nom: "Brevet du fax (Alexander Bain)", annee: 1843 },
-  { id: "neptune", nom: "Découverte de la planète Neptune", annee: 1846 },
+  { id: "neptune", nom: "Découverte de la planète Neptune", annee: 1846, date: "1846-09-23" },
+  { id: "anesthesie", nom: "Première démonstration publique d'une opération sous anesthésie (éther, Boston)", annee: 1846, date: "1846-10-16" },
+  { id: "liberia", nom: "Proclamation de l'indépendance du Liberia", annee: 1847, date: "1847-07-26" },
   { id: "esclavage-france", sujet: "esclavage", nom: "Abolition définitive de l'esclavage dans les colonies françaises", annee: 1848 },
   { id: "neandertal", nom: "Découverte de l'homme de Néandertal (vallée de Neander, Allemagne)", annee: 1856 },
   { id: "sheffield", nom: "Fondation du Sheffield FC, plus ancien club de football encore en activité", annee: 1857 },
@@ -943,6 +1099,7 @@ const EVENEMENTS = [
   { id: "uit", nom: "Fondation de l'Union télégraphique internationale (aujourd'hui l'UIT), à Paris", annee: 1865, date: "1865-05-17" },
   { id: "capital", nom: "Marx publie le premier livre du « Capital »", annee: 1867 },
   { id: "meiji", nom: "Fin du shogunat au Japon : restauration du pouvoir impérial (ère Meiji)", annee: 1868 },
+  { id: "feu-circulation", nom: "Premier feu de circulation, à Londres", annee: 1868 },
   { id: "suez", nom: "Ouverture du canal de Suez", annee: 1869, date: "1869-11-17" },
   { id: "mendeleiev", nom: "Présentation du tableau périodique des éléments par Mendeleïev", annee: 1869, date: "1869-03-06" },
   { id: "empire-allemand", nom: "Proclamation de l'Empire allemand", annee: 1871 },
@@ -959,7 +1116,9 @@ const EVENEMENTS = [
   { id: "bresil-republique", nom: "Proclamation de la République au Brésil, qui met fin à l'Empire", annee: 1889, date: "1889-11-15" },
   { id: "van-gogh", nom: "Mort de Vincent van Gogh", annee: 1890, date: "1890-07-29" },
   { id: "wounded-knee", nom: "Massacre de Lakotas par l'armée américaine à Wounded Knee", annee: 1890, date: "1890-12-29" },
+  { id: "basket", nom: "Invention du basket-ball (James Naismith, Springfield)", annee: 1891 },
   { id: "nouvelle-zelande", nom: "Premier vote des femmes à des élections nationales (Nouvelle-Zélande)", annee: 1893 },
+  { id: "hawaii-royaume", nom: "Renversement de la reine Liliʻuokalani, dernière souveraine du royaume d'Hawaï", annee: 1893, date: "1893-01-17" },
   { id: "rayons-x", nom: "Découverte des rayons X (Röntgen)", annee: 1895, date: "1895-11-08" },
   { id: "cinema", nom: "Première projection publique payante du cinématographe Lumière", annee: 1895, date: "1895-12-28" },
   { id: "jo", nom: "Premiers Jeux olympiques modernes (Athènes)", annee: 1896, date: "1896-04-06" },
@@ -968,9 +1127,11 @@ const EVENEMENTS = [
   { id: "australie", nom: "Naissance du Commonwealth d'Australie (fédération des six colonies)", annee: 1901, date: "1901-01-01" },
   { id: "wright", nom: "Premier vol motorisé des frères Wright", annee: 1903, date: "1903-12-17" },
   { id: "tour-de-france", nom: "Premier Tour de France", annee: 1903, date: "1903-07-01" },
+  { id: "panama", nom: "Le Panama se sépare de la Colombie et proclame son indépendance", annee: 1903, date: "1903-11-03" },
   { id: "fifa", nom: "Fondation de la FIFA, à Paris", annee: 1904 },
   { id: "relativite", nom: "Einstein publie la relativité restreinte", annee: 1905 },
   { id: "norvege", nom: "Le Parlement norvégien rompt l'union avec la Suède", annee: 1905, date: "1905-06-07" },
+  { id: "congo-belge", nom: "La Belgique annexe l'État indépendant du Congo, dont le roi Léopold II était le souverain", annee: 1908, date: "1908-11-15" },
   { id: "pole-sud", nom: "Amundsen atteint le pôle Sud", annee: 1911, date: "1911-12-14" },
   { id: "titanic", nom: "Naufrage du Titanic", annee: 1912 },
   { id: "chine-empire", nom: "Abdication du dernier empereur de Chine", annee: 1912 },
@@ -978,7 +1139,9 @@ const EVENEMENTS = [
   { id: "octobre", sujet: "guerres", nom: "Révolution d'Octobre en Russie", annee: 1917 },
   { id: "finlande", nom: "Le Parlement finlandais approuve la déclaration d'indépendance", annee: 1917, date: "1917-12-06" },
   { id: "elizabeth", nom: "Naissance de la reine Elizabeth II", annee: 1926, date: "1926-04-21" },
+  { id: "monet", nom: "Mort de Claude Monet", annee: 1926, date: "1926-12-05" },
   { id: "penicilline", nom: "Découverte de la pénicilline (Fleming)", annee: 1928 },
+  { id: "mickey", nom: "Sortie de « Steamboat Willie », premier dessin animé de Mickey sorti en salle", annee: 1928, date: "1928-11-18" },
   { id: "mlk", nom: "Naissance de Martin Luther King", annee: 1929, date: "1929-01-15" },
   { id: "anne-frank", nom: "Naissance d'Anne Frank", annee: 1929, date: "1929-06-12" },
   { id: "krach", nom: "Krach boursier de Wall Street", annee: 1929, date: "1929-10-24" },
@@ -997,6 +1160,8 @@ const EVENEMENTS = [
   { id: "spoutnik", sujet: "espace", nom: "Lancement de Spoutnik, premier satellite artificiel", annee: 1957 },
   { id: "tennis", nom: "Présentation de « Tennis for Two », l'un des premiers jeux vidéo", annee: 1958, date: "1958-10-18" },
   { id: "hawaii", nom: "Hawaï devient le 50e État des États-Unis", annee: 1959, date: "1959-08-21" },
+  { id: "barbie", nom: "Présentation de la première poupée Barbie, à New York", annee: 1959, date: "1959-03-09" },
+  { id: "brasilia", nom: "Inauguration de Brasília, nouvelle capitale du Brésil", annee: 1960, date: "1960-04-21" },
   { id: "gagarine", sujet: "espace", nom: "Premier humain dans l'espace (Gagarine)", annee: 1961, date: "1961-04-12" },
   { id: "mur", sujet: "berlin", nom: "Construction du mur de Berlin", annee: 1961, date: "1961-08-13" },
   { id: "kennedy", nom: "Assassinat de John F. Kennedy", annee: 1963 },
@@ -1004,6 +1169,8 @@ const EVENEMENTS = [
   { id: "lune", sujet: "espace", nom: "Premiers pas sur la Lune", annee: 1969, date: "1969-07-21" },
   { id: "arpanet", sujet: "internet", nom: "Premier message envoyé sur ARPANET, l'ancêtre d'Internet", annee: 1969, date: "1969-10-29" },
   { id: "suisse-vote", sujet: "vote-suisse", nom: "Droit de vote des femmes en Suisse, au niveau fédéral", annee: 1971, date: "1971-02-07" },
+  { id: "disney-world", nom: "Ouverture de Walt Disney World (Floride)", annee: 1971, date: "1971-10-01" },
+  { id: "emirats", nom: "Proclamation des Émirats arabes unis", annee: 1971, date: "1971-12-02" },
   { id: "picasso", nom: "Mort de Pablo Picasso", annee: 1973 },
   { id: "apple", nom: "Fondation d'Apple", annee: 1976 },
   { id: "star-wars", nom: "Sortie de « Star Wars » aux États-Unis", annee: 1977, date: "1977-05-25" },
@@ -1019,10 +1186,14 @@ const EVENEMENTS = [
   { id: "web", sujet: "internet", nom: "Premier site web (Tim Berners-Lee)", annee: 1991 },
   { id: "urss", nom: "Dissolution de l'URSS", annee: 1991, date: "1991-12-26" },
   { id: "tunnel", nom: "Ouverture du tunnel sous la Manche", annee: 1994 },
+  { id: "google", sujet: "internet", nom: "Création de l'entreprise Google", annee: 1998 },
+  { id: "bhoutan-tv", nom: "Lancement de la télévision nationale au Bhoutan", annee: 1999, date: "1999-06-02" },
+  { id: "macao", nom: "Rétrocession de Macao par le Portugal à la Chine", annee: 1999, date: "1999-12-20" },
   { id: "wikipedia", sujet: "internet", nom: "Création de Wikipédia", annee: 2001 },
   { id: "euro", nom: "Mise en circulation des pièces et billets en euros", annee: 2002 },
   { id: "facebook", sujet: "internet", nom: "Création de Facebook", annee: 2004 },
   { id: "iphone", sujet: "internet", nom: "Présentation du premier iPhone", annee: 2007 },
+  { id: "nepal", nom: "Abolition de la monarchie au Népal, qui devient une république", annee: 2008, date: "2008-05-28" },
   { id: "soudan-sud", nom: "Indépendance du Soudan du Sud", annee: 2011, date: "2011-07-09" },
   { id: "trou-noir", nom: "Première image d'un trou noir (galaxie M87)", annee: 2019, date: "2019-04-10" }
 ];
@@ -1146,6 +1317,45 @@ const PAIRES_CELEBRES = [
   { a: "sheffield", b: "darwin", depuis: 20781, note: "Le plus ancien club de football encore en activité, le Sheffield FC, a été fondé en 1857, deux ans avant la publication de « L'Origine des espèces »." },
   // OMS : dernier cas naturel en Somalie en 1977, éradication déclarée en 1980 ; Computer History Museum : Apple fondée en 1976
   { a: "apple", b: "variole", depuis: 20781, note: "Apple existait déjà quand la variole circulait encore : l'entreprise est fondée en 1976, le dernier cas naturel connu date de 1977 et l'OMS a déclaré la maladie éradiquée en 1980." },
+  // Ajouts du 23 novembre 2026 (lot 2), contre-vérifiés (agent verificateur-sources) ; « depuis » : 25 novembre.
+  // Bibliothèque du Congrès (blogs.loc.gov) : indépendance du Liberia le 26 juillet 1847 ; Office of the Historian (département d'État) : 1847
+  { a: "liberia", b: "esclavage-france", depuis: 20782, note: "Le Liberia, fondé par d'anciens esclaves et des Noirs nés libres venus des États-Unis, a proclamé son indépendance le 26 juillet 1847 : la France n'a aboli définitivement l'esclavage dans ses colonies que l'année suivante, en 1848." },
+  // Département d'État (Foreign Relations of the United States, 1903, doc. 229) : soulèvement de Panama le 3 novembre 1903
+  { a: "tour-de-france", b: "panama", depuis: 20782, note: "Le Tour de France est plus ancien que le Panama : la course est partie le 1er juillet 1903, et le Panama ne s'est séparé de la Colombie que le 3 novembre 1903." },
+  // Sénat fédéral du Brésil (senado.leg.br) : Brasília inaugurée le 21 avril 1960 ; Laboratoire de Brookhaven : « Tennis for Two » le 18 octobre 1958
+  { a: "tennis", b: "brasilia", depuis: 20782, note: "Brasília, la capitale du Brésil, est plus jeune que l'un des premiers jeux vidéo : « Tennis for Two » a été présenté en octobre 1958, la ville a été inaugurée le 21 avril 1960." },
+  // Ministère émirien des Affaires étrangères (mofa.gov.ae) : proclamation le 2 décembre 1971 ; Walt Disney Archives (d23.com) : ouverture le 1er octobre 1971
+  { a: "disney-world", b: "emirats", depuis: 20782, note: "Les Émirats arabes unis sont plus jeunes que Walt Disney World : le parc de Floride a ouvert le 1er octobre 1971, la fédération a été proclamée le 2 décembre 1971." },
+  // Tribunal de Waitangi (waitangitribunal.govt.nz) : traité signé le 6 février 1840 ; The Postal Museum (Londres) : Penny Black valable le 6 mai 1840
+  { a: "waitangi", b: "penny-black", depuis: 20782, note: "Le traité de Waitangi, entre la Couronne britannique et des chefs maoris, a été signé le 6 février 1840 ; le premier timbre-poste, le Penny Black, n'a été valable au Royaume-Uni que trois mois plus tard, le 6 mai 1840." },
+  // Service des parcs nationaux (nps.gov) : statue inaugurée le 28 octobre 1886 ; Congrès des États-Unis, résolution d'excuses (Public Law 103-150, 1993) : monarchie renversée le 17 janvier 1893
+  { a: "liberte", b: "hawaii-royaume", depuis: 20782, note: "Hawaï était encore un royaume indépendant quand la statue de la Liberté a été inaugurée, en 1886 : sa reine a été renversée le 17 janvier 1893 par un comité soutenu par des militaires américains." },
+  // Archives générales du Royaume de Belgique (agatha.arch.be), repères chronologiques : transfert effectif de souveraineté le 15 novembre 1908
+  { a: "wright", b: "congo-belge", depuis: 20782, note: "Le Congo n'était pas encore une colonie belge quand les frères Wright ont volé, en 1903 : c'était un État dont le roi des Belges Léopold II était le souverain, et la Belgique ne l'a annexé que le 15 novembre 1908." },
+  // Bhutan Broadcasting Service, rapport annuel 2019 : télévision lancée le 2 juin 1999
+  { a: "web", b: "bhoutan-tv", depuis: 20782, note: "Le web existait depuis huit ans quand le Bhoutan a lancé sa télévision nationale, le 2 juin 1999." },
+  // NPR, 28 mai 2008, et The Irish Times, 29 mai 2008 : l'Assemblée constituante abolit la monarchie le 28 mai 2008
+  { a: "iphone", b: "nepal", depuis: 20782, note: "Le Népal était encore un royaume quand le premier iPhone a été présenté, en 2007 : l'Assemblée constituante n'a aboli la monarchie que le 28 mai 2008." },
+  // Google (about.google, « Our story ») : Google Inc. née en août 1998 ; Annuaire officiel de Macao 2023 (gcs.gov.mo) : souveraineté chinoise le 20 décembre 1999
+  { a: "google", b: "macao", depuis: 20782, note: "Macao était encore administré par le Portugal quand Google a été créé, en 1998 : le territoire n'a été rendu à la Chine que le 20 décembre 1999." },
+  // Journal officiel de la Fédération (DOF, sidof.segob.gob.mx) et Commission nationale des droits de l'homme du Mexique : décret de Vicente Guerrero du 15 septembre 1829
+  { a: "mexique-esclavage", b: "esclavage-britannique", depuis: 20782, note: "Le Mexique a décrété l'abolition de l'esclavage le 15 septembre 1829, près de cinq ans avant son entrée en vigueur dans les colonies britanniques, le 1er août 1834." },
+  // Amgueddfa Cymru – Musée national du pays de Galles : locomotive de Trevithick le 21 février 1804 ; deutschland.de : draisienne le 12 juin 1817
+  { a: "locomotive", b: "draisienne", depuis: 20782, note: "La locomotive à vapeur est plus ancienne que le vélo : celle de Trevithick a roulé sur des rails le 21 février 1804, plus de treize ans avant la première sortie de la draisienne de Karl Drais, le 12 juin 1817." },
+  // NASA : Neptune observée dans la nuit du 23 au 24 septembre 1846 ; Linda Hall Library et PMC (Bigelow) : démonstration de l'éther le 16 octobre 1846
+  { a: "neptune", b: "anesthesie", depuis: 20782, note: "Même année : Neptune a été découverte en septembre 1846, trois semaines avant la première opération publique sous anesthésie, le 16 octobre 1846 à Boston." },
+  // Smithsonian Magazine et NBC News (2018) : feu installé devant le Parlement, à Londres, en décembre 1868 ; plaque de la Ville de Westminster : « 9th Dec. 1868 »
+  { a: "feu-circulation", b: "automobile", depuis: 20782, note: "Le feu de circulation est plus ancien que l'automobile : le premier a été installé à Londres en décembre 1868, pour les voitures à cheval, dix-sept ans avant le brevet de Carl Benz, en 1886." },
+  // Famille royale britannique : naissance le 21 avril 1926 ; National Gallery of Victoria et Visit Paris Region (centenaire Monet) : mort à Giverny le 5 décembre 1926
+  { a: "elizabeth", b: "monet", depuis: 20782, note: "Claude Monet, le peintre des « Nymphéas », était encore vivant à la naissance d'Elizabeth II, le 21 avril 1926 : il est mort à Giverny le 5 décembre 1926." },
+  // Walt Disney Archives (d23.com) : « Steamboat Willie » sorti le 18 novembre 1928 ; Tintin : 10 janvier 1929
+  { a: "mickey", b: "tintin", depuis: 20782, note: "Mickey est un peu plus âgé que Tintin : « Steamboat Willie » est sorti à New York le 18 novembre 1928, moins de deux mois avant la première apparition de Tintin, le 10 janvier 1929." },
+  // Natural History Museum de Londres : mégalosaure présenté le 20 février 1824 ; Orchestre philharmonique de Vienne : Neuvième créée le 7 mai 1824
+  { a: "megalosaure", b: "neuvieme", depuis: 20782, note: "Même année : le premier dinosaure nommé, le mégalosaure, a été présenté le 20 février 1824, deux mois et demi avant la création de la Neuvième Symphonie de Beethoven, le 7 mai 1824 à Vienne." },
+  // Springfield College : règles du basket-ball écrites par James Naismith en décembre 1891 ; Naismith Basketball Hall of Fame : hiver 1891 ; musée Van Gogh : mort le 29 juillet 1890
+  { a: "van-gogh", b: "basket", depuis: 20782, note: "Van Gogh est mort avant l'invention du basket-ball : il est mort le 29 juillet 1890, et James Naismith a écrit les règles du jeu en décembre 1891." },
+  // Time (« Barbie Turns 50 », 2009) et CBS News (2023) : Barbie présentée le 9 mars 1959 ; Archives nationales des États-Unis : Hawaï 50e État le 21 août 1959
+  { a: "barbie", b: "hawaii", depuis: 20782, note: "La poupée Barbie est plus âgée que l'État d'Hawaï : elle a été présentée à New York le 9 mars 1959, plus de cinq mois avant que Hawaï devienne le 50e État des États-Unis, le 21 août." },
 ];
 
 // ===================== Ordres de grandeur =====================
@@ -1169,7 +1379,7 @@ const GRANDEURS = [
   { id: "deces-jour", niveau: 2, q: "Nombre de décès par jour dans le monde", v: 167000, source: "61 millions de décès en 2023 (OMS)" },
   { id: "naissances-jour", niveau: 2, q: "Nombre de naissances par jour dans le monde", v: 363000, source: "taux de natalité de 16,3 ‰ en 2024 (Banque mondiale)" },
   { id: "battements", niveau: 2, q: "Nombre de battements de cœur au cours d'une vie de 80 ans", v: 2.9e9, source: "calcul pour 70 battements par minute" },
-  { id: "oceans", niveau: 3, q: "Volume total des océans, en kilomètres cubes", v: 1.335e9, source: "Charette et Smith, 2010" },
+  { id: "oceans", niveau: 3, q: "Volume total des océans, en kilomètres cubes", v: 1.332e9, source: "Charette et Smith, 2010" },
   { id: "lumiere-an", niveau: 3, q: "Distance parcourue par la lumière en un an, en kilomètres", v: 9.461e12, source: "définition de l'année-lumière" },
   { id: "proxima", niveau: 3, q: "Distance de l'étoile la plus proche du Soleil (Proxima du Centaure), en kilomètres", v: 4.0e13, source: "4,24 années-lumière" },
   { id: "pop-1800", niveau: 1, q: "Population mondiale en 1800", v: 1e9, source: "estimations historiques : environ 1 milliard (Our World in Data, d'après l'ONU)" },
@@ -1202,7 +1412,25 @@ const GRANDEURS = [
   { id: "andromede", niveau: 3, q: "Distance de la galaxie d'Andromède, en années-lumière", v: 2.5e6, source: "environ 2,5 millions d'années-lumière (NASA)" },
   { id: "neptune", niveau: 3, q: "Distance moyenne entre le Soleil et Neptune, en kilomètres", v: 4.5e9, source: "NASA : 30,07 unités astronomiques, soit environ 4,5 milliards de km" },
   { id: "rotation", niveau: 3, q: "Vitesse d'un point de l'équateur entraîné par la rotation de la Terre, en km/h", v: 1674, source: "calcul : 40 075 km parcourus en 23 h 56 min" },
-  { id: "soleil-volume", niveau: 3, q: "Nombre de Terres qui tiendraient dans le volume du Soleil", v: 1304000, source: "NASA : volume du Soleil égal à 1 304 000 fois celui de la Terre" }
+  { id: "soleil-volume", niveau: 3, q: "Nombre de Terres qui tiendraient dans le volume du Soleil", v: 1304000, source: "NASA : volume du Soleil égal à 1 304 000 fois celui de la Terre" },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny ; https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date
+  // Trésor américain, API « Debt to the Penny », lue le 22 novembre 2026 : tot_pub_debt_out_amt = 40709780700317.02 au 2026-11-19
+  { id: "dette-usa", niveau: 2, q: "Dette publique fédérale des États-Unis au 19 novembre 2026, en dollars", v: 4.071e13, source: "40 710 milliards de dollars au 19 novembre 2026, y compris 7 808 milliards détenus par des organismes fédéraux (Trésor américain, « Debt to the Penny »)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www2.telegeography.com/submarine-cable-faqs-frequently-asked-questions
+  { id: "cables-sous-marins", niveau: 3, q: "Longueur totale des câbles sous-marins de télécommunication en service début 2026, en kilomètres", v: 1.5e6, source: "plus de 1,5 million de km début 2026 (TeleGeography)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://legacy.slavevoyages.org/assessment/estimates ; https://www.neh.gov/humanities/2010/septemberoctober/feature/gross-injustice
+  { id: "traite", niveau: 2, q: "Nombre d'Africains embarqués de force sur les navires de la traite transatlantique, de 1501 à 1866", v: 1.25e7, source: "estimation : 12,5 millions (base de données Slave Voyages)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.mersenne.org/primes/?press=M136279841 ; https://www.mersenne.org/
+  { id: "premier-chiffres", niveau: 3, q: "Nombre de chiffres du plus grand nombre premier connu en novembre 2026", v: 41024320, source: "2 puissance 136 279 841, moins 1, découvert le 12 octobre 2024 : 41 024 320 chiffres (GIMPS)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.pnas.org/doi/10.1073/pnas.2023170118 ; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1073/pnas.2023170118&resultType=core&format=json ; https://pmc.ncbi.nlm.nih.gov/articles/PMC8166167/
+  // Volaille exclue : vérifié via National Geographic (« this study only looked at wild birds », poulets ≈ 25 milliards à part)
+  // et Smithsonian (« 50 billion total wild birds »), qui citent Callaghan et al. (2021) ; l'étude repose sur les observations eBird
+  { id: "oiseaux-sauvages", niveau: 2, q: "Nombre d'oiseaux sauvages sur Terre", v: 5e10, source: "environ 50 milliards, à peu près six par être humain, volailles d'élevage non comptées ; estimation très incertaine (Callaghan, Nakagawa et Cornwell, PNAS, 2021)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1038/s41591-020-01182-9&resultType=core&format=json
+  { id: "cellules-jour", niveau: 3, q: "Nombre de cellules que le corps d'un adulte remplace chaque jour", v: 3.3e11, source: "environ 330 milliards, dont près de 90 % de cellules sanguines (Sender et Milo, Nature Medicine, 2021)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+  { id: "terre-orbite", niveau: 2, q: "Distance parcourue en un an par la Terre sur son orbite autour du Soleil, en kilomètres", v: 9.4e8, source: "calcul : une orbite presque circulaire de 149,6 millions de km de rayon moyen, soit environ 940 millions de km (NASA)" },
 ];
 
 // Méthode de Fermi (niveau 3 d'« Ordres de grandeur ») : quantités de GRANDEURS décomposées en facteurs sourcés.
@@ -1234,7 +1462,16 @@ const FERMI = [
     ["Jours dans une année", 365, "calendrier"]] },
   { id: "rotation", facteurs: [
     ["Circonférence de la Terre à l'équateur, en km", 40075, "NASA : rayon équatorial de 6 378 km"],
-    ["Durée d'un tour de la Terre sur elle-même, en heures", 23.93, "jour sidéral : 23 h 56 min", true]] }
+    ["Durée d'un tour de la Terre sur elle-même, en heures", 23.93, "jour sidéral : 23 h 56 min", true]] },
+  // Ajouts du 22 novembre 2026 (lot 2), contre-vérifiés par l'agent verificateur-sources
+  // Sources lues les 22 et 23 novembre 2026 : https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+  { id: "terre-orbite", facteurs: [
+    ["Vitesse moyenne de la Terre sur son orbite, en km par seconde", 29.78, "NASA"],
+    ["Secondes dans une année", 31557600, "calcul : 365,25 jours de 86 400 secondes"]] },
+  // Sources lues les 22 et 23 novembre 2026 : https://tos.org/oceanography/assets/docs/23-2_charette.pdf
+  { id: "oceans", facteurs: [
+    ["Surface des océans, en km²", 3.6184e8, "Charette et Smith, Oceanography, 2010 : 361,84 millions de km²"],
+    ["Profondeur moyenne des océans, en km", 3.682, "Charette et Smith, Oceanography, 2010 : 3 682 m"]] },
 ];
 
 // ===================== Le nord est où ? =====================
@@ -1461,4 +1698,44 @@ const CITATIONS = [
   // Sources lues le 22 novembre 2026 : https://archive.org/details/in.ernet.dli.2015.264687
   { id: "aristote-habitude", depuis: 20781, niveau: 3, texte: "Nous sommes ce que nous faisons de manière répétée. L'excellence n'est donc pas un acte, mais une habitude.", auteur: "Aristote", statut: "apocryphe",
     explication: "La phrase est de l'historien américain Will Durant, dans « The Story of Philosophy » (1926), qui résume l'« Éthique à Nicomaque » : il y met les mots d'Aristote entre guillemets, pas ceux-là. L'idée est bien d'Aristote : on devient vertueux en agissant vertueusement." },
+  // Ajouts du 23 novembre 2026 (lot 2), contre-vérifiés (agent verificateur-sources) ; « depuis » : 25 novembre.
+  // Sources lues les 22 et 23 novembre 2026 : https://www.ndl.go.jp/constitution/shiryo/01/017/017tx.html ; https://www.archives.go.jp/exhibition/digital/s20/contents/5_02.html ; https://www.archives.go.jp/exhibition/jousetsu_08_08.html
+  { id: "hirohito-guerre", depuis: 20782, niveau: 3, texte: "La situation de la guerre n'a pas nécessairement évolué en notre faveur.", auteur: "L'empereur Hirohito, annonçant la capitulation du Japon (1945)", statut: "authentique",
+    explication: "Rescrit impérial daté du 14 août 1945, lu à la radio par l'empereur le 15 août à midi : « la situation de la guerre n'a pas nécessairement évolué en notre faveur, et la tendance générale du monde ne nous est pas favorable non plus ». Le même texte dit que l'ennemi emploie « une bombe nouvelle et cruelle ». Selon les Archives nationales du Japon, ce passage a été corrigé au conseil des ministres après une forte opposition, venue surtout de l'armée." },
+  // Sources lues les 22 et 23 novembre 2026 : https://documents.un.org/api/symbol/access?s=A/61/PV.12&l=es&t=pdf
+  { id: "chavez-soufre", depuis: 20782, niveau: 3, texte: "Hier, le diable est venu ici, et ça sent encore le soufre.", auteur: "Hugo Chávez", statut: "authentique",
+    explication: "Devant l'Assemblée générale des Nations unies, à New York, le 20 septembre 2006, au lendemain du discours de George W. Bush à la même tribune : « Hier, le diable est venu ici, […] ça sent encore le soufre, à cette table où il me revient de parler. » Il conclut : « Ça sent le soufre, mais Dieu est avec nous ! » Le compte rendu officiel de l'ONU a tout consigné." },
+  // Sources lues les 22 et 23 novembre 2026 : https://thomassankara.net/wp-content/uploads/2005/09/La_dette-1.pdf ; https://burkina24.com/2016/07/29/29-juillet-1987-le-discours-sur-la-dette-de-thomas-sankara-il-y-a-29-ans/ ; https://www.marxists.org/archive/sankara/1987/july/29.htm
+  { id: "sankara-dette", depuis: 20782, niveau: 3, texte: "La dette ne peut pas être remboursée parce que si nous ne payons pas, nos bailleurs de fonds ne mourront pas.", auteur: "Thomas Sankara", statut: "authentique",
+    explication: "Addis-Abeba, 29 juillet 1987, au sommet de l'Organisation de l'unité africaine, le président du Burkina Faso appelle à un front uni contre la dette : « si nous ne payons pas, nos bailleurs de fonds ne mourront pas. Soyons-en sûrs. Par contre si nous payons, c'est nous qui allons mourir. »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://documents.un.org/api/symbol/access?s=A/PV.2282&l=en&t=pdf
+  { id: "arafat-olivier", depuis: 20782, niveau: 2, texte: "Aujourd'hui, je suis venu porteur d'un rameau d'olivier et d'un fusil de combattant de la liberté. Ne laissez pas le rameau d'olivier tomber de ma main.", auteur: "Yasser Arafat", statut: "authentique",
+    explication: "Devant l'Assemblée générale des Nations unies, à New York, le 13 novembre 1974 : l'Organisation de libération de la Palestine, qu'il préside, vient d'y être invitée à débattre de la question de Palestine. Il termine par cette phrase et insiste : « Je le répète : ne laissez pas le rameau d'olivier tomber de ma main. » (version française officielle du compte rendu de l'ONU)" },
+  // Sources lues les 22 et 23 novembre 2026 : https://es.wikisource.org/wiki/Carta_de_Bol%C3%ADvar_al_general_Juan_Jos%C3%A9_Flores_(1830 ; https://academic.oup.com/book/48662
+  { id: "bolivar-mer", depuis: 20782, niveau: 3, texte: "Celui qui sert une révolution laboure la mer.", auteur: "Simón Bolívar", statut: "authentique",
+    explication: "Lettre au général Juan José Flores, Barranquilla, 9 novembre 1830. Bolívar y tire les leçons de vingt ans de pouvoir : « 1°. L'Amérique est ingouvernable pour nous. 2°. Celui qui sert une révolution laboure la mer. 3°. La seule chose à faire en Amérique est d'émigrer. »" },
+  // Vérifié via https://archive.org/download/strenuouslifees00roosgoog/strenuouslifees00roosgoog_djvu.txt ; https://www.hnn.us/article/37338 ; https://amp.insurancejournal.com/news/national/2007/04/05/78483.htm
+  { id: "roosevelt-baton", depuis: 20782, niveau: 2, texte: "Parle doucement et porte un gros bâton : tu iras loin.", auteur: "Theodore Roosevelt", statut: "authentique",
+    explication: "Il la prononce le 2 septembre 1901, à la foire de l'État du Minnesota, et la présente lui-même comme un proverbe : « Beaucoup d'entre vous connaissent sans doute le vieux proverbe : “Parle doucement et porte un gros bâton ; tu iras loin.” »" },
+  // Sources lues les 22 et 23 novembre 2026 : https://archive.org/download/mylifework00ford/mylifework00ford_djvu.txt
+  { id: "ford-noir", depuis: 20782, niveau: 2, texte: "Le client peut avoir une voiture de la couleur qu'il veut, pourvu qu'elle soit noire.", auteur: "Henry Ford", statut: "authentique",
+    explication: "Ford le raconte lui-même dans « My Life and Work » (1922), écrit avec le journaliste Samuel Crowther : en 1909, en annonçant qu'il ne construirait plus qu'un modèle, la Ford T, il dit avoir lancé : « N'importe quel client peut avoir une voiture peinte de la couleur qu'il veut, pourvu qu'elle soit noire. » Il ajoute que personne ne fut d'accord avec lui." },
+  // Sources lues les 22 et 23 novembre 2026 : http://kremlin.ru/events/president/transcripts/22931
+  { id: "poutine-urss", depuis: 20782, niveau: 2, texte: "L'effondrement de l'Union soviétique a été la plus grande catastrophe géopolitique du siècle.", auteur: "Vladimir Poutine", statut: "authentique",
+    explication: "Message annuel à l'Assemblée fédérale, au Kremlin, le 25 avril 2005. Il ajoute que ce fut « un véritable drame » pour le peuple russe : des dizaines de millions de concitoyens et de compatriotes se sont retrouvés hors du territoire russe." },
+  // Sources lues les 22 et 23 novembre 2026 : https://documents.un.org/api/symbol/access?s=A/PV.1229&l=fr&t=pdf ; https://jamaica-gleaner.com/article/entertainment/20150201/plea-peace-war ; https://www.boeckler.de/de/magazin-mitbestimmung-2744-des-kaisers-rede-als-reggae-19088.htm
+  { id: "selassie-guerre", depuis: 20782, niveau: 3, texte: "Tant que la philosophie qui tient une race pour supérieure et une autre pour inférieure ne sera pas définitivement discréditée et abandonnée, partout, c'est la guerre.", auteur: "Hailé Sélassié", statut: "deformee",
+    explication: "« Partout, c'est la guerre » vient de la chanson « War », enregistrée par Bob Marley en 1976, qui reprend le discours de l'empereur d'Éthiopie aux Nations unies, le 4 octobre 1963. Hailé Sélassié concluait autrement : tant que ces conditions ne seront pas remplies, « les idéaux de paix durable, de citoyenneté du monde et de primauté de la morale internationale resteront des illusions fugaces, que l'on poursuit sans jamais les atteindre »." },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.historynewsnetwork.org/article/you-can-fool-all-the-people-did-lincoln-say-it ; https://quoteinvestigator.com/2013/12/11/cannot-fool/
+  { id: "lincoln-tromper", depuis: 20782, niveau: 2, texte: "On peut tromper tout le monde un certain temps, et certains tout le temps, mais on ne peut pas tromper tout le monde tout le temps.", auteur: "Abraham Lincoln", statut: "apocryphe",
+    explication: "Aucun texte de Lincoln, mort en 1865, ne la contient. Les témoins qui la placent dans un discours de 1856 ou de 1858 se sont manifestés près d'un demi-siècle plus tard ; les historiens Don et Virginia Fehrenbacher jugent leur témoignage peu fiable. La plus ancienne attribution connue date des années 1880, dans les milieux qui militaient pour la prohibition de l'alcool." },
+  // Sources lues les 22 et 23 novembre 2026 : https://freakonomics.com/2008/04/17/our-daily-bleg-did-ibm-really-see-a-world-market-for-about-five-computers/ ; https://quoteinvestigator.com/2026/08/29/market-five/
+  { id: "watson-ordinateurs", depuis: 20782, niveau: 2, texte: "Je pense qu'il y a un marché mondial pour peut-être cinq ordinateurs.", auteur: "Thomas J. Watson, président d'IBM (1943)", statut: "apocryphe",
+    explication: "On ne la trouve ni dans ses discours, ni dans ses lettres, ni dans la presse de l'époque. Cette formulation apparaît pour la première fois dans un livre de 1981 sur les prédictions ratées. Selon IBM, elle déforme une phrase de Thomas J. Watson Jr. aux actionnaires, le 28 avril 1953, sur la machine IBM 701 : la tournée de présentation devait rapporter cinq commandes, elle en avait rapporté dix-huit." },
+  // Sources lues les 22 et 23 novembre 2026 : https://quoteinvestigator.com/2013/01/28/baby-shoes/ ; https://www.snopes.com/fact-check/baby-shoes/ ; https://www.mentalfloss.com/literature/authors/ernest-hemingway-did-not-write-six-word-baby-shoes-story
+  { id: "hemingway-chaussures", depuis: 20782, niveau: 3, texte: "À vendre : chaussures de bébé, jamais portées.", auteur: "Ernest Hemingway", statut: "apocryphe",
+    explication: "Aucun écrit de Hemingway, mort en 1961, ne la contient. L'anecdote du pari, où il aurait écrit cette histoire en six mots pour prouver qu'il le pouvait, n'apparaît dans des publications que près de trente ans après sa mort ; l'agent littéraire Peter Miller la publie en 1991, en disant la tenir d'un diffuseur d'articles de presse." },
+  // Sources lues les 22 et 23 novembre 2026 : https://news.harvard.edu/gazette/?p=6870 ; https://quoteinvestigator.com/2012/11/03/well-behaved-women/
+  { id: "monroe-sages", depuis: 20782, niveau: 3, texte: "Les femmes bien sages font rarement l'histoire.", auteur: "Marilyn Monroe", statut: "apocryphe",
+    explication: "La phrase est d'une historienne américaine, Laurel Thatcher Ulrich, dans un article savant des années 1970 sur les sermons funèbres de femmes pieuses de Nouvelle-Angleterre (1668-1735), ces femmes ordinaires que l'histoire oublie. Devenue slogan sur des tee-shirts et des tasses, elle a fini par donner son titre à un livre d'Ulrich, en 2007." },
 ];
