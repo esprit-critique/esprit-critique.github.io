@@ -84,7 +84,9 @@ const ILLUSIONS_DU_JOUR = [
       const decalages = [0, 10, 20, 10, 0, 10, 20];
       decalages.forEach((d, r) => {
         for (let c = -1; c < 9; c++) {
-          if (c % 2) g.appendChild(svg("rect", { x: 20 + c * 36 + d, y: 26 + r * 22, width: 36, height: 20, class: "ill-carreau leurre" }));
+          // Carreaux de bord coupés au cadre (20 à 300) : rien ne déborde du dessin
+          const x0 = Math.max(20, 20 + c * 36 + d), x1 = Math.min(300, 56 + c * 36 + d);
+          if (c % 2 && x1 > x0) g.appendChild(svg("rect", { x: x0, y: 26 + r * 22, width: x1 - x0, height: 20, class: "ill-carreau leurre" }));
         }
         if (r) g.appendChild(svg("line", { x1: 20, y1: 25 + r * 22, x2: 300, y2: 25 + r * 22, class: "ill-joint" }));
       });

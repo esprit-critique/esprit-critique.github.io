@@ -12,7 +12,7 @@ const pointsAsym = (v, brut) => fr(Number(v.toFixed(1))) + " " + (LANGUE === "en
 // ===================== Logique contre croyance =====================
 // 37 syllogismes : 9 ou 10 dans chaque case (valide ou non, conclusion crédible ou non) ; une partie en tire 4 par case,
 // pour que deux parties de suite ne se ressemblent pas tout en gardant les indices de −4 à +4.
-// « justifications » : pour six d'entre eux, trois explications, dont une seule correcte.
+// « justifications » : pour huit d'entre eux, trois explications, dont une seule correcte.
 
 const SYLLOGISMES = [
   { id: "chiens", p: ["Tous les chiens sont des mammifères.", "Tous les mammifères respirent de l'air."], c: "Tous les chiens respirent de l'air.", valide: true, credible: true },
