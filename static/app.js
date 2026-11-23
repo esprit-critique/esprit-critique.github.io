@@ -2330,6 +2330,8 @@ function annoncer(texte) {
 }
 
 // Partager le site : menu de partage du téléphone, ou copie du lien
+// Pied de page : l'aide des raccourcis, que la seule touche « ? » ne faisait pas découvrir
+$("btn-raccourcis").addEventListener("click", () => afficherRaccourcis());
 $("btn-partager").addEventListener("click", async () => {
   const adresse = location.origin + location.pathname;
   const donnees = { title: "Esprit critique", text: "Biais cognitifs et sophismes : fiches, quiz et ateliers fondés sur des données réelles.", url: adresse };
@@ -2529,6 +2531,8 @@ document.addEventListener("keydown", e => {
   }
   if (cible.matches && cible.matches("input, textarea, select")) return;
   if (e.key === "?") { e.preventDefault(); afficherRaccourcis(); return; }
+  // « / » : la recherche, comme sur la plupart des sites (hors d'un champ : vérifié plus haut)
+  if (e.key === "/" && $("recherche-globale")) { e.preventDefault(); $("recherche-globale").focus(); return; }
   const section = document.querySelector("main > section:not([hidden])");
   if (!section) return;
   // Certitude au quiz : 7 Sûr, 8 Plutôt sûr, 9 Au hasard (les touches 1 à 4 restent aux réponses)
@@ -2557,8 +2561,9 @@ document.addEventListener("keydown", e => {
 });
 
 // Aide des raccourcis clavier (touche « ? ») : une boîte de dialogue native, fermée par Échap ou par son bouton
-const RACCOURCIS = [["1 à 4", "Choisir une réponse"], ["7, 8, 9", "Certitude : sûr, plutôt sûr, au hasard"], ["Entrée ou →", "Question suivante, valider"],
-  ["R", "Tirer une autre carte, un autre défi"], ...(PIECE_VISIBLE ? [["P", "Ouvrir la pièce du jour"]] : []), ["Espace", "Retourner une carte (mode « Cartes »)"], ["?", "Afficher cette aide"]];
+const RACCOURCIS = [["1 à 9", "Choisir la réponse de ce rang"], ["7, 8, 9", "Certitude : sûr, plutôt sûr, au hasard"], ["Entrée ou →", "Question suivante, valider"],
+  ["R", "Tirer une autre carte, un autre défi"], ...(PIECE_VISIBLE ? [["P", "Ouvrir la pièce du jour"]] : []), ["Espace", "Retourner une carte (mode « Cartes »)"],
+  ["/", "Aller à la recherche"], ["↑ ↓, Entrée, Échap", "Dans la recherche : parcourir les résultats, ouvrir, fermer"], ["?", "Afficher cette aide"]];
 function afficherRaccourcis() {
   let boite = document.querySelector(".aide-raccourcis");
   if (!boite) {

@@ -608,6 +608,14 @@ f.onload = async () => {
     w.document.body.dispatchEvent(new w.KeyboardEvent("keydown", { key: "6", bubbles: true }));
     await pause(5);
     ok("clavier : la touche 6 choisit la sixième réponse", vue().querySelectorAll(".choix")[5].matches(".juste, .faux"));
+    // « / » mène à la recherche ; le bouton du pied ouvre l'aide, qui annonce bien « 1 à 9 » et « / »
+    w.document.body.dispatchEvent(new w.KeyboardEvent("keydown", { key: "/", bubbles: true }));
+    ok("clavier : « / » place le curseur dans la recherche", w.document.activeElement && w.document.activeElement.id === "recherche-globale");
+    w.document.activeElement.blur();
+    w.document.getElementById("btn-raccourcis").click();
+    const aide = w.document.querySelector(".aide-raccourcis");
+    ok("raccourcis : le bouton du pied ouvre l'aide, à jour (1 à 9, /)", !!aide && aide.open && /1 à 9/.test(aide.textContent) && /Aller à la recherche/.test(aide.textContent));
+    if (aide) aide.close();
 
     // ---------- Le calcul, en détail ----------
     // Tests positifs : le calcul suit chaque situation, avec ses propres chiffres
