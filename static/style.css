@@ -2066,7 +2066,10 @@ label[for] { display: block; margin: 0 0 8px; }
 .pied button, .choix-theme button { min-width: 44px; justify-content: center; }
 .bouton-pas { width: 44px; height: 44px; }
 .curseur { height: 44px; }
-@media (min-width: 760px) { .onglet { min-height: 44px; min-width: 44px; justify-content: center; } }
+/* Même marge intérieure pour tous les onglets (6 px de chaque côté) : « Quiz » atteint 44 px sans être élargi seul,
+   ce qui rendait les écarts visibles inégaux ; l'écart de la navigation en est réduit d'autant */
+@media (min-width: 760px) { .onglet { min-height: 44px; min-width: 44px; justify-content: center; padding-left: 6px; padding-right: 6px; } .navigation { gap: 12px; } }
+@media (min-width: 1040px) { .navigation { gap: 0; } }   /* en-tête serré sur une ligne : 12 px entre les mots */
 /* Échelles à 7 et 9 points sur téléphone : deux rangées (4 + 3, 5 + 4), pour des boutons de 44 px de large */
 @media (max-width: 759px) {
   .echelle-sept-boutons { grid-template-columns: repeat(4, minmax(44px, 1fr)); }
@@ -2302,7 +2305,7 @@ html.sobre .spectre { display: none; }
 }
 /* Grand écran : la place existe pour l'écart habituel des onglets (8 px ne suffit qu'entre 1 040 et 1 239 px, où la
    ligne unique de l'en-tête est serrée) */
-@media (min-width: 1240px) { .navigation { gap: 20px; } }
+@media (min-width: 1240px) { .navigation { gap: 8px; } }   /* + 2 × 6 px de marge des onglets : 20 px entre les mots */
 /* Parcours guidés : le filet de lien tombait au bas de la cible de 44 px, loin du texte, comme un trait parasite ; la
    ligne de séparation suffit. Titre et durée restent sur une ligne, le titre se coupe au besoin. */
 .liste-parcours li { flex-wrap: nowrap; align-items: center; }
