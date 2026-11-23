@@ -431,6 +431,87 @@ const MONDE = [
   { id: "voitures-electriques", depuis: 20781, niveau: 2, question: "Quelle part des voitures neuves vendues dans le monde en 2025 était électrique (hybrides rechargeables compris) ?",
     options: ["5 %", "un quart", "la moitié"], juste: 1,
     explication: "Un quart : plus de 20 millions de voitures, dont 65 % entièrement électriques et le reste hybrides rechargeables. Près de 55 % en Chine, 28 % en Europe, mais un peu moins de 10 % aux États-Unis (Agence internationale de l'énergie).", public: null },
+  // Ajouts du 23 novembre 2026 (lot 2), contre-vérifiés (agent verificateur-sources) ; « depuis » : 25 novembre.
+  // Sources lues les 22 et 23 novembre 2026 : https://www.imf.org/external/datamapper/api/v1/GGXWDG_NGDP
+  { id: "dette-japon", depuis: 20782, niveau: 2, question: "Lequel de ces pays a la dette publique la plus élevée par rapport à la richesse qu'il produit ?",
+    options: ["la Grèce", "les États-Unis", "le Japon"], juste: 2,
+    explication: "Le Japon : environ 205 % de son PIB en 2025, l'un des taux les plus élevés du monde, devant la Grèce (147 %), l'Italie (137 %) et les États-Unis (124 %) (Fonds monétaire international, octobre 2026).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.sipri.org/sites/default/files/2026-04/2604_milex_2025.pdf
+  { id: "armee-allemagne", depuis: 20782, niveau: 3, question: "En 2025, lequel de ces pays a dépensé le plus pour ses armées ?",
+    options: ["le Royaume-Uni", "la France", "l'Allemagne"], juste: 2,
+    explication: "L'Allemagne, avec 114 milliards de dollars, au quatrième rang mondial, devant le Royaume-Uni (89 milliards) et la France (68 milliards). Ses dépenses ont augmenté de 24 % en un an et dépassent 2 % de son PIB pour la première fois depuis 1990 (Institut international de recherche sur la paix de Stockholm, SIPRI).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://api.unhcr.org/population/v1/population/?yearFrom=2025&yearTo=2025&coo_all=true&cf_type=ISO
+  { id: "deplaces-soudan", depuis: 20782, niveau: 3, question: "Fin 2025, de quel pays venait le plus grand nombre de personnes forcées de fuir (réfugiés et déplacés dans leur propre pays) ?",
+    options: ["la Syrie", "l'Ukraine", "le Soudan"], juste: 2,
+    explication: "Du Soudan : près de 13 millions de personnes, dont 9,1 millions déplacées à l'intérieur du pays et 3,8 millions réfugiées ou demandeuses d'asile à l'étranger. Suivaient la Syrie (10,6 millions) et l'Ukraine (9 millions) (Haut-Commissariat des Nations unies pour les réfugiés, HCR).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://apps.fas.usda.gov/psdonline/circulars/grain.pdf
+  { id: "ble-russie", depuis: 20782, niveau: 2, question: "Quel pays exporte le plus de blé ?",
+    options: ["les États-Unis", "le Canada", "la Russie"], juste: 2,
+    explication: "La Russie, avec 48 millions de tonnes sur la campagne 2025-2026, soit plus d'un cinquième du blé échangé dans le monde, devant l'Union européenne (32 millions), le Canada (30 millions) et les États-Unis (24 millions) (ministère de l'Agriculture des États-Unis).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://arctic-council.org/about/states/ ; https://arctic-council.org/about/
+  { id: "arctique-huit", depuis: 20782, niveau: 2, question: "Combien de pays ont une partie de leur territoire dans l'Arctique ?",
+    options: ["3", "5", "8"], juste: 2,
+    explication: "Huit : le Canada, le Danemark (par le Groenland), les États-Unis (par l'Alaska), la Finlande, l'Islande, la Norvège, la Russie et la Suède. Ils forment le Conseil de l'Arctique, et leurs régions arctiques comptent environ quatre millions d'habitants (Conseil de l'Arctique).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard
+  { id: "age-median-afrique", depuis: 20782, niveau: 2, question: "En Afrique subsaharienne, la moitié des habitants a moins de…",
+    options: ["18 ans", "28 ans", "38 ans"], juste: 0,
+    explication: "18 ans (âge médian en 2025), contre 31 ans dans le monde et 43 ans en Europe. En 2050, il serait encore de 23 ans (ONU, World Population Prospects 2024).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://api.worldbank.org/v2/country/UZB/indicator/SP.POP.TOTL?format=json&mrv=1
+  { id: "ouzbekistan-peuple", depuis: 20782, niveau: 3, question: "Lequel de ces pays d'Asie centrale compte le plus d'habitants ?",
+    options: ["le Kazakhstan", "l'Ouzbékistan", "le Turkménistan"], juste: 1,
+    explication: "L'Ouzbékistan, avec 37 millions d'habitants en 2025, près du double du Kazakhstan (21 millions), pourtant six fois plus vaste. Le Turkménistan en compte 7,6 millions (Banque mondiale).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.un.org/ohrlls/content/list-lldcs
+  { id: "kazakhstan-enclave", depuis: 20782, niveau: 2, question: "Lequel de ces pays, tous sans accès à l'océan, est le plus vaste ?",
+    options: ["la Mongolie", "le Tchad", "le Kazakhstan"], juste: 2,
+    explication: "Le Kazakhstan, avec 2,7 millions de km², devant la Mongolie (1,6 million) et le Tchad (1,3 million). C'est le plus vaste pays sans accès à l'océan du monde : il borde la Caspienne, mais c'est une mer fermée (Banque mondiale).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.stats.gov.cn/english/PressRelease//202602/t20260228_1962661.html ; https://www.stats.gov.cn/english/PressRelease/202302/t20230227_1918979.html
+  { id: "chine-deces", depuis: 20782, niveau: 3, question: "En 2025, en Chine, y a-t-il eu plus de naissances ou plus de décès ?",
+    options: ["nettement plus de naissances", "à peu près autant", "nettement plus de décès"], juste: 2,
+    explication: "Nettement plus de décès : 11,3 millions, contre 7,9 millions de naissances. La population a perdu 3,4 millions d'habitants en un an, à 1,405 milliard ; elle baisse depuis 2022 (Bureau national des statistiques de Chine).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://european-union.europa.eu/principles-countries-history/languages_fr
+  { id: "ue-langues", depuis: 20782, niveau: 2, question: "Combien de langues officielles l'Union européenne compte-t-elle ?",
+    options: ["3", "12", "24"], juste: 2,
+    explication: "24. Tout citoyen peut écrire aux institutions européennes dans l'une d'elles et doit recevoir une réponse dans la même langue. Les dernières ajoutées sont le bulgare, l'irlandais et le roumain (2007), puis le croate (2013) (Union européenne).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data.zip
+  { id: "canne-a-sucre", depuis: 20782, niveau: 3, question: "Quelle plante cultivée est la plus récoltée au monde, en tonnes ?",
+    options: ["le blé", "le riz", "la canne à sucre"], juste: 2,
+    explication: "La canne à sucre : 1,94 milliard de tonnes en 2024, devant le maïs (1,22 milliard), le riz (0,82) et le blé (0,80) (Organisation des Nations unies pour l'alimentation et l'agriculture, FAO).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.unep.org/news-and-stories/press-release/world-squanders-over-1-billion-meals-day-un-report
+  { id: "gaspillage-foyers", depuis: 20782, niveau: 2, question: "Où est jetée la plus grande partie de la nourriture gaspillée dans le monde (hors pertes à la production) ?",
+    options: ["dans les magasins", "dans les restaurants et les cantines", "dans les foyers"], juste: 2,
+    explication: "Dans les foyers : 60 % du gaspillage, contre 28 % pour la restauration et 12 % pour les commerces. En 2022, 1,05 milliard de tonnes ont été gaspillées, près d'un cinquième de la nourriture disponible pour les consommateurs, parties non comestibles comprises (Programme des Nations unies pour l'environnement).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.usgs.gov/special-topics/water-science-school/science/where-earths-water
+  { id: "eau-souterraine", depuis: 20782, niveau: 3, question: "En dehors des glaces, où se trouve l'essentiel de l'eau douce de la Terre ?",
+    options: ["dans les lacs et les rivières", "sous terre, dans les nappes", "dans l'atmosphère"], juste: 1,
+    explication: "Sous terre : environ 30 % de l'eau douce, contre 0,26 % pour les lacs et 0,006 % pour les rivières. Les glaces et neiges permanentes en retiennent 69 %. Et l'eau douce ne représente que 2,5 % de l'eau de la planète (Institut d'études géologiques des États-Unis, USGS, d'après Shiklomanov).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://iho.int/en/global-seabed-mapping-reaches-new-milestone-as-five-million-square-kilometres-added-in-a-year ; https://seabed2030.org/?p=3108 ; https://www.ncei.noaa.gov/node/231
+  { id: "fonds-marins", depuis: 20782, niveau: 2, question: "Quelle part du fond des océans a été cartographiée à partir de mesures directes de profondeur ?",
+    options: ["environ 5 %", "environ 30 %", "environ 90 %"], juste: 1,
+    explication: "28,7 % en avril 2026, soit environ 104 millions de km², selon le projet international Seabed 2030. Ailleurs, les cartes reposent sur des profondeurs estimées, surtout d'après des mesures de la gravité par satellite (NOAA).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.protectedplanet.net/en/thematic-areas/marine-protected-areas
+  { id: "haute-mer", depuis: 20782, niveau: 3, question: "Quelle part de l'océan mondial se trouve en haute mer, hors de la juridiction de tout pays ?",
+    options: ["environ 10 %", "environ 35 %", "environ 60 %"], juste: 2,
+    explication: "61 %, soit près de la moitié de la surface de la Terre. Environ 1,5 % de la haute mer est protégé, contre 23 % des eaux nationales, qui s'étendent jusqu'à 200 milles marins des côtes (Protected Planet, Programme des Nations unies pour l'environnement).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://planet4589.org/space/stats/active.html
+  { id: "starlink", depuis: 20782, niveau: 2, question: "En novembre 2026, quelle part des satellites en activité autour de la Terre appartenait à une seule constellation, Starlink, de l'entreprise SpaceX ?",
+    options: ["environ 5 %", "environ 25 %", "près des deux tiers"], juste: 2,
+    explication: "Près des deux tiers : 11 195 satellites Starlink sur 17 246 satellites actifs au 18 novembre 2026, selon le catalogue de l'astrophysicien Jonathan McDowell ; 66 % selon le catalogue CelesTrak. Cette part change chaque mois, au fil des lancements et des retraits.", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.who.int/news-room/fact-sheets/detail/mental-disorders ; https://www.who.int/news/item/02-09-2025-over-a-billion-people-living-with-mental-health-conditions-services-require-urgent-scale-up
+  { id: "troubles-mentaux", depuis: 20782, niveau: 2, question: "Dans le monde, combien de personnes vivent avec un trouble mental (anxiété, dépression…) ?",
+    options: ["environ 1 sur 100", "environ 1 sur 30", "environ 1 sur 7"], juste: 2,
+    explication: "Près d'une sur sept, soit 1,2 milliard de personnes en 2023. Les plus fréquents sont les troubles anxieux (470 millions de personnes) et la dépression (322 millions) (Organisation mondiale de la santé).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.unwomen.org/en/news-stories/press-release/2025/11/every-day-137-women-and-girls-are-killed-by-intimate-partners-or-family-members ; https://internetcontenidos.inegi.org.mx/contenidos/unodc/wp-content/uploads/2025/11/Femicide_Brief_2025_compressed.pdf
+  { id: "feminicides", depuis: 20782, niveau: 3, question: "Dans le monde, quand une femme est tuée volontairement, qui est le plus souvent l'auteur ?",
+    options: ["un inconnu", "une connaissance hors de la famille", "son partenaire ou un membre de sa famille"], juste: 2,
+    explication: "Son partenaire ou un membre de sa famille, dans 60 % des cas : environ 50 000 femmes et filles sur 83 000 tuées volontairement en 2024 (estimations). Chez les hommes, qui représentent 80 % des victimes d'homicide, cette part n'est que de 11 % (Office des Nations unies contre la drogue et le crime ; ONU Femmes).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://aci.aero/2026/07/15/worlds-busiest-airports-atlanta-holds-asia-climbs-strong-demand-while-asia-pacific-growth-reshape-the-rankings/
+  { id: "aeroport-atlanta", depuis: 20782, niveau: 2, question: "Quel est l'aéroport le plus fréquenté du monde, en nombre de passagers ?",
+    options: ["Londres-Heathrow", "Dubaï", "Atlanta"], juste: 2,
+    explication: "Atlanta, aux États-Unis, avec 106 millions de passagers en 2025, devant Dubaï (95 millions) et Tokyo-Haneda (92 millions) ; Londres-Heathrow est septième (84 millions). En tout, 9,8 milliards de passagers ont été comptés dans les aéroports du monde (Conseil international des aéroports).", public: null },
+  // Sources lues les 22 et 23 novembre 2026 : https://www.itu.int/en/mediacentre/Pages/PR-2026-02-03-Porto-Submarine-Cable-Resilience-Summit.aspx ; https://resources.telegeography.com/2023-mythbusting-part-3
+  { id: "cables-sous-marins", depuis: 20782, niveau: 2, question: "Comment voyagent l'essentiel des données d'Internet entre les pays ?",
+    options: ["par satellite", "par des câbles posés au fond de la mer", "par des antennes relais"], juste: 1,
+    explication: "Par des câbles sous-marins, qui transportent plus de 99 % du trafic international de données (Union internationale des télécommunications).", public: null },
 ];
 
 // ===================== Qu'est-ce qui tue le plus ? =====================
